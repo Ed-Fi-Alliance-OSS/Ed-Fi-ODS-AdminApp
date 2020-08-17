@@ -100,10 +100,9 @@ param(
 $solution = "Application\Ed-Fi-ODS-Tools.sln"
 
 if ("Release" -eq $BuildConfiguration) {
-    $configuration = "OnPremisesRelease"
+    $configuration = "Release"
     $testConfiguration = "Release"
-}
-else {
+} else {
     $configuration = "OnPremises"
     $testConfiguration = "Debug"
 }
