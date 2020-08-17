@@ -102,6 +102,9 @@ $solution = "Application\Ed-Fi-ODS-Tools.sln"
 if ("Release" -eq $BuildConfiguration) {
     $configuration = "Release"
     $testConfiguration = "Release"
+} elseif ("OnPremisesRelease" -eq $BuildConfiguration) {
+    $configuration = "OnPremisesRelease"
+    $testConfiguration = "Release"
 } else {
     $configuration = "OnPremises"
     $testConfiguration = "Debug"
