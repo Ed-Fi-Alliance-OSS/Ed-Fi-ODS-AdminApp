@@ -70,9 +70,9 @@ param(
     [string]
     $BuildCounter = "1",
 
-    # .NET project build configuration, defaults to "Debug". Options are: Debug, Release.
+    # .NET project build configuration, defaults to "Debug". Options are: Debug, Release, OnPremisesRelease.
     [string]
-    [ValidateSet("Debug", "Release")]
+    [ValidateSet("Debug", "Release", "OnPremisesRelease")]
     $BuildConfiguration = "Debug",
 
     # Optional location of msbuild.exe. If not provided, the script attempts to
