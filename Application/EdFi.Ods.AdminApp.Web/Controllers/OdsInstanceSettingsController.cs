@@ -331,8 +331,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                 {
                     ApiKey = config.BulkUploadCredential?.ApiKey ?? string.Empty,
                     ApiSecret = config.BulkUploadCredential?.ApiSecret ?? string.Empty,
-                    CloudOdsEnvironment = CloudOdsEnvironment.Production,
-                    OdsInstanceName = _instanceContext.Name
+                    CloudOdsEnvironment = CloudOdsEnvironment.Production
                 },
                 OdsInstance = _instanceContext
             };
