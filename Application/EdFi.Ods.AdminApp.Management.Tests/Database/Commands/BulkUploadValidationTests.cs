@@ -41,15 +41,20 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
 
             SetupApplicationForInstance(odsInstance2);
 
-            var bulkUploadModel = new BulkFileUploadModel
+            var saveBulkUploadCredentialsModel = new SaveBulkUploadCredentialsModel
             {
                 ApiKey = apiClientForInstance1.Key,
-                ApiSecret = apiClientForInstance1.Secret,
-                OdsInstanceName = odsInstance1.Name
+                ApiSecret = apiClientForInstance1.Secret
             };
 
-            var validator = new BulkFileUploadModelValidator(TestContext);
-            var validationResults = validator.Validate(bulkUploadModel);
+            var instanceContext = new InstanceContext
+            {
+                Id = odsInstance1.OdsInstanceId,
+                Name = odsInstance1.Name
+            };
+
+            var validator = new SaveBulkUploadCredentialsModelValidator(TestContext, instanceContext);
+            var validationResults = validator.Validate(saveBulkUploadCredentialsModel);
             validationResults.IsValid.ShouldBe(true);
         }
 
@@ -78,15 +83,20 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
 
             SetupApplicationForInstance(odsInstance2);
 
-            var bulkUploadModel = new BulkFileUploadModel
+            var saveBulkUploadCredentialsModel = new SaveBulkUploadCredentialsModel
             {
                 ApiKey = apiClientForInstance1.Key,
-                ApiSecret = apiClientForInstance1.Secret,
-                OdsInstanceName = odsInstance2.Name
+                ApiSecret = apiClientForInstance1.Secret
             };
 
-            var validator = new BulkFileUploadModelValidator(TestContext);
-            var validationResults = validator.Validate(bulkUploadModel);
+            var instanceContext = new InstanceContext
+            {
+                Id = odsInstance2.OdsInstanceId,
+                Name = odsInstance2.Name
+            };
+
+            var validator = new SaveBulkUploadCredentialsModelValidator(TestContext, instanceContext);
+            var validationResults = validator.Validate(saveBulkUploadCredentialsModel);
             validationResults.IsValid.ShouldBe(false);
             validationResults.Errors.Select(x => x.ErrorMessage).ShouldContain("The Api key provided is not associated with the currently selected ODS instance.");
         }
