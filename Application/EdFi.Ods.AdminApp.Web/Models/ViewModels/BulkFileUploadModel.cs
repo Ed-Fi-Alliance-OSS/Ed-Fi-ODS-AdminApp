@@ -22,6 +22,7 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels
         public string ApiKey { get; set; }
         [Display(Name = "Api Secret")]
         public string ApiSecret { get; set; }
+        public string OdsInstanceName { get; set; }
         public bool IsJobRunning { get; set; }
         public bool IsSameOdsInstance { get; set; }
     }

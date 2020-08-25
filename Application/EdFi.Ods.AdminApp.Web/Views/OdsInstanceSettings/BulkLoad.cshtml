@@ -22,6 +22,7 @@ See the LICENSE and NOTICES files in the project root for more information.
         using (Html.BeginForm("SaveBulkLoadCredentials", "OdsInstanceSettings", FormMethod.Post, new { enctype = "multipart/form-data", id = "save-credentials-form" }))
         {
             @Html.ValidationBlock()
+            @Html.InputBlock(m => m.BulkFileUploadModel.OdsInstanceName).Hide()
             @Html.InputBlock(m => m.BulkFileUploadModel.ApiKey)
             @Html.InputBlock(m => m.BulkFileUploadModel.ApiSecret)
             <div class="col-xs-4"></div>
