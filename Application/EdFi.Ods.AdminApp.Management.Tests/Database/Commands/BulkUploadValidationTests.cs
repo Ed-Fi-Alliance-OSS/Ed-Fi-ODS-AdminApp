@@ -101,6 +101,31 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
             validationResults.Errors.Select(x => x.ErrorMessage).ShouldContain("The Api key provided is not associated with the currently selected ODS instance.");
         }
 
+        [Test]
+        public void ShouldNotAllowEmptyBulkLoadCredentials()
+        {
+            var saveBulkUploadCredentialsModel = new SaveBulkUploadCredentialsModel
+            {
+                ApiKey = "",
+                ApiSecret = ""
+            };
+
+            var instanceContext = new InstanceContext
+            {
+                Id = 1,
+                Name = "Test Instance"
+            };
+
+            var validator = new SaveBulkUploadCredentialsModelValidator(TestContext, instanceContext);
+            var validationResults = validator.Validate(saveBulkUploadCredentialsModel);
+            validationResults.IsValid.ShouldBe(false);
+            validationResults.Errors.Select(x => x.ErrorMessage).ShouldBe(new List<string>
+            {
+                "'Api Key' must not be empty.",
+                "'Api Secret' must not be empty."
+            });
+        }
+
         private ApiClient SetupApplicationForInstance(OdsInstance instance)
         {
             var vendor = new Vendor
