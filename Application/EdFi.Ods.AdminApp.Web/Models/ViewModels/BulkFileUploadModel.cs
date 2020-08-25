@@ -30,13 +30,23 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels
         public bool IsSameOdsInstance { get; set; }
     }
 
-    public class BulkFileUploadModelValidator : AbstractValidator<BulkFileUploadModel>
+    public class SaveBulkUploadCredentialsModel
+    {
+        [Display(Name = "Api Key")]
+        public string ApiKey { get; set; }
+        [Display(Name = "Api Secret")]
+        public string ApiSecret { get; set; }
+    }
+
+    public class SaveBulkUploadCredentialsModelValidator : AbstractValidator<SaveBulkUploadCredentialsModel>
     {
         private readonly IUsersContext _usersContext;
+        private readonly InstanceContext _instanceContext;
 
-        public BulkFileUploadModelValidator(IUsersContext usersContext)
+        public SaveBulkUploadCredentialsModelValidator(IUsersContext usersContext, InstanceContext instanceContext)
         {
             _usersContext = usersContext;
+            _instanceContext = instanceContext;
 
             RuleFor(m => m.ApiKey).NotEmpty();
             RuleFor(m => m.ApiSecret).NotEmpty();
@@ -46,7 +56,7 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels
                 .WithMessage("The Api key provided is not associated with the currently selected ODS instance.");
         }
 
-        private bool BeAssociatedToTheSelectedInstance(BulkFileUploadModel model, string apiKey)
+        private bool BeAssociatedToTheSelectedInstance(SaveBulkUploadCredentialsModel model, string apiKey)
         {
             var apiClient = _usersContext.Clients.SingleOrDefault(x => x.Key == apiKey);
         
@@ -55,7 +65,7 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels
                 var application =
                     _usersContext.Applications.SingleOrDefault(x => x.ApplicationId == apiClient.Application.ApplicationId);
         
-                if (application != null && application.OdsInstance.Name == model.OdsInstanceName)
+                if (application != null && application.OdsInstance.Name == _instanceContext.Name)
                 {
                     return true;
                 }
