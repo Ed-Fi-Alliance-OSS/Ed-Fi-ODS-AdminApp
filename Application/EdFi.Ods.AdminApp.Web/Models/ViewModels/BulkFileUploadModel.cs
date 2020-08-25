@@ -61,8 +61,7 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels
         
             if (apiClient != null)
             {        
-                var application =
-                    _usersContext.Applications.SingleOrDefault(x => x.ApplicationId == apiClient.Application.ApplicationId);
+                var application = apiClient.Application;
         
                 if (application != null && application.OdsInstance.Name == _instanceContext.Name)
                 {
