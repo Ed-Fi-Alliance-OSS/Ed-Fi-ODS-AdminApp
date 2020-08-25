@@ -5,6 +5,7 @@
 
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using EdFi.Admin.DataAccess.Contexts;
@@ -57,8 +58,10 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels
 
         private bool BeAssociatedToTheSelectedInstance(SaveBulkUploadCredentialsModel model, string apiKey)
         {
-            var apiClient = _usersContext.Clients.SingleOrDefault(x => x.Key == apiKey);
-        
+            var apiClient = _usersContext.Clients
+                .Include(x => x.Application.OdsInstance)
+                .SingleOrDefault(x => x.Key == apiKey);
+
             if (apiClient != null)
             {        
                 var application = apiClient.Application;
