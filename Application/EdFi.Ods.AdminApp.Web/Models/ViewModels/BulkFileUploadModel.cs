@@ -62,18 +62,9 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels
                 .Include(x => x.Application.OdsInstance)
                 .SingleOrDefault(x => x.Key == apiKey);
 
-            if (apiClient != null)
-            {        
-                var application = apiClient.Application;
-        
-                if (application != null && application.OdsInstance.Name == _instanceContext.Name)
-                {
-                    return true;
-                }
-        
-            }
-        
-            return false;
+            var odsInstanceNameForGivenKey = apiClient?.Application?.OdsInstance?.Name;
+
+            return odsInstanceNameForGivenKey != null && odsInstanceNameForGivenKey == _instanceContext.Name;
         }
     }
 }
