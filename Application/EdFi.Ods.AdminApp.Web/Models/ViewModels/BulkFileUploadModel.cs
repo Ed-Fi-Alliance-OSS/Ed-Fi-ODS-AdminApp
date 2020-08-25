@@ -5,9 +5,12 @@
 
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Web;
+using EdFi.Admin.DataAccess.Contexts;
 using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Web.Infrastructure.IO;
+using FluentValidation;
 
 namespace EdFi.Ods.AdminApp.Web.Models.ViewModels
 {
@@ -25,5 +28,41 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels
         public string OdsInstanceName { get; set; }
         public bool IsJobRunning { get; set; }
         public bool IsSameOdsInstance { get; set; }
+    }
+
+    public class BulkFileUploadModelValidator : AbstractValidator<BulkFileUploadModel>
+    {
+        private readonly IUsersContext _usersContext;
+
+        public BulkFileUploadModelValidator(IUsersContext usersContext)
+        {
+            _usersContext = usersContext;
+
+            RuleFor(m => m.ApiKey).NotEmpty();
+            RuleFor(m => m.ApiSecret).NotEmpty();
+            RuleFor(m => m.ApiKey)
+                .Must(BeAssociatedToTheSelectedInstance)
+                .When(m => !string.IsNullOrEmpty(m.ApiKey))
+                .WithMessage("The Api key provided is not associated with the currently selected ODS instance.");
+        }
+
+        private bool BeAssociatedToTheSelectedInstance(BulkFileUploadModel model, string apiKey)
+        {
+            var apiClient = _usersContext.Clients.SingleOrDefault(x => x.Key == apiKey);
+        
+            if (apiClient != null)
+            {        
+                var application =
+                    _usersContext.Applications.SingleOrDefault(x => x.ApplicationId == apiClient.Application.ApplicationId);
+        
+                if (application != null && application.OdsInstance.Name == model.OdsInstanceName)
+                {
+                    return true;
+                }
+        
+            }
+        
+            return false;
+        }
     }
 }
