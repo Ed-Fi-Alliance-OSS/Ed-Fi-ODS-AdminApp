@@ -98,7 +98,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
             var validator = new SaveBulkUploadCredentialsModelValidator(TestContext, instanceContext);
             var validationResults = validator.Validate(saveBulkUploadCredentialsModel);
             validationResults.IsValid.ShouldBe(false);
-            validationResults.Errors.Select(x => x.ErrorMessage).ShouldContain("The Api key provided is not associated with the currently selected ODS instance.");
+            validationResults.Errors.Select(x => x.ErrorMessage).ShouldContain("The Api Key provided is not associated with the currently selected ODS instance.");
         }
 
         [Test]

@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: Apache-2.0
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
@@ -52,7 +52,7 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels
             RuleFor(m => m.ApiKey)
                 .Must(BeAssociatedToTheSelectedInstance)
                 .When(m => !string.IsNullOrEmpty(m.ApiKey))
-                .WithMessage("The Api key provided is not associated with the currently selected ODS instance.");
+                .WithMessage("The Api Key provided is not associated with the currently selected ODS instance.");
         }
 
         private bool BeAssociatedToTheSelectedInstance(SaveBulkUploadCredentialsModel model, string apiKey)
