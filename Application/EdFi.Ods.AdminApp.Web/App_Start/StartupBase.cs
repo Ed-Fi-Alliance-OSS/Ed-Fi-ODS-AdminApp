@@ -176,7 +176,10 @@ namespace EdFi.Ods.AdminApp.Web
             //Hangfire without having to perform the schema initialization
 
             HangFireInstance.EnableWithoutSchemaMigration();
-            appBuilder.UseHangfireServer();
+            appBuilder.UseHangfireServer(new BackgroundJobServerOptions
+            {
+                ServerTimeout = TimeSpan.FromDays(1)
+            });
         }
 
         // For more information on configuring authentication, please visit https://go.microsoft.com/fwlink/?LinkId=301864
