@@ -402,10 +402,11 @@
     <Compile Include="AssertionExtensions.cs" />
     <Compile Include="Controllers\ControllerBaseTester.cs" />
     <Compile Include="Controllers\EducationOrganizationsControllerTests.cs" />
+    <Compile Include="Controllers\LearningStandardsController\LearningStandardsControllerFixture.cs" />
     <Compile Include="Controllers\OdsInstanceSettingsController\OdsInstanceSettingsControllerFixture.cs" />
     <Compile Include="Controllers\OdsInstanceSettingsController\WhenRunningBulkUpload.cs" />
-    <Compile Include="Controllers\OdsInstanceSettingsController\WhenRunningTheLearningStandardsSync.cs" />
-    <Compile Include="Controllers\OdsInstanceSettingsController\WhenUpdatingLearningStandards.cs" />
+    <Compile Include="Controllers\LearningStandardsController\WhenRunningTheLearningStandardsSync.cs" />
+    <Compile Include="Controllers\LearningStandardsController\WhenUpdatingLearningStandards.cs" />
     <Compile Include="Database\Commands\BulkUploadValidationTests.cs" />
     <Compile Include="Database\Models\RolePermissionTests.cs" />
     <Compile Include="AdminAppDataTestBase.cs" />
