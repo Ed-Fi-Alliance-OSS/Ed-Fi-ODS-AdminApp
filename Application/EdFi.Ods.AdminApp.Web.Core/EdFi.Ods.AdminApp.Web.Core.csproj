@@ -180,7 +180,8 @@
     <Compile Include="../EdFi.Ods.AdminApp.Web/Models/ViewModels/Identity/ChangePasswordViewModel.cs" LinkBase="Models/ViewModels/Identity" />
     <Compile Include="../EdFi.Ods.AdminApp.Web/Models/ViewModels/Identity/LoginViewModel.cs" LinkBase="Models/ViewModels/Identity" />
     <Compile Include="../EdFi.Ods.AdminApp.Web/Models/ViewModels/Identity/RegisterViewModel.cs" LinkBase="Models/ViewModels/Identity" />
-    <Compile Include="../EdFi.Ods.AdminApp.Web/Models/ViewModels/LearningStandardsModel.cs" LinkBase="Models/ViewModels" />
+    <Compile Include="../EdFi.Ods.AdminApp.Web/Models/ViewModels/LearningStandards/LearningStandardsModel.cs" LinkBase="Models/ViewModels/LearningStandards" />
+    <Compile Include="../EdFi.Ods.AdminApp.Web/Models/ViewModels/LearningStandards/LearningStandardsIndexModel.cs" LinkBase="Models/ViewModels/LearningStandards" />
     <Compile Include="../EdFi.Ods.AdminApp.Web/Models/ViewModels/LogSettingsModel.cs" LinkBase="Models/ViewModels" />
     <Compile Include="../EdFi.Ods.AdminApp.Web/Models/ViewModels/OdsInstances/BulkRegisterOdsInstancesModel.cs" LinkBase="Models/ViewModels/OdsInstances" /> 
     <Compile Include="../EdFi.Ods.AdminApp.Web/Models/ViewModels/OdsInstances/DeregisterOdsInstanceModel.cs" LinkBase="Models/ViewModels/OdsInstances" />
@@ -222,7 +223,6 @@
     <Content Remove="Views\Shared\_ProductionStagingReadOnlyNotice.cshtml" />
     <Content Remove="Views\Shared\_SignalRStatus.cshtml" />
     <Content Remove="Views\Shared\_SignalRStatus_BulkLoad.cshtml" />
-    <Content Remove="Views\Shared\_SignalRStatus_LS.cshtml" />
     <Content Remove="Views\Shared\Lockout.cshtml" />
     <Content Remove="Views\Update\Index.cshtml" />
   </ItemGroup>

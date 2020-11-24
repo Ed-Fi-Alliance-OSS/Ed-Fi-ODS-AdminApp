@@ -1068,7 +1068,7 @@
     <Content Include="Views\Shared\_LogSettings.cshtml" />
     <Content Include="Views\OdsInstanceSettings\Logging.cshtml" />
     <Content Include="Scripts\jquery-2.2.3.min.map" />
-    <Content Include="Views\OdsInstanceSettings\LearningStandards.cshtml" />
+    <Content Include="Views\LearningStandards\_LearningStandards.cshtml" />
     <Content Include="Views\GlobalSettings\ClaimSets.cshtml" />
     <Content Include="Views\ClaimSets\_CopyClaimSetModal.cshtml" />
     <Content Include="Views\ClaimSets\_DeleteClaimSetModal.cshtml" />
@@ -1102,6 +1102,7 @@
     <Content Include="Views\OdsInstanceSettings\_SaveBulkUploadCredentialsForm.cshtml" />
     <Content Include="Views\OdsInstances\BulkRegisterOdsInstances.cshtml" />
     <Content Include="Views\Home\PostSetup.cshtml" />
+    <Content Include="Views\LearningStandards\Index.cshtml" />
     <None Include="Web.base.config" />
     <Content Include="Views\OdsInstances\RegisterOdsInstance.cshtml" />
     <Content Include="Views\OdsInstances\Index.cshtml" />
