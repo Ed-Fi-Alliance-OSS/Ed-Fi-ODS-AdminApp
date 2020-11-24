@@ -116,11 +116,6 @@
     <Compile Include="../EdFi.Ods.AdminApp.Web/Infrastructure/IO/InterchangeFileHelpers.cs" LinkBase="Infrastructure/IO" />
     <Compile Include="../EdFi.Ods.AdminApp.Web/Infrastructure/IO/InterchangeFileType.cs" LinkBase="Infrastructure/IO" />
     <!-- <Compile Include="../EdFi.Ods.AdminApp.Web/Infrastructure/IO/LocalFileSystemFileUploadHandler.cs" LinkBase="Infrastructure/IO" /> -->
-    <Compile Include="../EdFi.Ods.AdminApp.Web/Infrastructure/Jobs/BulkUploadJob.cs" LinkBase="Infrastructure/Jobs" />
-    <Compile Include="../EdFi.Ods.AdminApp.Web/Infrastructure/Jobs/IWorkflowJob.cs" LinkBase="Infrastructure/Jobs" />
-    <Compile Include="../EdFi.Ods.AdminApp.Web/Infrastructure/Jobs/LearningStandardsJob.cs" LinkBase="Infrastructure/Jobs" />
-    <Compile Include="../EdFi.Ods.AdminApp.Web/Infrastructure/Jobs/ProductionSetupJob.cs" LinkBase="Infrastructure/Jobs" />
-    <Compile Include="../EdFi.Ods.AdminApp.Web/Infrastructure/Jobs/WorkflowJob.cs" LinkBase="Infrastructure/Jobs" />
     <!-- <Compile Include="../EdFi.Ods.AdminApp.Web/Infrastructure/ModelBinding/CompositeModelBinder.cs" LinkBase="Infrastructure/ModelBinding" /> -->
     <!-- <Compile Include="../EdFi.Ods.AdminApp.Web/Infrastructure/ModelBinding/EnumerationModelBinder.cs" LinkBase="Infrastructure/ModelBinding" /> -->
     <!-- <Compile Include="../EdFi.Ods.AdminApp.Web/Infrastructure/ModelBinding/EnumerationPropertyBinder.cs" LinkBase="Infrastructure/ModelBinding" /> -->
