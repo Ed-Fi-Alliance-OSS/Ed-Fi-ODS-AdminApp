@@ -11,6 +11,7 @@ using EdFi.Ods.AdminApp.Management.Workflow;
 using EdFi.Ods.AdminApp.Web.Hubs;
 using Hangfire;
 using log4net;
+using Microsoft.AspNetCore.SignalR;
 
 namespace EdFi.Ods.AdminApp.Web.Infrastructure.Jobs
 {
@@ -28,8 +29,9 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure.Jobs
         public ProductionSetupJob(
             ICloudOdsProductionLifecycleManagementService productionDatabaseLifecycleManagementService,
             IGetOdsSqlConfigurationQuery getOdsSqlConfigurationQuery, IBackgroundJobClient backgroundJobClient,
-            ProductionSetupHub productionSetupHub)
-            : base(backgroundJobClient, productionSetupHub, WorkflowJobName)
+            ProductionSetupHub productionSetupHub
+            , IHubContext<ProductionSetupHub> productionSetupHubContext)
+            : base(backgroundJobClient, productionSetupHub, WorkflowJobName, productionSetupHubContext)
         {
             _productionDatabaseLifecycleManagementService = productionDatabaseLifecycleManagementService;
             _getOdsSqlConfigurationQuery = getOdsSqlConfigurationQuery;
