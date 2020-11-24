@@ -9,7 +9,6 @@
 using System;
 using EdFi.Ods.AdminApp.Management.Workflow;
 using EdFi.Ods.AdminApp.Web.Infrastructure.Jobs;
-using EdFi.Common.Security;
 
 namespace EdFi.Ods.AdminApp.Web.Controllers
 {
@@ -38,14 +37,6 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure.IO
         {
             throw new System.NotImplementedException();
         }
-    }
-}
-
-namespace EdFi.Ods.AdminApp.Web.Hubs
-{
-    public abstract class EdfiOdsHub<T>
-    {
-        public void SendOperationStatusUpdate(WorkflowStatus status) => throw new System.NotImplementedException();
     }
 }
 
