@@ -93,7 +93,6 @@
     <Compile Include="../EdFi.Ods.AdminApp.Web/Helpers/VendorExtensions.cs" LinkBase="Helpers" />
 
     <Compile Include="../EdFi.Ods.AdminApp.Web/Hubs/BulkUploadHub.cs" LinkBase="Hubs" />
-    <!-- <Compile Include="../EdFi.Ods.AdminApp.Web/Hubs/EdfiOdsHub.cs" LinkBase="Hubs" /> -->
     <Compile Include="../EdFi.Ods.AdminApp.Web/Hubs/ProductionLearningStandardsHub.cs" LinkBase="Hubs" />
     <Compile Include="../EdFi.Ods.AdminApp.Web/Hubs/ProductionSetupHub.cs" LinkBase="Hubs" />
 
