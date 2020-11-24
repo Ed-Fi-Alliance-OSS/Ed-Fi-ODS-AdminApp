@@ -545,6 +545,7 @@
     <Compile Include="Controllers\OdsInstancesController.cs" />
     <Compile Include="Controllers\IdentityController.cs" />
     <Compile Include="Controllers\GlobalSettingsController.cs" />
+    <Compile Include="Controllers\LearningStandardsController.cs" />
     <Compile Include="Controllers\OdsInstanceSettingsController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\SetupController.cs" />
