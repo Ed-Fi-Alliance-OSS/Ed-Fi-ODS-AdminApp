@@ -19,12 +19,11 @@ using EdFi.Ods.AdminApp.Management.Instances;
 
 namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.OdsInstances
 {
-    public class BulkRegisterOdsInstancesModel
+    public class BulkRegisterOdsInstancesModel 
     {
-        private bool _streamWasRead = false;
+        private bool _streamWasRead;
         private IList<RegisterOdsInstanceModel> _dataRecords;
         private IList<string> _missingHeaders;
-        public IEnumerable<RegisterOdsInstanceModel> _filteredDataRecords;
 
         [Accept(".csv")]
         [Display(Name = "Instances Data File")]
@@ -35,12 +34,8 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.OdsInstances
             EnsureReadStreamOnce();
             return _dataRecords;
         }
-        public IEnumerable<RegisterOdsInstanceModel> FilteredDataRecords(IEnumerable<RegisterOdsInstanceModel> filteredDataRecords)
-        {
-            EnsureReadStreamOnce();
-            _filteredDataRecords = filteredDataRecords;
-            return _filteredDataRecords;
-        }
+
+        public IEnumerable<IRegisterOdsInstanceModel> FilteredDataRecords { get; set; }
 
         public IList<string> MissingHeaders()
         {
@@ -61,9 +56,6 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.OdsInstances
     public class BulkRegisterOdsInstancesModelValidator : AbstractValidator<BulkRegisterOdsInstancesModel>
     {
         private readonly ILog _logger = LogManager.GetLogger("BulkRegisterOdsInstancesLog");
-        private static AdminAppDbContext _database;
-        private static IDatabaseConnectionProvider _databaseConnectionProvider;
-        private static ApiMode _mode;        
 
         private bool UniquenessRuleFailed { get; set; }
 
@@ -72,11 +64,10 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.OdsInstances
         public BulkRegisterOdsInstancesModelValidator(AdminAppDbContext database
             , ICloudOdsAdminAppSettingsApiModeProvider apiModeProvider
             , IDatabaseValidationService databaseValidationService
-            , IDatabaseConnectionProvider databaseConnectionProvider)
+            , IDatabaseConnectionProvider databaseConnectionProvider
+            , IBulkRegisterOdsInstancesFiltrationService dataFilterService)
         {
-            _database = database;
-            _databaseConnectionProvider = databaseConnectionProvider;
-            _mode = apiModeProvider.GetApiMode();            
+            var mode = apiModeProvider.GetApiMode();            
 
             RuleFor(m => m.OdsInstancesFile)
                 .NotEmpty();
@@ -105,12 +96,12 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.OdsInstances
                                     database, apiModeProvider, databaseValidationService,
                                     databaseConnectionProvider, true);
 
-                                var newOdsInstanceToRegister = GetNewOdsInstancesToRegister(model.DataRecords());
-                                model.FilteredDataRecords(newOdsInstanceToRegister);
-
-                                foreach (var record in newOdsInstanceToRegister)
+                                var newOdsInstancesToRegister = dataFilterService.FilteredRecords(model.DataRecords(), mode).ToList();
+                                model.FilteredDataRecords = newOdsInstancesToRegister;
+                                foreach (var record in newOdsInstancesToRegister)
                                 {
-                                    var results = validator.Validate(record);
+                                    var data = (RegisterOdsInstanceModel) record;
+                                    var results = validator.Validate(data);
                                     if (!results.IsValid)
                                     {
                                         foreach (var failure in results.Errors)
@@ -169,17 +160,5 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.OdsInstances
             UniquenessRuleFailed = true;
             context.AddFailure(errorMessage);
         }
-        private IEnumerable<RegisterOdsInstanceModel> GetNewOdsInstancesToRegister(IList<RegisterOdsInstanceModel> dataRecords)
-        {
-            var previousRegisters = _database.OdsInstanceRegistrations.ToList();
-            var newRows = dataRecords.Where(dataRecord => !previousRegisters.Any(previousRegister => previousRegister.Name == InferInstanceDatabaseName(dataRecord.NumericSuffix)));
-            return newRows;
-        }
-        private static string InferInstanceDatabaseName(int? newInstanceNumericSuffix)
-        {
-            using (var connection = _databaseConnectionProvider.CreateNewConnection(newInstanceNumericSuffix.Value, _mode))
-                return connection.Database;
-        }
-
     }
 }
