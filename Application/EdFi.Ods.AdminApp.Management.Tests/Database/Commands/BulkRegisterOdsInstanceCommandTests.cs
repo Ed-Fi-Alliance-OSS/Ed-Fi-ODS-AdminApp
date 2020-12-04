@@ -15,11 +15,9 @@ using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 using Shouldly;
-using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using static EdFi.Ods.AdminApp.Management.Tests.Instance.InstanceTestSetup;
 using static EdFi.Ods.AdminApp.Management.Tests.Testing;
@@ -33,6 +31,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
         private Mock<IDatabaseValidationService> _databaseValidationService;
         private Mock<ICloudOdsAdminAppSettingsApiModeProvider> _apiModeProvider;
         private Mock<IDatabaseConnectionProvider> _connectionProvider;
+        private Mock<IBulkRegisterOdsInstancesFiltrationService> _dataFiltrationService;
         
         [SetUp]
         public void Init()
@@ -41,7 +40,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
             _databaseValidationService.Setup(x => x.IsValidDatabase(It.IsAny<int>(), It.IsAny<ApiMode>())).Returns(true);
             _apiModeProvider = new Mock<ICloudOdsAdminAppSettingsApiModeProvider>();
             _apiModeProvider.Setup(x => x.GetApiMode()).Returns(ApiMode.DistrictSpecific);
-            _connectionProvider = new Mock<IDatabaseConnectionProvider>();            
+            _connectionProvider = new Mock<IDatabaseConnectionProvider>();
+            _dataFiltrationService = new Mock<IBulkRegisterOdsInstancesFiltrationService>();
         }
 
         [Test]
@@ -49,7 +49,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
         {
             ResetOdsInstanceRegistrations();
             var instanceName = "TestInstance_23456";
-            const string description = "Test Description";
+            const string Description = "Test Description";
             var encryptedSecretConfigValue = "Encrypted string";
 
             using (var connection = GetDatabaseConnection(instanceName))
@@ -61,7 +61,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
                 var newInstance1 = new RegisterOdsInstanceModel
                 {
                     NumericSuffix = 23456,
-                    Description = description
+                    Description = Description
                 };
 
                 odsInstancesToRegister.Add(newInstance1);
@@ -75,7 +75,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
                         var odsInstanceFirstTimeSetupService = GetOdsInstanceFirstTimeSetupService(encryptedSecretConfigValue, instanceName, database);
                         RegisterOdsInstanceCommand registerOdsInstanceCommand = new RegisterOdsInstanceCommand(odsInstanceFirstTimeSetupService, _connectionProvider.Object, identity);
 
-                        var command = new BulkRegisterOdsInstancesCommand(registerOdsInstanceCommand);
+                        var command = new BulkRegisterOdsInstancesCommand(registerOdsInstanceCommand, _dataFiltrationService.Object);
                         return await command.Execute(odsInstancesToRegister, odsInstancesToRegister, ApiMode.DistrictSpecific, testUsername, new CloudOdsClaimSet());
                     });
                 });
@@ -96,32 +96,24 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
         {
             ResetOdsInstanceRegistrations();
             var instanceName = "TestInstance_23456";
-            const string description = "Test Description";
+            const string Description = "Test Description";
             var encryptedSecretConfigValue = "Encrypted string";
 
             using (var connection = GetDatabaseConnection(instanceName))
-            using (var connection2 = GetDatabaseConnection(instanceName))
-            using (var connection3 = GetDatabaseConnection(instanceName))
-            using (var connection4 = GetDatabaseConnection(instanceName))
-            using (var connection5 = GetDatabaseConnection(instanceName))
             {
                 _connectionProvider
                     .SetupSequence(x => x.CreateNewConnection(23456, ApiMode.DistrictSpecific))
-                    .Returns(connection)
-                    .Returns(connection2)
-                    .Returns(connection3)
-                    .Returns(connection4)
-                    .Returns(connection5);
-
+                    .Returns(connection);
+                   
                 var newInstance = new RegisterOdsInstanceModel
                 {
                     NumericSuffix = 23456,
-                    Description = description
+                    Description = Description
                 };
 
                 var testUsername = UserTestSetup.SetupUsers(1).Single().Id;
 
-                int newInstanceId = await ScopedAsync<AdminAppIdentityDbContext, int>(async identity =>
+                await ScopedAsync<AdminAppIdentityDbContext, int>(async identity =>
                 {
                     return await ScopedAsync<AdminAppDbContext, int>(async database =>
                     {
@@ -132,11 +124,11 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
                     });
                 });
 
-                List<RegisterOdsInstanceModel> odsInstancesToRegister = new List<RegisterOdsInstanceModel>();
+                var odsInstancesToRegister = new List<RegisterOdsInstanceModel>();
                 var repeatedInstance = new RegisterOdsInstanceModel
                 {
                     NumericSuffix = 23456,
-                    Description = description
+                    Description = Description
                 };
 
                 odsInstancesToRegister.Add(repeatedInstance);
@@ -148,14 +140,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
                         var odsInstanceFirstTimeSetupService = GetOdsInstanceFirstTimeSetupService(encryptedSecretConfigValue, instanceName, database);
                         RegisterOdsInstanceCommand registerOdsInstanceCommand = new RegisterOdsInstanceCommand(odsInstanceFirstTimeSetupService, _connectionProvider.Object, identity);
 
-                        var command = new BulkRegisterOdsInstancesCommand(registerOdsInstanceCommand);
+                        var command = new BulkRegisterOdsInstancesCommand(registerOdsInstanceCommand, _dataFiltrationService.Object);
                         return await command.Execute(odsInstancesToRegister, new List<RegisterOdsInstanceModel>(), ApiMode.DistrictSpecific, testUsername, new CloudOdsClaimSet());
                     });
                 });
-
-                var addedInstance = Query<OdsInstanceRegistration>(newInstances.FirstOrDefault().OdsInstanceRegisteredId);
-                var secretConfiguration = Transaction(database =>
-                    database.SecretConfigurations.FirstOrDefault(x => x.OdsInstanceRegistrationId == newInstances.FirstOrDefault().OdsInstanceRegisteredId));
 
                 newInstances.FirstOrDefault().ShouldNotBeNull();
                 newInstances.FirstOrDefault().NumericSuffix.ShouldBe(repeatedInstance.NumericSuffix.ToString());
