@@ -23,6 +23,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Property = EdFi.Ods.AdminApp.Web.Infrastructure.Property;
 using Preconditions = EdFi.Common.Preconditions;
+using System.Runtime.Caching;
+using EdFi.Ods.AdminApp.Management.Api;
 
 namespace EdFi.Ods.AdminApp.Web.Helpers
 {
@@ -509,7 +511,7 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
             var assembly = Assembly.GetExecutingAssembly();
             var informationVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
 
-            return !string.IsNullOrEmpty(informationVersion) ? new HtmlString($"<span>{informationVersion}</span>") : new HtmlString("");
+            return !string.IsNullOrEmpty(informationVersion) ? new HtmlString($"<span>Admin App Version: {informationVersion}</span>") : new HtmlString("");
         }
 
         public static HtmlTag CheckBoxSquare<T>(this IHtmlHelper<T> helper, bool expression, string action) where T : class
@@ -520,6 +522,18 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
             if (expression)
                 label.Append(input).AppendHtml(icon);
             return label;
+        }
+
+        public static HtmlString OdsApiVersion(this IHtmlHelper helper)
+        {
+            var odsApiVersion = MemoryCache.Default["odsApiVersion"];
+            if (odsApiVersion == null)
+            {
+                odsApiVersion = new InferOdsApiVersion().Version(CloudOdsAdminAppSettings.Instance.ProductionApiUrl);
+                MemoryCache.Default["odsApiVersion"] = odsApiVersion;
+            }
+
+            return !string.IsNullOrEmpty(odsApiVersion.ToString()) ? new HtmlString($"<span>ODS/API Version: {odsApiVersion}</span>") : new HtmlString("");
         }
     }
 }
