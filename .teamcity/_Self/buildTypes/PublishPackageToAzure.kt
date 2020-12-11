@@ -21,6 +21,7 @@ object PublishPackageToAzure : BuildType ({
     params {
         param("nuGet.packageFile", "placeholder")
         param("nuGet.packageVersion", "placeholder")
+        param("env.VSS_NUGET_EXTERNAL_FEED_ENDPOINTS", "{\"endpointCredentials\": [{\"endpoint\": \"%azureArtifacts.feed.nuget%\",\"username\": \"%azureArtifacts.edFiBuildAgent.userName%\",\"password\": \"%azureArtifacts.edFiBuildAgent.accessToken%\"}]}")
     }
 
     vcs {
