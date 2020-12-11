@@ -23,7 +23,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Property = EdFi.Ods.AdminApp.Web.Infrastructure.Property;
 using Preconditions = EdFi.Common.Preconditions;
-using System.Runtime.Caching;
 using EdFi.Ods.AdminApp.Management.Api;
 
 namespace EdFi.Ods.AdminApp.Web.Helpers
@@ -507,9 +506,10 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
         }
 
         public static HtmlString ApplicationVersion(this IHtmlHelper helper)
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            var informationVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+        {            
+            var informationVersion = InMemoryCache.Instance
+                .GetOrSet("informationVersion",
+                    () => Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion);
 
             return !string.IsNullOrEmpty(informationVersion) ? new HtmlString($"<span>Admin App Version: {informationVersion}</span>") : new HtmlString("");
         }
@@ -526,12 +526,8 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
 
         public static HtmlString OdsApiVersion(this IHtmlHelper helper)
         {
-            var odsApiVersion = MemoryCache.Default["odsApiVersion"];
-            if (odsApiVersion == null)
-            {
-                odsApiVersion = new InferOdsApiVersion().Version(CloudOdsAdminAppSettings.Instance.ProductionApiUrl);
-                MemoryCache.Default["odsApiVersion"] = odsApiVersion;
-            }
+            var odsApiVersion = InMemoryCache.Instance
+                .GetOrSet("OdsApiVersion", () => new InferOdsApiVersion().Version(CloudOdsAdminAppSettings.Instance.ProductionApiUrl));
 
             return !string.IsNullOrEmpty(odsApiVersion.ToString()) ? new HtmlString($"<span>ODS/API Version: {odsApiVersion}</span>") : new HtmlString("");
         }
