@@ -10,9 +10,9 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.swabra
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.powerShell
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.finishBuildTrigger
 
-object PublishPackageToAzure : BuildType ({
-    name = "Publish Package to Azure"
-    description = "Publishes NuGet package to the Azure feed"
+object PublishPackageToAzureArtifacts : BuildType ({
+    name = "Publish Package to Azure Artifacts"
+    description = "Publishes NuGet package to the Azure Artifacts"
 
     publishArtifacts = PublishMode.SUCCESSFUL
 
@@ -38,7 +38,7 @@ object PublishPackageToAzure : BuildType ({
             }
         }
         powerShell {
-            name = "Publish to Azure"
+            name = "Publish to Azure Artifacts"
             formatStderrAsError = true
             executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
             scriptMode = script {
