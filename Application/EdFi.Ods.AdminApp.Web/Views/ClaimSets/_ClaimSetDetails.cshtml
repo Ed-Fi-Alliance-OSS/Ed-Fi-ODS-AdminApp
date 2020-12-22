@@ -1,12 +1,19 @@
-﻿@*
-SPDX-License-Identifier: Apache-2.0
-Licensed to the Ed-Fi Alliance under one or more agreements.
-The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
-See the LICENSE and NOTICES files in the project root for more information.
+@*
+    SPDX-License-Identifier: Apache-2.0
+    Licensed to the Ed-Fi Alliance under one or more agreements.
+    The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+    See the LICENSE and NOTICES files in the project root for more information.
 *@
 
 @using EdFi.Ods.AdminApp.Web.Helpers
 @model EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets.ClaimSetDetailsModel
+
+@{   
+    if (!Model.IsOpenedInSameTab)
+    {
+        Layout = "~/Views/Shared/_ClaimSetDetailsPartial.cshtml";
+    }
+}
 
 <h3>Claim Set Information</h3>
 <div class="form-group row">
@@ -109,13 +116,13 @@ else
 {
     <div> No resource claims found.</div>
 }
-    <div>
-        @Html.Button("Back").AddClass("back-btn back-ajax claimset-back-btn").Data("back-url", Url.Action("ClaimSets", "GlobalSettings"))
-        @if (Model.ClaimSet.IsEditable)
-        {
-            @Html.Button("Edit Claim Set").Attr("href", Url.Action("EditClaimSet", "ClaimSets", new { claimSetId = Model.ClaimSet.Id })).AddClass("edit-claimset navigational-ajax").Data("state", "edit").Data("page-url", Url.Action("ClaimSets", "GlobalSettings")).Data("action", "editing the Claim Set")
-        }
-    </div>
+<div>
+    @Html.Button("Back").AddClass("back-btn back-ajax claimset-back-btn").Data("back-url", Url.Action("ClaimSets", "GlobalSettings"))
+    @if (Model.ClaimSet.IsEditable)
+    {
+        @Html.Button("Edit Claim Set").Attr("href", Url.Action("EditClaimSet", "ClaimSets", new { claimSetId = Model.ClaimSet.Id })).AddClass("edit-claimset navigational-ajax").Data("state", "edit").Data("page-url", Url.Action("ClaimSets", "GlobalSettings")).Data("action", "editing the Claim Set")
+    }
+</div>
 
 <script type="text/javascript">
     $('.claims-toggle').click(function () {

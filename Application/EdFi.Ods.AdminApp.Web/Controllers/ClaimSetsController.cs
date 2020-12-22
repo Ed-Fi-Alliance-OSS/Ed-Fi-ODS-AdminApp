@@ -18,6 +18,7 @@ using EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets;
 using Newtonsoft.Json;
 using static EdFi.Ods.AdminApp.Web.Infrastructure.ResourceClaimSelectListBuilder;
 using AddClaimSetModel = EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets.AddClaimSetModel;
+using EdFi.Ods.AdminApp.Web.Display.TabEnumeration;
 
 namespace EdFi.Ods.AdminApp.Web.Controllers
 {
@@ -42,6 +43,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         private readonly ClaimSetFileExportCommand _claimSetFileExportCommand;
         private readonly OverrideDefaultAuthorizationStrategyCommand _overrideDefaultAuthorizationStrategyCommand;
         private readonly ResetToDefaultAuthStrategyCommand _resetToDefaultAuthStrategyCommand;
+        private readonly ITabDisplayService _tabDisplayService;
 
         public ClaimSetsController(IGetClaimSetByIdQuery getClaimSetByIdQuery
             , IGetApplicationsByClaimSetIdQuery getApplicationsByClaimSetIdQuery
@@ -59,7 +61,8 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             , ClaimSetFileExportCommand claimSetFileExportCommand
             , ClaimSetFileImportCommand claimSetFileImportCommand
             , OverrideDefaultAuthorizationStrategyCommand overrideDefaultAuthorizationStrategyCommand
-            , ResetToDefaultAuthStrategyCommand resetToDefaultAuthStrategyCommand)
+            , ResetToDefaultAuthStrategyCommand resetToDefaultAuthStrategyCommand
+            , ITabDisplayService tabDisplayService)
         {
             _getClaimSetByIdQuery = getClaimSetByIdQuery;
             _getApplicationsByClaimSetIdQuery = getApplicationsByClaimSetIdQuery;
@@ -79,6 +82,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _claimSetFileImportCommand = claimSetFileImportCommand;
             _overrideDefaultAuthorizationStrategyCommand = overrideDefaultAuthorizationStrategyCommand;
             _resetToDefaultAuthStrategyCommand = resetToDefaultAuthStrategyCommand;
+            _tabDisplayService = tabDisplayService;
         }
 
         public ActionResult ClaimSetDetails(int claimSetId)
@@ -87,9 +91,13 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             {
                 ClaimSet = _getClaimSetByIdQuery.Execute(claimSetId),
                 Applications = _getApplicationsByClaimSetIdQuery.Execute(claimSetId),
-                ResourceClaims = _getResourcesByClaimSetIdQuery.AllResources(claimSetId)
-            };
-
+                ResourceClaims = _getResourcesByClaimSetIdQuery.AllResources(claimSetId),
+                GlobalSettingsTabEnumerations =
+                    _tabDisplayService.GetGlobalSettingsTabDisplay(
+                        GlobalSettingsTabEnumeration.ClaimSets),
+                IsOpenedInSameTab = Request.Query["_"].Any()
+        };
+            
            return PartialView("_ClaimSetDetails", model);
         }
 
