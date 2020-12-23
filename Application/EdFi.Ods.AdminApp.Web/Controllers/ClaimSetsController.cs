@@ -96,7 +96,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                     _tabDisplayService.GetGlobalSettingsTabDisplay(
                         GlobalSettingsTabEnumeration.ClaimSets),
                 IsOpenedInSameTab = Request.Query["_"].Any()
-        };
+            };
             
            return PartialView("_ClaimSetDetails", model);
         }
