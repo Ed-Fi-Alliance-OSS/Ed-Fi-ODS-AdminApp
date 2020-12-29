@@ -52,7 +52,7 @@
 param(
     # Command to execute, defaults to "Build".
     [string]
-    [ValidateSet("Clean", "Build", "UnitTest", "IntegrationTest", "Package", "Push", "BuildAndTest")]
+    [ValidateSet("Clean", "Build", "UnitTest", "IntegrationTest", "Package", "Push", "BuildAndTest", "PackageDatabaseScripts")]
     $Command = "Build",
 
     # Assembly and package version number. The current package number is
@@ -210,10 +210,11 @@ function IntegrationTests {
 function RunNuGetPack {
     param (
         [string]
-        $PackageVersion
-    )
+        $PackageVersion,
 
-    $nugetSpecPath = "$solutionRoot/EdFi.Ods.AdminApp.Web/publish/EdFi.Ods.AdminApp.Web.nuspec"
+        [string]
+        $nuspecPath
+    )   
 
     $arguments = @(
         "pack",  $nugetSpecPath,
@@ -230,9 +231,16 @@ function GetPackagePreleaseVersion {
     return "$Version-pre$($BuildCounter.PadLeft(4,'0'))"
 }
 
+function BuildDatabaseScriptPackage{
+    $nugetSpecPath = "$solutionRoot/EdFi.Ods.AdminApp.Web/publish/EdFi.Ods.AdminApp.Database.nuspec"
+    RunNuGetPack -PackageVersion $Version $nugetSpecPath
+    RunNuGetPack -PackageVersion $(GetPackagePreleaseVersion) $nugetSpecPath
+}
+
 function BuildPackage {
-    RunNuGetPack -PackageVersion $Version
-    RunNuGetPack -PackageVersion $(GetPackagePreleaseVersion)   
+    $nugetSpecPath = "$solutionRoot/EdFi.Ods.AdminApp.Web/publish/EdFi.Ods.AdminApp.Web.nuspec"
+    RunNuGetPack -PackageVersion $Version $nugetSpecPath
+    RunNuGetPack -PackageVersion $(GetPackagePreleaseVersion) $nugetSpecPath
 }
 
 function PushPackage {
@@ -258,7 +266,7 @@ function Invoke-Build {
 
     Invoke-Step { InitializeNuGet }
     Invoke-Step { Clean }
-    Invoke-Step { Restore }
+    #Invoke-Step { Restore }
     Invoke-Step { AssemblyInfo }
     Invoke-Step { Compile }
 }
@@ -296,6 +304,11 @@ function Invoke-BuildPackage {
     Invoke-Step { BuildPackage }
 }
 
+function Invoke-BuildDatabasePackage{
+    Invoke-Step { InitializeNuGet }
+    Invoke-Step { BuildDatabaseScriptPackage}
+}
+
 function Invoke-PushPackage {
     Invoke-Step { InitializeNuGet }
     Invoke-Step { PushPackage }
@@ -313,6 +326,7 @@ Invoke-Main {
             Invoke-IntegrationTests
         }
         Package { Invoke-BuildPackage }
+        PackageDatabaseScripts { Invoke-BuildDatabasePackage}
         Push { Invoke-PushPackage }      
         default { throw "Command '$Command' is not recognized" }
     }
