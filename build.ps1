@@ -266,7 +266,7 @@ function Invoke-Build {
 
     Invoke-Step { InitializeNuGet }
     Invoke-Step { Clean }
-    #Invoke-Step { Restore }
+    Invoke-Step { Restore }
     Invoke-Step { AssemblyInfo }
     Invoke-Step { Compile }
 }
