@@ -262,7 +262,7 @@ function Invoke-Build {
 
     Invoke-Step { InitializeNuGet }
     Invoke-Step { Clean }
-    #Invoke-Step { Restore }
+    Invoke-Step { Restore }
     Invoke-Step { AssemblyInfo }
     Invoke-Step { Compile }
 }
@@ -306,8 +306,7 @@ function Invoke-PushPackage {
 }
 
 function UpdateAppSettings {    
-    $filePath = "$solutionRoot/EdFi.Ods.AdminApp.Web/publish/appsettings.json"
-    Write-Host $filePath
+    $filePath = "$solutionRoot/EdFi.Ods.AdminApp.Web/publish/appsettings.json"   
     $json = (Get-Content -Path $filePath) | ConvertFrom-Json
     $json.AppSettings.ProductionApiUrl = $DockerEnvValues["ProductionApiUrl"]
     $json.AppSettings.AppStartup = $DockerEnvValues["AppStartup"]
