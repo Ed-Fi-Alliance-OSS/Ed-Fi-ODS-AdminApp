@@ -313,6 +313,7 @@ function UpdateAppSettings {
     $json.AppSettings.ApiStartupType = $DockerEnvValues["ApiStartupType"]
     $json.AppSettings.DatabaseEngine = $DockerEnvValues["DatabaseEngine"]
     $json.AppSettings.DbSetupEnabled = $DockerEnvValues["DbSetupEnabled"]
+    $json.AppSettings.BulkUploadHashCache = $DockerEnvValues["BulkUploadHashCache"]
     $json.AppSettings.EncryptionProtocol = $DockerEnvValues["EncryptionProtocol"]
 
     if ($null -eq $json.AppSettings.EncryptionKey) {
