@@ -311,6 +311,7 @@ function UpdateAppSettings {
     $json.AppSettings.ProductionApiUrl = $DockerEnvValues["ProductionApiUrl"]
     $json.AppSettings.AppStartup = $DockerEnvValues["AppStartup"]
     $json.AppSettings.ApiStartupType = $DockerEnvValues["ApiStartupType"]
+    $json.AppSettings.XsdFolder = $DockerEnvValues["XsdFolder"]
     $json.AppSettings.DatabaseEngine = $DockerEnvValues["DatabaseEngine"]
     $json.AppSettings.DbSetupEnabled = $DockerEnvValues["DbSetupEnabled"]
     $json.AppSettings.BulkUploadHashCache = $DockerEnvValues["BulkUploadHashCache"]
