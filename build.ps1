@@ -24,6 +24,8 @@
         * Package: builds pre-release and release NuGet packages for the Admin
           App web application.
         * Push: uploads a NuGet package to the NuGet feed.
+        * BuildAndDeployToDockerContainer: runs the build operation, update the appsettings.json with provided 
+          DockerEnvValues and copy over the latest files to existing AdminApp docker container for testing.
 
     .EXAMPLE
         .\build.ps1 build -Configuration Release -Version "2.0.0" -BuildCounter 45
@@ -48,6 +50,23 @@
 
     .EXAMPLE
         .\build.ps1 push -NuGetApiKey $env:nuget_key
+    
+    .EXAMPLE
+        $p = @{}
+        $p["ProductionApiUrl"] = "http://api"
+        $p["AppStartup"] = "OnPrem"
+        $p["XsdFolder"] = "/app/Schema"
+        $p["ApiStartupType"] = "SharedInstance"
+        $p["DatabaseEngine"] = "PostgreSql"
+        $p["DbSetupEnabled"] = "false"
+        $p["BulkUploadHashCache"] = "/app/BulkUploadHashCache/"
+        $p["EncryptionProtocol"] = "AES"
+        $p["EncryptionKey"] = "<Generated encryption key>"
+        $p["AdminDB"] = "host=db-admin;port=5432;username=username;password=password;database=EdFi_Admin;Application Name=EdFi.Ods.AdminApp;"
+        $p["SecurityDB"] = "host=db-admin;port=5432;username=username;password=password;database=EdFi_Security;Application Name=EdFi.Ods.AdminApp;"
+        $p["ProductionOdsDB"] = "host=db-ods;port=5432;username=username;password=password;database=EdFi_Ods;Application Name=EdFi.Ods.AdminApp;"
+
+        .\build.ps1 -Version "2.1.0" -Configuration Release -DockerEnvValues $p -Command BuildAndDeployToDockerContainer
 #>
 param(
     # Command to execute, defaults to "Build".
@@ -88,7 +107,8 @@ param(
     [string]
     $PackageFile,
 
-    # Environment values for updating the existing Admin App docker container
+    # Environment values for updating the appsettings on existing AdminApp docker container. 
+    # Only required with the BuildAndDeployToDockerContainer command.
     [hashtable]
     $DockerEnvValues
 )
