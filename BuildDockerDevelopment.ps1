@@ -16,18 +16,19 @@
         .\BuildDockerDevelopment.ps1
 #>
 
-$p = @{}
-$p["ProductionApiUrl"] = "http://api"
-$p["AppStartup"] = "OnPrem"
-$p["XsdFolder"] = "/app/Schema"
-$p["ApiStartupType"] = "SharedInstance"
-$p["DatabaseEngine"] = "PostgreSql"
-$p["DbSetupEnabled"] = "false"
-$p["BulkUploadHashCache"] = "/app/BulkUploadHashCache/"
-$p["EncryptionProtocol"] = "AES"
-$p["EncryptionKey"] = "<Generated encryption key>"
-$p["AdminDB"] = "host=db-admin;port=5432;username=username;password=password;database=EdFi_Admin;Application Name=EdFi.Ods.AdminApp;"
-$p["SecurityDB"] = "host=db-admin;port=5432;username=username;password=password;database=EdFi_Security;Application Name=EdFi.Ods.AdminApp;"
-$p["ProductionOdsDB"] = "host=db-ods;port=5432;username=username;password=password;database=EdFi_Ods;Application Name=EdFi.Ods.AdminApp;"
+$p = @{
+        ProductionApiUrl = "http://api"
+        AppStartup = "OnPrem"
+        XsdFolder = "/app/Schema"
+        ApiStartupType = "SharedInstance"
+        DatabaseEngine = "PostgreSql"
+        DbSetupEnabled = "false"
+        BulkUploadHashCache = "/app/BulkUploadHashCache/"
+        EncryptionProtocol = "AES"
+        EncryptionKey = "<Generated encryption key>"
+        AdminDB = "host=db-admin;port=5432;username=username;password=password;database=EdFi_Admin;Application Name=EdFi.Ods.AdminApp;"
+        SecurityDB = "host=db-admin;port=5432;username=username;password=password;database=EdFi_Security;Application Name=EdFi.Ods.AdminApp;"
+        ProductionOdsDB = "host=db-ods;port=5432;username=username;password=password;database=EdFi_Ods;Application Name=EdFi.Ods.AdminApp;"
+    }
 
 .\build.ps1 -Version 2.1.0 -Configuration Release -DockerEnvValues $p -Command BuildAndDeployToDockerContainer
