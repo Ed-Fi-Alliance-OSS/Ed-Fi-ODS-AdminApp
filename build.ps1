@@ -24,7 +24,7 @@
         * Package: builds pre-release and release NuGet packages for the Admin
           App web application.
         * Push: uploads a NuGet package to the NuGet feed.
-        * BuildAndDeployToDockerContainer: runs the build operation, update the appsettings.json with provided 
+        * BuildAndDeployToDockerContainer: runs the build operation, update the appsettings.json with provided
           DockerEnvValues and copy over the latest files to existing AdminApp docker container for testing.
 
     .EXAMPLE
@@ -50,7 +50,7 @@
 
     .EXAMPLE
         .\build.ps1 push -NuGetApiKey $env:nuget_key
-    
+
     .EXAMPLE
        $p = @{
             ProductionApiUrl = "http://api"
@@ -108,7 +108,7 @@ param(
     [string]
     $PackageFile,
 
-    # Environment values for updating the appsettings on existing AdminApp docker container. 
+    # Environment values for updating the appsettings on existing AdminApp docker container.
     # Only required with the BuildAndDeployToDockerContainer command.
     [hashtable]
     $DockerEnvValues
@@ -257,7 +257,7 @@ function GetPackagePreleaseVersion {
 
 function BuildPackage {
     RunNuGetPack -PackageVersion $Version
-    RunNuGetPack -PackageVersion $(GetPackagePreleaseVersion)   
+    RunNuGetPack -PackageVersion $(GetPackagePreleaseVersion)
 }
 
 function PushPackage {
@@ -326,8 +326,8 @@ function Invoke-PushPackage {
     Invoke-Step { PushPackage }
 }
 
-function UpdateAppSettings {    
-    $filePath = "$solutionRoot/EdFi.Ods.AdminApp.Web/publish/appsettings.json"   
+function UpdateAppSettings {
+    $filePath = "$solutionRoot/EdFi.Ods.AdminApp.Web/publish/appsettings.json"
     $json = (Get-Content -Path $filePath) | ConvertFrom-Json
     $json.AppSettings.ProductionApiUrl = $DockerEnvValues["ProductionApiUrl"]
     $json.AppSettings.AppStartup = $DockerEnvValues["AppStartup"]
@@ -354,13 +354,18 @@ function UpdateAppSettings {
 }
 
 function CopyLatestFilesToContainer {
-    $source = "$solutionRoot/EdFi.Ods.AdminApp.Web/publish/."   
+    $source = "$solutionRoot/EdFi.Ods.AdminApp.Web/publish/."
     docker cp $source ed-fi-ods-adminapp:/app
+}
+
+function RestartAdminAppContainer {
+    &docker restart ed-fi-ods-adminapp
 }
 
 function Invoke-DockerDeploy {
    Invoke-Step { UpdateAppSettings }
    Invoke-Step { CopyLatestFilesToContainer }
+   Invoke-Step { RestartAdminAppContainer }
 }
 
 Invoke-Main {
@@ -375,11 +380,11 @@ Invoke-Main {
             Invoke-IntegrationTests
         }
         Package { Invoke-BuildPackage }
-        Push { Invoke-PushPackage }     
-        BuildAndDeployToDockerContainer { 
+        Push { Invoke-PushPackage }
+        BuildAndDeployToDockerContainer {
             Invoke-Build
-            Invoke-DockerDeploy           
-        } 
+            Invoke-DockerDeploy
+        }
         default { throw "Command '$Command' is not recognized" }
     }
 }
