@@ -50,7 +50,7 @@
 
     .EXAMPLE
         .\build.ps1 push -NuGetApiKey $env:nuget_key
-    
+
     .EXAMPLE
        $p = @{
             ProductionApiUrl = "http://api"
@@ -109,6 +109,7 @@ param(
     $PackageFile,
 
     # Environment values for updating the appsettings on existing AdminApp docker container. 
+
     # Only required with the BuildAndDeployToDockerContainer command.
     [hashtable]
     $DockerEnvValues
@@ -257,7 +258,7 @@ function GetPackagePreleaseVersion {
 
 function BuildPackage {
     RunNuGetPack -PackageVersion $Version
-    RunNuGetPack -PackageVersion $(GetPackagePreleaseVersion)   
+    RunNuGetPack -PackageVersion $(GetPackagePreleaseVersion)
 }
 
 function PushPackage {
@@ -326,7 +327,6 @@ function Invoke-PushPackage {
     Invoke-Step { PushPackage }
 }
 
-function UpdateAppSettings {    
     $filePath = "$solutionRoot/EdFi.Ods.AdminApp.Web/publish/appsettings.json"   
     $json = (Get-Content -Path $filePath) | ConvertFrom-Json
     $json.AppSettings.ProductionApiUrl = $DockerEnvValues["ProductionApiUrl"]
@@ -354,13 +354,18 @@ function UpdateAppSettings {
 }
 
 function CopyLatestFilesToContainer {
-    $source = "$solutionRoot/EdFi.Ods.AdminApp.Web/publish/."   
+    $source = "$solutionRoot/EdFi.Ods.AdminApp.Web/publish/."
     docker cp $source ed-fi-ods-adminapp:/app
+}
+
+function RestartAdminAppContainer {
+    &docker restart ed-fi-ods-adminapp
 }
 
 function Invoke-DockerDeploy {
    Invoke-Step { UpdateAppSettings }
    Invoke-Step { CopyLatestFilesToContainer }
+   Invoke-Step { RestartAdminAppContainer }
 }
 
 Invoke-Main {
