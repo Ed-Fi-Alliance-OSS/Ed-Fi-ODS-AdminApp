@@ -130,5 +130,4 @@ for quick local development testing:
   # From AdminApp clone directory
   .\BuildDockerDevelopment.ps1
   ```
-
-* Note: Restarting the container will lose all the updates that made as part of this script(BuildDockerDevelopment.ps1) execution.
+  
