@@ -14,13 +14,13 @@ See the LICENSE and NOTICES files in the project root for more information.
     Layout = "~/Views/Shared/_Settings_Global.cshtml";
     ViewBag.Title = "Global | Claim Sets";
 }
-<div id="claim-set-warning-message" class="alert alert-danger margin-top-10" role="alert" hidden>
-    <p>
-        <strong>Please reset IIS or wait <span id="claim-set-warning-time"></span> for the latest claimset changes to take effect.</strong>
-    </p>
-</div>
 <div class="tab-content margin-top-10" id="claims-list">
     <div id="claim-set-tab" class="tab-pane active navigational-index col-lg-8">
+        <div id="claim-set-warning-message" class="alert alert-danger margin-top-10" role="alert" hidden>
+            <p>
+                <strong>Please reset IIS or wait <span id="claim-set-warning-time"></span> for the latest claimset changes to take effect.</strong>
+            </p>
+        </div>
         <div align="right">
             @Html.Button("Add Claim Set").Attr("href", Url.Action("AddClaimSet", "ClaimSets")).AddClass("add-claimset navigational-ajax").Data("state", "add").Data("page-url", Url.Action("ClaimSets", "GlobalSettings")).Data("action", "opening Add Claim Set")
             @Html.Button("Import/Export Claim Set").Attr("href", Url.Action("ImportExportClaimSet", "ClaimSets")).AddClass("import-export-claimset navigational-ajax").Data("state", "import").Data("page-url", Url.Action("ClaimSets", "GlobalSettings")).Data("action", "opening Import/Export Claim Set")
@@ -38,7 +38,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                 {
                     <tr>
                         <th scope="row">
-                            <a class="details-link navigational-ajax" data-state="details" data-page-url="@Url.Action("ClaimSets", "GlobalSettings")" data-action="loading the Claim Set" href="@Url.Action("ClaimSetDetails", "ClaimSets", new {claimSetId = claimSet.Id})">
+                            <a class="details-link" href="@Url.Action("ClaimSetDetails", "ClaimSets", new {claimSetId = claimSet.Id})">
                                 @claimSet.Name
                             </a>
                         </th>
@@ -48,7 +48,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                                 <a class="loads-ajax-modal" data-url="@Url.Action("CopyClaimSetModal","ClaimSets", new {claimSetId = claimSet.Id})"> <span class="fa fa-copy action-icons"></span></a>
                                 @if (claimSet.IsEditable)
                                 {
-                                    <a class="edit-claimset navigational-ajax" data-state="edit" data-page-url="@Url.Action("ClaimSets", "GlobalSettings")" data-action="editing the Claim Set" href="@Url.Action("EditClaimSet", "ClaimSets", new {claimSetId = claimSet.Id})">
+                                    <a class="edit-claimset" href="@Url.Action("EditClaimSet", "ClaimSets", new {claimSetId = claimSet.Id})">
                                          <span class="fa fa-pencil action-icons"></span>
                                     </a>
                                     <a class="loads-ajax-modal" data-url="@Url.Action("DeleteClaimSetModal","ClaimSets", new {claimSetId = claimSet.Id})"> <span class="fa fa-trash-o action-icons"></span></a>
@@ -63,7 +63,6 @@ See the LICENSE and NOTICES files in the project root for more information.
 </div>
 
 <script type="text/javascript">
-    var cacheTimeout = '@CloudOdsAdminAppSettings.Instance.SecurityMetadataCacheTimeoutMinutes';
     $(function () {
         InitializeModalLoaders();
         InitializeNavigationalAjaxButtons();

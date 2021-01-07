@@ -13,6 +13,7 @@ using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
 using EdFi.Ods.AdminApp.Management.Database.Models;
 using EdFi.Ods.AdminApp.Management.Database.Queries;
 using EdFi.Ods.AdminApp.Web.ActionFilters;
+using EdFi.Ods.AdminApp.Web.Display.TabEnumeration;
 using EdFi.Ods.AdminApp.Web.Helpers;
 using EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets;
 using Newtonsoft.Json;
@@ -30,6 +31,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         private readonly IGetResourcesByClaimSetIdQuery _getResourcesByClaimSetIdQuery;
         private readonly IGetClaimSetsByApplicationNameQuery _getClaimSetsByApplicationNameQuery;
         private readonly IGetAuthStrategiesByApplicationNameQuery _getAuthStrategiesByApplicationNameQuery;
+        private readonly ITabDisplayService _tabDisplayService;
         private readonly CopyClaimSetCommand _copyClaimSetCommand;
         private readonly AddClaimSetCommand _addClaimSetCommand;
         private readonly EditClaimSetCommand _editClaimSetCommand;
@@ -48,6 +50,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             , IGetResourcesByClaimSetIdQuery getResourcesByClaimSetIdQuery
             , IGetClaimSetsByApplicationNameQuery getClaimSetsByApplicationNameQuery
             , IGetAuthStrategiesByApplicationNameQuery getAuthStrategiesByApplicationNameQuery
+            , ITabDisplayService tabDisplayService
             , CopyClaimSetCommand copyClaimSetCommand
             , AddClaimSetCommand addClaimSetCommand
             , EditClaimSetCommand editClaimSetCommand
@@ -66,6 +69,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _getResourcesByClaimSetIdQuery = getResourcesByClaimSetIdQuery;
             _getClaimSetsByApplicationNameQuery = getClaimSetsByApplicationNameQuery;
             _getAuthStrategiesByApplicationNameQuery = getAuthStrategiesByApplicationNameQuery;
+            _tabDisplayService = tabDisplayService;
             _copyClaimSetCommand = copyClaimSetCommand;
             _addClaimSetCommand = addClaimSetCommand;
             _editClaimSetCommand = editClaimSetCommand;
@@ -83,14 +87,19 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
 
         public ActionResult ClaimSetDetails(int claimSetId)
         {
-            var model = new ClaimSetDetailsModel
+            var model = new ClaimSetModel
             {
-                ClaimSet = _getClaimSetByIdQuery.Execute(claimSetId),
-                Applications = _getApplicationsByClaimSetIdQuery.Execute(claimSetId),
-                ResourceClaims = _getResourcesByClaimSetIdQuery.AllResources(claimSetId)
+                ClaimSetDetailsModel = new ClaimSetDetailsModel
+                {
+                    ClaimSet = _getClaimSetByIdQuery.Execute(claimSetId),
+                    Applications = _getApplicationsByClaimSetIdQuery.Execute(claimSetId),
+                    ResourceClaims = _getResourcesByClaimSetIdQuery.AllResources(claimSetId)
+                },
+                GlobalSettingsTabEnumerations = _tabDisplayService.GetGlobalSettingsTabDisplay(
+                    GlobalSettingsTabEnumeration.ClaimSets)
             };
 
-           return PartialView("_ClaimSetDetails", model);
+           return View(model);
         }
 
         public ActionResult AuthStrategyModal(int claimSetId, int resourceClaimId)
@@ -155,15 +164,30 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         [HttpPost]
         public ActionResult AddClaimSet(AddClaimSetModel model)
         {
-            var id = _addClaimSetCommand.Execute(model);
-            return RedirectToAction("EditClaimSet", "ClaimSets", new {claimSetId = id});
+            var claimSetId = _addClaimSetCommand.Execute(model);
+
+            var editClaimSetModel = GetEditClaimSetModel(claimSetId);
+
+            return PartialView("_EditClaimSet",editClaimSetModel);
         }
 
         public ActionResult EditClaimSet(int claimSetId)
         {
+            var model = new ClaimSetModel
+            {
+                EditClaimSetModel = GetEditClaimSetModel(claimSetId),
+                GlobalSettingsTabEnumerations = _tabDisplayService.GetGlobalSettingsTabDisplay(GlobalSettingsTabEnumeration.ClaimSets)
+            };
+  
+            return View(model);
+        }
+
+        private EditClaimSetModel GetEditClaimSetModel(int claimSetId)
+        {
             var existingClaimSet = _getClaimSetByIdQuery.Execute(claimSetId);
             var allResourceClaims = _getResourceClaimsQuery.Execute().ToList();
-            var model = new EditClaimSetModel
+
+            return new EditClaimSetModel
             {
                 ClaimSetName = existingClaimSet.Name,
                 ClaimSetId = claimSetId,
@@ -171,8 +195,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                 ResourceClaims = _getResourcesByClaimSetIdQuery.AllResources(claimSetId),
                 AllResourceClaims = GetSelectListForResourceClaims(allResourceClaims)
             };
-  
-            return PartialView("_EditClaimSet", model);
         }
 
         [HttpGet]
