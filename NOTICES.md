@@ -732,10 +732,12 @@ https://github.com/dotnet/runtime
 * Microsoft.Azure.Management.ResourceManager
 * Microsoft.Azure.Management.WebSites
 * Microsoft.Bcl.AsyncInterfaces
+* System.Security.Cryptography.ProtectedData
 * Microsoft.CSharp
 * Microsoft.Data.Edm
 * Microsoft.Data.OData
 * Microsoft.Data.Services.Client
+* Microsoft.IdentityModel.Clients.ActiveDirectory
 * Microsoft.Rest.ClientRuntime.Azure
 * Microsoft.Rest.ClientRuntime
 * System.Buffers
@@ -743,6 +745,7 @@ https://github.com/dotnet/runtime
 * System.Diagnostics.DiagnosticSource
 * System.Memory
 * System.Numerics.Vectors
+* System.Runtime.Caching MIT
 * System.Runtime.CompilerServices.Unsafe
 * System.Security.AccessControl
 * System.Security.Permissions
@@ -781,7 +784,7 @@ The license below applies to all of these packages:
 
 # Microsoft .NET Libraries
 
-The license below applies to packages which self-identify as following the MS-.NET-Library License
+The license below applies to Microsoft.NET.Test.Sdk and to packages which self-identify as following the MS-.NET-Library License
 
     MICROSOFT SOFTWARE LICENSE TERMS
 
