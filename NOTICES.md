@@ -660,6 +660,12 @@ https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-do
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 
+## Microsoft.Extensions.Logging.Log4Net.AspNetCore
+
+https://github.com/huorswords/Microsoft.Extensions.Logging.Log4Net.AspNetCore
+
+See the [Apache License, Version 2.0](LICENSE) file in this application.
+
 # Azure SDK
 
 https://github.com/Azure/azure-sdk-for-net
