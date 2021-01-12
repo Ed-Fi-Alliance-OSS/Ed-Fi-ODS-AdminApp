@@ -740,8 +740,6 @@ https://github.com/dotnet/runtime
 * Microsoft.Rest.ClientRuntime
 * System.Buffers
 * System.ComponentModel.Annotations
-* System.ComponentModel.Annotations
-* System.Configuration.ConfigurationManager
 * System.Diagnostics.DiagnosticSource
 * System.Memory
 * System.Numerics.Vectors
