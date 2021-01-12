@@ -247,7 +247,7 @@ https://github.com/HtmlTags/htmltags
 
 http://jqueryvalidation.org/
 
-    Copyright (c) 2016 J�rn Zaefferer
+    Copyright (c) 2016 Jörn Zaefferer
 
     Permission is hereby granted, free of charge, to any person obtaining a copy of
     this software and associated documentation files (the "Software"), to deal in
