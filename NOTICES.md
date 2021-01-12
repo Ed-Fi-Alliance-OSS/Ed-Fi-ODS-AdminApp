@@ -172,7 +172,7 @@ The following license applies to these packages:
     License
     ========
 
-    Copyright � 2013-2020 Sergey Odinokov.
+    Copyright (c) 2013-2020 Sergey Odinokov.
 
     Hangfire software is an open-source software that is multi-licensed under the
     terms of the licenses listed in this file. Recipients may choose the terms under
@@ -209,7 +209,7 @@ The following license applies to these packages:
 
 https://github.com/frankhommers/Hangfire.PostgreSql
 
-    Copyright � 2014-2020 Frank Hommers http://hmm.rs/Hangfire.PostgreSql and others
+    Copyright (c) 2014-2020 Frank Hommers http://hmm.rs/Hangfire.PostgreSql and others
     (Burhan Irmikci (barhun), Zachary Sims(zsims), kgamecarter, Stafford Williams
     (staff0rd), briangweber, Viktor Svyatokha (ahydrax), Christopher Dresel
     (Dresel), Vytautas Kasparavicius (vytautask), Vincent Vrijburg, David Roth
