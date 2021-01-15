@@ -32,6 +32,7 @@ $parameters = @{
     PackageName = "EdFi.Installer.AppCommon"
     PackageVersion = $dependencyVersions.AppCommon
     ToolsPath = "C:/temp/tools"
+    PackageSource = "https://pkgs.dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_packaging/EdFi/nuget/v3/index.json"
 }
 $appCommonDirectory = Get-NugetPackage @parameters
 
