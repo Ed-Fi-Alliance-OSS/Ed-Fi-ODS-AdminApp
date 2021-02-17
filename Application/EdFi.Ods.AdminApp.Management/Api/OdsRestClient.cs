@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using EdFi.Ods.AdminApp.Management.Api.Models;
 using Flurl;
 using log4net;
 using Newtonsoft.Json;
@@ -159,17 +160,37 @@ namespace EdFi.Ods.AdminApp.Management.Api
             }
         }
 
-        public IReadOnlyList<string> GetAllDescriptors()
+        public IReadOnlyList<DescriptorCategory> GetAllDescriptors()
         {
             _restClient.BaseUrl = new Uri(_connectionInformation.DescriptorsUrl);
             var request = OdsRequest("swagger.json");
             var response = _restClient.Execute(request);
             HandleErrorResponse(response);
             var swaggerDocument = JsonConvert.DeserializeObject<JObject>(response.Content);
-            var descriptorsList = swaggerDocument["definitions"].ToObject<Dictionary<string, JObject>>();
+            var descriptorPaths = swaggerDocument["paths"].ToObject<Dictionary<string, JObject>>();
 
-            return descriptorsList.Keys.Where(x => x.StartsWith("edFi_"))
-                .Select(x => CapitalizeFirstLetter(x.Substring("edFi_".Length))).ToList();
+            var descriptorsList = new SortedSet<DescriptorCategory>(
+                Comparer<DescriptorCategory>.Create(
+                    (a, b) => string.Compare(a.Name, b.Name, StringComparison.Ordinal)));
+
+            if (descriptorPaths != null)
+            {
+                foreach (var descriptorPath in descriptorPaths.Keys)
+                {
+                    var descriptorPathParts = descriptorPath.Split('/');
+
+                    var descriptorNameSpace = descriptorPathParts[1];
+                    var descriptorName = descriptorPathParts[2];
+
+                    descriptorsList.Add(new DescriptorCategory
+                    {
+                        Name = CapitalizeFirstLetter(descriptorName.Remove(descriptorName.Length - 1, 1)),
+                        Namespace = descriptorNameSpace
+                    });
+                }
+            }
+
+            return descriptorsList.ToList();
 
             string CapitalizeFirstLetter(string descriptorName)
             {

@@ -85,6 +85,11 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure.AutoMapper
                 
             CreateMap<Descriptor, DescriptorModel>();
 
+            CreateMap<DescriptorCategory, DescriptorCategoryModel>()
+                .ForMember(
+                    dst => dst.DescriptorCategoryName, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dst => dst.DescriptorNameSpace, opt => opt.MapFrom(src => src.Namespace));
+
             CreateMap<AuthorizationStrategy, Management.ClaimSetEditor.AuthorizationStrategy>()
                 .ForMember(dst => dst.AuthStrategyName, opt => opt.MapFrom(src => src.AuthorizationStrategyName))
                 .ForMember(dst => dst.AuthStrategyId, opt => opt.MapFrom(src => src.AuthorizationStrategyId))

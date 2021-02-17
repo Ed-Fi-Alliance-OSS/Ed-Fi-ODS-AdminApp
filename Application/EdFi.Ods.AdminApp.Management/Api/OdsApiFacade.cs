@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: Apache-2.0
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
@@ -87,14 +87,15 @@ namespace EdFi.Ods.AdminApp.Management.Api
             return _restClient.PostResource(request, ResourcePaths.Schools);
         }
 
-        public IReadOnlyList<string> GetAllDescriptors()
+        public IReadOnlyList<DescriptorCategory> GetAllDescriptors()
         {
             return _restClient.GetAllDescriptors();
         }
 
-        public List<Descriptor> GetDescriptorsByName(string descriptorName)
+        public List<Descriptor> GetDescriptorsByName(string descriptorName, string descriptorNameSpace)
         {
-            var response = _restClient.GetAll<DomainModels.EdFiDescriptor>($"/ed-fi/{descriptorName}s");
+
+            var response = _restClient.GetAll<DomainModels.EdFiDescriptor>($"/{descriptorNameSpace}/{descriptorName}s");
 
             var descriptors = new List<Descriptor>();
             foreach (var descriptor in response)

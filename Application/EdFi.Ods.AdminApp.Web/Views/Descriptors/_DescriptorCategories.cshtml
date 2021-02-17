@@ -1,4 +1,4 @@
-﻿@*
+@*
 SPDX-License-Identifier: Apache-2.0
 Licensed to the Ed-Fi Alliance under one or more agreements.
 The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
@@ -18,13 +18,13 @@ See the LICENSE and NOTICES files in the project root for more information.
     <div class="panel-section">
         <div class="row heading">
             <div class="col-xs-8">
-                <h7>@category</h7>
+                <h7>@category.DescriptorCategoryName</h7>
             </div>
             <div class="col-xs-4 text-right">
                 <span class="custom-divider"> |</span>
-                <a href="javascript:void(0)" class="descriptor-panel-toggle" data-target="#descriptor-@(category)"><span class="fa fa-chevron-down caret-custom panel-toggle"></span></a>
+                <a href="javascript:void(0)" class="descriptor-panel-toggle" data-target="#descriptor-@(category.DescriptorCategoryName)"><span class="fa fa-chevron-down caret-custom panel-toggle"></span></a>
             </div>
-            <div id="descriptor-@(category)" data-category="@category" class="row content collapse panel-loading">
+            <div id="descriptor-@(category.DescriptorCategoryName)" data-category="@category.DescriptorCategoryName" data-namespace="@category.DescriptorNameSpace" class="row content collapse panel-loading">
                 <i class="fa fa-spinner fa-pulse fa-fw"></i>
             </div>
         </div>
@@ -45,7 +45,8 @@ See the LICENSE and NOTICES files in the project root for more information.
 
         if ($panel.hasClass("panel-loading")) {
             var category = $panel.attr("data-category");
-            var url = "@Html.Raw(Url.Action("GetDescriptorsFromCategoryName", "Descriptors", new { }))" + "?category=" + category;
+            var namespace = $panel.attr("data-namespace");
+            var url = "@Html.Raw(Url.Action("GetDescriptorsFromCategoryName", "Descriptors", new {}))" + "?category=" + category + "&descriptorNameSpace=" + namespace;
             $.ajax({
                 url: url,
                 success: function (data) {

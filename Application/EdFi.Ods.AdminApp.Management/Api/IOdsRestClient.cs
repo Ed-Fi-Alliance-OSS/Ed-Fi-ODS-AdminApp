@@ -4,6 +4,7 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using System.Collections.Generic;
+using EdFi.Ods.AdminApp.Management.Api.Models;
 
 namespace EdFi.Ods.AdminApp.Management.Api
 {
@@ -13,7 +14,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
         T GetById<T>(string elementPath, string id) where T : class;
         OdsApiResult PostResource<T>(T resource, string elementPath, bool refreshToken = false);
         OdsApiResult PutResource<T>(T resource, string elementPath, string id, bool refreshToken = false);
-        IReadOnlyList<string> GetAllDescriptors();
+        IReadOnlyList<DescriptorCategory> GetAllDescriptors();
         OdsApiResult DeleteResource(string elementPath, string id, bool refreshToken = false);
     }
 }
