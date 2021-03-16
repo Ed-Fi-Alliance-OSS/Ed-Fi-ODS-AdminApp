@@ -3,7 +3,7 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
-package installers.templates
+package _self.buildTypes
 
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.powerShell
@@ -11,7 +11,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.vcs.GitVcsRoot
 
 object BuildAdminAppInstaller : BuildType ({
-    name = "EdFi.Suite3.Installer.AdminApp"
+    name = "Build AdminApp Installer"
     description = "PowerShell deployment orchestration for the Admin App."
 
     artifactRules = "**/EdFi.Suite3.Installer.AdminApp*.nupkg"
@@ -23,7 +23,7 @@ object BuildAdminAppInstaller : BuildType ({
     }
 
     vcs {
-        root(EdFiOdsAdminApp, "+:. => Ed-Fi-ODS-AdminApp")
+        root(DslContext.settingsRoot)
     }
 
     steps {
@@ -46,5 +46,9 @@ object BuildAdminAppInstaller : BuildType ({
                 """.trimIndent()
             }
         }
+    }
+
+    requirements {
+        equals("teamcity.agent.name", "INTEDFIBUILD3")
     }
 })
