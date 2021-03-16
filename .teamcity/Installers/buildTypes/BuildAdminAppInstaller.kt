@@ -24,10 +24,8 @@ object BuildAdminAppInstaller : BuildType ({
         param("project.shouldPublishPreRelease", "true")
     }
 
-    vcs {
-        root(DslContext.settingsRoot)
-        root(_self.vcsRoots.EdFiOdsImplementation)
-    }
+    vcsRoot(DslContext.settingsRoot)
+    vcsRoot(_self.vcsRoots.EdFiOdsImplementation)
 
     steps {
         powerShell {
