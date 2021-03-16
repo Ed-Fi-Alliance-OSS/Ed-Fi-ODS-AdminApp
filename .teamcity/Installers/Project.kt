@@ -14,6 +14,7 @@ object AdminAppInstallerProject : Project({
 
     params {
         param("adminAppInstaller.version", "2.2.0")
+        param("version.preReleaseLabel", "pre")
     }
 
     buildType(_self.buildTypes.BuildAdminAppInstaller)

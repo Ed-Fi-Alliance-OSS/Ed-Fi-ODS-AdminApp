@@ -26,6 +26,7 @@ object BuildAdminAppInstaller : BuildType ({
 
     vcs {
         root(DslContext.settingsRoot)
+        root(_self.vcsRoots.EdFiOdsImplementation)
     }
 
     steps {
@@ -37,7 +38,7 @@ object BuildAdminAppInstaller : BuildType ({
             scriptMode = script {
                 content = """
                     ${'$'}parameters = @{
-                        SemanticVersion = "%version%"
+                        SemanticVersion = "%adminAppInstaller.version%"
                         BuildCounter = "%build.counter%"
                         PreReleaseLabel = "%version.preReleaseLabel%"
                         Publish = [System.Convert]::ToBoolean("%project.shouldPublishPreRelease%")
