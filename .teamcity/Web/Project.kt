@@ -13,13 +13,6 @@ object AdminAppWebProject : Project({
     description = "ODS Admin App Build Configurations"
 
     params {
-        param("build.feature.freeDiskSpace", "2gb")
-        param("git.branch.default", "main")
-        param("git.branch.specification", """
-            +:refs/heads/(*)
-            +:refs/(pull/*)/merge
-        """.trimIndent())
-        param("teamcity.ui.settings.readOnly","true")
         param("adminApp.version", "2.2.0")
     }
 
