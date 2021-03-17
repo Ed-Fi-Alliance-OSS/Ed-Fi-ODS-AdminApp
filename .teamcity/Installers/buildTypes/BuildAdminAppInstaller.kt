@@ -50,8 +50,4 @@ object BuildAdminAppInstaller : BuildType ({
             }
         }
     }
-
-    requirements {
-        equals("teamcity.agent.name", "INTEDFIBUILD3")
-    }
 })

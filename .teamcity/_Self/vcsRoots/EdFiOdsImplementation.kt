@@ -18,8 +18,5 @@ object EdFiOdsImplementation : GitVcsRoot({
     checkoutSubmodules = GitVcsRoot.CheckoutSubmodules.IGNORE
     serverSideAutoCRLF = true
     useMirrors = false
-    authMethod = password {
-        userName = "%github.username%"
-        password = "%github.accessToken%"
-    }
+    authMethod = anonymous()
 })
