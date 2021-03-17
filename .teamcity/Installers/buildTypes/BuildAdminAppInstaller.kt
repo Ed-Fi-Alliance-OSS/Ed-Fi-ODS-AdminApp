@@ -7,25 +7,27 @@ package _self.buildTypes
 
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.powerShell
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.swabra
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.vcs.GitVcsRoot
 
 object BuildAdminAppInstaller : BuildType ({
-    name = "Build AdminApp Installer"
+    name = "Build Admin App Installer"
     description = "PowerShell deployment orchestration for the Admin App."
 
+    publishArtifacts = PublishMode.SUCCESSFUL
     artifactRules = "**/EdFi.Suite3.Installer.AdminApp*.nupkg"
 
     params {
+        param("version.preReleaseLabel", "pre")
         param("github.organization", "Ed-Fi-Alliance-OSS")
         param("project.directory", """Ed-Fi-ODS-AdminApp\%project.name%""")
         param("env.VSS_NUGET_EXTERNAL_FEED_ENDPOINTS", """{"endpointCredentials": [{"endpoint": "%azureArtifacts.feed.nuget%","username": "%azureArtifacts.edFiBuildAgent.userName%","password": "%azureArtifacts.edFiBuildAgent.accessToken%"}]}""")
-        param("project.name", "%system.teamcity.buildConfName%")
         param("project.shouldPublishPreRelease", "true")
     }
 
     vcs {
-        root(DslContext.settingsRoot)
+        root(DslContext.settingsRoot, "+:. => Ed-Fi-ODS-AdminApp")
         root(_self.vcsRoots.EdFiOdsImplementation, "+:. => Ed-Fi-ODS-Implementation")
     }
 
@@ -51,7 +53,9 @@ object BuildAdminAppInstaller : BuildType ({
         }
     }
 
-    requirements {
-        equals("teamcity.agent.name", "INTEDFIBUILD3")
+    features {
+        swabra {
+            forceCleanCheckout = true
+        }
     }
 })
