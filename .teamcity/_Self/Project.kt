@@ -22,4 +22,6 @@ object AdminAppProject : Project({
 
     subProject(web.AdminAppWebProject)
     subProject(installers.AdminAppInstallerProject)
+
+    vcsRoot(_self.vcsRoots.EdFiOdsImplementation)
 })
