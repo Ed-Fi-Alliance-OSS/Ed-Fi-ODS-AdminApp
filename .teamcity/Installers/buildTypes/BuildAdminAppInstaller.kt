@@ -26,6 +26,7 @@ object BuildAdminAppInstaller : BuildType ({
 
     vcs {
         root(DslContext.settingsRoot)
+        root(_self.vcsRoots.EdFiOdsImplementation, "%vcs.checkout.rules.implementation%")
     }
 
     steps {
