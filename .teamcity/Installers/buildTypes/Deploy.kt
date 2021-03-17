@@ -19,9 +19,9 @@ object Deploy : BuildType ({
         param("octopus.package", "placeholder")
         param("octopus.environment", "Integration")
         param("nuGet.packageFile", "placeholder")
-        param("octopus.channel", "Suite3")
+        param("octopus.channel", "SharedInstance v5.1.x")
         param("octopus.release", "placeholder")
-        param("octopus.project", "Admin App")
+        param("octopus.project", "Suite 3 Admin App")
     }
 
     vcs {
@@ -63,7 +63,7 @@ object Deploy : BuildType ({
 
     triggers {
         finishBuildTrigger {
-            buildType = "${BuildBranch.id}"
+            buildType = "${BuildAdminAppInstaller.id}"
         }
     }
 
@@ -74,7 +74,7 @@ object Deploy : BuildType ({
     }
 
     dependencies {
-        dependency(BuildBranch) {
+        dependency(BuildAdminAppInstaller) {
             snapshot {
             }
 
