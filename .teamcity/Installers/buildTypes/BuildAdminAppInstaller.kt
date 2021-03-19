@@ -11,7 +11,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.vcs.GitVcsRoot
 
 object BuildAdminAppInstaller : BuildType ({
-    name = "Build AdminApp Installer"
+    name = "EdFi.Suite3.Installer.AdminApp"
     description = "PowerShell deployment orchestration for the Admin App."
 
     artifactRules = "**/EdFi.Suite3.Installer.AdminApp*.nupkg"
