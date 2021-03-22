@@ -14,7 +14,8 @@ object BuildAdminAppInstaller : BuildType ({
     name = "EdFi.Suite3.Installer.AdminApp"
     description = "PowerShell deployment orchestration for the Admin App."
 
-    artifactRules = "**/EdFi.Suite3.Installer.AdminApp*.nupkg"
+    publishArtifacts = PublishMode.SUCCESSFUL
+    artifactRules = "+:*.nupkg"
 
     params {
         param("github.organization", "Ed-Fi-Alliance-OSS")
