@@ -7,6 +7,7 @@ package _self.buildTypes
 
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.powerShell
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.swabra
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.vcs.GitVcsRoot
 
@@ -49,6 +50,12 @@ object BuildAdminAppInstaller : BuildType ({
                     .\build-package.ps1 @parameters
                 """.trimIndent()
             }
+        }
+    }
+
+    features {
+        swabra {
+            forceCleanCheckout = true
         }
     }
 })

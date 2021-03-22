@@ -67,20 +67,15 @@ object Deploy : BuildType ({
         }
     }
 
-    features {
-        swabra {
-            forceCleanCheckout = true
-        }
-    }
-
     dependencies {
         dependency(BuildAdminAppInstaller) {
             snapshot {
             }
 
             artifacts {
+                cleanDestination = true
                 artifactRules = """
-                    +:*pre*.nupkg =>
+                    +:Ed-Fi-ODS-AdminApp\EdFi.Suite3.Installer.AdminApp\*pre*.nupkg =>
                 """.trimIndent()
             }
         }
