@@ -25,22 +25,11 @@ object BuildAdminAppInstaller : BuildType ({
     }
 
     vcs {
-        root(DslContext.settingsRoot)
+        root(DslContext.settingsRoot, "+:. => Ed-Fi-ODS-AdminApp")
         root(_self.vcsRoots.EdFiOdsImplementation, "+:. => Ed-Fi-ODS-Implementation")
     }
 
     steps {
-        powerShell {
-            name = "Troubleshooting"
-            id = "Test"
-            formatStderrAsError = true
-            workingDir = "%project.directory%"
-            scriptMode = script {
-                content = """
-                    Get-ChildItem
-                """.trimIndent()
-            }
-        }
         powerShell {
             name = "Build Pre-release and release, publish pre-release package"
             id = "PackageAndPublishInstallerLibrary_PackPreRelease"
