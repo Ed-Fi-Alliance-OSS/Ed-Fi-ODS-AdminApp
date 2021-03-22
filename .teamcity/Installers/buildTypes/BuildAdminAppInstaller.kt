@@ -31,6 +31,17 @@ object BuildAdminAppInstaller : BuildType ({
 
     steps {
         powerShell {
+            name = "Troubleshooting"
+            id = "Test"
+            formatStderrAsError = true
+            workingDir = "%project.directory%"
+            scriptMode = script {
+                content = """
+                    Get-ChildItem
+                """.trimIndent()
+            }
+        }
+        powerShell {
             name = "Build Pre-release and release, publish pre-release package"
             id = "PackageAndPublishInstallerLibrary_PackPreRelease"
             formatStderrAsError = true
