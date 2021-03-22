@@ -25,7 +25,7 @@ object Deploy : BuildType ({
     }
 
     vcs {
-        root(DslContext.settingsRoot)
+        root(DslContext.settingsRoot, "+:. => Ed-Fi-ODS-AdminApp")
     }
 
     steps {
