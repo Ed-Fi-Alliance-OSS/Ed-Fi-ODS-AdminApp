@@ -13,6 +13,10 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.finishBuildTrigger
 object Deploy : BuildType ({
     name = "Deploy"
     description = "Creates a release in Octopus Deploy and triggers its deployment to the test server"
+    
+    //Pausing this build since there's an issue that will be addresses in an upcoming ticket
+    paused = true
+    
     type = BuildTypeSettings.Type.DEPLOYMENT
 
     params {
