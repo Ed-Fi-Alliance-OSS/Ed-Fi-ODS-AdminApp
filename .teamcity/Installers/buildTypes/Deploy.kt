@@ -18,7 +18,6 @@ object Deploy : BuildType ({
     params {
         param("octopus.package", "placeholder")
         param("octopus.environment", "Integration")
-        param("nuGet.packageFile", "placeholder")
         param("octopus.channel", "SharedInstance v5.1.x")
         param("octopus.release", "placeholder")
         param("octopus.project", "Suite 3 Admin App")
@@ -29,14 +28,6 @@ object Deploy : BuildType ({
     }
 
     steps {
-        powerShell {
-            name = "Lookup Package Name and Version"
-            formatStderrAsError = true
-            executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
-            scriptMode = file {
-                path = """eng\teamcity-get-package-version.ps1"""
-            }
-        }
         step {
             name = "Publish Package to Octopus"
             type = "octopus.push.package"
