@@ -69,8 +69,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         public ActionResult Vendors()
         {
             var vendors = _getVendorsQuery
-                .Execute()
-                .Where(v => !v.IsSystemReservedVendor());
+                .Execute();
 
             var model = new GlobalSettingsModel
             {
@@ -165,6 +164,12 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
 
             _editVendorCommand.Execute(model);
             return RedirectToActionJson<GlobalSettingsController>(x => x.Vendors(), "Vendor updated successfully");
+        }
+
+        public ActionResult DefineApplications()
+        {
+            TempData["IsVendorApplications"] = true;
+            return RedirectToAction("Index", "OdsInstances");
         }
 
         public async Task<ActionResult> AdvancedSettings()
