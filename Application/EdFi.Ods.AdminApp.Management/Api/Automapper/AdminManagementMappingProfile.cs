@@ -76,6 +76,20 @@ namespace EdFi.Ods.AdminApp.Management.Api.Automapper
                 .ForCtorParam("localEducationAgencyCategoryDescriptor", opt => opt.MapFrom(src => src.LocalEducationAgencyCategoryType))
                 .ForCtorParam("nameOfInstitution", opt => opt.MapFrom(src => src.Name));
 
+            CreateMap<PostSecondaryInstitution, EdFiPostSecondaryInstitution>()
+                .ForMember(dst => dst.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dst => dst.PostSecondaryInstitutionId, opt => opt.MapFrom(src => src.PostSecondaryInstitutionId))
+                .ForMember(dst => dst.NameOfInstitution, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dst => dst.PostSecondaryInstitutionLevelDescriptor, opt => opt.MapFrom(src => src.PostSecondaryInstitutionLevel))
+                .ForMember(dst => dst.AdministrativeFundingControlDescriptor, opt => opt.MapFrom(src => src.AdministrativeFundingControl))
+                .ForMember(dst => dst.Categories, opt => opt.MapFrom<PostSecondaryInstitutionCategoryResolver>())
+                .ForCtorParam("id", opt => opt.MapFrom(src => src.Id))
+                .ForCtorParam("categories", opt => opt.MapFrom(EducationOrganizationCategoryResolver.Resolve))
+                .ForCtorParam("postSecondaryInstitutionId", opt => opt.MapFrom(src => src.PostSecondaryInstitutionId))
+                .ForCtorParam("postSecondaryInstitutionLevelDescriptor", opt => opt.MapFrom(src => src.PostSecondaryInstitutionLevel))
+                .ForCtorParam("administrativeFundingControlDescriptor", opt => opt.MapFrom(src => src.AdministrativeFundingControl))
+                .ForCtorParam("nameOfInstitution", opt => opt.MapFrom(src => src.Name));
+
             List<EdFiEducationOrganizationAddress> AddressResolver(EducationOrganization source,
                 ResolutionContext context)
                 => EducationOrganizationAddressResolver.Resolve(source);
