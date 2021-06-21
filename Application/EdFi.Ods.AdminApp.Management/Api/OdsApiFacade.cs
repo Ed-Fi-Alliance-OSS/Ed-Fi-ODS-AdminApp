@@ -38,16 +38,42 @@ namespace EdFi.Ods.AdminApp.Management.Api
                 .ToList();
         }
 
+        public List<SelectOptionModel> GetPostSecondaryInstitutionLevels()
+        {
+            var response = _restClient.GetAll<DomainModels.EdFiDescriptor>(ResourcePaths.PostSecondaryInstitutionLevelDescriptors);
+            return response.Select(x => BuildDescriptorSelectOptionModel(x.Namespace, x.CodeValue, x.Description))
+                .ToList();
+        }
+
+        public List<SelectOptionModel> GetAdministrativeFundingControls()
+        {
+            var response = _restClient.GetAll<DomainModels.EdFiDescriptor>(ResourcePaths.AdministrativeFundingControlDescriptors);
+            return response.Select(x => BuildDescriptorSelectOptionModel(x.Namespace, x.CodeValue, x.Description))
+                .ToList();
+        }
+
         public List<Models.LocalEducationAgency> GetAllLocalEducationAgencies()
         {
             var response = _restClient.GetAll<LocalEducationAgency>(ResourcePaths.LocalEducationAgencies);
             return _mapper.Map<List<Models.LocalEducationAgency>>(response);
         }
 
+        public List<Models.PostSecondaryInstitution> GetAllPostSecondaryInstitutions()
+        {
+            var response = _restClient.GetAll<PostSecondaryInstitution>(ResourcePaths.PostSecondaryInstitutions);
+            return _mapper.Map<List<Models.PostSecondaryInstitution>>(response);
+        }
+
         public List<Models.LocalEducationAgency> GetLocalEducationAgenciesByPage(int offset, int limit)
         {
             var response = _restClient.GetAll<LocalEducationAgency>(ResourcePaths.LocalEducationAgencies, offset, limit);
             return _mapper.Map<List<Models.LocalEducationAgency>>(response);
+        }
+
+        public List<Models.PostSecondaryInstitution> GetPostSecondaryInstitutionsByPage(int offset, int limit)
+        {
+            var response = _restClient.GetAll<PostSecondaryInstitution>(ResourcePaths.PostSecondaryInstitutions, offset, limit);
+            return _mapper.Map<List<Models.PostSecondaryInstitution>>(response);
         }
 
         public List<SelectOptionModel> GetAllGradeLevels()
@@ -64,11 +90,24 @@ namespace EdFi.Ods.AdminApp.Management.Api
              return _restClient.PostResource(request, ResourcePaths.LocalEducationAgencies);
         }
 
+        public OdsApiResult AddPostSecondaryInstitution(Models.PostSecondaryInstitution newPostSecondaryInstitution)
+        {
+            var request = _mapper.Map<PostSecondaryInstitution>(newPostSecondaryInstitution);
+            return _restClient.PostResource(request, ResourcePaths.PostSecondaryInstitutions);
+        }
+
         public Models.LocalEducationAgency GetLocalEducationAgencyById(string id)
         {
             var localEducationAgency =
                 _restClient.GetById<LocalEducationAgency>(ResourcePaths.LocalEducationAgencyById, id);
             return _mapper.Map<Models.LocalEducationAgency>(localEducationAgency);
+        }
+
+        public Models.PostSecondaryInstitution GetPostSecondaryInstitutionById(string id)
+        {
+            var postSecondaryInstitution =
+                _restClient.GetById<PostSecondaryInstitution>(ResourcePaths.PostSecondaryInstitutionById, id);
+            return _mapper.Map<Models.PostSecondaryInstitution>(postSecondaryInstitution);
         }
 
         public OdsApiResult EditLocalEducationAgency(Models.LocalEducationAgency model)
@@ -77,9 +116,20 @@ namespace EdFi.Ods.AdminApp.Management.Api
             return _restClient.PutResource(request, ResourcePaths.LocalEducationAgencies, request.Id);
         }
 
+        public OdsApiResult EditPostSecondaryInstitution(Models.PostSecondaryInstitution model)
+        {
+            var request = _mapper.Map<PostSecondaryInstitution>(model);
+            return _restClient.PutResource(request, ResourcePaths.PostSecondaryInstitutions, request.Id);
+        }
+
         public OdsApiResult DeleteLocalEducationAgency(string id)
         {
             return _restClient.DeleteResource(ResourcePaths.LocalEducationAgencyById, id);
+        }
+
+        public OdsApiResult DeletePostSecondaryInstitution(string id)
+        {
+            return _restClient.DeleteResource(ResourcePaths.PostSecondaryInstitutionById, id);
         }
 
         public OdsApiResult DeleteSchool(string id)

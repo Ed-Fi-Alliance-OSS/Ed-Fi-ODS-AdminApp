@@ -28,5 +28,13 @@ namespace EdFi.Ods.AdminApp.Management.Api
         School GetSchoolById(string id);
         OdsApiResult EditSchool(School editedSchool);
         List<SelectOptionModel> GetAllStateAbbreviations();
+        List<SelectOptionModel> GetPostSecondaryInstitutionLevels();
+        List<SelectOptionModel> GetAdministrativeFundingControls();
+        List<PostSecondaryInstitution> GetAllPostSecondaryInstitutions();
+        List<PostSecondaryInstitution> GetPostSecondaryInstitutionsByPage(int offset = 0, int limit = 50);
+        OdsApiResult AddPostSecondaryInstitution(Models.PostSecondaryInstitution newPostSecondaryInstitution);
+        PostSecondaryInstitution GetPostSecondaryInstitutionById(string id);
+        OdsApiResult EditPostSecondaryInstitution(Models.PostSecondaryInstitution model);
+        OdsApiResult DeletePostSecondaryInstitution(string id);
     }
 }
