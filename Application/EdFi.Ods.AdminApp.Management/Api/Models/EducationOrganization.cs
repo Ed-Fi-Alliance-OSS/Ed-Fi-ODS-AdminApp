@@ -10,6 +10,7 @@ namespace EdFi.Ods.AdminApp.Management.Api.Models
         public string Id { get; set; }
         public int EducationOrganizationId { get; set; }
         public int? LocalEducationAgencyId { get; set; }
+        public int? PostSecondaryInstitutionId { get; set; }
         public string Name { get; set; }
         public string StreetNumberName { get; set; }
         public string ApartmentRoomSuiteNumber { get; set; }
