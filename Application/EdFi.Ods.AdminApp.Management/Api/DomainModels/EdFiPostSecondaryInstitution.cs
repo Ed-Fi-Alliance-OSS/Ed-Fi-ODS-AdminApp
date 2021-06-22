@@ -12,27 +12,33 @@ namespace EdFi.Ods.AdminApp.Management.Api.DomainModels
     {
         public EdFiPostSecondaryInstitution(
             string id,
+            List<EdFiEducationOrganizationAddress> addresses,
             List<EdFiEducationOrganizationCategory> categories,
             int? postSecondaryInstitutionId,
             string postSecondaryInstitutionLevelDescriptor,
             string administrativeFundingControlDescriptor,
-            string nameOfInstitution
+            string nameOfInstitution,
+            EdFiStateEducationAgencyReference stateEducationAgencyReference = null
             )
         {
             var resourceName = GetType().Name;
             Id = id.IsRequired(nameof(Id), resourceName);
+            Addresses = addresses.IsRequired(nameof(Addresses), resourceName);
             Categories = categories.IsRequired(nameof(Categories), resourceName);
             PostSecondaryInstitutionId = postSecondaryInstitutionId.IsRequired(nameof(postSecondaryInstitutionId), resourceName);
             PostSecondaryInstitutionLevelDescriptor = postSecondaryInstitutionLevelDescriptor.IsRequired(nameof(PostSecondaryInstitutionLevelDescriptor), resourceName);
             AdministrativeFundingControlDescriptor = administrativeFundingControlDescriptor.IsRequired(nameof(AdministrativeFundingControlDescriptor), resourceName);
             NameOfInstitution = nameOfInstitution.IsRequired(nameof(NameOfInstitution), resourceName);
+            StateEducationAgencyReference = stateEducationAgencyReference;
         }
 
         public string Id { get; }
         public int? PostSecondaryInstitutionId { get; }
         public string NameOfInstitution { get; }
+        public List<EdFiEducationOrganizationAddress> Addresses { get; }
         public string PostSecondaryInstitutionLevelDescriptor { get; }
         public string AdministrativeFundingControlDescriptor { get; }
+        public EdFiStateEducationAgencyReference StateEducationAgencyReference { get; set; }
         public List<EdFiEducationOrganizationCategory> Categories { get; }
     }
 }
