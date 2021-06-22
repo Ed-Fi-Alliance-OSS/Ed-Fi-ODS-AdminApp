@@ -36,7 +36,7 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Automapper
             var mapperConfiguration = new MapperConfiguration(cfg =>
                 cfg.CreateMap<LocalEducationAgency, EdFiLocalEducationAgency>()
                     .ForMember(dst => dst.StateEducationAgencyReference,
-                        opt => opt.MapFrom<StateEducationAgencyReferenceResolver>()));
+                        opt => opt.MapFrom<LeaStateEducationAgencyReferenceResolver>()));
             var mapper = mapperConfiguration.CreateMapper();
 
             // Act
@@ -59,7 +59,7 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Automapper
             var mapperConfiguration = new MapperConfiguration(cfg =>
                 cfg.CreateMap<LocalEducationAgency, EdFiLocalEducationAgency>()
                     .ForMember(dst => dst.StateEducationAgencyReference,
-                        opt => opt.MapFrom<StateEducationAgencyReferenceResolver>()));
+                        opt => opt.MapFrom<LeaStateEducationAgencyReferenceResolver>()));
             var mapper = mapperConfiguration.CreateMapper();
 
             // Act
