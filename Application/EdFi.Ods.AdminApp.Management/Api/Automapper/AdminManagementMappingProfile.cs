@@ -44,6 +44,21 @@ namespace EdFi.Ods.AdminApp.Management.Api.Automapper
                 .ForMember(dst => dst.EducationOrganizationCategory, opt => opt.Ignore()) //this value is currently stored in web.config
                 .ForMember(dst => dst.StateOrganizationId, opt => opt.MapFrom(src => src.StateEducationAgencyReference != null ? src.StateEducationAgencyReference.StateEducationAgencyId : 0));
 
+            CreateMap<EdFiPostSecondaryInstitution, PostSecondaryInstitution>()
+                .ForMember(dst => dst.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dst => dst.PostSecondaryInstitutionId, opt => opt.MapFrom(src => src.PostSecondaryInstitutionId))
+                .ForMember(dst => dst.Name, opt => opt.MapFrom(src => src.NameOfInstitution))
+                .ForMember(dst => dst.EducationOrganizationId, opt => opt.MapFrom(src => src.PostSecondaryInstitutionId ?? 0))
+                .ForMember(dst => dst.StreetNumberName, opt => opt.MapFrom(src => src.Addresses != null && src.Addresses.Any() ? src.Addresses.First().StreetNumberName : null))
+                .ForMember(dst => dst.ApartmentRoomSuiteNumber, opt => opt.MapFrom(src => src.Addresses != null && src.Addresses.Any() ? src.Addresses.First().ApartmentRoomSuiteNumber : null))
+                .ForMember(dst => dst.State, opt => opt.MapFrom(src => src.Addresses != null && src.Addresses.Any() ? src.Addresses.First().StateAbbreviationDescriptor : null))
+                .ForMember(dst => dst.City, opt => opt.MapFrom(src => src.Addresses != null && src.Addresses.Any() ? src.Addresses.First().City : null))
+                .ForMember(dst => dst.ZipCode, opt => opt.MapFrom(src => src.Addresses != null && src.Addresses.Any() ? src.Addresses.First().PostalCode : null))
+                .ForMember(dst => dst.PostSecondaryInstitutionLevel, opt => opt.MapFrom(src => src.PostSecondaryInstitutionLevelDescriptor))
+                .ForMember(dst => dst.AdministrativeFundingControl, opt => opt.MapFrom(src => src.AdministrativeFundingControlDescriptor))
+                .ForMember(dst => dst.EducationOrganizationCategory, opt => opt.Ignore()) //this value is currently stored in web.config
+                .ForMember(dst => dst.StateOrganizationId, opt => opt.MapFrom(src => src.StateEducationAgencyReference != null ? src.StateEducationAgencyReference.StateEducationAgencyId : 0));
+
             CreateMap<School, EdFiSchool>()
                 .ForMember(dst => dst.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dst => dst.SchoolId, opt => opt.MapFrom(src => src.EducationOrganizationId))
@@ -67,7 +82,7 @@ namespace EdFi.Ods.AdminApp.Management.Api.Automapper
                 .ForMember(dst => dst.NameOfInstitution, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dst => dst.LocalEducationAgencyCategoryDescriptor, opt => opt.MapFrom(src => src.LocalEducationAgencyCategoryType))
                 .ForMember(dst => dst.Addresses, opt => opt.MapFrom<LocalEducationAgencyAddressResolver>())
-                .ForMember(dst => dst.StateEducationAgencyReference, opt => opt.MapFrom<StateEducationAgencyReferenceResolver>())
+                .ForMember(dst => dst.StateEducationAgencyReference, opt => opt.MapFrom<LeaStateEducationAgencyReferenceResolver>())
                 .ForMember(dst => dst.Categories, opt => opt.MapFrom<LocalEducationAgencyCategoryResolver>())
                 .ForCtorParam("id", opt => opt.MapFrom(src => src.Id))
                 .ForCtorParam("addresses", opt => opt.MapFrom(AddressResolver))
@@ -82,8 +97,11 @@ namespace EdFi.Ods.AdminApp.Management.Api.Automapper
                 .ForMember(dst => dst.NameOfInstitution, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dst => dst.PostSecondaryInstitutionLevelDescriptor, opt => opt.MapFrom(src => src.PostSecondaryInstitutionLevel))
                 .ForMember(dst => dst.AdministrativeFundingControlDescriptor, opt => opt.MapFrom(src => src.AdministrativeFundingControl))
+                .ForMember(dst => dst.Addresses, opt => opt.MapFrom<PostSecondaryInstitutionAddressResolver>())
                 .ForMember(dst => dst.Categories, opt => opt.MapFrom<PostSecondaryInstitutionCategoryResolver>())
+                .ForMember(dst => dst.StateEducationAgencyReference, opt => opt.MapFrom<PsiStateEducationAgencyReferenceResolver>())
                 .ForCtorParam("id", opt => opt.MapFrom(src => src.Id))
+                .ForCtorParam("addresses", opt => opt.MapFrom(AddressResolver))
                 .ForCtorParam("categories", opt => opt.MapFrom(EducationOrganizationCategoryResolver.Resolve))
                 .ForCtorParam("postSecondaryInstitutionId", opt => opt.MapFrom(src => src.PostSecondaryInstitutionId))
                 .ForCtorParam("postSecondaryInstitutionLevelDescriptor", opt => opt.MapFrom(src => src.PostSecondaryInstitutionLevel))
