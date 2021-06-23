@@ -59,12 +59,14 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure.AutoMapper
             CreateMap<AddLocalEducationAgencyModel, LocalEducationAgency>()
                 .ForMember(dst => dst.Id, opt => opt.Ignore())
                 .ForMember(dst => dst.EducationOrganizationId, opt => opt.MapFrom(src => src.LocalEducationAgencyId))
-                .ForMember(dst => dst.EducationOrganizationCategory, opt => opt.MapFrom(src => EducationOrganizationTypes.Instance.LocalEducationAgency));
+                .ForMember(dst => dst.EducationOrganizationCategory, opt => opt.MapFrom(src => EducationOrganizationTypes.Instance.LocalEducationAgency))
+                .ForMember(dst => dst.PostSecondaryInstitutionId, opt => opt.Ignore());
 
             CreateMap<AddSchoolModel, School>()
                 .ForMember(dst => dst.Id, opt => opt.Ignore())
                 .ForMember(dst => dst.EducationOrganizationId, opt => opt.MapFrom(src => src.SchoolId))
-                .ForMember(dst => dst.EducationOrganizationCategory, opt => opt.MapFrom(src => EducationOrganizationTypes.Instance.SchoolType));
+                .ForMember(dst => dst.EducationOrganizationCategory, opt => opt.MapFrom(src => EducationOrganizationTypes.Instance.SchoolType))
+                .ForMember(dst => dst.PostSecondaryInstitutionId, opt => opt.Ignore());
 
             CreateMap<LocalEducationAgency, EditLocalEducationAgencyModel>()
                 .ForMember(dst => dst.LocalEducationAgencyCategoryTypeOptions, opt => opt.Ignore())
@@ -72,7 +74,8 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure.AutoMapper
 
             CreateMap<EditLocalEducationAgencyModel, LocalEducationAgency>()
                 .ForMember(dst => dst.EducationOrganizationId, opt => opt.MapFrom(src => src.LocalEducationAgencyId))
-                .ForMember(dst => dst.EducationOrganizationCategory, opt => opt.MapFrom(src => EducationOrganizationTypes.Instance.LocalEducationAgency));
+                .ForMember(dst => dst.EducationOrganizationCategory, opt => opt.MapFrom(src => EducationOrganizationTypes.Instance.LocalEducationAgency))
+                .ForMember(dst => dst.PostSecondaryInstitutionId, opt => opt.Ignore()); ;
 
             CreateMap<School, EditSchoolModel>()
                 .ForMember(dst => dst.SchoolId, opt => opt.MapFrom(src => src.EducationOrganizationId))
@@ -81,7 +84,8 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure.AutoMapper
 
             CreateMap<EditSchoolModel, School>()
                 .ForMember(dst => dst.EducationOrganizationId, opt => opt.MapFrom(src => src.SchoolId))
-                .ForMember(dst => dst.EducationOrganizationCategory, opt => opt.MapFrom(src => EducationOrganizationTypes.Instance.SchoolType));
+                .ForMember(dst => dst.EducationOrganizationCategory, opt => opt.MapFrom(src => EducationOrganizationTypes.Instance.SchoolType))
+                .ForMember(dst => dst.PostSecondaryInstitutionId, opt => opt.Ignore());
                 
             CreateMap<Descriptor, DescriptorModel>();
 
