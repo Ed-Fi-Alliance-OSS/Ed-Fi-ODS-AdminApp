@@ -10,6 +10,5 @@ namespace EdFi.Ods.AdminApp.Management.Api.Models
         public string EducationOrganizationCategory { get; set; }
         public string PostSecondaryInstitutionLevel { get; set; }
         public string AdministrativeFundingControl { get; set; }
-        public int? StateOrganizationId { get; set; }
     }
 }

@@ -17,8 +17,7 @@ namespace EdFi.Ods.AdminApp.Management.Api.DomainModels
             int? postSecondaryInstitutionId,
             string postSecondaryInstitutionLevelDescriptor,
             string administrativeFundingControlDescriptor,
-            string nameOfInstitution,
-            EdFiStateEducationAgencyReference stateEducationAgencyReference = null
+            string nameOfInstitution
             )
         {
             var resourceName = GetType().Name;
@@ -29,7 +28,6 @@ namespace EdFi.Ods.AdminApp.Management.Api.DomainModels
             PostSecondaryInstitutionLevelDescriptor = postSecondaryInstitutionLevelDescriptor.IsRequired(nameof(PostSecondaryInstitutionLevelDescriptor), resourceName);
             AdministrativeFundingControlDescriptor = administrativeFundingControlDescriptor.IsRequired(nameof(AdministrativeFundingControlDescriptor), resourceName);
             NameOfInstitution = nameOfInstitution.IsRequired(nameof(NameOfInstitution), resourceName);
-            StateEducationAgencyReference = stateEducationAgencyReference;
         }
 
         public string Id { get; }
@@ -38,7 +36,6 @@ namespace EdFi.Ods.AdminApp.Management.Api.DomainModels
         public List<EdFiEducationOrganizationAddress> Addresses { get; }
         public string PostSecondaryInstitutionLevelDescriptor { get; }
         public string AdministrativeFundingControlDescriptor { get; }
-        public EdFiStateEducationAgencyReference StateEducationAgencyReference { get; set; }
         public List<EdFiEducationOrganizationCategory> Categories { get; }
     }
 }
