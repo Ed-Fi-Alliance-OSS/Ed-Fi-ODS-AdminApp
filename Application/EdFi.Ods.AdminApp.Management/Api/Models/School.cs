@@ -10,6 +10,9 @@ namespace EdFi.Ods.AdminApp.Management.Api.Models
     public class School : EducationOrganization
     {
         public string EducationOrganizationCategory { get; set; }
-        public List<string> GradeLevels { get; set; }  
+        public List<string> GradeLevels { get; set; }
+        public string AccreditationStatus { get; set; }
+        public string FederalLocaleCode { get; set; }
+        public bool? ImprovingSchool { get; set; }
     }
 }

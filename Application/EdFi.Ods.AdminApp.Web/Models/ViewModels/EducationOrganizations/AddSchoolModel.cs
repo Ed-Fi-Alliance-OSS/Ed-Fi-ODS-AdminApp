@@ -30,6 +30,10 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.EducationOrganizations
         public List<SelectOptionModel> GradeLevelOptions { get; set; }
         public List<SelectOptionModel> StateOptions { get; set; }
         public bool RequiredApiDataExist { get; set; }
+
+        public string AccreditationStatus { get; set; }
+        public string FederalLocaleCode { get; set; }
+        public bool? ImprovingSchool { get; set; }
     }
 
     public class AddSchoolModelValidator : AbstractValidator<AddSchoolModel>
