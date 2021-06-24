@@ -22,13 +22,16 @@ namespace EdFi.Ods.AdminApp.Management.Api.Automapper
                 .ForMember(dst => dst.Name, opt => opt.MapFrom(src => src.NameOfInstitution))
                 .ForMember(dst => dst.EducationOrganizationId, opt => opt.MapFrom(src => src.SchoolId))
                 .ForMember(dst => dst.LocalEducationAgencyId, opt => opt.MapFrom(src => src.LocalEducationAgencyReference == null ? null : src.LocalEducationAgencyReference.LocalEducationAgencyId))
-                .ForMember(dst => dst.PostSecondaryInstitutionId, opt => opt.Ignore())
+                .ForMember(dst => dst.PostSecondaryInstitutionId, opt => opt.MapFrom(src => src.Ext.TPDM.PostSecondaryInstitutionReference == null ? null : src.Ext.TPDM.PostSecondaryInstitutionReference.PostSecondaryInstitutionId))
                 .ForMember(dst => dst.StreetNumberName, opt => opt.MapFrom(src => src.Addresses != null && src.Addresses.Any()? src.Addresses.First().StreetNumberName : null))
                 .ForMember(dst => dst.ApartmentRoomSuiteNumber, opt => opt.MapFrom(src => src.Addresses != null && src.Addresses.Any() ? src.Addresses.First().ApartmentRoomSuiteNumber : null))
                 .ForMember(dst => dst.State, opt => opt.MapFrom(src => src.Addresses != null && src.Addresses.Any() ? src.Addresses.First().StateAbbreviationDescriptor : null))
                 .ForMember(dst => dst.City, opt => opt.MapFrom(src => src.Addresses != null && src.Addresses.Any() ? src.Addresses.First().City : null))
                 .ForMember(dst => dst.ZipCode, opt => opt.MapFrom(src => src.Addresses != null && src.Addresses.Any() ? src.Addresses.First().PostalCode : null))
                 .ForMember(dst => dst.GradeLevels, opt => opt.MapFrom(src => src.GradeLevels != null  ? src.GradeLevels.Select(g => g.GradeLevelDescriptor) : new List<string>()))
+                .ForMember(dst => dst.AccreditationStatus, opt => opt.MapFrom(src => src.Ext.TPDM == null ? null : src.Ext.TPDM.AccreditationStatusDescriptor))
+                .ForMember(dst => dst.FederalLocaleCode, opt => opt.MapFrom(src => src.Ext.TPDM == null ? null : src.Ext.TPDM.FederalLocaleCodeDescriptor))
+                .ForMember(dst => dst.ImprovingSchool, opt => opt.MapFrom(src => src.Ext.TPDM == null ? null : src.Ext.TPDM.ImprovingSchool))
                 .ForMember(dst => dst.EducationOrganizationCategory, opt => opt.Ignore()); //this value is currently stored in web.config
 
             CreateMap<EdFiLocalEducationAgency, LocalEducationAgency>()
@@ -71,6 +74,8 @@ namespace EdFi.Ods.AdminApp.Management.Api.Automapper
                 .ForMember(dst => dst.GradeLevels, opt => opt.MapFrom<SchoolGradeLevelResolver>())
                 .ForMember(dst => dst.LocalEducationAgencyReference,
                     opt => opt.MapFrom<LocalEducationAgencyReferenceResolver>())
+                .ForMember(dst => dst.Ext,
+                    opt => opt.MapFrom<SchoolExtensionsResolver>())
                 .ForCtorParam("id", opt => opt.MapFrom(src => src.Id))
                 .ForCtorParam("schoolId", opt => opt.MapFrom(src => src.EducationOrganizationId))
                 .ForCtorParam("nameOfInstitution", opt => opt.MapFrom(src => src.Name))

@@ -54,10 +54,15 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Automapper
             private const string LocalEducationAgencyCategoryDescriptor = "NameSpace#Private";
             private const string LocalEducationAgencyCategoryType = "Public";
             private const int StateEducationAgencyId = 999;
+            private const string AccreditationStatusDescriptor = "TestAccreditationStatus";
+            private const string FederalLocaleCodeDescriptor = "TestFederalLocaleCode";
+            private const bool ImprovingSchool = false;
+            private const int PsiId = 12345;
             private List<EdFiEducationOrganizationAddress> _addresses;
             private List<EdFiSchoolGradeLevel> _gradeLevels;
             private List<EdFiEducationOrganizationCategory> _edOrgCategories;
             private EdFiLocalEducationAgencyReference _leaReference;
+            private SchoolExtensions _schoolExtensions;
             private EdFiStateEducationAgencyReference _stateEducationAgencyReference;
 
             [SetUp]
@@ -77,6 +82,11 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Automapper
                     {new EdFiSchoolGradeLevel(GradeLevelDescriptor)};
                 _edOrgCategories = new List<EdFiEducationOrganizationCategory>();
                 _leaReference = new EdFiLocalEducationAgencyReference(LeaId);
+
+                var postSecondaryInstitutionReference = new EdFiPostSecondaryInstitutionReference(PsiId);
+                var tpdmExtension = new TpdmSchoolExtension(AccreditationStatusDescriptor, FederalLocaleCodeDescriptor, ImprovingSchool, postSecondaryInstitutionReference);
+                _schoolExtensions = new SchoolExtensions(tpdmExtension);
+
                 _stateEducationAgencyReference = new EdFiStateEducationAgencyReference(StateEducationAgencyId);
             }
 
@@ -84,7 +94,7 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Automapper
             public void When_Mapping_EdFiSchool_to_School_Should_Have_Expected_Values_On_Destination()
             {
                 // Arrange
-                var edfiSchool = new EdFiSchool(Id, Name, SchoolId, _addresses, _edOrgCategories, _gradeLevels, _leaReference);
+                var edfiSchool = new EdFiSchool(Id, Name, SchoolId, _addresses, _edOrgCategories, _gradeLevels, _leaReference, _schoolExtensions);
 
                 // Act
                  var result = _mapper.Map<School>(edfiSchool);
@@ -95,6 +105,10 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Automapper
                 result.Name.ShouldBe(Name);
                 result.EducationOrganizationId.ShouldBe(SchoolId);
                 result.LocalEducationAgencyId.ShouldBe(LeaId);
+                result.PostSecondaryInstitutionId.ShouldBe(PsiId);
+                result.AccreditationStatus.ShouldBe(AccreditationStatusDescriptor);
+                result.FederalLocaleCode.ShouldBe(FederalLocaleCodeDescriptor);
+                result.ImprovingSchool.ShouldBe(ImprovingSchool);
                 result.StreetNumberName.ShouldBe(StreetNumberName);
                 result.ApartmentRoomSuiteNumber.ShouldBe(ApartmentRoomSuiteNumber);
                 result.State.ShouldBe(StateAbbreviationDescriptor);
@@ -146,6 +160,10 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Automapper
                     ZipCode = PostalCode,
                     GradeLevels = new List<string> { GradeLevelDescriptor},
                     LocalEducationAgencyId = LeaId,
+                    PostSecondaryInstitutionId = PsiId,
+                    AccreditationStatus = AccreditationStatusDescriptor,
+                    FederalLocaleCode = FederalLocaleCodeDescriptor,
+                    ImprovingSchool = ImprovingSchool,
                     EducationOrganizationCategory = LocalEducationAgencyCategoryType
                 };
 
@@ -168,6 +186,10 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Automapper
                 result.GradeLevels.Count.ShouldBe(1);
                 result.GradeLevels.First().GradeLevelDescriptor.ShouldBe(GradeLevelDescriptor);
                 result.LocalEducationAgencyReference.LocalEducationAgencyId.ShouldBe(LeaId);
+                result.Ext.TPDM.AccreditationStatusDescriptor.ShouldBe(AccreditationStatusDescriptor);
+                result.Ext.TPDM.FederalLocaleCodeDescriptor.ShouldBe(FederalLocaleCodeDescriptor);
+                result.Ext.TPDM.ImprovingSchool.ShouldBe(ImprovingSchool);
+                result.Ext.TPDM.PostSecondaryInstitutionReference.PostSecondaryInstitutionId.ShouldBe(PsiId);
             }
 
             [Test]
