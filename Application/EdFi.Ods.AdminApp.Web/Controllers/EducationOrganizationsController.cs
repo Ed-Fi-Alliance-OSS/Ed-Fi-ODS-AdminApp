@@ -153,7 +153,9 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                 {
                     GradeLevelOptions = api.GetAllGradeLevels(),
                     StateOptions = api.GetAllStateAbbreviations(),
-                    RequiredApiDataExist = requiredApiDataExist
+                    RequiredApiDataExist = requiredApiDataExist,
+                    AccreditationStatusOptions = api.GetAccreditationStatusOptions(),
+                    FederalLocaleCodeOptions = api.GetFederalLocaleCodes()
                 },
                 AddLocalEducationAgencyModel = new AddLocalEducationAgencyModel
                 {
