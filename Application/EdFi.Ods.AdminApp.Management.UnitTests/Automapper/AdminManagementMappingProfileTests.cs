@@ -119,6 +119,34 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Automapper
             }
 
             [Test]
+            public void When_Mapping_EdFiSchool_to_School_With_No_Extensions()
+            {
+                // Arrange
+                var edfiSchool = new EdFiSchool(Id, Name, SchoolId, _addresses, _edOrgCategories, _gradeLevels, _leaReference);
+
+                // Act
+                var result = _mapper.Map<School>(edfiSchool);
+
+                // Assert
+                result.ShouldNotBeNull();
+                result.Id.ShouldBe(Id);
+                result.Name.ShouldBe(Name);
+                result.EducationOrganizationId.ShouldBe(SchoolId);
+                result.LocalEducationAgencyId.ShouldBe(LeaId);
+                result.PostSecondaryInstitutionId.ShouldBeNull();
+                result.AccreditationStatus.ShouldBeNull();
+                result.FederalLocaleCode.ShouldBeNull();
+                result.ImprovingSchool.ShouldBeNull();
+                result.StreetNumberName.ShouldBe(StreetNumberName);
+                result.ApartmentRoomSuiteNumber.ShouldBe(ApartmentRoomSuiteNumber);
+                result.State.ShouldBe(StateAbbreviationDescriptor);
+                result.City.ShouldBe(City);
+                result.ZipCode.ShouldBe(PostalCode);
+                result.GradeLevels.Count.ShouldBeGreaterThan(0);
+                result.GradeLevels.First().ShouldBe(GradeLevelDescriptor);
+            }
+
+            [Test]
             public void When_Mapping_EdFiLocalEducationAgency_to_LocalEducationAgency_Should_Have_Expected_Values_On_Destination()
             {
                 // Arrange
@@ -190,6 +218,50 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Automapper
                 result.Ext.TPDM.FederalLocaleCodeDescriptor.ShouldBe(FederalLocaleCodeDescriptor);
                 result.Ext.TPDM.ImprovingSchool.ShouldBe(ImprovingSchool);
                 result.Ext.TPDM.PostSecondaryInstitutionReference.PostSecondaryInstitutionId.ShouldBe(PsiId);
+            }
+
+            [Test]
+            public void When_Mapping_School_to_EdFiSchool__With_No_Extensions()
+            {
+                // Arrange
+                var school = new School
+                {
+                    Id = Id,
+                    EducationOrganizationId = SchoolId,
+                    Name = Name,
+                    State = State,
+                    ApartmentRoomSuiteNumber = ApartmentRoomSuiteNumber,
+                    StreetNumberName = StreetNumberName,
+                    City = City,
+                    ZipCode = PostalCode,
+                    GradeLevels = new List<string> { GradeLevelDescriptor },
+                    LocalEducationAgencyId = LeaId,
+                    EducationOrganizationCategory = LocalEducationAgencyCategoryType
+                };
+
+                // Act
+                var result = _mapper.Map<EdFiSchool>(school);
+
+                // Assert
+                result.ShouldNotBeNull();
+                result.Id.ShouldBe(Id);
+                result.SchoolId.ShouldBe(SchoolId);
+                result.NameOfInstitution.ShouldBe(Name);
+                result.Addresses.Count.ShouldBe(1);
+                result.Addresses.First().StreetNumberName.ShouldBe(StreetNumberName);
+                result.Addresses.First().ApartmentRoomSuiteNumber.ShouldBe(ApartmentRoomSuiteNumber);
+                result.Addresses.First().City.ShouldBe(City);
+                result.Addresses.First().StateAbbreviationDescriptor.ShouldContain(State);
+                result.Addresses.First().PostalCode.ShouldBe(PostalCode);
+                result.EducationOrganizationCategories.Count.ShouldBe(1);
+                result.EducationOrganizationCategories.First().EducationOrganizationCategoryDescriptor.ShouldContain(LocalEducationAgencyCategoryType);
+                result.GradeLevels.Count.ShouldBe(1);
+                result.GradeLevels.First().GradeLevelDescriptor.ShouldBe(GradeLevelDescriptor);
+                result.LocalEducationAgencyReference.LocalEducationAgencyId.ShouldBe(LeaId);
+                result.Ext.TPDM.AccreditationStatusDescriptor.ShouldBeNull();
+                result.Ext.TPDM.FederalLocaleCodeDescriptor.ShouldBeNull();
+                result.Ext.TPDM.ImprovingSchool.ShouldBeNull();
+                result.Ext.TPDM.PostSecondaryInstitutionReference.ShouldBeNull();
             }
 
             [Test]
