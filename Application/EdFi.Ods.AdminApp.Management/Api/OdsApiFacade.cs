@@ -53,6 +53,20 @@ namespace EdFi.Ods.AdminApp.Management.Api
                 .ToList();
         }
 
+        public List<SelectOptionModel> GetAccreditationStatusOptions()
+        {
+            var response = _restClient.GetAll<DomainModels.EdFiDescriptor>(ResourcePaths.AccreditationStatusDescriptors);
+            return response.Select(x => BuildDescriptorSelectOptionModel(x.Namespace, x.CodeValue, x.Description))
+                .ToList();
+        }
+
+        public List<SelectOptionModel> GetFederalLocaleCodes()
+        {
+            var response = _restClient.GetAll<DomainModels.EdFiDescriptor>(ResourcePaths.FederalLocaleCodeDescriptors);
+            return response.Select(x => BuildDescriptorSelectOptionModel(x.Namespace, x.CodeValue, x.Description))
+                .ToList();
+        }
+
         public List<Models.LocalEducationAgency> GetAllLocalEducationAgencies()
         {
             var response = _restClient.GetAll<LocalEducationAgency>(ResourcePaths.LocalEducationAgencies);

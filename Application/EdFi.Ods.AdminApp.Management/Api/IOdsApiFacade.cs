@@ -30,6 +30,8 @@ namespace EdFi.Ods.AdminApp.Management.Api
         List<SelectOptionModel> GetAllStateAbbreviations();
         List<SelectOptionModel> GetPostSecondaryInstitutionLevels();
         List<SelectOptionModel> GetAdministrativeFundingControls();
+        List<SelectOptionModel> GetAccreditationStatusOptions();
+        List<SelectOptionModel> GetFederalLocaleCodes();
         List<PostSecondaryInstitution> GetAllPostSecondaryInstitutions();
         List<PostSecondaryInstitution> GetPostSecondaryInstitutionsByPage(int offset = 0, int limit = 50);
         OdsApiResult AddPostSecondaryInstitution(Models.PostSecondaryInstitution newPostSecondaryInstitution);
