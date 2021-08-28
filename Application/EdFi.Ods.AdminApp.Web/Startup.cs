@@ -23,6 +23,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using FluentValidation.AspNetCore;
 using Hangfire;
+using Hangfire.PostgreSql;
+using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
@@ -126,12 +128,46 @@ namespace EdFi.Ods.AdminApp.Web
                 new AzureInstaller().Install(services, appSettings);
 
 
-            services.AddHangfire(configuration => configuration
-                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-                .UseSimpleAssemblyNameTypeSerializer()
-                .UseRecommendedSerializerSettings());
-            HangFireInstance.EnableWithoutSchemaMigration();
-            services.AddHangfireServer();
+            services.AddHangfire(configuration =>
+                {
+                    configuration
+                        .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                        .UseSimpleAssemblyNameTypeSerializer()
+                        .UseRecommendedSerializerSettings();
+
+                    var connectionString = Configuration.GetConnectionString("Admin");
+
+                    if (databaseEngine.Equals("SqlServer", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        configuration.UseSqlServerStorage(
+                            connectionString,
+                            new SqlServerStorageOptions
+                            {
+                                CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                                SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                                QueuePollInterval = TimeSpan.FromMinutes(20),
+                                UseRecommendedIsolationLevel = true,
+                                DisableGlobalLocks = true,
+                                SchemaName = "adminapp_hangfire"
+                            });
+                    }
+                    else
+                    {
+                        configuration.UsePostgreSqlStorage(
+                            connectionString,
+                            new PostgreSqlStorageOptions
+                            {
+                                DistributedLockTimeout = TimeSpan.FromMinutes(5),
+                                InvisibilityTimeout = TimeSpan.FromMinutes(5),
+                                QueuePollInterval = TimeSpan.FromMinutes(20),
+                                PrepareSchemaIfNecessary = false,
+                                SchemaName = "adminapp_hangfire"
+                            });
+                    }
+                }
+            );
+
+            services.AddHangfireServer(options => options.WorkerCount = 2);
 
             CommonConfigurationInstaller.ConfigureLearningStandards(services);
         }
