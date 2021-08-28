@@ -40,16 +40,23 @@ namespace EdFi.Ods.AdminApp.Management.Instances
                 Name = instanceName,
                 Description = instance.Description
             };
-            await _odsInstanceFirstTimeSetupService.CompleteSetup(newInstance, cloudOdsClaimSet, mode);
+
+            var odsInstance = new OdsInstanceRegistration
+            {
+                Name = instance.NumericSuffix.Value.ToString(),
+                Description = instance.Description
+            };
+
+            await _odsInstanceFirstTimeSetupService.CompleteSetup(odsInstance, cloudOdsClaimSet, mode);
 
             _identity.UserOdsInstanceRegistrations.Add(
                 new UserOdsInstanceRegistration
                 {
-                    OdsInstanceRegistrationId = newInstance.Id,
+                    OdsInstanceRegistrationId = odsInstance.Id,
                     UserId = userId
                 });
 
-            _identity.SaveChanges();
+            await _identity.SaveChangesAsync();
 
             if (mode == ApiMode.YearSpecific)
                 _setCurrentSchoolYear.Execute(instanceName, mode, (short)instance.NumericSuffix.Value);
