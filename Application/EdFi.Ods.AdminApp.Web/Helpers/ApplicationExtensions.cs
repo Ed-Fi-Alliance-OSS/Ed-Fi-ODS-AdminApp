@@ -15,6 +15,6 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
             return application != null && application.Vendor.IsSystemReservedVendor();
         }
 
-        public static int MaximumApplicationNameLength = 50;
+        public static int MaximumApplicationNameLength = 1024;
     }
 }

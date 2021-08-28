@@ -9,6 +9,7 @@ using System.Linq;
 using EdFi.Admin.DataAccess.Contexts;
 using EdFi.Admin.DataAccess.Models;
 using EdFi.Ods.AdminApp.Management.Database.Commands;
+using EdFi.Ods.AdminApp.Web.Helpers;
 using EdFi.Ods.AdminApp.Web.Models.ViewModels.Application;
 using NUnit.Framework;
 using Shouldly;
@@ -71,7 +72,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
 
             Save(vendor, user);
 
-            var applicationName = Sample("Test Application", 51);
+            var applicationName = Sample("Test Application", ApplicationExtensions.MaximumApplicationNameLength);
 
             var newApplication = new AddApplicationModel
             {
@@ -141,7 +142,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
                 apiClient.Secret.ShouldBe(result.Secret);
             });
         }
-        
+
         [Test]
         public void ShouldExecute()
         {
