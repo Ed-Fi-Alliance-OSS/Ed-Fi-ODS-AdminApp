@@ -163,6 +163,14 @@ function Invoke-Upgrade-Nonsense{
     Update-EdFiOdsAdminApp -PackageVersion "asfjaslkdja"
 }
 
+function Invoke-Upgrade-Prerelease{
+
+    Invoke-InstallApplication '2.3.0.41'
+
+    # Upgrade to newer 'pre' build (should succeed)
+    Update-EdFiOdsAdminApp -PackageVersion "2.3.0-pre0043"
+}
+
 function Invoke-InstallMultiInstanceSqlServer {
 
     $dbConnectionInfo = @{
