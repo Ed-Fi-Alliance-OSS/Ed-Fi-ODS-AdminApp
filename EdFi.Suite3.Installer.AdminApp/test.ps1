@@ -261,6 +261,7 @@ try {
         "Upgrade-SameVersion" { Invoke-Upgrade-SameVersion }
         "Upgrade-OldVersion" { Invoke-Upgrade-OldVersion }
         "Upgrade-Nonsense" { Invoke-Upgrade-Nonsense }
+        "Upgrade-Prerelease" { Invoke-Upgrade-Prerelease }
         "Uninstall" { Invoke-Uninstall }
         default {
             Write-Host "Valid test scenarios are: "
@@ -279,6 +280,7 @@ try {
             Write-Host "    Upgrade-SameVersion"
             Write-Host "    Upgrade-OldVersion"
             Write-Host "    Upgrade-Nonsense"
+            Write-Host "    Upgrade-Prerelease"
         }
     }
 }
