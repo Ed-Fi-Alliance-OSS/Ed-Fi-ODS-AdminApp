@@ -734,14 +734,14 @@ function CheckForCompatibleUpdate($webSitePath,  $existingAdminApp, $targetVersi
 }
 
 function IsVersionHigherThanOther($versionString, $otherVersionString) {
-    $version = ParseVersionWithoutTag($versionString)
-    $otherVersion = ParseVersionWithoutTag($otherVersionString)
+    $version = ParseVersion($versionString)
+    $otherVersion = ParseVersion($otherVersionString)
 
     $result = $version.CompareTo($otherVersion)
     return $result -gt 0
 }
 
-function ParseVersionWithoutTag($versionString) {
+function ParseVersion($versionString) {
     $splitByTags = $versionString -split '-'
     $version = $splitByTags[0];
 
