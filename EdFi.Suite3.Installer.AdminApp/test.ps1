@@ -165,10 +165,10 @@ function Invoke-Upgrade-Nonsense{
 
 function Invoke-Upgrade-Prerelease{
 
-    Invoke-InstallApplication '2.3.0.41'
+    Invoke-InstallApplication '2.3.0-pre0003'
 
     # Upgrade to newer 'pre' build (should succeed)
-    Update-EdFiOdsAdminApp -PackageVersion "2.3.0-pre0043"
+    Update-EdFiOdsAdminApp -PackageVersion "2.3.0-pre0005"
 }
 
 function Invoke-InstallMultiInstanceSqlServer {
