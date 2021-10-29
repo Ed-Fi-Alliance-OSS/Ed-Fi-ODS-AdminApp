@@ -743,8 +743,17 @@ function IsVersionHigherThanOther($versionString, $otherVersionString) {
 
 function ParseVersionWithoutTag($versionString) {
     $splitByTags = $versionString -split '-'
+    $version = $splitByTags[0];
 
-    try { return [System.Version]::Parse($splitByTags[0]) }
+    for ($i = 1; $i -lt $splitByTags.Length; $i++) {
+        $preVersion = $splitByTags[$i] -replace '[^0-9.]', ''
+        $cleanedPreVersion = $preVersion.Trim('.')
+        if($cleanedPreVersion -ne '') {
+            $version += ".$cleanedPreVersion"
+        }
+    }
+
+    try { return [System.Version]::Parse($version) }
     catch
     {
         Write-Warning "Failed to parse version configuration $versionString. Please correct and try again."
