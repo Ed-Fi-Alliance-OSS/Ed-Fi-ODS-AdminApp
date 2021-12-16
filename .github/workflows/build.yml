@@ -8,6 +8,7 @@ on:
 
 env:
   BUILD_VERSION: ${{ secrets.SEMANTIC_VERSION }}
+  GA_MEASUREMENT_ID: ${{ secrets.GOOGLE_ANALYTICS_MEASUREMENT_ID}}
 
 jobs:
   build:
@@ -26,6 +27,10 @@ jobs:
     - name: Build
       run: |
         ./build.ps1 -Command Build -Configuration Release -Version ${{ env.BUILD_VERSION }} -BuildCounter ${{ github.run_number }}
+      shell: pwsh
+    - name: Populate Google Analytics ID
+      run: |
+        .\build.ps1 -Command PopulateGoogleAnalyticsAppSettings -GoogleAnalyticsMeasurementId ${{env.GA_MEASUREMENT_ID}}
       shell: pwsh
     - name: Unit Tests
       run: |
