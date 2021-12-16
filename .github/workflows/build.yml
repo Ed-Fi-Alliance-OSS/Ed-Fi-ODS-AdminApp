@@ -24,3 +24,11 @@ jobs:
       run: |
         ./build.ps1 -Command Build -Configuration Release
       shell: pwsh
+    - name: Unit Tests
+      run: |
+        ./build.ps1 -Command UnitTest -Configuration Release
+      shell: pwsh
+    - name: Integration Tests
+      run: |
+        ./build.ps1 -Command IntegrationTest -Configuration Release
+      shell: pwsh
