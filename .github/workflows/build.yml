@@ -17,12 +17,7 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.x
-    - name: Restore dependencies
-      run: dotnet restore
-      working-directory: ./Application
     - name: Build
-      run: dotnet build --no-restore -c Release
-      working-directory: ./Application
-    - name: Test
-      run: dotnet test --no-build --verbosity normal -c Release --filter FullyQualifiedName~UnitTests
-      working-directory: ./Application
+      run: |
+        ./build.ps1 -Command Build -Configuration Release
+      shell: pwsh
