@@ -21,8 +21,8 @@ jobs:
       run: dotnet restore
       working-directory: ./Application
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore -c Release
       working-directory: ./Application
     - name: Test
-      run: dotnet test --no-build --verbosity normal --filter FullyQualifiedName~UnitTests
+      run: dotnet test --no-build --verbosity normal -c Release --filter FullyQualifiedName~UnitTests
       working-directory: ./Application
