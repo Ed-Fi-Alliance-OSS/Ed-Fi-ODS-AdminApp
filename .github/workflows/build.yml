@@ -23,3 +23,6 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
       working-directory: ./Application
+    - name: Test
+      run: dotnet test --no-build --verbosity normal --filter FullyQualifiedName~UnitTests
+      working-directory: ./Application
