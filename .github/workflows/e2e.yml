@@ -1,0 +1,19 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Get ODS Docker
+      uses: actions/checkout@v2
+      with:
+        repository: Ed-Fi-Alliance-OSS/Ed-Fi-ODS-Docker
