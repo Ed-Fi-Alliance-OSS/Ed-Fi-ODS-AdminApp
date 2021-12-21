@@ -4,7 +4,6 @@ on:
   push:
     branches: [ main ]
   pull_request:
-    branches: [ main ]
 
 jobs:
   build:
@@ -22,7 +21,8 @@ jobs:
         path: ods-docker
     - name: Run ODS
       run: |
-        docker-compose -f ./ods-docker/Compose/mssql/compose-shared-instance-env-build.yml --env-file ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/setup/.automation.env up -d
+        docker-compose -f ./ods-docker/Compose/pgsql/compose-shared-instance-env-build.yml --env-file ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/setup/.automation.env up -d
     - name: Verify ODS Health
       run: |
-        wget https://localhost/api
+        while [ "`docker inspect -f {{.State.Health.Status}} ed-fi-ods-adminapp`" != "healthy" ]; do     sleep 2; done
+        curl https://localhost/api
