@@ -1,3 +1,8 @@
+# SPDX-License-Identifier: Apache-2.0
+# Licensed to the Ed-Fi Alliance under one or more agreements.
+# The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+# See the LICENSE and NOTICES files in the project root for more information.
+
 name: Build and Test
 
 on:
@@ -15,23 +20,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0
     - name: Setup .NET
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@499789684c9a0d41c9b3f0d66a785ba17b1d51ab # v1.9.0
       with:
         dotnet-version: 3.1.x
     - name: Restore dependencies
       run: dotnet restore
       working-directory: ./Application
     - name: Build
-      run: |
-        ./build.ps1 -Command Build -Configuration Release -Version ${{ env.BUILD_VERSION }} -BuildCounter ${{ github.run_number }}
+      run: ./build.ps1 -Command Build -Configuration Release -Version ${{ env.BUILD_VERSION }} -BuildCounter ${{ github.run_number }}
       shell: pwsh
     - name: Populate Google Analytics ID
-      run: |
-        .\build.ps1 -Command PopulateGoogleAnalyticsAppSettings -GoogleAnalyticsMeasurementId ${{env.GA_MEASUREMENT_ID}}
+      run: .\build.ps1 -Command PopulateGoogleAnalyticsAppSettings -GoogleAnalyticsMeasurementId ${{env.GA_MEASUREMENT_ID}}
       shell: pwsh
     - name: Unit Tests
-      run: |
-        ./build.ps1 -Command UnitTest -Configuration Release
+      run: ./build.ps1 -Command UnitTest -Configuration Release
       shell: pwsh
