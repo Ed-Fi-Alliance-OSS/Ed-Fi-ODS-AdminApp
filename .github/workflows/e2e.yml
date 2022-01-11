@@ -33,3 +33,8 @@ jobs:
       run: |
         chmod +x ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/ct-setup/inspect.sh
         ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/ct-setup/inspect.sh
+    - name: Clean ODS
+      if: ${{ always() }}
+      run: ./shared-instance-env-clean.ps1
+      shell: pwsh
+      working-directory: ods-docker
