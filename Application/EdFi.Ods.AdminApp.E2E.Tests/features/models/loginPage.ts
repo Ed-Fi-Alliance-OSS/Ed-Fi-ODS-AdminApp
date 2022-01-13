@@ -1,4 +1,3 @@
-import {takeScreenshot} from "../management/functions";
 import { AdminAppPage } from "./adminAppPage";
 
 export class LoginPage extends AdminAppPage {
@@ -23,7 +22,7 @@ export class LoginPage extends AdminAppPage {
     }
 
     async fillPasswordConfirm(password?: string) {
-        if(password) {
+        if (password) {
             await this.page.fill(this.passwordConfirmInput, password);
         }
     }
@@ -43,10 +42,7 @@ export class LoginPage extends AdminAppPage {
     }
 
     async startRegistration(): Promise<void> {
-        await Promise.all([
-            this.clickOnRegisterFromLogin(),
-            this.page.waitForNavigation()
-        ]);
+        await Promise.all([this.clickOnRegisterFromLogin(), this.page.waitForNavigation()]);
     }
 
     async register() {
