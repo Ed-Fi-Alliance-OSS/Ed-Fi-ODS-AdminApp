@@ -12,6 +12,10 @@ export class LoginPage extends AdminAppPage {
         return `${this.url}/Identity/Login`;
     }
 
+    needsFirstTimeSetup(): boolean {
+        return this.page.url().includes("FirstTimeSetup");
+    }
+
     async fillForm(username?: string, password?: string): Promise<void> {
         if (username && password) {
             await this.page.fill(this.emailInput, username);

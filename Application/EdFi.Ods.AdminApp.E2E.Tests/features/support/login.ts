@@ -4,8 +4,14 @@ import { takeScreenshot } from "../management/functions";
 import { models } from "../management/setup";
 import { validatePath } from "../management/validators";
 
+Given("there's a user registered", async () => {
+    if (models.loginPage.needsFirstTimeSetup() && (await models.loginPage.hasRegisterButton())) {
+        throw "There's no user registered";
+    }
+});
+
 Given("register button is present", async () => {
-    ok(models.loginPage.hasRegisterButton());
+    ok(await models.loginPage.hasRegisterButton());
 });
 
 When("clicking on register as a new user", async () => {
@@ -29,9 +35,15 @@ When("clicks Register", async () => {
 });
 
 Then("login is successful", async () => {
-    validatePath(models.homePage.path(), true);
-    ok(await models.homePage.hasGlobalOption());
-    ok(await models.homePage.hasSettingsOption());
+    if (models.homePage.isOnPage()) {
+        ok(await models.homePage.hasGlobalOption());
+        ok(await models.homePage.hasSettingsOption());
+    } else if (models.firstTimeSetupPage.isOnPage()) {
+        ok(await models.firstTimeSetupPage.hasTitle());
+    } else {
+        throw "Login failed";
+    }
+
     await takeScreenshot("login successful");
 });
 
