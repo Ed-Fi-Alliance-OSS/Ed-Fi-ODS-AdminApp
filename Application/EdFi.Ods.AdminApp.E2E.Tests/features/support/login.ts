@@ -8,7 +8,7 @@ Given("register button is present", async () => {
     ok(models.loginPage.hasRegisterButton());
 });
 
-When("clicking on register as a new user", async() => {
+When("clicking on register as a new user", async () => {
     await models.loginPage.startRegistration();
 });
 
