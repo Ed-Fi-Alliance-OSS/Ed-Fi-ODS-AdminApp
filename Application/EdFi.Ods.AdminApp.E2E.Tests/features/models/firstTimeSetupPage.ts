@@ -6,7 +6,6 @@ export class FirstTimeSetupPage extends AdminAppPage {
     }
 
     hasTitle() {
-        return this.hasText('Additional Setup Required');
+        return this.hasText("Additional Setup Required");
     }
-
 }
