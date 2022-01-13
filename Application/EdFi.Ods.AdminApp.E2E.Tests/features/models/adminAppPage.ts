@@ -22,9 +22,13 @@ export abstract class AdminAppPage {
     abstract path(): string;
 
     async navigate(): Promise<void> {
-        if (this.page.url() !== this.path()) {
+        if (!this.isOnPage()) {
             await this.page.goto(this.path());
         }
+    }
+
+    isOnPage(): boolean {
+        return this.page.url() === this.path();
     }
 
     async waitForResponse(url: string, status = 200): Promise<void> {
