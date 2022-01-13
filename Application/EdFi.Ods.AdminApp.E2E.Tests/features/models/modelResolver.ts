@@ -2,6 +2,7 @@ import { Page } from "playwright";
 import { AdminAppPage } from "./adminAppPage";
 import { LoginPage } from "./loginPage";
 import { HomePage } from "./homePage";
+import { FirstTimeSetupPage } from "./firstTimeSetupPage";
 
 export class ModelResolver {
     aaPages: Array<AdminAppPage> = [];
@@ -19,6 +20,15 @@ export class ModelResolver {
         let model = this.getModel<HomePage>(HomePage.name);
         if (!model) {
             model = new HomePage(this.page);
+            this.aaPages.push(model);
+        }
+        return model;
+    }
+
+    public get firstTimeSetupPage(): FirstTimeSetupPage {
+        let model = this.getModel<FirstTimeSetupPage>(FirstTimeSetupPage.name);
+        if (!model) {
+            model = new FirstTimeSetupPage(this.page);
             this.aaPages.push(model);
         }
         return model;
