@@ -31,7 +31,7 @@ export abstract class AdminAppPage {
         }
     }
 
-    async waitForResponse(url: string, status = 200): Promise<void> {
+    async waitForResponse({ url, status = 200 }: { url: string; status?: number }): Promise<void> {
         await this.page.waitForResponse(
             (response) => response.url().includes(url) && response.status() === status
         );
@@ -41,7 +41,13 @@ export abstract class AdminAppPage {
         return this.page.textContent(text);
     }
 
-    protected async hasText(text: string, selector = "div"): Promise<boolean> {
+    protected async hasText({
+        text,
+        selector = "div",
+    }: {
+        text: string;
+        selector?: string;
+    }): Promise<boolean> {
         return await this.elementExists(`div.container ${selector}:has-text("${text}")`);
     }
 

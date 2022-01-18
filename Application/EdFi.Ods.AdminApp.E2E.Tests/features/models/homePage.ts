@@ -6,10 +6,10 @@ export class HomePage extends AdminAppPage {
     }
 
     async hasSettingsOption(): Promise<boolean> {
-        return await this.hasText("Settings");
+        return await this.hasText({ text: "Settings" });
     }
 
     async hasGlobalOption(): Promise<boolean> {
-        return await this.hasText("Global");
+        return await this.hasText({ text: "Global" });
     }
 }
