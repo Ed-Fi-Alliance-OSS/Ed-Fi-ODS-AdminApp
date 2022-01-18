@@ -42,7 +42,6 @@ export class LoginPage extends AdminAppPage {
     }
 
     async fullRegistration(email?: string, password?: string) {
-        await this.navigate();
         await this.startRegistration();
         await this.fillForm(email, password);
         await this.fillPasswordConfirm(password);
@@ -50,7 +49,7 @@ export class LoginPage extends AdminAppPage {
     }
 
     async hasRegisterButton(): Promise<boolean> {
-        return await this.hasText("Register as a new user");
+        return await this.hasText("Register as a new user", "a.btn");
     }
 
     async startRegistration(): Promise<void> {
