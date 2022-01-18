@@ -8,7 +8,7 @@ Given("there is/are {word} user(s) registered", async (qty: string) => {
     if (qty === "one") {
         ok(!(await models.loginPage.hasRegisterButton()), "There are no users registered");
     } else {
-        ok(await models.loginPage.hasRegisterButton(), "There is a user registered");
+        ok(await models.loginPage.hasRegisterButton(), "There is a user already registered");
     }
 });
 

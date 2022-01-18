@@ -41,6 +41,14 @@ export class LoginPage extends AdminAppPage {
         await this.login();
     }
 
+    async fullRegistration(email?: string, password?: string) {
+        await this.navigate();
+        await this.startRegistration();
+        await this.fillForm(email, password);
+        await this.fillPasswordConfirm(password);
+        await this.register();
+    }
+
     async hasRegisterButton(): Promise<boolean> {
         return await this.hasText("Register as a new user");
     }
