@@ -8,11 +8,15 @@ export abstract class AdminAppPage {
     loadingSelector = ".footable-loader";
     validationErrors = "div#validationSummary:not(.hidden)";
 
-    get url(): string {
+    protected get url(): string {
         if (!process.env.URL) {
             throw "URL not found. Verify that URL is set in .env file";
         }
         return process.env.URL;
+    }
+
+    get isOnPage(): boolean {
+        return this.page.url() === this.path();
     }
 
     constructor(page: Page) {
@@ -22,13 +26,9 @@ export abstract class AdminAppPage {
     abstract path(): string;
 
     async navigate(): Promise<void> {
-        if (!this.isOnPage()) {
-            await this.page.goto(this.path());
+        if (!this.isOnPage) {
+            await this.page.goto(this.path(), { waitUntil: "networkidle" });
         }
-    }
-
-    isOnPage(): boolean {
-        return this.page.url() === this.path();
     }
 
     async waitForResponse(url: string, status = 200): Promise<void> {
