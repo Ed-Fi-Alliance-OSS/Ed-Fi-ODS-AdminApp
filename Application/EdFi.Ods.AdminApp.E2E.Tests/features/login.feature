@@ -4,7 +4,7 @@ Feature: Log in
   @Sanity
   Scenario: Register successfully
     Given it's on the "Log in" page
-    And register button is present
+    And there are no users registered
     When clicking on register as a new user
     And user enters valid email and password
     And password confirmation
@@ -15,7 +15,7 @@ Feature: Log in
   @Sanity
   Scenario: Log in successful
     Given it's on the "Log in" page
-    And there's a user registered
+    And there is one user registered
     When user enters valid email and password
     And clicks Log in
     Then login is successful

@@ -4,14 +4,12 @@ import { takeScreenshot } from "../management/functions";
 import { models } from "../management/setup";
 import { validatePath } from "../management/validators";
 
-Given("there's a user registered", async () => {
-    if (models.loginPage.needsFirstTimeSetup() && (await models.loginPage.hasRegisterButton())) {
-        throw "There's no user registered";
+Given("there is/are {word} user(s) registered", async (qty: string) => {
+    if (qty === "one") {
+        ok(!(await models.loginPage.hasRegisterButton()), "There are no users registered");
+    } else {
+        ok(await models.loginPage.hasRegisterButton(), "There is a user registered");
     }
-});
-
-Given("register button is present", async () => {
-    ok(await models.loginPage.hasRegisterButton());
 });
 
 When("clicking on register as a new user", async () => {
