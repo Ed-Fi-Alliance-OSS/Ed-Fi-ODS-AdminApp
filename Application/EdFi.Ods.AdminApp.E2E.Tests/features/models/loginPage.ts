@@ -49,7 +49,7 @@ export class LoginPage extends AdminAppPage {
     }
 
     async hasRegisterButton(): Promise<boolean> {
-        return await this.hasText("Register as a new user", "a.btn");
+        return await this.hasText({ text: "Register as a new user", selector: "a.btn" });
     }
 
     async startRegistration(): Promise<void> {
