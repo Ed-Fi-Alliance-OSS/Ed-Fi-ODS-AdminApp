@@ -37,6 +37,32 @@ When("clicks Register", async () => {
     await models.loginPage.register();
 });
 
+When("user enters {string} for Log in", async (scenario: string) => {
+    switch (scenario) {
+        case "email only":
+            await models.loginPage.fillEmail(process.env.email);
+            break;
+        case "wrong email":
+            await models.loginPage.fillEmail("not-an-email");
+            await models.loginPage.fillPassword(process.env.password);
+            break;
+        case "email not registered":
+            await models.loginPage.fillEmail("wrong-email@test-ed-fi.org");
+            await models.loginPage.fillPassword(process.env.password);
+            break;
+        case "password only":
+            await models.loginPage.fillPassword(process.env.password);
+            break;
+        case "wrong password":
+            await models.loginPage.fillEmail(process.env.email);
+            await models.loginPage.fillPassword(process.env.password + "x");
+            break;
+        case "no data":
+        default:
+            break;
+    }
+});
+
 Then("login is successful", async () => {
     if (models.homePage.isOnPage) {
         ok(await models.homePage.hasGlobalOption());
@@ -54,4 +80,53 @@ Then("registration is successful", async () => {
     validatePath(models.firstTimeSetupPage.path(), true);
     ok(await models.firstTimeSetupPage.hasTitle());
     await takeScreenshot("registration successful");
+});
+
+Then("validation errors for Log in scenario: {string} appears", async (scenario: string) => {
+    const errors = await models.loginPage.getErrorMessages();
+
+    switch (scenario) {
+        case "email only":
+            ok(
+                errors?.includes(models.loginPage.errorMessages.missingPassword),
+                `Password error message failed. Actual message: ${errors}`
+            );
+            break;
+        case "wrong email":
+            ok(
+                errors?.includes(models.loginPage.errorMessages.wrongEmail),
+                `Email error message failed. Actual message: ${errors}`
+            );
+            break;
+        case "email not registered":
+            ok(
+                errors?.includes(models.loginPage.errorMessages.invalidLogin),
+                `Email error message failed. Actual message: ${errors}`
+            );
+            break;
+        case "password only":
+            ok(
+                errors?.includes(models.loginPage.errorMessages.missingEmail),
+                `Email error message failed. Actual message: ${errors}`
+            );
+            break;
+        case "wrong password":
+            ok(
+                errors?.includes(models.loginPage.errorMessages.invalidLogin),
+                `Password error message failed. Actual message: ${errors}`
+            );
+            break;
+        case "no data":
+            ok(
+                errors?.includes(models.loginPage.errorMessages.missingEmail),
+                `Email error message failed. Actual message: ${errors}`
+            );
+            ok(
+                errors?.includes(models.loginPage.errorMessages.missingPassword),
+                `Password error message failed. Actual message: ${errors}`
+            );
+            break;
+        default:
+            break;
+    }
 });
