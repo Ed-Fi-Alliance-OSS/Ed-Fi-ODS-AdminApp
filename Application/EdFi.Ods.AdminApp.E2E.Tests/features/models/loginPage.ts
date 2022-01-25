@@ -7,6 +7,14 @@ export class LoginPage extends AdminAppPage {
     submitBtn = 'button[type="submit"]';
     registerNewUserBtn = "a.btn:text('Register as a new user')";
     registerBtn = 'button[type="submit"]';
+    errorMsgSection = "div.validation-summary-errors";
+
+    public errorMessages = {
+        missingEmail: "The Email field is required.",
+        wrongEmail: "The Email field is not a valid e-mail address.",
+        missingPassword: "The Password field is required.",
+        invalidLogin: "Invalid login attempt.",
+    };
 
     path(): string {
         return `${this.url}/Identity/Login`;
@@ -16,28 +24,39 @@ export class LoginPage extends AdminAppPage {
         return this.page.url().includes("FirstTimeSetup");
     }
 
-    async fillForm(username?: string, password?: string): Promise<void> {
-        if (username && password) {
-            await this.page.fill(this.emailInput, username);
-            await this.page.fill(this.passwordInput, password);
-        } else {
-            throw "Could not find email or password. Verify that variables are set in the .env file";
-        }
+    async fillForm(email?: string, password?: string): Promise<void> {
+        await this.fillEmail(email);
+        await this.fillPassword(password);
     }
 
-    async fillPasswordConfirm(password?: string) {
-        if (password) {
-            await this.page.fill(this.passwordConfirmInput, password);
+    async fillEmail(email?: string): Promise<void> {
+        if (!email) {
+            throw "Could not find email. Verify that the variable is set in the .env file";
         }
+        await this.page.fill(this.emailInput, email);
+    }
+
+    async fillPassword(password?: string): Promise<void> {
+        if (!password) {
+            throw "Could not find password. Verify that the variable is set in the .env file";
+        }
+        await this.page.fill(this.passwordInput, password);
+    }
+
+    async fillPasswordConfirm(password?: string): Promise<void> {
+        if (!password) {
+            throw "Could not find password. Verify that the variable is set in the .env file";
+        }
+        await this.page.fill(this.passwordConfirmInput, password);
     }
 
     async login(): Promise<void> {
         await this.page.click(this.submitBtn);
     }
 
-    async fullLogin(username?: string, password?: string): Promise<void> {
+    async fullLogin(email?: string, password?: string): Promise<void> {
         await this.navigate();
-        await this.fillForm(username, password);
+        await this.fillForm(email, password);
         await this.login();
     }
 
@@ -56,8 +75,12 @@ export class LoginPage extends AdminAppPage {
         await Promise.all([this.clickOnRegisterFromLogin(), this.page.waitForNavigation()]);
     }
 
-    async register() {
+    async register(): Promise<void> {
         await this.page.click(this.registerBtn);
+    }
+
+    async getErrorMessages(): Promise<string | null> {
+        return await this.getText(this.errorMsgSection);
     }
 
     private async clickOnRegisterFromLogin(): Promise<void> {
