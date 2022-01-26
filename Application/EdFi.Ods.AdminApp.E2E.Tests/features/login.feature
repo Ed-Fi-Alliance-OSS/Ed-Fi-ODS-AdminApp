@@ -11,9 +11,8 @@ Feature: Log in
         And clicks Log in
         Then login is successful
 
-
     #AA-995
-    Scenario Outline: Login errors
+    Scenario Outline: Log in errors
         Given it's on the "Log in" page
         When user enters "<Scenario>" for Log in
         And clicks Log in
@@ -27,3 +26,9 @@ Feature: Log in
             | email not registered |
             | password only        |
             | wrong password       |
+
+    #AA-1019
+    Scenario: Log out successfully
+        Given user is logged in
+        When clicks sign out
+        Then logout is successful

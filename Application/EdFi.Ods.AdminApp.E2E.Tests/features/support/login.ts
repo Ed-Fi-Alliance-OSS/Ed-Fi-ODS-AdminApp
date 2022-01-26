@@ -8,15 +8,6 @@ Given("there are no users registered", async () => {
     ok(await models.loginPage.hasRegisterButton(), "There is a user already registered");
 });
 
-Given("user is registered", async () => {
-    await models.loginPage.navigate();
-    if (!(await models.loginPage.hasRegisterButton())) {
-        //Registration not required
-        return;
-    }
-    await models.loginPage.fullRegistration(process.env.email, process.env.password);
-});
-
 When("clicking on register as a new user", async () => {
     await models.loginPage.startRegistration();
 });
@@ -31,6 +22,10 @@ When("password confirmation", async () => {
 
 When("clicks Log in", async () => {
     await models.loginPage.login();
+});
+
+When("clicks sign out", async () => {
+    await models.homePage.logout();
 });
 
 When("clicks Register", async () => {
@@ -65,7 +60,7 @@ When("user enters {string} for Log in", async (scenario: string) => {
 
 Then("login is successful", async () => {
     if (models.homePage.isOnPage) {
-        ok(await models.homePage.hasGlobalOption());
+        ok(await models.homePage.hasGlobalOption(), "Global option not found");
         ok(await models.homePage.hasSettingsOption());
     } else if (models.firstTimeSetupPage.isOnPage) {
         ok(await models.firstTimeSetupPage.hasTitle());
@@ -76,9 +71,16 @@ Then("login is successful", async () => {
     await takeScreenshot("login successful");
 });
 
+Then("logout is successful", async () => {
+    ok(models.loginPage.isOnPage, "Page not expected");
+
+    await takeScreenshot("logout successful");
+});
+
 Then("registration is successful", async () => {
     validatePath(models.firstTimeSetupPage.path(), true);
     ok(await models.firstTimeSetupPage.hasTitle());
+
     await takeScreenshot("registration successful");
 });
 
