@@ -51,7 +51,7 @@ export class LoginPage extends AdminAppPage {
     }
 
     async login(): Promise<void> {
-        await this.page.click(this.submitBtn);
+        await Promise.all([this.clickLogin(), this.page.waitForNavigation()]);
     }
 
     async fullLogin(email?: string, password?: string): Promise<void> {
@@ -81,6 +81,10 @@ export class LoginPage extends AdminAppPage {
 
     async getErrorMessages(): Promise<string | null> {
         return await this.getText(this.errorMsgSection);
+    }
+
+    private async clickLogin(): Promise<void> {
+        await this.page.click(this.submitBtn);
     }
 
     private async clickOnRegisterFromLogin(): Promise<void> {
