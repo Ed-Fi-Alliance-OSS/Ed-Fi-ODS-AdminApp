@@ -65,7 +65,7 @@ Then("login is successful", async () => {
     } else if (models.firstTimeSetupPage.isOnPage) {
         ok(await models.firstTimeSetupPage.hasTitle());
     } else {
-        throw "Login failed";
+        throw "Login failed, current page is: " + models.homePage.page.url();
     }
 
     await takeScreenshot("login successful");
