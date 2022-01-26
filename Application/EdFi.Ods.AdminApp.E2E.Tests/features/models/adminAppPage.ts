@@ -16,7 +16,10 @@ export abstract class AdminAppPage {
     }
 
     get isOnPage(): boolean {
-        return this.page.url() === this.path();
+        const currentURL = this.page.url();
+        const baseURL = currentURL.substring(0, currentURL.indexOf("?"));
+        const URL = baseURL === "" ? currentURL : baseURL;
+        return URL === this.path();
     }
 
     constructor(page: Page) {
