@@ -49,8 +49,14 @@ jobs:
     - name: Run tests
       run: npm test
       working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
+    - name: Upload execution screenshots
+      if: failure()
+      uses: actions/upload-artifact@82c141cc518b40d92cc801eee768e7aafc9c2fa2 # v2.3.1
+      with:
+        name: playwright-execution-screenshots
+        path: main/Application/EdFi.Ods.AdminApp.E2E.Tests/screenshots
     - name: Clean ODS
-      if: ${{ always() }}
+      if: always()
       run: ./shared-instance-env-clean.ps1
       shell: pwsh
       working-directory: ods-docker
