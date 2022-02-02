@@ -28,7 +28,7 @@ Before(async (scenario) => {
 
 BeforeAll(async () => {
     browser =
-        process.env.GITHUB_ACTIONS || process.env.HEADLESS
+        process.env.GITHUB_ACTIONS || !process.env.HEADLESS
             ? await chromium.launch()
             : await chromium.launch({ headless: false });
 });

@@ -72,7 +72,10 @@ Then("login is successful", async () => {
 });
 
 Then("logout is successful", async () => {
-    ok(models.loginPage.isOnPage, "Page not expected");
+    ok(models.landingPage.isOnPage || models.loginPage.isOnPage, "Page not expected");
+    if(models.landingPage.isOnPage) {
+        ok(await models.landingPage.hasPageTitle(), "Page title not found");
+    }
 
     await takeScreenshot("logout successful");
 });
