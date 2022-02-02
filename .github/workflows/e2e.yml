@@ -50,6 +50,7 @@ jobs:
       run: npm run report
       working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
     - name: Transform results
+      if: success()
       run: python ./resultparser.py
       working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
     - name: Generate report
