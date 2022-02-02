@@ -2,10 +2,20 @@ import { Page } from "playwright";
 import { AdminAppPage } from "./adminAppPage";
 import { LoginPage } from "./loginPage";
 import { HomePage } from "./homePage";
+import { LandingPage } from "./landingPage";
 import { FirstTimeSetupPage } from "./firstTimeSetupPage";
 
 export class ModelResolver {
     aaPages: Array<AdminAppPage> = [];
+
+    public get landingPage(): LandingPage {
+        let model = this.getModel<LandingPage>(LandingPage.name);
+        if (!model) {
+            model = new LandingPage(this.page);
+            this.aaPages.push(model);
+        }
+        return model;
+    }
 
     public get loginPage(): LoginPage {
         let model = this.getModel<LoginPage>(LoginPage.name);
