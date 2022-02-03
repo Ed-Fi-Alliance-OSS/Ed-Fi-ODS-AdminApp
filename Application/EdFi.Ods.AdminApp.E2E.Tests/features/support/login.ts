@@ -73,7 +73,7 @@ Then("login is successful", async () => {
 
 Then("logout is successful", async () => {
     ok(models.landingPage.isOnPage || models.loginPage.isOnPage, "Page not expected");
-    if(models.landingPage.isOnPage) {
+    if (models.landingPage.isOnPage) {
         ok(await models.landingPage.hasPageTitle(), "Page title not found");
     }
 
@@ -134,4 +134,6 @@ Then("validation errors for Log in scenario: {string} appears", async (scenario:
         default:
             break;
     }
+
+    await takeScreenshot(`Validation errors for login scenario - ${scenario}`);
 });
