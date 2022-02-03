@@ -2,7 +2,16 @@ import { Given } from "@cucumber/cucumber";
 import { models, context } from "../management/setup";
 import { validatePath } from "../management/validators";
 
+Given("user is registered", async () => {
+    await models.loginPage.navigate();
+    if (!(await models.loginPage.hasRegisterButton())) {
+        return;
+    }
+    await models.loginPage.fullRegistration(process.env.email, process.env.password);
+});
+
 Given("user is logged in", async () => {
+    await models.loginPage.navigate();
     await models.loginPage.fullLogin(process.env.email, process.env.password);
     await context.storageState({ path: "./state/login-state.json" });
 });
