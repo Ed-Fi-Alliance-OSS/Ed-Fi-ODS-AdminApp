@@ -58,8 +58,9 @@ jobs:
       if: success() || failure()
       with:
         name: Playwright Tests
-        path: "**/result.xml"
+        path: "Application/EdFi.Ods.AdminApp.E2E.Tests/reports/result.xml"
         reporter: java-junit
+        working-directory: main
     - name: Upload execution screenshots
       if: failure()
       uses: actions/upload-artifact@82c141cc518b40d92cc801eee768e7aafc9c2fa2 # v2.3.1
