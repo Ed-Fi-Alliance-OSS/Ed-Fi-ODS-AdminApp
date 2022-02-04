@@ -9,12 +9,12 @@ def readReport():
     for feature in jsonContent:
       for scenario in feature["elements"]:
 
-        success = True        
+        success = True
         for step in scenario["steps"]:
           success = step["result"]["status"] == "passed"
           if success == False:
             break
-      
+
         current = {"name": feature["name"] +" - " + scenario["name"], "success": success}
 
         existing = next((item for item in result if (item["name"] == current["name"])), None)
@@ -22,7 +22,7 @@ def readReport():
           index = result.index(existing)
           result.pop(index)
           existing = None
-        
+
         if not existing:
           result.append(current)
 
@@ -37,7 +37,7 @@ def buildXML(items):
     if not item["success"]:
       ET.SubElement(tc, "failure")
 
-  tree.write("reports/result.xml")
+  tree.write("reports/playwright-results.xml")
 
 result = readReport()
 buildXML(result)
