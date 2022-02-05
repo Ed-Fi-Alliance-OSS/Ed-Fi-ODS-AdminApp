@@ -60,7 +60,6 @@ def buildXML(all_tests, total_time):
         failure = ET.SubElement(testcase, "failure")
         failure.text = item["errorMessage"]
 
-  ET.indent(tree, space="\t", level=0)
   tree.write("reports/playwright-results.xml")
 
 result = readReport()
