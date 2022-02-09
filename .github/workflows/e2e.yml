@@ -6,10 +6,20 @@
 name: E2E Tests
 
 on:
+  push:
+    branches: [ main ]
   schedule:
     - cron:  '0 5 * * 1'
   pull_request:
   workflow_dispatch:
+
+env:
+  ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+  PROJECT_ID: 11900
+  VERSION_ID: -1
+  CYCLE_ID: 39
+  TASK_NAME: "Automation Task 1"
+  FOLDER_NAME: "Automation 2/8"
 
 jobs:
   run-e2e-tests:
@@ -50,7 +60,7 @@ jobs:
       run: npm run report
       working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
     - name: Transform results
-      if: success()
+      if: success() || failure()
       run: python ./resultparser.py
       working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
     - name: Generate report
@@ -61,6 +71,18 @@ jobs:
         path: "Application/EdFi.Ods.AdminApp.E2E.Tests/reports/playwright-results.xml"
         reporter: java-junit
         working-directory: main
+    - name: Send results to Zephyr
+      if: contains(github.ref, 'main')
+      run: |
+        $parameters = @{
+            versionId = {{env.VERSION_ID}}
+            cycleId = {{env.CYCLE_ID}}
+            taskName = {{env.TASK_NAME}}
+            folderName = {{env.FOLDER_NAME}}
+        }
+        .\SendTestResults.ps1 -PersonalAccessToken {{env.ACCESS_TOKEN}} -ProjectId {{env.PROJECT_ID}} -ResultsFilePath "Application/EdFi.Ods.AdminApp.E2E.Tests/reports/playwright-results.xml" -ConfigParams $parameters
+      shell: pwsh
+      working-directory: main
     - name: Upload execution screenshots
       if: failure()
       uses: actions/upload-artifact@82c141cc518b40d92cc801eee768e7aafc9c2fa2 # v2.3.1
