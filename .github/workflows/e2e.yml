@@ -75,12 +75,12 @@ jobs:
       if: contains(github.ref, 'main')
       run: |
         $parameters = @{
-            versionId = $Env:VERSION_ID
+            versionId = ${{env.VERSION_ID}}
             cycleId = $Env:CYCLE_ID
             taskName = $Env:TASK_NAME
             folderName = $Env:FOLDER_NAME
         }
-        .\SendTestResults.ps1 -PersonalAccessToken {{env.ACCESS_TOKEN}} -ProjectId {{env.PROJECT_ID}} -ResultsFilePath "Application/EdFi.Ods.AdminApp.E2E.Tests/reports/playwright-results.xml" -ConfigParams $parameters
+        .\SendTestResults.ps1 -PersonalAccessToken ${{env.ACCESS_TOKEN}} -ProjectId ${{env.PROJECT_ID}} -ResultsFilePath "Application/EdFi.Ods.AdminApp.E2E.Tests/reports/playwright-results.xml" -ConfigParams $parameters
       shell: pwsh
       working-directory: main
     # - name: Upload execution screenshots
