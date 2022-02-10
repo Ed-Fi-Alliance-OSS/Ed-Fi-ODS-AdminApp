@@ -162,6 +162,6 @@ function GetJobStatus {
 
 
 $jobId = CreateAutomationJob
-#UploadResultsFile -JobId $jobId
-# ExecuteJob -JobId $jobId
+UploadResultsFile -JobId $jobId
+ExecuteJob -JobId $jobId
 GetJobStatus -JobId $jobId
