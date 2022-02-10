@@ -161,9 +161,7 @@ function GetJobStatus {
 }
 
 
-#$jobId = CreateAutomationJob
-#UploadResultsFile -JobId $jobId
+$jobId = CreateAutomationJob
+UploadResultsFile -JobId $jobId
 # ExecuteJob -JobId $jobId
-#GetJobStatus -JobId $jobId
-
-Write-Host $ConfigParams.folderName
+GetJobStatus -JobId $jobId

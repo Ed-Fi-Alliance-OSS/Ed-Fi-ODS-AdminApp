@@ -30,47 +30,47 @@ jobs:
     - uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0
       with:
         path: main
-    # - name: Get ODS Docker
-    #   uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0
-    #   with:
-    #     repository: Ed-Fi-Alliance-OSS/Ed-Fi-ODS-Docker
-    #     path: ods-docker
-    # - name: Add cert
-    #   run: sudo cp -r ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/ct-setup/ssl ./ods-docker
-    # - name: Run ODS
-    #   run: docker-compose -f ./ods-docker/Compose/pgsql/compose-shared-instance-env-build.yml --env-file ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/ct-setup/.automation.env up -d
-    # - name: Verify ODS Health
-    #   run: |
-    #     chmod +x ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/ct-setup/inspect.sh
-    #     ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/ct-setup/inspect.sh
-    # - name: Setup node
-    #   uses: actions/setup-node@v2
-    #   with:
-    #     node-version: '14'
-    # - name: Install dependencies
-    #   run: npm ci
-    #   working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
-    # - name: Install OS dependencies
-    #   run: npx playwright install-deps
-    #   working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
-    # - name: Set environment
-    #   run: mv .env.example .env
-    #   working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
-    # - name: Run tests
-    #   run: npm run report
-    #   working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
-    # - name: Transform results
-    #   if: success() || failure()
-    #   run: python ./resultparser.py
-    #   working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
-    # - name: Generate report
-    #   uses: dorny/test-reporter@0d00bb14cb0cc2c9b8985df6e81dd333188224e1 #v1.5.0
-    #   if: success() || failure()
-    #   with:
-    #     name: Playwright Tests
-    #     path: "Application/EdFi.Ods.AdminApp.E2E.Tests/reports/playwright-results.xml"
-    #     reporter: java-junit
-    #     working-directory: main
+    - name: Get ODS Docker
+      uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0
+      with:
+        repository: Ed-Fi-Alliance-OSS/Ed-Fi-ODS-Docker
+        path: ods-docker
+    - name: Add cert
+      run: sudo cp -r ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/ct-setup/ssl ./ods-docker
+    - name: Run ODS
+      run: docker-compose -f ./ods-docker/Compose/pgsql/compose-shared-instance-env-build.yml --env-file ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/ct-setup/.automation.env up -d
+    - name: Verify ODS Health
+      run: |
+        chmod +x ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/ct-setup/inspect.sh
+        ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/ct-setup/inspect.sh
+    - name: Setup node
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+    - name: Install dependencies
+      run: npm ci
+      working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
+    - name: Install OS dependencies
+      run: npx playwright install-deps
+      working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
+    - name: Set environment
+      run: mv .env.example .env
+      working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
+    - name: Run tests
+      run: npm run report
+      working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
+    - name: Transform results
+      if: success() || failure()
+      run: python ./resultparser.py
+      working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
+    - name: Generate report
+      uses: dorny/test-reporter@0d00bb14cb0cc2c9b8985df6e81dd333188224e1 #v1.5.0
+      if: success() || failure()
+      with:
+        name: Playwright Tests
+        path: "Application/EdFi.Ods.AdminApp.E2E.Tests/reports/playwright-results.xml"
+        reporter: java-junit
+        working-directory: main
     - name: Send results to Zephyr
       if: contains(github.ref, 'main')
       run: |
@@ -83,14 +83,14 @@ jobs:
         .\SendTestResults.ps1 -PersonalAccessToken {{env.ACCESS_TOKEN}} -ProjectId {{env.PROJECT_ID}} -ResultsFilePath "Application/EdFi.Ods.AdminApp.E2E.Tests/reports/playwright-results.xml" -ConfigParams $parameters
       shell: pwsh
       working-directory: main
-    # - name: Upload execution screenshots
-    #   if: failure()
-    #   uses: actions/upload-artifact@82c141cc518b40d92cc801eee768e7aafc9c2fa2 # v2.3.1
-    #   with:
-    #     name: playwright-execution-screenshots
-    #     path: main/Application/EdFi.Ods.AdminApp.E2E.Tests/screenshots
-    # - name: Clean ODS
-    #   if: always()
-    #   run: ./shared-instance-env-clean.ps1
-    #   shell: pwsh
-    #   working-directory: ods-docker
+    - name: Upload execution screenshots
+      if: failure()
+      uses: actions/upload-artifact@82c141cc518b40d92cc801eee768e7aafc9c2fa2 # v2.3.1
+      with:
+        name: playwright-execution-screenshots
+        path: main/Application/EdFi.Ods.AdminApp.E2E.Tests/screenshots
+    - name: Clean ODS
+      if: always()
+      run: ./shared-instance-env-clean.ps1
+      shell: pwsh
+      working-directory: ods-docker
