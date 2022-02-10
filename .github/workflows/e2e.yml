@@ -15,11 +15,11 @@ on:
 
 env:
   ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-  PROJECT_ID: 11900
-  VERSION_ID: -1
-  CYCLE_ID: 39
+  PROJECT_ID: "11900"
+  VERSION_ID: "-1"
+  CYCLE_ID: "39"
   TASK_NAME: "Automation Task 1"
-  FOLDER_NAME: "Automation 2/8"
+  FOLDER_NAME: "Automation 2/10"
 
 jobs:
   run-e2e-tests:
@@ -75,12 +75,12 @@ jobs:
       if: contains(github.ref, 'main')
       run: |
         $parameters = @{
-            versionId = {{env.VERSION_ID}}
-            cycleId = {{env.CYCLE_ID}}
-            taskName = {{env.TASK_NAME}}
-            folderName = {{env.FOLDER_NAME}}
+            versionId = "${{ env.VERSION_ID }}"
+            cycleId = "${{ env.CYCLE_ID }}"
+            taskName = "${{ env.TASK_NAME }}"
+            folderName = "${{ env.FOLDER_NAME }}"
         }
-        .\SendTestResults.ps1 -PersonalAccessToken {{env.ACCESS_TOKEN}} -ProjectId {{env.PROJECT_ID}} -ResultsFilePath "Application/EdFi.Ods.AdminApp.E2E.Tests/reports/playwright-results.xml" -ConfigParams $parameters
+        .\SendTestResults.ps1 -PersonalAccessToken ${{ env.ACCESS_TOKEN }} -ProjectId ${{ env.PROJECT_ID }} -ResultsFilePath "Application/EdFi.Ods.AdminApp.E2E.Tests/reports/playwright-results.xml" -ConfigParams $parameters
       shell: pwsh
       working-directory: main
     - name: Upload execution screenshots
