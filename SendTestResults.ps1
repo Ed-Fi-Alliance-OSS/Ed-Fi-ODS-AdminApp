@@ -69,18 +69,14 @@ function CreateAutomationJob {
     $headers = @{Authorization = "Bearer $PersonalAccessToken"}
     $createJobURL = "$JiraURL/rest/zapi/latest/automation/job/create"
 
-    Write-Host "Create job url: $createJobURL"
-
     $ConfigParams.Add("projectId", $ProjectId)
     $ConfigParams.Add("automationType", "UPLOAD")
     $ConfigParams.Add("automationTool", "JUnit")
 
     $body = $ConfigParams | ConvertTo-Json
 
-    Write-Host $body
-
     try {
-        #$response = Invoke-RestMethod -Method 'Post' -Uri $createJobURL -Headers $headers -Body $body -ContentType "application/json"
+        $response = Invoke-RestMethod -Method 'Post' -Uri $createJobURL -Headers $headers -Body $body -ContentType "application/json"
     } catch {
         Write-Host "Error: $_"
     }
@@ -166,6 +162,6 @@ function GetJobStatus {
 
 
 $jobId = CreateAutomationJob
-# UploadResultsFile -JobId $jobId
+UploadResultsFile -JobId $jobId
 # ExecuteJob -JobId $jobId
-# GetJobStatus -JobId $jobId
+GetJobStatus -JobId $jobId
