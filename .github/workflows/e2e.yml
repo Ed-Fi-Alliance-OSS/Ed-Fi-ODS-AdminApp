@@ -15,9 +15,9 @@ on:
 
 env:
   ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-  PROJECT_ID: 11900
-  VERSION_ID: -1
-  CYCLE_ID: 39
+  PROJECT_ID: "11900"
+  VERSION_ID: "-1"
+  CYCLE_ID: "39"
   TASK_NAME: "Automation Task 1"
   FOLDER_NAME: "Automation 2/8"
 

@@ -45,14 +45,14 @@ param(
 
     # Ed-Fi's Jira URL
     [string]
-    $JiraURL = "https://tracker.ed-fi.org/",
+    $JiraURL = "https://tracker.ed-fi.org",
 
     # Access Token to upload the results
     [string]
     $PersonalAccessToken,
 
     # Id of the project in Jira https://support.smartbear.com/zephyr-squad-server/docs/api/how-to/get-ids.html
-    [int]
+    [string]
     $ProjectId,
 
     # Full path of an XML file with JUnit format to upload the results
@@ -160,9 +160,8 @@ function GetJobStatus {
     Write-Host $response.Status
 }
 
-Invoke-Main {
-    $jobId = CreateAutomationJob
-    UploadResultsFile -JobId $jobId
-    # ExecuteJob -JobId $jobId
-    GetJobStatus -JobId $jobId
-}
+
+$jobId = CreateAutomationJob
+UploadResultsFile -JobId $jobId
+# ExecuteJob -JobId $jobId
+GetJobStatus -JobId $jobId
