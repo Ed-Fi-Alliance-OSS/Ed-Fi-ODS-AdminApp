@@ -64,6 +64,39 @@ param(
     $ConfigParams
 )
 
+function ObtainAdminAppVersionId {
+    param (
+        [string]
+        $AdminAppVersion
+    )
+
+    if(-not $AdminAppVersion) {
+        return -1
+    }
+
+    $headers = @{Authorization = "Bearer $PersonalAccessToken"}
+    $getVersionURL = "$JiraURL/rest/zapi/latest/util/versionBoard-list?projectId=$ProjectId"
+
+    try {
+        $response = Invoke-RestMethod -Uri $getVersionURL -Headers $headers
+    } catch {
+        Write-Host "Error: $_"
+    }
+
+    $unreleasedVersions = $response.unreleasedVersions | where { $_.label -like "*$AdminAppVersion*"}
+    if($unreleasedVersions) {
+        return $unreleasedVersions.value
+    }
+
+    $releasedVersions = $response.releasedVersions | where { $_.label -like "*$AdminAppVersion*"}
+    if($releasedVersions) {
+        return $releasedVersions.value
+    }
+
+    return "-1"
+
+}
+
 function CreateAutomationJob {
 
     $headers = @{Authorization = "Bearer $PersonalAccessToken"}
@@ -82,7 +115,6 @@ function CreateAutomationJob {
     }
 
     if($response.status -eq 200) {
-        Write-Host $response.message
         return $response.JOB_ID
     }
 }
@@ -160,8 +192,8 @@ function GetJobStatus {
     Write-Host $response.Status
 }
 
-
-$jobId = CreateAutomationJob
+$versionId = ObtainAdminAppVersionId -AdminAppVersion $AdminAppVersion
+$jobId = CreateAutomationJob  -VersionId $versionId
 UploadResultsFile -JobId $jobId
 ExecuteJob -JobId $jobId
 GetJobStatus -JobId $jobId
