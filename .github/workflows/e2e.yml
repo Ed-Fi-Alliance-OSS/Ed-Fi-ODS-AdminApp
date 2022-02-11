@@ -15,11 +15,12 @@ on:
 
 env:
   ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-  PROJECT_ID: "11900"
+  PROJECT_ID: '11900'
   TASK_NAME: 'Playwright Automation Task'
   FOLDER_NAME: 'Playwright Automation Run'
   ADMIN_APP_VERSION: '2.3.1'
   CYCLE_NAME: 'Automation Cycle'
+  RESULTS_FILE: 'Application/EdFi.Ods.AdminApp.E2E.Tests/reports/playwright-results.xml'
 
 jobs:
   run-e2e-tests:
@@ -68,18 +69,18 @@ jobs:
       if: success() || failure()
       with:
         name: Playwright Tests
-        path: "Application/EdFi.Ods.AdminApp.E2E.Tests/reports/playwright-results.xml"
+        path: '${{env.RESULTS_FILE}}'
         reporter: java-junit
         working-directory: main
     - name: Send results to Zephyr
       if: contains(github.ref, 'main')
       run: |
         $parameters = @{
-            cycleName = "${{ env.CYCLE_NAME }}"
-            taskName = "${{ env.TASK_NAME }}"
-            folderName = "${{ env.FOLDER_NAME }}"
+            cycleName = '${{ env.CYCLE_NAME }}'
+            taskName = '${{ env.TASK_NAME }}'
+            folderName = '${{ env.FOLDER_NAME }}'
         }
-        .\send-test-results.ps1 -PersonalAccessToken ${{ env.ACCESS_TOKEN }} -ProjectId ${{ env.PROJECT_ID }} -AdminAppVersion "${{ env.ADMIN_APP_VERSION }}" -ResultsFilePath "Application/EdFi.Ods.AdminApp.E2E.Tests/reports/playwright-results.xml" -ConfigParams $parameters
+        .\send-test-results.ps1 -PersonalAccessToken ${{ env.ACCESS_TOKEN }} -ProjectId ${{ env.PROJECT_ID }} -AdminAppVersion '${{ env.ADMIN_APP_VERSION }}' -ResultsFilePath '${{ env.RESULTS_FILE }}' -ConfigParams $parameters
       shell: pwsh
       working-directory: main
     - name: Upload execution screenshots
