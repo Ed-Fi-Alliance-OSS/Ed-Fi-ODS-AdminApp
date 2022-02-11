@@ -16,8 +16,6 @@
 
     .EXAMPLE
         $parameters = @{
-            projectId = 11900
-            versionId = -1
             cycleId = 39
             taskName = "Automation Task 1"
             cycleName = "Test Cycle 1"
@@ -29,7 +27,6 @@
         Sends the results to the staging Jira server
     .EXAMPLE
         $parameters = @{
-            versionId = -1
             cycleId = 39
             folderId = 1
             taskName = "Automation Task 1"
@@ -37,7 +34,7 @@
             folderName = "New Folder"
         }
 
-        .\SendTestResults.ps1 -PersonalAccessToken ** -ProjectId 1 -ResultsFile "C:/results.xml" -ConfigParams $parameters
+        .\SendTestResults.ps1 -PersonalAccessToken ** -ProjectId 1 -AdminAppVersion 2.3.0 -ResultsFile "C:/results.xml" -ConfigParams $parameters
 
         Sends the results to the main Jira server
 #>
@@ -55,13 +52,20 @@ param(
     [string]
     $ProjectId,
 
+    # Numeric part of the fix version field on Jira
+    [string]
+    $AdminAppVersion,
+
     # Full path of an XML file with JUnit format to upload the results
     [string]
     $ResultsFilePath,
 
     # Configuration parameters. See examples
     [hashtable]
-    $ConfigParams
+    $ConfigParams = @{},
+
+    [boolean]
+    $IncludeDateOnFolder = $true
 )
 
 function ObtainAdminAppVersionId {
@@ -97,12 +101,59 @@ function ObtainAdminAppVersionId {
 
 }
 
+function GetCycleId {
+    param (
+        [string]
+        $VersionId
+    )
+
+    # Get only if there's no cycleId specified
+    if($ConfigParams.cycleId) {
+        return
+    }
+
+    if(!$ConfigParams.cycleName) {
+      throw "Specify test cycle name to get ID"
+    }
+
+    $headers = @{Authorization = "Bearer $PersonalAccessToken"}
+    $getCycleURL = "$JiraURL/rest/zapi/latest/cycle?projectId=$ProjectId&versionId=$VersionId"
+
+    try {
+        $response = Invoke-RestMethod -Uri $getCycleURL -Headers $headers
+    } catch {
+        Write-Host "Error: $_"
+    }
+
+    $response.psobject.properties.remove('recordsCount')
+    $response.psobject.properties.remove('-1')
+    $result = $response.psobject.properties.value | where { $_.name -eq $ConfigParams.cycleName}
+
+    if($result) {
+        $ConfigParams.Add("cycleId", $response.psobject.properties.name)
+    } else {
+        Write-Host "Could not find an existing cycle with the given name. Will create a new one"
+    }
+}
+
 function CreateAutomationJob {
+    param (
+        [string]
+        $VersionId
+    )
 
     $headers = @{Authorization = "Bearer $PersonalAccessToken"}
     $createJobURL = "$JiraURL/rest/zapi/latest/automation/job/create"
 
+    if($ConfigParams.folderName -and $IncludeDateOnFolder) {
+        $folder = $ConfigParams.folderName
+        $ConfigParams.Remove("folderName")
+        $date = Get-Date -DisplayHint Date
+        $ConfigParams.Add("folderName", "$folder - $date")
+    }
+
     $ConfigParams.Add("projectId", $ProjectId)
+    $ConfigParams.Add("versionId", $VersionId)
     $ConfigParams.Add("automationType", "UPLOAD")
     $ConfigParams.Add("automationTool", "JUnit")
 
@@ -128,8 +179,6 @@ function UploadResultsFile {
     $headers = @{Authorization = "Bearer $PersonalAccessToken"}
     $uploadJobUrl = "$JiraURL/rest/zapi/latest/automation/upload/$JobId"
 
-    Write-Host $ResultsFilePath
-    Write-Host $uploadJobUrl
     $fileBytes = [System.IO.File]::ReadAllBytes($ResultsFilePath);
     $fileEnc = [System.Text.Encoding]::GetEncoding('UTF-8').GetString($fileBytes);
     $boundary = [System.Guid]::NewGuid().ToString();
@@ -193,7 +242,8 @@ function GetJobStatus {
 }
 
 $versionId = ObtainAdminAppVersionId -AdminAppVersion $AdminAppVersion
-$jobId = CreateAutomationJob  -VersionId $versionId
+GetCycleId -VersionId $versionId
+$jobId = CreateAutomationJob -VersionId $versionId
 UploadResultsFile -JobId $jobId
 ExecuteJob -JobId $jobId
 GetJobStatus -JobId $jobId
