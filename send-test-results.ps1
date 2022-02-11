@@ -39,7 +39,6 @@
         Sends the results to the main Jira server
 #>
 param(
-
     # Ed-Fi's Jira URL
     [string]
     $JiraURL = "https://tracker.ed-fi.org",
@@ -68,6 +67,8 @@ param(
     $IncludeDateOnFolder = $true
 )
 
+$headers = @{Authorization = "Bearer $PersonalAccessToken"}
+
 function ObtainAdminAppVersionId {
     param (
         [string]
@@ -78,7 +79,6 @@ function ObtainAdminAppVersionId {
         return -1
     }
 
-    $headers = @{Authorization = "Bearer $PersonalAccessToken"}
     $getVersionURL = "$JiraURL/rest/zapi/latest/util/versionBoard-list?projectId=$ProjectId"
 
     try {
@@ -116,7 +116,6 @@ function GetCycleId {
       throw "Specify test cycle name to get ID"
     }
 
-    $headers = @{Authorization = "Bearer $PersonalAccessToken"}
     $getCycleURL = "$JiraURL/rest/zapi/latest/cycle?projectId=$ProjectId&versionId=$VersionId"
 
     try {
@@ -125,6 +124,7 @@ function GetCycleId {
         Write-Host "Error: $_"
     }
 
+    # Remove entries that do not bring valuable information
     $response.psobject.properties.remove('recordsCount')
     $response.psobject.properties.remove('-1')
     $result = $response.psobject.properties.value | where { $_.name -eq $ConfigParams.cycleName}
@@ -142,7 +142,6 @@ function CreateAutomationJob {
         $VersionId
     )
 
-    $headers = @{Authorization = "Bearer $PersonalAccessToken"}
     $createJobURL = "$JiraURL/rest/zapi/latest/automation/job/create"
 
     if($ConfigParams.folderName -and $IncludeDateOnFolder) {
@@ -176,7 +175,6 @@ function UploadResultsFile {
         $JobId
     )
 
-    $headers = @{Authorization = "Bearer $PersonalAccessToken"}
     $uploadJobUrl = "$JiraURL/rest/zapi/latest/automation/upload/$JobId"
 
     $fileBytes = [System.IO.File]::ReadAllBytes($ResultsFilePath);
@@ -210,7 +208,6 @@ function ExecuteJob {
         $JobId
     )
 
-    $headers = @{Authorization = "Bearer $PersonalAccessToken"}
     $executeJobUrl = "$JiraURL/rest/zapi/latest/automation/job/execute/$JobId"
 
     try {
@@ -229,7 +226,7 @@ function GetJobStatus {
         [string]
         $JobId
     )
-    $headers = @{Authorization = "Bearer $PersonalAccessToken"}
+
     $jobStatusUrl = "$JiraURL/rest/zapi/latest/automation/job/status/$JobId"
 
     try {
