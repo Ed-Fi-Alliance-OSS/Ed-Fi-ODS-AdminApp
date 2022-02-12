@@ -1,11 +1,12 @@
-import { mkdir, writeFile } from "fs/promises";
-import { currentScenarioName, page } from "./setup";
+import { mkdir } from "fs/promises";
+import { context, currentScenarioName, page } from "./setup";
 
-export function saveLog(error: string): void {
-    const logFolder = "./logs";
-    mkdir(logFolder).catch(() => {});
-    const content = `${new Date().toISOString()}\n${error}`;
-    writeFile(`${logFolder}/ERROR ${currentScenarioName}.txt`, content).catch();
+export async function saveTrace() {
+    const traceFolder = "./traces";
+    mkdir(traceFolder).catch(() => {});
+    if (process.env.TRACE) {
+        await context.tracing.stop({ path: `./traces/${currentScenarioName} - trace.zip` });
+    }
 }
 
 export async function takeScreenshot(name: string): Promise<void> {
