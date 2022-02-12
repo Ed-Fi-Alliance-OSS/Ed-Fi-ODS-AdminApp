@@ -83,12 +83,12 @@ jobs:
         .\send-test-results.ps1 -PersonalAccessToken ${{ env.JIRA_ACCESS_TOKEN }} -ProjectId ${{ env.PROJECT_ID }} -AdminAppVersion '${{ env.ADMIN_APP_VERSION }}' -ResultsFilePath '${{ env.RESULTS_FILE }}' -ConfigParams $parameters
       shell: pwsh
       working-directory: main
-    - name: Upload execution screenshots
+    - name: Upload execution traces
       if: failure()
       uses: actions/upload-artifact@82c141cc518b40d92cc801eee768e7aafc9c2fa2 # v2.3.1
       with:
-        name: playwright-execution-screenshots
-        path: main/Application/EdFi.Ods.AdminApp.E2E.Tests/screenshots
+        name: playwright-execution-traces
+        path: main/Application/EdFi.Ods.AdminApp.E2E.Tests/traces
     - name: Clean ODS
       if: always()
       run: ./shared-instance-env-clean.ps1
