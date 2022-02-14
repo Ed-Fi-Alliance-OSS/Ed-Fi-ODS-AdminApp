@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 env:
-  ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+  JIRA_ACCESS_TOKEN: ${{ secrets.JIRA_ACCESS_TOKEN }}
   PROJECT_ID: '11900'
   TASK_NAME: 'Playwright Automation Task'
   FOLDER_NAME: 'Playwright Automation Run'
@@ -80,7 +80,7 @@ jobs:
             taskName = '${{ env.TASK_NAME }}'
             folderName = '${{ env.FOLDER_NAME }}'
         }
-        .\send-test-results.ps1 -PersonalAccessToken ${{ env.ACCESS_TOKEN }} -ProjectId ${{ env.PROJECT_ID }} -AdminAppVersion '${{ env.ADMIN_APP_VERSION }}' -ResultsFilePath '${{ env.RESULTS_FILE }}' -ConfigParams $parameters
+        .\send-test-results.ps1 -PersonalAccessToken ${{ env.JIRA_ACCESS_TOKEN }} -ProjectId ${{ env.PROJECT_ID }} -AdminAppVersion '${{ env.ADMIN_APP_VERSION }}' -ResultsFilePath '${{ env.RESULTS_FILE }}' -ConfigParams $parameters
       shell: pwsh
       working-directory: main
     - name: Upload execution screenshots
