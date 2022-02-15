@@ -14,13 +14,12 @@ export let models: ModelResolver;
 export let currentScenarioName: string;
 
 Before(async (scenario) => {
-    context = process.env.RECORD
-        ? await browser.newContext({
-              recordVideo: { dir: "./videos" },
-              acceptDownloads: true,
-              ignoreHTTPSErrors: true,
-          })
-        : await browser.newContext({ acceptDownloads: true, ignoreHTTPSErrors: true });
+    context = await browser.newContext({ acceptDownloads: true, ignoreHTTPSErrors: true });
+
+    if (process.env.TRACE) {
+        await context.tracing.start({ screenshots: true, snapshots: true });
+    }
+
     page = await context.newPage();
     models = new ModelResolver(page);
     setScenarioName(scenario.pickle.name);
