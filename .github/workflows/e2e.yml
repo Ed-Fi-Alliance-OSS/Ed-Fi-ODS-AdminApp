@@ -73,7 +73,7 @@ jobs:
         reporter: java-junit
         working-directory: main
     - name: Send results to Zephyr
-      if: contains(github.ref, 'main')
+      if: contains(github.ref, 'main') && (success() || failure())
       run: |
         $parameters = @{
             cycleName = '${{ env.CYCLE_NAME }}'
