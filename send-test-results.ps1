@@ -130,7 +130,7 @@ function GetCycleId {
     $result = $response.psobject.properties.value | where { $_.name -eq $ConfigParams.cycleName}
 
     if($result) {
-        $ConfigParams.Add("cycleId", $response.psobject.properties.name)
+        $ConfigParams.Add("cycleId", $response.psobject.properties.name[0])
     } else {
         Write-Host "Could not find an existing cycle with the given name. Will create a new one"
     }
