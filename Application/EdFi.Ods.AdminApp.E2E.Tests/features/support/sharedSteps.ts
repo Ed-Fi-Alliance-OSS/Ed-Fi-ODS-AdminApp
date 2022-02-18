@@ -25,6 +25,9 @@ Given("it's on the {string} page", async (pageName: string) => {
         case "Log in":
             currentPage = models.loginPage;
             break;
+        case "First Time Setup":
+            currentPage = models.firstTimeSetupPage;
+            break;
         default:
             break;
     }
