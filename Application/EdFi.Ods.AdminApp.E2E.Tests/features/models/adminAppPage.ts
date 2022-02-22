@@ -40,6 +40,10 @@ export abstract class AdminAppPage {
         );
     }
 
+    async getToastMessage(): Promise<string | null> {
+        return await this.getText(this.toast);
+    }
+
     protected async getText(text: string): Promise<string | null> {
         return this.page.textContent(text);
     }
