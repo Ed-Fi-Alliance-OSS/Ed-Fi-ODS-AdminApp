@@ -9,7 +9,7 @@ When("clicking Continue", async () => {
 
 Then("first time setup is successful", async () => {
     ok(
-        models.productImprovementPage.isOnFirstTimeProductImprovementPage(),
+        models.productImprovementPage.isOnPage,
         `Page not expected. Current page is ${models.homePage.page.url()}`
     );
     ok(await models.productImprovementPage.hasPageTitle(), "Title not found");
