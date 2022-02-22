@@ -16,6 +16,17 @@ Given("user is logged in", async () => {
     await context.storageState({ path: "./state/login-state.json" });
 });
 
+Given("setup is complete", async () => {
+    if (models.firstTimeSetupPage.isOnPage) {
+        await models.firstTimeSetupPage.continue(models.productImprovementPage.firstTimePath());
+    }
+
+    if (models.productImprovementPage.isOnPage) {
+        await models.productImprovementPage.uncheckAnalyticsTag();
+        await models.productImprovementPage.proceed();
+    }
+});
+
 Given("it's on the {string} page", async (pageName: string) => {
     let currentPage;
 
@@ -27,6 +38,9 @@ Given("it's on the {string} page", async (pageName: string) => {
             break;
         case "First Time Setup":
             currentPage = models.firstTimeSetupPage;
+            break;
+        case "Education Organizations":
+            currentPage = models.edOrgsPage;
             break;
         default:
             break;
