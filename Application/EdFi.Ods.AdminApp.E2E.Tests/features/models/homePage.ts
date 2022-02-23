@@ -20,6 +20,6 @@ export class HomePage extends AdminAppPage {
     }
 
     private async clickLogout() {
-        await this.page.click(this.logoutBtn);
+        await this.page.locator(this.logoutBtn).click();
     }
 }
