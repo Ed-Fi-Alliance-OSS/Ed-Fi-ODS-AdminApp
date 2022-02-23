@@ -7,7 +7,7 @@ export class FirstTimeSetupPage extends AdminAppPage {
         return `${this.url}/Setup/FirstTimeSetup`;
     }
 
-    hasTitle() {
+    hasTitle(): Promise<boolean> {
         return this.hasText({ text: "Additional Setup Required" });
     }
 
