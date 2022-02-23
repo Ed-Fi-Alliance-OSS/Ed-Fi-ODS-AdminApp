@@ -16,6 +16,6 @@ AfterAll(() => {
 async function cleanup() {
     if (currentScenarioName.includes("Add Local Education Agency")) {
         await models.edOrgsPage.navigate();
-        await models.edOrgsPage.deleteLEA();
+        await models.edOrgsPage.deleteLEAFullSteps();
     }
 }
