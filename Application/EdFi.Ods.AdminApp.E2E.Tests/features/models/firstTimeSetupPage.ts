@@ -16,6 +16,6 @@ export class FirstTimeSetupPage extends AdminAppPage {
     }
 
     private async clickContinue(): Promise<void> {
-        await this.page.click(this.continueBtn);
+        await this.page.locator(this.continueBtn).click();
     }
 }

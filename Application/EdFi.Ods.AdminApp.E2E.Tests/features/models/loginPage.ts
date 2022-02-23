@@ -33,21 +33,21 @@ export class LoginPage extends AdminAppPage {
         if (!email) {
             throw "Could not find email. Verify that the variable is set in the .env file";
         }
-        await this.page.fill(this.emailInput, email);
+        await this.page.locator(this.emailInput).fill(email);
     }
 
     async fillPassword(password?: string): Promise<void> {
         if (!password) {
             throw "Could not find password. Verify that the variable is set in the .env file";
         }
-        await this.page.fill(this.passwordInput, password);
+        await this.page.locator(this.passwordInput).fill(password);
     }
 
     async fillPasswordConfirm(password?: string): Promise<void> {
         if (!password) {
             throw "Could not find password. Verify that the variable is set in the .env file";
         }
-        await this.page.fill(this.passwordConfirmInput, password);
+        await this.page.locator(this.passwordConfirmInput).fill(password);
     }
 
     async login(): Promise<void> {
@@ -76,7 +76,7 @@ export class LoginPage extends AdminAppPage {
     }
 
     async register(): Promise<void> {
-        await this.page.click(this.registerBtn);
+        await this.page.locator(this.registerBtn).click();
     }
 
     async getErrorMessages(): Promise<string | null> {
@@ -84,10 +84,10 @@ export class LoginPage extends AdminAppPage {
     }
 
     private async clickLogin(): Promise<void> {
-        await this.page.click(this.submitBtn);
+        await this.page.locator(this.submitBtn).click();
     }
 
     private async clickOnRegisterFromLogin(): Promise<void> {
-        await this.page.click(this.registerNewUserBtn);
+        await this.page.locator(this.registerNewUserBtn).click();
     }
 }

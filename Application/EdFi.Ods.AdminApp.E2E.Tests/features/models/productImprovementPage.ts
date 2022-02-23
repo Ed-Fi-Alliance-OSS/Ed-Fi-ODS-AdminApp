@@ -25,7 +25,7 @@ export class ProductImprovementPage extends AdminAppPage {
     }
 
     async uncheckAnalyticsTag(): Promise<void> {
-        await this.page.uncheck(this.analyticsCheckbox);
+        await this.page.locator(this.analyticsCheckbox).uncheck();
     }
 
     async proceed(): Promise<void> {
@@ -33,6 +33,6 @@ export class ProductImprovementPage extends AdminAppPage {
     }
 
     private async clickProceed(): Promise<void> {
-        await this.page.click(this.proceedBtn);
+        await this.page.locator(this.proceedBtn).click();
     }
 }
