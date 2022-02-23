@@ -1,22 +1,27 @@
+import { Locator } from "playwright";
 import { AdminAppPage } from "./adminAppPage";
 
 export class EducationOrganizationsPage extends AdminAppPage {
-    titleMsg = "h6";
+    titleMsg = "div > h6";
+    openModal = "div.modal.fade.in";
     addNewLeaBtn = 'button[data-target="#add-lea-modal"]';
-    openModal = "div.container div.modal.fade.in";
-    modalTitleSection = `${this.openModal} h4.modal-title`;
-    confirmBtn = `${this.openModal} button[type="submit"]`;
+    modalTitleSection = "h4.modal-title";
+    confirmBtn = 'button[type="submit"]';
     nameOnList = ".panel-section h8";
     deleteLEABtn = "a.delete-lea-link";
 
     leaFormSelectors = {
-        ID: `${this.openModal} input[name="LocalEducationAgencyId"]`,
-        name: `${this.openModal} input[name="Name"]`,
-        address: `${this.openModal} input[name="StreetNumberName"]`,
-        city: `${this.openModal} input[name="City"]`,
-        state: `${this.openModal} select[name="State"]`,
-        zip: `${this.openModal} input[name="ZipCode"]`,
+        ID: 'input[name="LocalEducationAgencyId"]',
+        name: 'input[name="Name"]',
+        address: 'input[name="StreetNumberName"]',
+        city: 'input[name="City"]',
+        state: 'select[name="State"]',
+        zip: 'input[name="ZipCode"]',
     };
+
+    get modalSelector(): Locator {
+        return this.page.locator(this.openModal);
+    }
 
     leaFormValues = {
         ID: "1",
@@ -53,20 +58,15 @@ export class EducationOrganizationsPage extends AdminAppPage {
     }
 
     async addNewLEA(): Promise<void> {
-        await this.page.click(this.addNewLeaBtn);
+        await this.page.locator(this.addNewLeaBtn).click();
     }
 
     async hasAddLEAModalTitle(): Promise<boolean> {
-        return (
-            (await this.page.locator(this.modalTitleSection).textContent()) === this.modalTitleMessages.AddLEA
-        );
+        return (await this.getModalTitle()) === this.modalTitleMessages.AddLEA;
     }
 
     async hasDeleteLEAModalTitle(): Promise<boolean> {
-        return (
-            (await this.page.locator(this.modalTitleSection).textContent()) ===
-            this.modalTitleMessages.DeleteLEA
-        );
+        return (await this.getModalTitle()) === this.modalTitleMessages.DeleteLEA;
     }
 
     async hasDeleteModalConfirmationMessage(): Promise<boolean> {
@@ -81,7 +81,8 @@ export class EducationOrganizationsPage extends AdminAppPage {
         await this.fillLEAName();
         await this.fillAddress();
         await this.fillCity();
-        await this.selectState(), await this.fillZipCode();
+        await this.selectState();
+        await this.fillZipCode();
     }
 
     async saveLEAForm(): Promise<void> {
@@ -104,10 +105,10 @@ export class EducationOrganizationsPage extends AdminAppPage {
     }
 
     async clickDelete(): Promise<void> {
-        await this.page.click(this.deleteLEABtn);
+        await this.page.locator(this.deleteLEABtn).click();
     }
 
-    async deleteLEA() {
+    async deleteLEA(): Promise<void> {
         await Promise.all([
             this.clickConfirmDelete(),
             this.waitForResponse({ url: "/EducationOrganizations/DeleteLocalEducationAgency" }),
@@ -129,35 +130,42 @@ export class EducationOrganizationsPage extends AdminAppPage {
         await this.waitForListLoad();
     }
 
+    private async getModalTitle(): Promise<string> {
+        const content = await this.modalSelector.locator(this.modalTitleSection).textContent();
+        return content ? content : "";
+    }
+
     private async clickConfirmDelete(): Promise<void> {
-        await this.page.click(this.confirmBtn);
+        await this.modalSelector.locator(this.confirmBtn).click();
     }
 
     private async fillLEAId(): Promise<void> {
-        await this.page.fill(this.leaFormSelectors.ID, this.leaFormValues.ID);
+        await this.modalSelector.locator(this.leaFormSelectors.ID).fill(this.leaFormValues.ID);
     }
 
     private async fillLEAName(): Promise<void> {
-        await this.page.fill(this.leaFormSelectors.name, this.leaFormValues.name);
+        await this.modalSelector.locator(this.leaFormSelectors.name).fill(this.leaFormValues.name);
     }
 
     private async fillAddress(): Promise<void> {
-        await this.page.fill(this.leaFormSelectors.address, this.leaFormValues.address);
+        await this.modalSelector.locator(this.leaFormSelectors.address).fill(this.leaFormValues.address);
     }
 
     private async fillCity(): Promise<void> {
-        await this.page.fill(this.leaFormSelectors.city, this.leaFormValues.city);
+        await this.modalSelector.locator(this.leaFormSelectors.city).fill(this.leaFormValues.city);
     }
 
     private async selectState(): Promise<void> {
-        await this.page.selectOption(this.leaFormSelectors.state, { label: this.leaFormValues.state });
+        await this.modalSelector
+            .locator(this.leaFormSelectors.state)
+            .selectOption({ label: this.leaFormValues.state });
     }
 
     private async fillZipCode(): Promise<void> {
-        await this.page.fill(this.leaFormSelectors.zip, this.leaFormValues.zip);
+        await this.modalSelector.locator(this.leaFormSelectors.zip).fill(this.leaFormValues.zip);
     }
 
     private async saveForm(): Promise<void> {
-        this.page.locator(this.confirmBtn).click();
+        await this.modalSelector.locator(this.confirmBtn).click();
     }
 }
