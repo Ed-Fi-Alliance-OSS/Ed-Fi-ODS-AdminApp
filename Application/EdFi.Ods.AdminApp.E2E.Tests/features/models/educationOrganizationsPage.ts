@@ -53,7 +53,7 @@ export class EducationOrganizationsPage extends AdminAppPage {
         });
     }
 
-    async waitForListLoad() {
+    async waitForListLoad(): Promise<void> {
         await this.waitForResponse({ url: "/EducationOrganizations/LocalEducationAgency" });
     }
 

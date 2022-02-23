@@ -1,7 +1,7 @@
 import { mkdir } from "fs/promises";
 import { context, currentScenarioName, page } from "./setup";
 
-export async function saveTrace() {
+export async function saveTrace(): Promise<void> {
     const traceFolder = "./traces";
     mkdir(traceFolder).catch(() => {});
     if (process.env.TRACE) {

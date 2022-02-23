@@ -15,11 +15,11 @@ export class HomePage extends AdminAppPage {
         return await this.hasText({ text: "Global" });
     }
 
-    async logout() {
+    async logout(): Promise<void> {
         await Promise.all([this.clickLogout(), this.page.waitForNavigation()]);
     }
 
-    private async clickLogout() {
+    private async clickLogout(): Promise<void> {
         await this.page.locator(this.logoutBtn).click();
     }
 }
