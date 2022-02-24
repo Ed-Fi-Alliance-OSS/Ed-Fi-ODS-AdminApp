@@ -9,6 +9,7 @@ export class EducationOrganizationsPage extends AdminAppPage {
     confirmBtn = 'button[type="submit"]';
     nameOnList = ".panel-section h8";
     deleteLEABtn = "a.delete-lea-link";
+    editLEABtn = ".row.heading a:has(.fa-pencil)";
 
     leaFormSelectors = {
         ID: 'input[name="LocalEducationAgencyId"]',
@@ -32,13 +33,19 @@ export class EducationOrganizationsPage extends AdminAppPage {
         zip: "11208",
     };
 
+    get editedFormValueName(): string {
+        return `${this.leaFormValues.name} - Edited`;
+    }
+
     confirmationMessages = {
         leaAdded: "Organization Added",
+        leaEdited: "Organization Updated",
         leaDeleted: "Organization Removed",
     };
 
     modalTitleMessages = {
         AddLEA: "Add Local Education Agency",
+        EditLEA: "Edit Local Education Agency",
         DeleteLEA: "Delete Local Education Agency",
     };
 
@@ -65,6 +72,10 @@ export class EducationOrganizationsPage extends AdminAppPage {
         return (await this.getModalTitle()) === this.modalTitleMessages.AddLEA;
     }
 
+    async hasEditLEAModalTitle(): Promise<boolean> {
+        return (await this.getModalTitle()) === this.modalTitleMessages.EditLEA;
+    }
+
     async hasDeleteLEAModalTitle(): Promise<boolean> {
         return (await this.getModalTitle()) === this.modalTitleMessages.DeleteLEA;
     }
@@ -85,9 +96,20 @@ export class EducationOrganizationsPage extends AdminAppPage {
         await this.fillZipCode();
     }
 
+    async editLEAForm(): Promise<void> {
+        await this.fillLEAName(this.editedFormValueName);
+    }
+
     async saveLEAForm(): Promise<void> {
         await Promise.all([
             this.waitForResponse({ url: "/EducationOrganizations/AddLocalEducationAgency" }),
+            this.saveForm(),
+        ]);
+    }
+
+    async saveEditedLEAForm(): Promise<void> {
+        await Promise.all([
+            this.waitForResponse({ url: "/EducationOrganizations/EditLocalEducationAgency" }),
             this.saveForm(),
         ]);
     }
@@ -96,12 +118,12 @@ export class EducationOrganizationsPage extends AdminAppPage {
         return this.hasText({ text: this.leaFormValues.name, selector: this.nameOnList });
     }
 
-    async addedConfirmationAppears(): Promise<boolean> {
-        return (await this.getToastMessage()) === this.confirmationMessages.leaAdded;
+    async isEditedLEAPresentOnPage(): Promise<boolean> {
+        return this.hasText({ text: this.editedFormValueName, selector: this.nameOnList });
     }
 
-    async deletedConfirmationAppears(): Promise<boolean> {
-        return (await this.getToastMessage()) === this.confirmationMessages.leaDeleted;
+    async clickEdit(): Promise<void> {
+        await this.page.locator(this.editLEABtn).click();
     }
 
     async clickDelete(): Promise<void> {
@@ -126,7 +148,6 @@ export class EducationOrganizationsPage extends AdminAppPage {
         await this.addNewLEA();
         await this.fillLEAForm();
         await this.saveLEAForm();
-        await this.addedConfirmationAppears();
         await this.waitForListLoad();
     }
 
@@ -143,8 +164,8 @@ export class EducationOrganizationsPage extends AdminAppPage {
         await this.modalSelector.locator(this.leaFormSelectors.ID).fill(this.leaFormValues.ID);
     }
 
-    private async fillLEAName(): Promise<void> {
-        await this.modalSelector.locator(this.leaFormSelectors.name).fill(this.leaFormValues.name);
+    private async fillLEAName(value = this.leaFormValues.name): Promise<void> {
+        await this.modalSelector.locator(this.leaFormSelectors.name).fill(value);
     }
 
     private async fillAddress(): Promise<void> {

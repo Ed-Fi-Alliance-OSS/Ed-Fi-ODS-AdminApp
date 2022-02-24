@@ -1,5 +1,5 @@
 import { Given, Then, When } from "@cucumber/cucumber";
-import { ok } from "assert";
+import { strictEqual, ok } from "assert";
 import { takeScreenshot } from "../management/functions";
 import { models } from "../management/setup";
 
@@ -21,8 +21,22 @@ When("filling Local Education Agency form", async () => {
     await models.edOrgsPage.fillLEAForm();
 });
 
+When("modifying added Local Education Agency", async () => {
+    ok(await models.edOrgsPage.hasEditLEAModalTitle(), "Modal title not found");
+
+    await models.edOrgsPage.editLEAForm();
+});
+
 When("clicking save Local Education Agency", async () => {
     await models.edOrgsPage.saveLEAForm();
+});
+
+When("clicking save edited Local Education Agency", async () => {
+    await models.edOrgsPage.saveEditedLEAForm();
+});
+
+When("clicking edit Local Education Agency", async () => {
+    await models.edOrgsPage.clickEdit();
 });
 
 When("clicking delete Local Education Agency", async () => {
@@ -35,8 +49,20 @@ When("confirming delete Local Education Agency", async () => {
     await models.edOrgsPage.deleteLEA();
 });
 
-Then("Local Education Agency is saved", async () => {
-    ok(await models.edOrgsPage.addedConfirmationAppears(), "Confirmation message not found");
+Then("Local Education Agency is added", async () => {
+    strictEqual(
+        await models.edOrgsPage.getToastMessage(),
+        models.edOrgsPage.confirmationMessages.leaAdded,
+        "Confirmation message not found"
+    );
+});
+
+Then("Local Education Agency is edited", async () => {
+    strictEqual(
+        await models.edOrgsPage.getToastMessage(),
+        models.edOrgsPage.confirmationMessages.leaEdited,
+        "Confirmation message not found"
+    );
 });
 
 Then("Local Education Agency appears on list", async () => {
@@ -45,7 +71,17 @@ Then("Local Education Agency appears on list", async () => {
     await takeScreenshot("New Education Agency Added");
 });
 
+Then("edited Local Education Agency appears on list", async () => {
+    await models.edOrgsPage.waitForListLoad();
+    ok(await models.edOrgsPage.isEditedLEAPresentOnPage(), "Local Education Agency not found in page");
+    await takeScreenshot("Education Agency Edited");
+});
+
 Then("Local Education Agency is deleted", async () => {
-    ok(await models.edOrgsPage.deletedConfirmationAppears(), "Confirmation message not found");
+    strictEqual(
+        await models.edOrgsPage.getToastMessage(),
+        models.edOrgsPage.confirmationMessages.leaDeleted,
+        "Confirmation message not found"
+    );
     await takeScreenshot("Local Education Agency Deleted");
 });
