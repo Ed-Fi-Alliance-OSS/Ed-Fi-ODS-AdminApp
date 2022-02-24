@@ -12,13 +12,24 @@ Feature: Education Organizations
     When adding new Local Education Agency
     And filling Local Education Agency form
     And clicking save Local Education Agency
-    Then Local Education Agency is saved
+    Then Local Education Agency is added
     And Local Education Agency appears on list
+
+  #AA-860
+  Scenario: Education Organizations section - Edit Local Education Agency
+    Given there's a Local Education Agency added
+    And it's on the "Education Organizations" page
+    And Education Organization list has loaded
+    When clicking edit Local Education Agency
+    And modifying added Local Education Agency
+    And clicking save edited Local Education Agency
+    Then Local Education Agency is edited
+    And edited Local Education Agency appears on list
 
   #AA-861
   Scenario: Education Organizations section - Delete Local Education Agency
     Given there's a Local Education Agency added
-    Given it's on the "Education Organizations" page
+    And it's on the "Education Organizations" page
     And Education Organization list has loaded
     When clicking delete Local Education Agency
     And confirming delete Local Education Agency

@@ -14,7 +14,7 @@ AfterAll(() => {
 });
 
 async function cleanup(): Promise<void> {
-    if (currentScenarioName.includes("Add Local Education Agency")) {
+    if (currentScenarioName.match(".*(Add|Edit) Local Education Agency")) {
         await models.edOrgsPage.navigate();
         await models.edOrgsPage.deleteLEAFullSteps();
     }
