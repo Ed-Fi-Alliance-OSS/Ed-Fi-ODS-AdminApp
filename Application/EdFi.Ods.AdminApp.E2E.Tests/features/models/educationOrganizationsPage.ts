@@ -10,6 +10,9 @@ export class EducationOrganizationsPage extends AdminAppPage {
     nameOnList = ".panel-section h8";
     deleteLEABtn = "a.delete-lea-link";
     editLEABtn = ".row.heading a:has(.fa-pencil)";
+    collapseBtn = 'a[data-toggle="collapse"]:has(.fa-chevron-up)';
+    expandBtn = 'a[data-toggle="collapse"]:has(.fa-chevron-down)';
+    edOrgDetailsSectionCollapsed = 'div.content[aria-expanded="false"]';
 
     leaFormSelectors = {
         ID: 'input[name="LocalEducationAgencyId"]',
@@ -122,12 +125,23 @@ export class EducationOrganizationsPage extends AdminAppPage {
         return this.hasText({ text: this.editedFormValueName, selector: this.nameOnList });
     }
 
+    async clickCollapse() {
+        await this.page.locator(this.collapseBtn).click();
+    }
+
     async clickEdit(): Promise<void> {
         await this.page.locator(this.editLEABtn).click();
     }
 
     async clickDelete(): Promise<void> {
         await this.page.locator(this.deleteLEABtn).click();
+    }
+
+    async isSectionCollapsed(): Promise<boolean> {
+        return (
+            (await this.elementExists(this.expandBtn)) &&
+            (await this.page.locator(this.edOrgDetailsSectionCollapsed).count()) > 0
+        );
     }
 
     async deleteLEA(): Promise<void> {

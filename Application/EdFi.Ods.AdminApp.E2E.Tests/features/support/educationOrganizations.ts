@@ -49,6 +49,15 @@ When("confirming delete Local Education Agency", async () => {
     await models.edOrgsPage.deleteLEA();
 });
 
+When("clicking collapse Local Education Agency section", async () => {
+    await models.edOrgsPage.clickCollapse();
+});
+
+Then("Local Education Agency section is collapsed", async () => {
+    ok(await models.edOrgsPage.isSectionCollapsed(), "Section is not collapsed");
+    await takeScreenshot("Section collapsed");
+});
+
 Then("Local Education Agency is added", async () => {
     strictEqual(
         await models.edOrgsPage.getToastMessage(),
