@@ -34,3 +34,12 @@ Feature: Education Organizations
     When clicking delete Local Education Agency
     And confirming delete Local Education Agency
     Then Local Education Agency is deleted
+
+  #AA-862
+  @WIP
+  Scenario: Education Organizations section - Collapse Local Education Agency Section
+    Given there's a Local Education Agency added
+    Given it's on the "Education Organizations" page
+    And Education Organization list has loaded
+    When clicking collapse Local Education Agency section
+    Then Local Education Agency section is collapsed
