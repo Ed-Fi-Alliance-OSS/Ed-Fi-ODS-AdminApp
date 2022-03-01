@@ -35,14 +35,12 @@ export abstract class AdminAppPage {
     }
 
     async waitForResponse({ url, status = 200 }: { url: string; status?: number }): Promise<void> {
-        await this.page.waitForResponse(
-            (response) => {
-                if(response.url().includes(url) && response.status() !== status) {
-                    return Promise.reject(new Error(`Expected status ${status}, got ${response.status()}`));
-                }
-                return response.url().includes(url) && response.status() === status
+        await this.page.waitForResponse((response) => {
+            if (response.url().includes(url) && response.status() !== status) {
+                return Promise.reject(new Error(`Expected status ${status}, got ${response.status()}`));
             }
-        );
+            return response.url().includes(url) && response.status() === status;
+        });
     }
 
     async getToastMessage(): Promise<string | null> {

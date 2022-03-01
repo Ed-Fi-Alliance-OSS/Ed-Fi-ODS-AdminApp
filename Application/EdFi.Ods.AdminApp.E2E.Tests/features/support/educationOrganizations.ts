@@ -5,7 +5,7 @@ import { models } from "../management/setup";
 
 Given("there's a Local Education Agency added", async () => {
     await models.edOrgsPage.navigate();
-    if(await models.edOrgsPage.isLEAPresentOnPage()) {
+    if (await models.edOrgsPage.isLEAPresentOnPage()) {
         return Promise.resolve("LEA is already present");
     }
     await models.edOrgsPage.addLocalEducationAgencyFullSteps();
@@ -119,15 +119,21 @@ Then("Local Education Agency validation for {string} appears", async (scenario: 
     const errors = await models.edOrgsPage.getErrorMessages();
 
     switch (scenario) {
+        case "no data":
+            ok(
+                errors?.includes(models.edOrgsPage.errorMessages.noData),
+                `Error message failed. Actual message: ${errors}`
+            );
+            break;
         case "wrong id":
             ok(
                 errors?.includes(models.edOrgsPage.errorMessages.invalidID),
                 `ID error message failed. Actual message: ${errors}`
             );
             break;
-        case "no data":
+        case "duplicated id":
             ok(
-                errors?.includes(models.edOrgsPage.errorMessages.noData),
+                errors?.includes(models.edOrgsPage.errorMessages.duplicatedID),
                 `Error message failed. Actual message: ${errors}`
             );
             break;
@@ -139,6 +145,7 @@ Then("Local Education Agency validation for {string} appears", async (scenario: 
 Then("field with errors for {string} are highlighted", async (scenario: string) => {
     switch (scenario) {
         case "wrong id":
+        case "duplicated id":
             ok(await models.edOrgsPage.idFieldHasError());
             break;
         case "no data":
@@ -148,4 +155,8 @@ Then("field with errors for {string} are highlighted", async (scenario: string) 
             break;
     }
     await takeScreenshot("Validation errors");
+});
+
+Then("modal is dismissed", async () => {
+    await models.edOrgsPage.dismissModal();
 });
