@@ -14,7 +14,13 @@ export let models: ModelResolver;
 export let currentScenarioName: string;
 
 Before(async (scenario) => {
-    context = await browser.newContext({ acceptDownloads: true, ignoreHTTPSErrors: true });
+    context = process.env.RECORD
+        ? await browser.newContext({
+              recordVideo: { dir: "./videos" },
+              acceptDownloads: true,
+              ignoreHTTPSErrors: true,
+          })
+        : await browser.newContext({ acceptDownloads: true, ignoreHTTPSErrors: true });
 
     if (process.env.TRACE) {
         await context.tracing.start({ screenshots: true, snapshots: true });
@@ -35,6 +41,6 @@ BeforeAll(async () => {
 function setScenarioName(scenarioName: string) {
     currentScenarioName =
         scenarioName.indexOf("Outline") > -1
-            ? scenarioName.substr(scenarioName.indexOf(":") + 1, scenarioName.length)
+            ? scenarioName.substring(scenarioName.indexOf(":") + 1, scenarioName.length)
             : scenarioName;
 }
