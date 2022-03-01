@@ -1,9 +1,12 @@
 import { After, AfterAll } from "@cucumber/cucumber";
+import { TestStepResultStatus } from "@cucumber/messages";
 import { saveTrace } from "./functions";
-import { page, browser, currentScenarioName, models } from "./setup";
+import { page, browser, models, currentScenarioName } from "./setup";
 
-After(async () => {
-    await cleanup();
+After(async (scenario) => {
+    if (scenario.result?.status === TestStepResultStatus.PASSED) {
+        await cleanup();
+    }
     await saveTrace();
 });
 
@@ -14,8 +17,12 @@ AfterAll(() => {
 });
 
 async function cleanup(): Promise<void> {
-    if (currentScenarioName.match(".*(Add|Edit|Collapse) Local Education Agency.*")) {
-        await models.edOrgsPage.navigate();
-        await models.edOrgsPage.deleteLEAFullSteps();
+    if (currentScenarioName.match(".*(Add|Edit|Collapse) Local Education Agency( section)?$")) {
+        try {
+            await models.edOrgsPage.navigate();
+            await models.edOrgsPage.deleteLEAFullSteps();
+        } catch (error) {
+            console.info(`Item to delete not found\n${error}`);
+        }
     }
 }
