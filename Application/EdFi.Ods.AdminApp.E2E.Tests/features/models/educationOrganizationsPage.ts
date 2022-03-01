@@ -13,6 +13,8 @@ export class EducationOrganizationsPage extends AdminAppPage {
     collapseBtn = 'a[data-toggle="collapse"]:has(.fa-chevron-up)';
     expandBtn = 'a[data-toggle="collapse"]:has(.fa-chevron-down)';
     edOrgDetailsSectionCollapsed = 'div.content[aria-expanded="false"]';
+    errorMsgSection = "div.validationSummary";
+    fieldWithError = ".row.has-error";
 
     leaFormSelectors = {
         ID: 'input[name="LocalEducationAgencyId"]',
@@ -40,6 +42,10 @@ export class EducationOrganizationsPage extends AdminAppPage {
         return `${this.leaFormValues.name} - Edited`;
     }
 
+    get invalidFormValueId(): string {
+        return `${this.leaFormValues.ID} - Wrong`;
+    }
+
     confirmationMessages = {
         leaAdded: "Organization Added",
         leaEdited: "Organization Updated",
@@ -50,6 +56,11 @@ export class EducationOrganizationsPage extends AdminAppPage {
         AddLEA: "Add Local Education Agency",
         EditLEA: "Edit Local Education Agency",
         DeleteLEA: "Delete Local Education Agency",
+    };
+
+    errorMessages = {
+        noData: "The highlighted fields are required to submit this form.",
+        invalidID: "is not valid for Local Education Organization ID.",
     };
 
     path(): string {
@@ -103,9 +114,16 @@ export class EducationOrganizationsPage extends AdminAppPage {
         await this.fillLEAName(this.editedFormValueName);
     }
 
-    async saveLEAForm(): Promise<void> {
+    async fillInvalidId(): Promise<void> {
+        await this.fillLEAId(this.invalidFormValueId);
+    }
+
+    async saveLEAForm({ expectErrors = false }: { expectErrors?: boolean } = {}): Promise<void> {
         await Promise.all([
-            this.waitForResponse({ url: "/EducationOrganizations/AddLocalEducationAgency" }),
+            this.waitForResponse({
+                url: "/EducationOrganizations/AddLocalEducationAgency",
+                status: expectErrors ? 400 : 200,
+            }),
             this.saveForm(),
         ]);
     }
@@ -165,6 +183,24 @@ export class EducationOrganizationsPage extends AdminAppPage {
         await this.waitForListLoad();
     }
 
+    async getErrorMessages(): Promise<string | null> {
+        return await this.modalSelector.locator(this.errorMsgSection).textContent();
+    }
+
+    async idFieldHasError(): Promise<boolean> {
+        return (
+            this.modalSelector.locator(this.fieldWithError).locator(this.leaFormSelectors.ID) !== undefined
+        );
+    }
+
+    async allFieldsHaveError(): Promise<boolean> {
+        let fieldsWithError = true;
+        Object.values(this.leaFormSelectors).forEach((selector) => {
+            fieldsWithError = this.modalSelector.locator(this.fieldWithError).locator(selector) !== undefined;
+        });
+        return fieldsWithError;
+    }
+
     private async getModalTitle(): Promise<string> {
         const content = await this.modalSelector.locator(this.modalTitleSection).textContent();
         return content ? content : "";
@@ -174,8 +210,8 @@ export class EducationOrganizationsPage extends AdminAppPage {
         await this.modalSelector.locator(this.confirmBtn).click();
     }
 
-    private async fillLEAId(): Promise<void> {
-        await this.modalSelector.locator(this.leaFormSelectors.ID).fill(this.leaFormValues.ID);
+    private async fillLEAId(value = this.leaFormValues.ID): Promise<void> {
+        await this.modalSelector.locator(this.leaFormSelectors.ID).fill(value);
     }
 
     private async fillLEAName(value = this.leaFormValues.name): Promise<void> {
