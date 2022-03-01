@@ -15,6 +15,7 @@ export class EducationOrganizationsPage extends AdminAppPage {
     edOrgDetailsSectionCollapsed = 'div.content[aria-expanded="false"]';
     errorMsgSection = "div.validationSummary";
     fieldWithError = ".row.has-error";
+    dismissModalBtn = "button.close";
 
     leaFormSelectors = {
         ID: 'input[name="LocalEducationAgencyId"]',
@@ -61,6 +62,8 @@ export class EducationOrganizationsPage extends AdminAppPage {
     errorMessages = {
         noData: "The highlighted fields are required to submit this form.",
         invalidID: "is not valid for Local Education Organization ID.",
+        duplicatedID:
+            "This 'Local Education Organization ID' is already associated with another Education Organization. Please provide a unique value.",
     };
 
     path(): string {
@@ -199,6 +202,10 @@ export class EducationOrganizationsPage extends AdminAppPage {
             fieldsWithError = this.modalSelector.locator(this.fieldWithError).locator(selector) !== undefined;
         });
         return fieldsWithError;
+    }
+
+    async dismissModal(): Promise<void> {
+        await this.modalSelector.locator(this.dismissModalBtn).click();
     }
 
     private async getModalTitle(): Promise<string> {

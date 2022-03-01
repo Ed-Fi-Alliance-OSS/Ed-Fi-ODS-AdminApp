@@ -5,7 +5,8 @@ import { page, browser, models, currentScenarioName } from "./setup";
 
 After(async (scenario) => {
     if (scenario.result?.status === TestStepResultStatus.PASSED) {
-        await cleanup();
+        const steps = scenario.pickle.steps.map((step) => step.text);
+        await cleanup(steps);
     }
     await saveTrace();
 });
@@ -16,8 +17,12 @@ AfterAll(() => {
     }
 });
 
-async function cleanup(): Promise<void> {
-    if (currentScenarioName.match(".*(Add|Edit|Collapse) Local Education Agency( Section)?$")) {
+async function cleanup(steps: string[]): Promise<void> {
+    if (
+        currentScenarioName.match(".*Add Local Education Agency$") ||
+        (steps.includes("there's a Local Education Agency added") &&
+            !currentScenarioName.match(".*Delete Local Education Agency$"))
+    ) {
         try {
             await models.edOrgsPage.navigate();
             await models.edOrgsPage.deleteLEAFullSteps();
