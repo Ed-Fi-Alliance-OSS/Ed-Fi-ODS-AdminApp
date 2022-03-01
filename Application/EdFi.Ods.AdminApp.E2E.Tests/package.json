@@ -25,6 +25,7 @@
     "lint": "npx eslint --ext .ts ./ --fix",
     "test": "cucumber-js --tags \"not (@Register or @FTS)\"",
     "report": "npm run test -- --format json:reports/report.json",
+    "html-report": "npm run test -- --format html:reports/report.html",
     "sanity-test": "cucumber-js --tags @Sanity",
     "test-wip": "cucumber-js --tags @WIP",
     "publish": "npm run test -- --publish",

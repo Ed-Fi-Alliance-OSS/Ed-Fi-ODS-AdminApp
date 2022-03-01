@@ -4,6 +4,10 @@ import { takeScreenshot } from "../management/functions";
 import { models } from "../management/setup";
 
 Given("there's a Local Education Agency added", async () => {
+    await models.edOrgsPage.navigate();
+    if(await models.edOrgsPage.isLEAPresentOnPage()) {
+        return Promise.resolve("LEA is already present");
+    }
     await models.edOrgsPage.addLocalEducationAgencyFullSteps();
 });
 
