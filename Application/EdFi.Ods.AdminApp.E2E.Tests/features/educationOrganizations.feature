@@ -52,10 +52,21 @@ Feature: Education Organizations
         And clicking save Local Education Agency with errors
         Then Local Education Agency validation for "<Scenario>" appears
         And field with errors for "<Scenario>" are highlighted
+        And modal is dismissed
 
         Examples:
             | Scenario |
             | no data  |
             | wrong id |
 
-# #Duplicated ID
+    #AA-1448
+    Scenario: Education Organizations section - Add Duplicated Local Education Agency Id
+        Given there's a Local Education Agency added
+        And it's on the "Education Organizations" page
+        And Education Organization list has loaded
+        When adding new Local Education Agency
+        And filling Local Education Agency form
+        And clicking save Local Education Agency with errors
+        Then Local Education Agency validation for "duplicated id" appears
+        And field with errors for "duplicated id" are highlighted
+        And modal is dismissed
