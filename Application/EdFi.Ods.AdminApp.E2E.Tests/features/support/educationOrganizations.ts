@@ -31,6 +31,10 @@ When("clicking save Local Education Agency", async () => {
     await models.edOrgsPage.saveLEAForm();
 });
 
+When("clicking save Local Education Agency with errors", async () => {
+    await models.edOrgsPage.saveLEAForm({ expectErrors: true });
+});
+
 When("clicking save edited Local Education Agency", async () => {
     await models.edOrgsPage.saveEditedLEAForm();
 });
@@ -51,6 +55,18 @@ When("confirming delete Local Education Agency", async () => {
 
 When("clicking collapse Local Education Agency section", async () => {
     await models.edOrgsPage.clickCollapse();
+});
+
+When("entering Local Education Agency form {string}", async (scenario: string) => {
+    switch (scenario) {
+        case "wrong id":
+            await models.edOrgsPage.fillLEAForm();
+            await models.edOrgsPage.fillInvalidId();
+            break;
+        case "no data":
+        default:
+            break;
+    }
 });
 
 Then("Local Education Agency section is collapsed", async () => {
@@ -93,4 +109,39 @@ Then("Local Education Agency is deleted", async () => {
         "Confirmation message not found"
     );
     await takeScreenshot("Local Education Agency Deleted");
+});
+
+Then("Local Education Agency validation for {string} appears", async (scenario: string) => {
+    const errors = await models.edOrgsPage.getErrorMessages();
+
+    switch (scenario) {
+        case "wrong id":
+            ok(
+                errors?.includes(models.edOrgsPage.errorMessages.invalidID),
+                `ID error message failed. Actual message: ${errors}`
+            );
+            break;
+        case "no data":
+            ok(
+                errors?.includes(models.edOrgsPage.errorMessages.noData),
+                `Error message failed. Actual message: ${errors}`
+            );
+            break;
+        default:
+            break;
+    }
+});
+
+Then("field with errors for {string} are highlighted", async (scenario: string) => {
+    switch (scenario) {
+        case "wrong id":
+            ok(await models.edOrgsPage.idFieldHasError());
+            break;
+        case "no data":
+            ok(await models.edOrgsPage.allFieldsHaveError());
+            break;
+        default:
+            break;
+    }
+    await takeScreenshot("Validation errors");
 });
