@@ -6,7 +6,7 @@ Feature: Education Organizations
 
     #AA-859
     @Sanity
-    Scenario: Education Organizations section - Add Local Education Agency
+    Scenario: Add Local Education Agency
         Given it's on the "Education Organizations" page
         And Education Organization list has loaded
         When adding new Local Education Agency
@@ -16,7 +16,7 @@ Feature: Education Organizations
         And Local Education Agency appears on list
 
     #AA-860
-    Scenario: Education Organizations section - Edit Local Education Agency
+    Scenario: Edit Local Education Agency
         Given there's a Local Education Agency added
         And it's on the "Education Organizations" page
         And Education Organization list has loaded
@@ -27,7 +27,7 @@ Feature: Education Organizations
         And edited Local Education Agency appears on list
 
     #AA-861
-    Scenario: Education Organizations section - Delete Local Education Agency
+    Scenario: Delete Local Education Agency
         Given there's a Local Education Agency added
         And it's on the "Education Organizations" page
         And Education Organization list has loaded
@@ -36,7 +36,7 @@ Feature: Education Organizations
         Then Local Education Agency is deleted
 
     #AA-862
-    Scenario: Education Organizations section - Collapse Local Education Agency Section
+    Scenario: Collapse Local Education Agency Section
         Given there's a Local Education Agency added
         And it's on the "Education Organizations" page
         And Education Organization list has loaded
@@ -44,7 +44,7 @@ Feature: Education Organizations
         Then Local Education Agency section is collapsed
 
     #AA-934
-    Scenario Outline: Education Organizations section - Add Local Education Agency validations
+    Scenario Outline: Add Local Education Agency validations
         Given it's on the "Education Organizations" page
         And Education Organization list has loaded
         When adding new Local Education Agency
@@ -60,7 +60,7 @@ Feature: Education Organizations
             | wrong id |
 
     #AA-1448
-    Scenario: Education Organizations section - Add Duplicated Local Education Agency Id
+    Scenario: Add Duplicated Local Education Agency Id
         Given there's a Local Education Agency added
         And it's on the "Education Organizations" page
         And Education Organization list has loaded
