@@ -13,6 +13,7 @@ Given("there's a Local Education Agency added", async () => {
 
 Given("Education Organization list has loaded", async () => {
     ok(await models.edOrgsPage.hasPageTitle(), "Page title not found");
+    //Check tab
 });
 
 When("adding new Local Education Agency", async () => {

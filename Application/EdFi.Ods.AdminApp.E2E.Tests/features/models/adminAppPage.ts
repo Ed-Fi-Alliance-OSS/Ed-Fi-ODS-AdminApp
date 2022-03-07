@@ -5,6 +5,7 @@ export abstract class AdminAppPage {
 
     title = ".container h2";
     toast = "#toast-container";
+    mainSelector = "div.container";
     loadingSelector = ".footable-loader";
     validationErrors = "div#validationSummary:not(.hidden)";
 
@@ -58,7 +59,7 @@ export abstract class AdminAppPage {
         text: string;
         selector?: string;
     }): Promise<boolean> {
-        return await this.elementExists(`div.container ${selector}:has-text("${text}")`);
+        return await this.elementExists(`${this.mainSelector} ${selector}:has-text("${text}")`);
     }
 
     protected async elementExists(selector: string): Promise<boolean> {
