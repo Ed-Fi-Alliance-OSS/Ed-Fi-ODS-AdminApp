@@ -42,6 +42,9 @@ Given("it's on the {string} page", async (pageName: string) => {
         case "Education Organizations":
             currentPage = models.edOrgsPage;
             break;
+        case "Vendors":
+            currentPage = models.vendorsPage;
+            break;
         default:
             break;
     }
