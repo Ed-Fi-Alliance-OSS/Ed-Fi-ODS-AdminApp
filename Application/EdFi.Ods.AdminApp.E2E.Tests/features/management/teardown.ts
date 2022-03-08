@@ -1,13 +1,17 @@
 import { After, AfterAll } from "@cucumber/cucumber";
 import { TestStepResultStatus } from "@cucumber/messages";
-import { saveTrace } from "./functions";
-import { page, browser, models, currentScenarioName } from "./setup";
+import { saveTrace, takeScreenshot } from "./functions";
+import { page, browser, models, currentTest } from "./setup";
 
 After(async (scenario) => {
     if (scenario.result?.status === TestStepResultStatus.PASSED) {
+        await takeScreenshot("SUCCESS");
         const steps = scenario.pickle.steps.map((step) => step.text);
         await cleanup(steps);
+    } else if (scenario.result?.status === TestStepResultStatus.FAILED) {
+        await takeScreenshot("FAIL");
     }
+
     await saveTrace();
 });
 
@@ -19,9 +23,9 @@ AfterAll(() => {
 
 async function cleanup(steps: string[]): Promise<void> {
     if (
-        currentScenarioName.match(".*Add Local Education Agency$") ||
+        currentTest.scenario.match(".*Add Local Education Agency$") ||
         (steps.includes("there's a Local Education Agency added") &&
-            !currentScenarioName.match(".*Delete Local Education Agency$"))
+            !currentTest.scenario.match(".*Delete Local Education Agency$"))
     ) {
         try {
             await models.edOrgsPage.navigate();

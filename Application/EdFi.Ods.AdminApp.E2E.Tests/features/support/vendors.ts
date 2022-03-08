@@ -1,7 +1,6 @@
 import { Given, Then, When } from "@cucumber/cucumber";
 import { models } from "../management/setup";
 import { ok } from "assert";
-import { takeScreenshot } from "../management/functions";
 
 Given("Vendor page has loaded", async () => {
     ok(await models.vendorsPage.hasTabSelected(), "Vendors tab not selected");
@@ -15,11 +14,9 @@ When("help section is present", async () => {
 Then("help section can be collapsed", async () => {
     await models.vendorsPage.collapseHelpSection();
     ok(await models.vendorsPage.helpSectionFlag(), "Hide help not set");
-    await takeScreenshot("Help section collapsed");
 });
 
 Then("help section can be expanded", async () => {
     await models.vendorsPage.showHelpSection();
     ok(!(await models.vendorsPage.helpSectionFlag()), "Hide help set");
-    await takeScreenshot("Help section expanded");
 });
