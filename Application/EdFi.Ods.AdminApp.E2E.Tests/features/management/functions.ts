@@ -1,16 +1,18 @@
 import { mkdir } from "fs/promises";
-import { context, currentScenarioName, page } from "./setup";
+import { context, currentTest, page } from "./setup";
 
 export async function saveTrace(): Promise<void> {
-    const traceFolder = "./traces";
-    mkdir(traceFolder).catch(() => {});
     if (process.env.TRACE) {
-        await context.tracing.stop({ path: `./traces/${currentScenarioName} - trace.zip` });
+        const traceFolder = "./traces";
+        mkdir(traceFolder).catch(() => {});
+        const path = `${traceFolder}/${currentTest.feature}/${currentTest.scenario}/trace.zip`;
+
+        await context.tracing.stop({ path });
     }
 }
 
 export async function takeScreenshot(name: string): Promise<void> {
     await page.screenshot({
-        path: `./screenshots/${currentScenarioName} - ${name}.png`,
+        path: `./screenshots/${currentTest.feature}/${currentTest.scenario}/${name}.png`,
     });
 }

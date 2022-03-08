@@ -28,7 +28,7 @@ Feature: Log in
             | wrong password       |
 
     #AA-1019
-    Scenario: Log out successfully
+    Scenario: Log out successful
         Given user is logged in
         When clicks sign out
         Then logout is successful

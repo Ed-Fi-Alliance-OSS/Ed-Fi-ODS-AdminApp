@@ -1,6 +1,5 @@
 import { Given, Then, When } from "@cucumber/cucumber";
 import { ok } from "assert";
-import { takeScreenshot } from "../management/functions";
 import { models } from "../management/setup";
 import { validatePath } from "../management/validators";
 
@@ -67,8 +66,6 @@ Then("login is successful", async () => {
     } else {
         throw "Login failed, current page is: " + models.homePage.page.url();
     }
-
-    await takeScreenshot("login successful");
 });
 
 Then("logout is successful", async () => {
@@ -76,15 +73,11 @@ Then("logout is successful", async () => {
     if (models.landingPage.isOnPage) {
         ok(await models.landingPage.hasPageTitle(), "Page title not found");
     }
-
-    await takeScreenshot("logout successful");
 });
 
 Then("registration is successful", async () => {
     validatePath(models.firstTimeSetupPage.path(), true);
     ok(await models.firstTimeSetupPage.hasTitle());
-
-    await takeScreenshot("registration successful");
 });
 
 Then("validation errors for Log in scenario: {string} appears", async (scenario: string) => {
@@ -134,6 +127,4 @@ Then("validation errors for Log in scenario: {string} appears", async (scenario:
         default:
             break;
     }
-
-    await takeScreenshot(`Validation errors for login scenario - ${scenario}`);
 });

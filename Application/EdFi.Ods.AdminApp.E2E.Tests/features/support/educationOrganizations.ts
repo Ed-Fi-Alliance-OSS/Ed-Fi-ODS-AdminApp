@@ -1,6 +1,5 @@
 import { Given, Then, When } from "@cucumber/cucumber";
 import { strictEqual, ok } from "assert";
-import { takeScreenshot } from "../management/functions";
 import { models } from "../management/setup";
 
 Given("there's a Local Education Agency added", async () => {
@@ -76,7 +75,6 @@ When("entering Local Education Agency form {string}", async (scenario: string) =
 
 Then("Local Education Agency section is collapsed", async () => {
     ok(await models.edOrgsPage.isSectionCollapsed(), "Section is not collapsed");
-    await takeScreenshot("Section collapsed");
 });
 
 Then("Local Education Agency is added", async () => {
@@ -98,13 +96,11 @@ Then("Local Education Agency is edited", async () => {
 Then("Local Education Agency appears on list", async () => {
     await models.edOrgsPage.waitForListLoad();
     ok(await models.edOrgsPage.isLEAPresentOnPage(), "Local Education Agency not found in page");
-    await takeScreenshot("New Education Agency Added");
 });
 
 Then("edited Local Education Agency appears on list", async () => {
     await models.edOrgsPage.waitForListLoad();
     ok(await models.edOrgsPage.isEditedLEAPresentOnPage(), "Local Education Agency not found in page");
-    await takeScreenshot("Education Agency Edited");
 });
 
 Then("Local Education Agency is deleted", async () => {
@@ -113,7 +109,6 @@ Then("Local Education Agency is deleted", async () => {
         models.edOrgsPage.confirmationMessages.leaDeleted,
         "Confirmation message not found"
     );
-    await takeScreenshot("Local Education Agency Deleted");
 });
 
 Then("Local Education Agency validation for {string} appears", async (scenario: string) => {
@@ -155,7 +150,6 @@ Then("field with errors for {string} are highlighted", async (scenario: string) 
         default:
             break;
     }
-    await takeScreenshot("Validation errors");
 });
 
 Then("modal is dismissed", async () => {
