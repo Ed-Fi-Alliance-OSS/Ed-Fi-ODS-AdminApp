@@ -1,4 +1,4 @@
-import { Page } from "playwright";
+import { Page, Locator } from "playwright";
 
 export abstract class AdminAppPage {
     page: Page;
@@ -8,6 +8,8 @@ export abstract class AdminAppPage {
     mainSelector = "div.container";
     loadingSelector = ".footable-loader";
     validationErrors = "div#validationSummary:not(.hidden)";
+    openModal = "div.modal.fade.in";
+    modalTitleSelector = "h4.modal-title";
 
     protected get url(): string {
         if (!process.env.URL) {
@@ -21,6 +23,10 @@ export abstract class AdminAppPage {
         const baseURL = currentURL.substring(0, currentURL.indexOf("?"));
         const URL = baseURL === "" ? currentURL : baseURL;
         return URL === this.path();
+    }
+
+    get modalSelector(): Locator {
+        return this.page.locator(this.openModal);
     }
 
     constructor(page: Page) {
@@ -46,6 +52,11 @@ export abstract class AdminAppPage {
 
     async getToastMessage(): Promise<string | null> {
         return await this.getText(this.toast);
+    }
+
+    async modalTitle(): Promise<string> {
+        const content = await this.modalSelector.locator(this.modalTitleSelector).textContent();
+        return content ? content : "";
     }
 
     protected async getText(text: string): Promise<string | null> {
