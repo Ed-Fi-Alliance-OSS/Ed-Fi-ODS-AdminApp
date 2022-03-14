@@ -1,11 +1,8 @@
-import { Locator } from "playwright";
 import { AdminAppPage } from "./adminAppPage";
 
 export class EducationOrganizationsPage extends AdminAppPage {
     titleMsg = "div > h6";
-    openModal = "div.modal.fade.in";
     addNewLeaBtn = 'button[data-target="#add-lea-modal"]';
-    modalTitleSection = "h4.modal-title";
     confirmBtn = 'button[type="submit"]';
     nameOnList = ".panel-section h8";
     deleteLEABtn = "a.delete-lea-link";
@@ -16,6 +13,7 @@ export class EducationOrganizationsPage extends AdminAppPage {
     errorMsgSection = "div.validationSummary";
     fieldWithError = ".row.has-error";
     dismissModalBtn = "button.close";
+    activeTab = "ul.nav li.active";
 
     leaFormSelectors = {
         ID: 'input[name="LocalEducationAgencyId"]',
@@ -25,10 +23,6 @@ export class EducationOrganizationsPage extends AdminAppPage {
         state: 'select[name="State"]',
         zip: 'input[name="ZipCode"]',
     };
-
-    get modalSelector(): Locator {
-        return this.page.locator(this.openModal);
-    }
 
     leaFormValues = {
         ID: "1",
@@ -85,18 +79,6 @@ export class EducationOrganizationsPage extends AdminAppPage {
         await this.page.locator(this.addNewLeaBtn).click();
     }
 
-    async hasAddLEAModalTitle(): Promise<boolean> {
-        return (await this.getModalTitle()) === this.modalTitleMessages.AddLEA;
-    }
-
-    async hasEditLEAModalTitle(): Promise<boolean> {
-        return (await this.getModalTitle()) === this.modalTitleMessages.EditLEA;
-    }
-
-    async hasDeleteLEAModalTitle(): Promise<boolean> {
-        return (await this.getModalTitle()) === this.modalTitleMessages.DeleteLEA;
-    }
-
     async hasDeleteModalConfirmationMessage(): Promise<boolean> {
         return this.hasText({
             text: `Are you sure you want to permanently delete ${this.leaFormValues.name}`,
@@ -111,6 +93,13 @@ export class EducationOrganizationsPage extends AdminAppPage {
         await this.fillCity();
         await this.selectState();
         await this.fillZipCode();
+    }
+
+    async hasTabSelected(): Promise<boolean> {
+        return await this.hasText({
+            text: "Education Organizations",
+            selector: this.activeTab,
+        });
     }
 
     async editLEAForm(): Promise<void> {
@@ -172,20 +161,6 @@ export class EducationOrganizationsPage extends AdminAppPage {
         ]);
     }
 
-    async deleteLEAFullSteps(): Promise<void> {
-        await this.hasPageTitle();
-        await this.clickDelete();
-        await this.deleteLEA();
-    }
-
-    async addLocalEducationAgencyFullSteps(): Promise<void> {
-        await this.navigate();
-        await this.addNewLEA();
-        await this.fillLEAForm();
-        await this.saveLEAForm();
-        await this.waitForListLoad();
-    }
-
     async getErrorMessages(): Promise<string | null> {
         return await this.modalSelector.locator(this.errorMsgSection).textContent();
     }
@@ -208,9 +183,18 @@ export class EducationOrganizationsPage extends AdminAppPage {
         await this.modalSelector.locator(this.dismissModalBtn).click();
     }
 
-    private async getModalTitle(): Promise<string> {
-        const content = await this.modalSelector.locator(this.modalTitleSection).textContent();
-        return content ? content : "";
+    async deleteLEAFullSteps(): Promise<void> {
+        await this.hasPageTitle();
+        await this.clickDelete();
+        await this.deleteLEA();
+    }
+
+    async addLocalEducationAgencyFullSteps(): Promise<void> {
+        await this.navigate();
+        await this.addNewLEA();
+        await this.fillLEAForm();
+        await this.saveLEAForm();
+        await this.waitForListLoad();
     }
 
     private async clickConfirmDelete(): Promise<void> {

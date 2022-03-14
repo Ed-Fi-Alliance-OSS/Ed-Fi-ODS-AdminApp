@@ -11,8 +11,8 @@ Given("there's a Local Education Agency added", async () => {
 });
 
 Given("Education Organization list has loaded", async () => {
+    ok(await models.edOrgsPage.hasTabSelected(), "Education Organization tab not selected.");
     ok(await models.edOrgsPage.hasPageTitle(), "Page title not found");
-    //Check tab
 });
 
 When("adding new Local Education Agency", async () => {
@@ -20,14 +20,20 @@ When("adding new Local Education Agency", async () => {
 });
 
 When("filling Local Education Agency form", async () => {
-    ok(await models.edOrgsPage.hasAddLEAModalTitle(), "Modal title not found");
-
+    strictEqual(
+        await models.edOrgsPage.modalTitle(),
+        models.edOrgsPage.modalTitleMessages.AddLEA,
+        "Add modal title not found"
+    );
     await models.edOrgsPage.fillLEAForm();
 });
 
 When("modifying added Local Education Agency", async () => {
-    ok(await models.edOrgsPage.hasEditLEAModalTitle(), "Modal title not found");
-
+    strictEqual(
+        await models.edOrgsPage.modalTitle(),
+        models.edOrgsPage.modalTitleMessages.EditLEA,
+        "Edit modal title not found"
+    );
     await models.edOrgsPage.editLEAForm();
 });
 
@@ -52,7 +58,11 @@ When("clicking delete Local Education Agency", async () => {
 });
 
 When("confirming delete Local Education Agency", async () => {
-    await models.edOrgsPage.hasDeleteLEAModalTitle();
+    strictEqual(
+        await models.edOrgsPage.modalTitle(),
+        models.edOrgsPage.modalTitleMessages.DeleteLEA,
+        "Delete modal title not found"
+    );
     await models.edOrgsPage.hasDeleteModalConfirmationMessage();
     await models.edOrgsPage.deleteLEA();
 });
