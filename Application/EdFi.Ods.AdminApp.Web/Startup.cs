@@ -81,7 +81,10 @@ namespace EdFi.Ods.AdminApp.Web
                             opt.ValidatorOptions.DisplayNameResolver = (type, memberInfo, expression)
                                 => memberInfo?
                                     .GetCustomAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>()?.GetName();
-                        });
+                        })
+                    .AddNewtonsoftJson(options =>
+                        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    );
 
             services.AddAuthorization(options =>
             {
