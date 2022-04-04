@@ -34,7 +34,7 @@ Feature: Vendors
         And it's on the "Vendors" page
         And vendor page has loaded
         When clicking delete vendor
-        And validation message has vendor name
+        And delete vendor modal is open
         And confirming delete vendor
         Then vendor is deleted
 

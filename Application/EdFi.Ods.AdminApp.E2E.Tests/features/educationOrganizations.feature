@@ -32,6 +32,7 @@ Feature: Education Organizations
         And it's on the "Education Organizations" page
         And education organization list has loaded
         When clicking delete local education agency
+        And delete local education agency modal is open
         And confirming delete local education agency
         Then local education agency is deleted
 

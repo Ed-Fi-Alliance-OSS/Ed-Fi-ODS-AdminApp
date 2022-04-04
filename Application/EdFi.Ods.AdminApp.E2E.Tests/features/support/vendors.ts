@@ -40,7 +40,12 @@ When("modifying added vendor", async () => {
     await models.vendorsPage.editVendorForm();
 });
 
-When("validation message has vendor name", async () => {
+When("delete vendor modal is open", async () => {
+    strictEqual(
+        await models.vendorsPage.modalTitle(),
+        models.vendorsPage.modalTitleMessages.deleteVendor,
+        "Delete modal title not found"
+    );
     ok(
         (await models.vendorsPage.getDeleteVendorMessage())?.includes(
             models.vendorsPage.deleteVendorConfirmationMessage
@@ -109,7 +114,6 @@ Then("added vendor appears on list", async () => {
 });
 
 Then("edited vendor appears on list", async () => {
-    //await models.vendorsPage.waitForListLoad(); ?
     ok(await models.vendorsPage.isEditedVendorPresentOnPage(), "Vendor not found in page");
 });
 

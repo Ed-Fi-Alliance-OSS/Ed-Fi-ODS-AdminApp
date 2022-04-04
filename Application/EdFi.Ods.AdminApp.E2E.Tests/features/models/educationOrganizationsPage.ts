@@ -48,9 +48,9 @@ export class EducationOrganizationsPage extends AdminAppPage {
     };
 
     modalTitleMessages = {
-        AddLEA: "Add Local Education Agency",
-        EditLEA: "Edit Local Education Agency",
-        DeleteLEA: "Delete Local Education Agency",
+        addLEA: "Add Local Education Agency",
+        editLEA: "Edit Local Education Agency",
+        deleteLEA: "Delete Local Education Agency",
     };
 
     errorMessages = {
