@@ -9,13 +9,22 @@ Feature: Vendors
         Given it's on the "Vendors" page
         And vendor page has loaded
         And there are no vendors
-        When clicking on add a vendor
-        And filling Vendor form
+        When clicking add vendor
+        And filling vendor form
         And adding vendor namespace prefix
         And clicking save vendor
         Then vendor is added
         And vendor appears on list
 
+    #AA-873
+    Scenario: Delete a vendor
+        Given there's a vendor added
+        Given it's on the "Vendors" page
+        And vendor page has loaded
+        When clicking delete vendor
+        And validation message has vendor name
+        And confirming delete vendor
+        Then vendor is deleted
 
     #AA-880
     Scenario: Help Section

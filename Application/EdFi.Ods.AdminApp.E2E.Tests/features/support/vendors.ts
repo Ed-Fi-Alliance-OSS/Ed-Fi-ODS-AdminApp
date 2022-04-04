@@ -2,6 +2,14 @@ import { Given, Then, When } from "@cucumber/cucumber";
 import { models } from "../management/setup";
 import { ok, strictEqual } from "assert";
 
+Given("there's a vendor added", async () => {
+    await models.vendorsPage.navigate();
+    if (await models.vendorsPage.isVendorPresentOnPage()) {
+        return Promise.resolve("Vendor is already added");
+    }
+    await models.vendorsPage.addVendorFullSteps();
+});
+
 Given("vendor page has loaded", async () => {
     ok(await models.vendorsPage.hasTabSelected(), "Vendors tab not selected.");
     ok(await models.vendorsPage.hasPageTitle(), "Page title not found.");
@@ -11,11 +19,28 @@ Given("there are no vendors", async () => {
     ok(await models.vendorsPage.noVendorsMessageVisible(), "There are vendors on the page");
 });
 
-When("clicking on add a vendor", async () => {
+When("clicking add vendor", async () => {
     await models.vendorsPage.addVendor();
 });
 
-When("filling Vendor form", async () => {
+When("clicking delete vendor", async () => {
+    await models.vendorsPage.clickDelete();
+});
+
+When("validation message has vendor name", async () => {
+    ok(
+        (await models.vendorsPage.getDeleteVendorMessage())?.includes(
+            models.vendorsPage.deleteVendorConfirmationMessage
+        ),
+        "Validation message not correct"
+    );
+});
+
+When("confirming delete vendor", async () => {
+    await models.vendorsPage.deleteVendor();
+});
+
+When("filling vendor form", async () => {
     strictEqual(
         await models.vendorsPage.modalTitle(),
         models.vendorsPage.modalTitleMessages.addVendor,
@@ -42,6 +67,14 @@ Then("vendor is added", async () => {
     strictEqual(
         await models.vendorsPage.getToastMessage(),
         models.vendorsPage.confirmationMessages.added,
+        "Confirmation message not found"
+    );
+});
+
+Then("vendor is deleted", async () => {
+    strictEqual(
+        await models.vendorsPage.getToastMessage(),
+        models.vendorsPage.confirmationMessages.deleted,
         "Confirmation message not found"
     );
 });

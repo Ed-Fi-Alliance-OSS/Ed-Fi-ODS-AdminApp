@@ -2,24 +2,24 @@ import { Given, Then, When } from "@cucumber/cucumber";
 import { strictEqual, ok } from "assert";
 import { models } from "../management/setup";
 
-Given("there's a Local Education Agency added", async () => {
+Given("there's a local education agency added", async () => {
     await models.edOrgsPage.navigate();
     if (await models.edOrgsPage.isLEAPresentOnPage()) {
-        return Promise.resolve("LEA is already present");
+        return Promise.resolve("LEA is already added");
     }
     await models.edOrgsPage.addLocalEducationAgencyFullSteps();
 });
 
-Given("Education Organization list has loaded", async () => {
+Given("education organization list has loaded", async () => {
     ok(await models.edOrgsPage.hasTabSelected(), "Education Organization tab not selected.");
     ok(await models.edOrgsPage.hasPageTitle(), "Page title not found");
 });
 
-When("adding new Local Education Agency", async () => {
+When("adding new local education agency", async () => {
     await models.edOrgsPage.addNewLEA();
 });
 
-When("filling Local Education Agency form", async () => {
+When("filling local education agency form", async () => {
     strictEqual(
         await models.edOrgsPage.modalTitle(),
         models.edOrgsPage.modalTitleMessages.AddLEA,
@@ -28,7 +28,7 @@ When("filling Local Education Agency form", async () => {
     await models.edOrgsPage.fillLEAForm();
 });
 
-When("modifying added Local Education Agency", async () => {
+When("modifying added local education agency", async () => {
     strictEqual(
         await models.edOrgsPage.modalTitle(),
         models.edOrgsPage.modalTitleMessages.EditLEA,
@@ -37,27 +37,27 @@ When("modifying added Local Education Agency", async () => {
     await models.edOrgsPage.editLEAForm();
 });
 
-When("clicking save Local Education Agency", async () => {
+When("clicking save local education agency", async () => {
     await models.edOrgsPage.saveLEAForm();
 });
 
-When("clicking save Local Education Agency with errors", async () => {
+When("clicking save local education agency with errors", async () => {
     await models.edOrgsPage.saveLEAForm({ expectErrors: true });
 });
 
-When("clicking save edited Local Education Agency", async () => {
+When("clicking save edited local education agency", async () => {
     await models.edOrgsPage.saveEditedLEAForm();
 });
 
-When("clicking edit Local Education Agency", async () => {
+When("clicking edit local education agency", async () => {
     await models.edOrgsPage.clickEdit();
 });
 
-When("clicking delete Local Education Agency", async () => {
+When("clicking delete local education agency", async () => {
     await models.edOrgsPage.clickDelete();
 });
 
-When("confirming delete Local Education Agency", async () => {
+When("confirming delete local education agency", async () => {
     strictEqual(
         await models.edOrgsPage.modalTitle(),
         models.edOrgsPage.modalTitleMessages.DeleteLEA,
@@ -67,11 +67,11 @@ When("confirming delete Local Education Agency", async () => {
     await models.edOrgsPage.deleteLEA();
 });
 
-When("clicking collapse Local Education Agency section", async () => {
+When("clicking collapse local education agency section", async () => {
     await models.edOrgsPage.clickCollapse();
 });
 
-When("entering Local Education Agency form {string}", async (scenario: string) => {
+When("entering local education agency form {string}", async (scenario: string) => {
     switch (scenario) {
         case "wrong id":
             await models.edOrgsPage.fillLEAForm();
@@ -83,11 +83,11 @@ When("entering Local Education Agency form {string}", async (scenario: string) =
     }
 });
 
-Then("Local Education Agency section is collapsed", async () => {
+Then("local education agency section is collapsed", async () => {
     ok(await models.edOrgsPage.isSectionCollapsed(), "Section is not collapsed");
 });
 
-Then("Local Education Agency is added", async () => {
+Then("local education agency is added", async () => {
     strictEqual(
         await models.edOrgsPage.getToastMessage(),
         models.edOrgsPage.confirmationMessages.leaAdded,
@@ -95,7 +95,7 @@ Then("Local Education Agency is added", async () => {
     );
 });
 
-Then("Local Education Agency is edited", async () => {
+Then("local education agency is edited", async () => {
     strictEqual(
         await models.edOrgsPage.getToastMessage(),
         models.edOrgsPage.confirmationMessages.leaEdited,
@@ -103,17 +103,17 @@ Then("Local Education Agency is edited", async () => {
     );
 });
 
-Then("Local Education Agency appears on list", async () => {
+Then("local education agency appears on list", async () => {
     await models.edOrgsPage.waitForListLoad();
-    ok(await models.edOrgsPage.isLEAPresentOnPage(), "Local Education Agency not found in page");
+    ok(await models.edOrgsPage.isLEAPresentOnPage(), "local education agency not found in page");
 });
 
-Then("edited Local Education Agency appears on list", async () => {
+Then("edited local education agency appears on list", async () => {
     await models.edOrgsPage.waitForListLoad();
-    ok(await models.edOrgsPage.isEditedLEAPresentOnPage(), "Local Education Agency not found in page");
+    ok(await models.edOrgsPage.isEditedLEAPresentOnPage(), "local education agency not found in page");
 });
 
-Then("Local Education Agency is deleted", async () => {
+Then("local education agency is deleted", async () => {
     strictEqual(
         await models.edOrgsPage.getToastMessage(),
         models.edOrgsPage.confirmationMessages.leaDeleted,
@@ -121,7 +121,7 @@ Then("Local Education Agency is deleted", async () => {
     );
 });
 
-Then("Local Education Agency validation for {string} appears", async (scenario: string) => {
+Then("local education agency validation for {string} appears", async (scenario: string) => {
     const errors = await models.edOrgsPage.getErrorMessages();
 
     switch (scenario) {

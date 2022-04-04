@@ -12,6 +12,7 @@ export class VendorsPage extends AdminAppPage {
     saveChangesBtn = 'button[type="submit"]';
     deleteVendorBtn = "a.delete-vendor-link";
     vendorOnList = `${this.tableBody} .tr-custom th`;
+    deleteConfirmSelector = "div.alert:not(.hidden)";
 
     vendorFormSelectors = {
         name: 'input[name="Company"]',
@@ -32,11 +33,14 @@ export class VendorsPage extends AdminAppPage {
 
     confirmationMessages = {
         added: "Vendor added successfully",
+        deleted: "Vendor removed successfully",
     };
 
     modalTitleMessages = {
         addVendor: "Add Vendor",
     };
+
+    deleteVendorConfirmationMessage = `Are you sure you want to permanently delete vendor ${this.vendorFormValues.name}?`;
 
     path(): string {
         return `${this.url}/GlobalSettings/Vendors`;
@@ -110,7 +114,7 @@ export class VendorsPage extends AdminAppPage {
     }
 
     async isVendorPresentOnPage(): Promise<boolean> {
-        return this.hasText({ text: this.vendorFormValues.name, selector: this.vendorOnList });
+        return await this.hasText({ text: this.vendorFormValues.name, selector: this.vendorOnList });
     }
 
     async noVendorsMessageVisible(): Promise<boolean> {
@@ -121,21 +125,36 @@ export class VendorsPage extends AdminAppPage {
         await this.page.locator(this.deleteVendorBtn).click();
     }
 
-    async clickConfirmDelete() {
+    async clickConfirmDelete(): Promise<void> {
         await this.modalSelector.locator(this.saveChangesBtn).click();
     }
 
-    async deleteVendor() {
+    async deleteVendor(): Promise<void> {
         await Promise.all([
             this.clickConfirmDelete(),
             this.waitForResponse({ url: "GlobalSettings/DeleteVendor" }),
         ]);
     }
 
-    async deleteVendorFullSteps() {
+    async addVendorFullSteps(): Promise<void> {
+        await this.navigate();
+        await this.addVendor();
+        await this.fillVendorForm();
+        await this.saveVendorForm();
+        if ((await this.getToastMessage()) !== this.confirmationMessages.added) {
+            throw "confirmation of vendor added not found";
+        }
+        await this.isVendorPresentOnPage();
+    }
+
+    async deleteVendorFullSteps(): Promise<void> {
         await this.hasPageTitle();
         await this.clickDelete();
         await this.deleteVendor();
+    }
+
+    async getDeleteVendorMessage(): Promise<string | null> {
+        return await this.modalSelector.locator(this.deleteConfirmSelector).textContent();
     }
 
     private async fillVendorName(value = this.vendorFormValues.name): Promise<void> {
