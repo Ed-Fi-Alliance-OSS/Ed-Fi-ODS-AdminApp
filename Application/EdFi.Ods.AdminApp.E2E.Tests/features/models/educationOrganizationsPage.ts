@@ -111,13 +111,17 @@ export class EducationOrganizationsPage extends AdminAppPage {
     }
 
     async saveLEAForm({ expectErrors = false }: { expectErrors?: boolean } = {}): Promise<void> {
-        await Promise.all([
-            this.waitForResponse({
-                url: "/EducationOrganizations/AddLocalEducationAgency",
-                status: expectErrors ? 400 : 200,
-            }),
-            this.saveForm(),
-        ]);
+        try {
+            await Promise.all([
+                this.waitForResponse({
+                    url: "/EducationOrganizations/AddLocalEducationAgency",
+                    status: expectErrors ? 400 : 200,
+                }),
+                this.saveForm(),
+            ]);
+        } catch (error) {
+            throw `${error}\nErrors saving form:\n${await this.getErrorMessages()}`;
+        }
     }
 
     async saveEditedLEAForm(): Promise<void> {

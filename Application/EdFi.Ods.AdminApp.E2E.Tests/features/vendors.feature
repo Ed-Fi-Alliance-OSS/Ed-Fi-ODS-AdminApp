@@ -5,7 +5,7 @@ Feature: Vendors
         And setup is complete
 
     #AA-871
-    Scenario: Add a vendor
+    Scenario: Add vendor
         Given it's on the "Vendors" page
         And vendor page has loaded
         And there are no vendors
@@ -17,7 +17,7 @@ Feature: Vendors
         And vendor appears on list
 
     #AA-873
-    Scenario: Delete a vendor
+    Scenario: Delete vendor
         Given there's a vendor added
         Given it's on the "Vendors" page
         And vendor page has loaded

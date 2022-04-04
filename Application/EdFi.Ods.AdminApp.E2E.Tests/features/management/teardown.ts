@@ -24,19 +24,19 @@ AfterAll(() => {
 async function cleanup(steps: string[]): Promise<void> {
     try {
         if (
-            currentTest.scenario.match(".*Add Local Education Agency$") ||
-            (steps.includes("there's a Local Education Agency added") &&
-                !currentTest.scenario.match(".*Delete Local Education Agency$"))
+            currentTest.scenario.match(".*Add local education agency$") ||
+            (steps.includes("there's a local education agency added") &&
+                !currentTest.scenario.match(".*Delete local education agency$"))
         ) {
             await models.edOrgsPage.navigate();
             await models.edOrgsPage.deleteLEAFullSteps();
         }
 
-        if (currentTest.scenario.match(".*Add a vendor$")) {
+        if (currentTest.scenario.match(".*Add vendor$")) {
             await models.vendorsPage.navigate();
             await models.vendorsPage.deleteVendorFullSteps();
         }
     } catch (error) {
-        console.info(`Item to delete not found\n${error}`);
+        console.info(`Item to delete for scenario ${currentTest.scenario} not found\n${error}`);
     }
 }
