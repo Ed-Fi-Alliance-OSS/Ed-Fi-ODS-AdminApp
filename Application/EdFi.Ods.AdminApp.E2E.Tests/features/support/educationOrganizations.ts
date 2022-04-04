@@ -22,7 +22,7 @@ When("adding new local education agency", async () => {
 When("filling local education agency form", async () => {
     strictEqual(
         await models.edOrgsPage.modalTitle(),
-        models.edOrgsPage.modalTitleMessages.AddLEA,
+        models.edOrgsPage.modalTitleMessages.addLEA,
         "Add modal title not found"
     );
     await models.edOrgsPage.fillLEAForm();
@@ -31,7 +31,7 @@ When("filling local education agency form", async () => {
 When("modifying added local education agency", async () => {
     strictEqual(
         await models.edOrgsPage.modalTitle(),
-        models.edOrgsPage.modalTitleMessages.EditLEA,
+        models.edOrgsPage.modalTitleMessages.editLEA,
         "Edit modal title not found"
     );
     await models.edOrgsPage.editLEAForm();
@@ -57,13 +57,16 @@ When("clicking delete local education agency", async () => {
     await models.edOrgsPage.clickDelete();
 });
 
-When("confirming delete local education agency", async () => {
+When("delete local education agency modal is open", async () => {
     strictEqual(
         await models.edOrgsPage.modalTitle(),
-        models.edOrgsPage.modalTitleMessages.DeleteLEA,
+        models.edOrgsPage.modalTitleMessages.deleteLEA,
         "Delete modal title not found"
     );
     await models.edOrgsPage.hasDeleteModalConfirmationMessage();
+});
+
+When("confirming delete local education agency", async () => {
     await models.edOrgsPage.deleteLEA();
 });
 

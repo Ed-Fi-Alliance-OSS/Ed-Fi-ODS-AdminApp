@@ -49,6 +49,7 @@ export class VendorsPage extends AdminAppPage {
     modalTitleMessages = {
         addVendor: "Add Vendor",
         editVendor: "Edit Vendor",
+        deleteVendor: "Delete Vendor",
     };
 
     path(): string {
