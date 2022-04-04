@@ -14,12 +14,24 @@ Feature: Vendors
         And adding vendor namespace prefix
         And clicking save vendor
         Then vendor is added
-        And vendor appears on list
+        And added vendor appears on list
+
+    #AA-872
+    @WIP
+    Scenario: Edit vendor
+        Given there's a vendor added
+        And it's on the "Vendors" page
+        And vendor page has loaded
+        When clicking edit vendor
+        And modifying added vendor
+        And clicking save edited vendor
+        Then vendor is edited
+        And edited vendor appears on list
 
     #AA-873
     Scenario: Delete vendor
         Given there's a vendor added
-        Given it's on the "Vendors" page
+        And it's on the "Vendors" page
         And vendor page has loaded
         When clicking delete vendor
         And validation message has vendor name

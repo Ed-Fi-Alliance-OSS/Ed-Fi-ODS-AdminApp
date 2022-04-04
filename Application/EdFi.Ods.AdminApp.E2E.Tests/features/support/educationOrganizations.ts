@@ -103,7 +103,7 @@ Then("local education agency is edited", async () => {
     );
 });
 
-Then("local education agency appears on list", async () => {
+Then("added local education agency appears on list", async () => {
     await models.edOrgsPage.waitForListLoad();
     ok(await models.edOrgsPage.isLEAPresentOnPage(), "local education agency not found in page");
 });

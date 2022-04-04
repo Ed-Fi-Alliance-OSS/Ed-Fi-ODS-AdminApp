@@ -23,8 +23,21 @@ When("clicking add vendor", async () => {
     await models.vendorsPage.addVendor();
 });
 
+When("clicking edit vendor", async () => {
+    await models.vendorsPage.clickEdit();
+});
+
 When("clicking delete vendor", async () => {
     await models.vendorsPage.clickDelete();
+});
+
+When("modifying added vendor", async () => {
+    strictEqual(
+        await models.vendorsPage.modalTitle(),
+        models.vendorsPage.modalTitleMessages.editVendor,
+        "Edit modal title not found"
+    );
+    await models.vendorsPage.editVendorForm();
 });
 
 When("validation message has vendor name", async () => {
@@ -59,6 +72,10 @@ When("clicking save vendor", async () => {
     await models.vendorsPage.saveVendorForm();
 });
 
+When("clicking save edited vendor", async () => {
+    await models.vendorsPage.saveEditedVendorForm();
+});
+
 When("help section is present", async () => {
     ok(await models.vendorsPage.hasHelpSection(), "Help section not found");
 });
@@ -71,6 +88,14 @@ Then("vendor is added", async () => {
     );
 });
 
+Then("vendor is edited", async () => {
+    strictEqual(
+        await models.vendorsPage.getToastMessage(),
+        models.vendorsPage.confirmationMessages.edited,
+        "Confirmation message not found"
+    );
+});
+
 Then("vendor is deleted", async () => {
     strictEqual(
         await models.vendorsPage.getToastMessage(),
@@ -79,8 +104,13 @@ Then("vendor is deleted", async () => {
     );
 });
 
-Then("vendor appears on list", async () => {
+Then("added vendor appears on list", async () => {
     ok(await models.vendorsPage.isVendorPresentOnPage(), "Vendor not found in page");
+});
+
+Then("edited vendor appears on list", async () => {
+    //await models.vendorsPage.waitForListLoad(); ?
+    ok(await models.vendorsPage.isEditedVendorPresentOnPage(), "Vendor not found in page");
 });
 
 Then("help section can be collapsed", async () => {

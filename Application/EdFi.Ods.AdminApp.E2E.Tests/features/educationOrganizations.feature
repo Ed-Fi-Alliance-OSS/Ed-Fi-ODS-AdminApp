@@ -13,7 +13,7 @@ Feature: Education Organizations
         And filling local education agency form
         And clicking save local education agency
         Then local education agency is added
-        And local education agency appears on list
+        And added local education agency appears on list
 
     #AA-860
     Scenario: Edit local education agency
