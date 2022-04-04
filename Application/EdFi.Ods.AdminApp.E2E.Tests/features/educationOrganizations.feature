@@ -6,51 +6,51 @@ Feature: Education Organizations
 
     #AA-859
     @Sanity
-    Scenario: Add Local Education Agency
+    Scenario: Add local education agency
         Given it's on the "Education Organizations" page
-        And Education Organization list has loaded
-        When adding new Local Education Agency
-        And filling Local Education Agency form
-        And clicking save Local Education Agency
-        Then Local Education Agency is added
-        And Local Education Agency appears on list
+        And education organization list has loaded
+        When adding new local education agency
+        And filling local education agency form
+        And clicking save local education agency
+        Then local education agency is added
+        And local education agency appears on list
 
     #AA-860
-    Scenario: Edit Local Education Agency
-        Given there's a Local Education Agency added
+    Scenario: Edit local education agency
+        Given there's a local education agency added
         And it's on the "Education Organizations" page
-        And Education Organization list has loaded
-        When clicking edit Local Education Agency
-        And modifying added Local Education Agency
-        And clicking save edited Local Education Agency
-        Then Local Education Agency is edited
-        And edited Local Education Agency appears on list
+        And education organization list has loaded
+        When clicking edit local education agency
+        And modifying added local education agency
+        And clicking save edited local education agency
+        Then local education agency is edited
+        And edited local education agency appears on list
 
     #AA-861
-    Scenario: Delete Local Education Agency
-        Given there's a Local Education Agency added
+    Scenario: Delete local education agency
+        Given there's a local education agency added
         And it's on the "Education Organizations" page
-        And Education Organization list has loaded
-        When clicking delete Local Education Agency
-        And confirming delete Local Education Agency
-        Then Local Education Agency is deleted
+        And education organization list has loaded
+        When clicking delete local education agency
+        And confirming delete local education agency
+        Then local education agency is deleted
 
     #AA-862
-    Scenario: Collapse Local Education Agency Section
-        Given there's a Local Education Agency added
+    Scenario: Collapse local education agency Section
+        Given there's a local education agency added
         And it's on the "Education Organizations" page
-        And Education Organization list has loaded
-        When clicking collapse Local Education Agency section
-        Then Local Education Agency section is collapsed
+        And education organization list has loaded
+        When clicking collapse local education agency section
+        Then local education agency section is collapsed
 
     #AA-934
-    Scenario Outline: Add Local Education Agency validations
+    Scenario Outline: Add local education agency validations
         Given it's on the "Education Organizations" page
-        And Education Organization list has loaded
-        When adding new Local Education Agency
-        And entering Local Education Agency form "<Scenario>"
-        And clicking save Local Education Agency with errors
-        Then Local Education Agency validation for "<Scenario>" appears
+        And education organization list has loaded
+        When adding new local education agency
+        And entering local education agency form "<Scenario>"
+        And clicking save local education agency with errors
+        Then local education agency validation for "<Scenario>" appears
         And field with errors for "<Scenario>" are highlighted
         And modal is dismissed
 
@@ -60,13 +60,13 @@ Feature: Education Organizations
             | wrong id |
 
     #AA-1448
-    Scenario: Add Duplicated Local Education Agency Id
-        Given there's a Local Education Agency added
+    Scenario: Add Duplicated local education agency Id
+        Given there's a local education agency added
         And it's on the "Education Organizations" page
-        And Education Organization list has loaded
-        When adding new Local Education Agency
-        And filling Local Education Agency form
-        And clicking save Local Education Agency with errors
-        Then Local Education Agency validation for "duplicated id" appears
+        And education organization list has loaded
+        When adding new local education agency
+        And filling local education agency form
+        And clicking save local education agency with errors
+        Then local education agency validation for "duplicated id" appears
         And field with errors for "duplicated id" are highlighted
         And modal is dismissed
