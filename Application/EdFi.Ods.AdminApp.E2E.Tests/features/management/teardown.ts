@@ -32,7 +32,10 @@ async function cleanup(steps: string[]): Promise<void> {
             await models.edOrgsPage.deleteLEAFullSteps();
         }
 
-        if (currentTest.scenario.match(".*Add vendor$")) {
+        if (
+            currentTest.scenario.match(".*Add vendor$") ||
+            (steps.includes("there's a vendor added") && !currentTest.scenario.match(".*Delete vendor$"))
+        ) {
             await models.vendorsPage.navigate();
             await models.vendorsPage.deleteVendorFullSteps();
         }

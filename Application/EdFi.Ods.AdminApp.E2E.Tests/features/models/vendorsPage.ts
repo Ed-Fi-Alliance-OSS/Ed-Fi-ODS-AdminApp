@@ -9,8 +9,9 @@ export class VendorsPage extends AdminAppPage {
     collapseSectionBtn = "#security-hint a#hide-security-hint-link";
     expandSectionBtn = "#show-security-hint-link a";
     addVendorBtn = 'button[data-target=".add-vendor-modal"]';
-    saveChangesBtn = 'button[type="submit"]';
+    editVendorBtn = "#vendors-table a.edit-vendor-link";
     deleteVendorBtn = "a.delete-vendor-link";
+    saveChangesBtn = 'button[type="submit"]';
     vendorOnList = `${this.tableBody} .tr-custom th`;
     deleteConfirmSelector = "div.alert:not(.hidden)";
 
@@ -23,6 +24,14 @@ export class VendorsPage extends AdminAppPage {
         email: 'input[name="ContactEmailAddress"]',
     };
 
+    get editedFormValueName(): string {
+        return `${this.vendorFormValues.name} - Edited`;
+    }
+
+    get deleteVendorConfirmationMessage(): string {
+        return `Are you sure you want to permanently delete vendor ${this.vendorFormValues.name}?`;
+    }
+
     vendorFormValues = {
         name: "Test Vendor",
         initialNamespacePrefix: "uri://ed-fi.org",
@@ -33,14 +42,14 @@ export class VendorsPage extends AdminAppPage {
 
     confirmationMessages = {
         added: "Vendor added successfully",
+        edited: "Vendor updated successfully",
         deleted: "Vendor removed successfully",
     };
 
     modalTitleMessages = {
         addVendor: "Add Vendor",
+        editVendor: "Edit Vendor",
     };
-
-    deleteVendorConfirmationMessage = `Are you sure you want to permanently delete vendor ${this.vendorFormValues.name}?`;
 
     path(): string {
         return `${this.url}/GlobalSettings/Vendors`;
@@ -57,7 +66,7 @@ export class VendorsPage extends AdminAppPage {
         return await this.elementExists(this.helpSection);
     }
 
-    async collapseHelpSection() {
+    async collapseHelpSection(): Promise<void> {
         await this.page.locator(this.collapseSectionBtn).click();
     }
 
@@ -104,7 +113,7 @@ export class VendorsPage extends AdminAppPage {
         ).includes(this.vendorFormValues.addedNamespacePrefix);
     }
 
-    async saveVendorForm() {
+    async saveVendorForm(): Promise<void> {
         await Promise.all([
             this.waitForResponse({
                 url: "/GlobalSettings/AddVendor",
@@ -113,8 +122,21 @@ export class VendorsPage extends AdminAppPage {
         ]);
     }
 
+    async saveEditedVendorForm(): Promise<void> {
+        await Promise.all([
+            this.waitForResponse({
+                url: "/GlobalSettings/EditVendor",
+            }),
+            this.saveForm(),
+        ]);
+    }
+
     async isVendorPresentOnPage(): Promise<boolean> {
         return await this.hasText({ text: this.vendorFormValues.name, selector: this.vendorOnList });
+    }
+
+    async isEditedVendorPresentOnPage(): Promise<boolean> {
+        return this.hasText({ text: this.editedFormValueName, selector: this.vendorOnList });
     }
 
     async noVendorsMessageVisible(): Promise<boolean> {
@@ -136,6 +158,18 @@ export class VendorsPage extends AdminAppPage {
         ]);
     }
 
+    async getDeleteVendorMessage(): Promise<string | null> {
+        return await this.modalSelector.locator(this.deleteConfirmSelector).textContent();
+    }
+
+    async clickEdit(): Promise<void> {
+        await this.page.locator(this.editVendorBtn).click();
+    }
+
+    async editVendorForm(): Promise<void> {
+        await this.fillVendorName(this.editedFormValueName);
+    }
+
     async addVendorFullSteps(): Promise<void> {
         await this.navigate();
         await this.addVendor();
@@ -151,10 +185,6 @@ export class VendorsPage extends AdminAppPage {
         await this.hasPageTitle();
         await this.clickDelete();
         await this.deleteVendor();
-    }
-
-    async getDeleteVendorMessage(): Promise<string | null> {
-        return await this.modalSelector.locator(this.deleteConfirmSelector).textContent();
     }
 
     private async fillVendorName(value = this.vendorFormValues.name): Promise<void> {
