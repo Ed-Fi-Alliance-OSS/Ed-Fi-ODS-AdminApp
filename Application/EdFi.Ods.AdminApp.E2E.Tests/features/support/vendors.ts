@@ -85,6 +85,10 @@ When("help section is present", async () => {
     ok(await models.vendorsPage.hasHelpSection(), "Help section not found");
 });
 
+When("clicking define applications", async () => {
+    await models.vendorsPage.defineApplicationsSingleInstance();
+});
+
 Then("vendor is added", async () => {
     strictEqual(
         await models.vendorsPage.getToastMessage(),
@@ -119,10 +123,19 @@ Then("edited vendor appears on list", async () => {
 
 Then("help section can be collapsed", async () => {
     await models.vendorsPage.collapseHelpSection();
-    ok(await models.vendorsPage.helpSectionFlag(), "Hide help not set");
+    ok(await models.vendorsPage.hasHelpSectionFlag(), "Hide help not set");
 });
 
 Then("help section can be expanded", async () => {
     await models.vendorsPage.showHelpSection();
-    ok(!(await models.vendorsPage.helpSectionFlag()), "Hide help set");
+    ok(!(await models.vendorsPage.hasHelpSectionFlag()), "Hide help set");
+});
+
+Then("help section can be expanded", async () => {
+    await models.vendorsPage.showHelpSection();
+    ok(!(await models.vendorsPage.hasHelpSectionFlag()), "Hide help set");
+});
+
+Then("it navigates to the applications page", async () => {
+    ok(models.applicationsPage.isOnPage, "It did not navigate to the applications page");
 });

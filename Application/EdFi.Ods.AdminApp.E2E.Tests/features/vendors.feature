@@ -45,3 +45,11 @@ Feature: Vendors
         When help section is present
         Then help section can be collapsed
         And help section can be expanded
+
+    #AA-999
+    Scenario: Define Applications (Single Instance)
+        Given there's a vendor added
+        And it's on the "Vendors" page
+        And vendor page has loaded
+        When clicking define applications
+        Then it navigates to the applications page
