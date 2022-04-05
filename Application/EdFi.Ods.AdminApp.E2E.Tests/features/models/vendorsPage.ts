@@ -11,6 +11,7 @@ export class VendorsPage extends AdminAppPage {
     addVendorBtn = 'button[data-target=".add-vendor-modal"]';
     editVendorBtn = "#vendors-table a.edit-vendor-link";
     deleteVendorBtn = "a.delete-vendor-link";
+    defineAppBtn = "a.btn-primary:text('Define Applications')";
     saveChangesBtn = 'button[type="submit"]';
     vendorOnList = `${this.tableBody} .tr-custom th`;
     deleteConfirmSelector = "div.alert:not(.hidden)";
@@ -78,7 +79,7 @@ export class VendorsPage extends AdminAppPage {
         });
     }
 
-    async helpSectionFlag(): Promise<boolean> {
+    async hasHelpSectionFlag(): Promise<boolean> {
         return (
             (await context.storageState()).origins
                 .find((o) => this.url.includes(o.origin))
@@ -148,10 +149,6 @@ export class VendorsPage extends AdminAppPage {
         await this.page.locator(this.deleteVendorBtn).click();
     }
 
-    async clickConfirmDelete(): Promise<void> {
-        await this.modalSelector.locator(this.saveChangesBtn).click();
-    }
-
     async deleteVendor(): Promise<void> {
         await Promise.all([
             this.clickConfirmDelete(),
@@ -171,6 +168,10 @@ export class VendorsPage extends AdminAppPage {
         await this.fillVendorName(this.editedFormValueName);
     }
 
+    async defineApplicationsSingleInstance() {
+        await Promise.all([this.clickDefineApplications(), this.page.waitForNavigation()]);
+    }
+
     async addVendorFullSteps(): Promise<void> {
         await this.navigate();
         await this.addVendor();
@@ -186,6 +187,14 @@ export class VendorsPage extends AdminAppPage {
         await this.hasPageTitle();
         await this.clickDelete();
         await this.deleteVendor();
+    }
+
+    private async clickConfirmDelete(): Promise<void> {
+        await this.modalSelector.locator(this.saveChangesBtn).click();
+    }
+
+    private async clickDefineApplications(): Promise<void> {
+        await this.page.locator(this.defineAppBtn).click();
     }
 
     private async fillVendorName(value = this.vendorFormValues.name): Promise<void> {

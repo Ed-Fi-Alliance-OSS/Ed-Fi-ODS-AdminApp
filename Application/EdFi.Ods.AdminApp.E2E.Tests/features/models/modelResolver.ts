@@ -7,6 +7,7 @@ import { FirstTimeSetupPage } from "./firstTimeSetupPage";
 import { ProductImprovementPage } from "./productImprovementPage";
 import { EducationOrganizationsPage } from "./educationOrganizationsPage";
 import { VendorsPage } from "./vendorsPage";
+import { ApplicationsPage } from "./applicationsPage";
 
 export class ModelResolver {
     aaPages: Array<AdminAppPage> = [];
@@ -51,6 +52,15 @@ export class ModelResolver {
         let model = this.getModel<ProductImprovementPage>(ProductImprovementPage.name);
         if (!model) {
             model = new ProductImprovementPage(this.page);
+            this.aaPages.push(model);
+        }
+        return model;
+    }
+
+    public get applicationsPage(): ApplicationsPage {
+        let model = this.getModel<ApplicationsPage>(ApplicationsPage.name);
+        if (!model) {
+            model = new ApplicationsPage(this.page);
             this.aaPages.push(model);
         }
         return model;
