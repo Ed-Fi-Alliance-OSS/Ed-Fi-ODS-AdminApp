@@ -17,7 +17,6 @@ Feature: Vendors
         And added vendor appears on list
 
     #AA-872
-    @WIP
     Scenario: Edit vendor
         Given there's a vendor added
         And it's on the "Vendors" page
@@ -53,3 +52,19 @@ Feature: Vendors
         And vendor page has loaded
         When clicking define applications
         Then it navigates to the applications page
+
+    #AA-1000
+    Scenario Outline: Add vendor form validations
+        Given it's on the "Vendors" page
+        And vendor page has loaded
+        And there are no vendors
+        When clicking add vendor
+        And entering vendor form "<Scenario>"
+        And clicking save vendor with errors
+        Then vendor validation for "<Scenario>" appears
+        And modal is dismissed
+
+        Examples:
+            | Scenario    |
+            | no data     |
+            | wrong email |
