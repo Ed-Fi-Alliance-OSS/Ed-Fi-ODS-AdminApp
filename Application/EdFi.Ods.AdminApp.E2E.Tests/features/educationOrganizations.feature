@@ -52,7 +52,6 @@ Feature: Education Organizations
         And entering local education agency form "<Scenario>"
         And clicking save local education agency with errors
         Then local education agency validation for "<Scenario>" appears
-        And field with errors for "<Scenario>" are highlighted
         And modal is dismissed
 
         Examples:
@@ -69,5 +68,4 @@ Feature: Education Organizations
         And filling local education agency form
         And clicking save local education agency with errors
         Then local education agency validation for "duplicated id" appears
-        And field with errors for "duplicated id" are highlighted
         And modal is dismissed

@@ -13,20 +13,44 @@ export class VendorsPage extends AdminAppPage {
     deleteVendorBtn = "a.delete-vendor-link";
     defineAppBtn = "a.btn-primary:text('Define Applications')";
     saveChangesBtn = 'button[type="submit"]';
+    fieldWithError = ".row.has-error";
+    errorMsgSection = "div.validationSummary";
     vendorOnList = `${this.tableBody} .tr-custom th`;
     deleteConfirmSelector = "div.alert:not(.hidden)";
 
-    vendorFormSelectors = {
-        name: 'input[name="Company"]',
-        namespacePrefix: 'textarea[name="NamespacePrefixes"]',
-        addNamespacePrefix: "input#add-namespace-prefix-input",
-        addNamespacePrefixBtn: "button#add-namespace-prefix",
-        contact: 'input[name="ContactName"]',
-        email: 'input[name="ContactEmailAddress"]',
+    vendorFormFields = {
+        name: {
+            selector: 'input[name="Company"]',
+            required: true,
+        },
+        namespacePrefix: {
+            selector: 'textarea[name="NamespacePrefixes"]',
+            required: false,
+        },
+        addNamespacePrefix: {
+            selector: "input#add-namespace-prefix-input",
+            required: false,
+        },
+        addNamespacePrefixBtn: {
+            selector: "button#add-namespace-prefix",
+            required: false,
+        },
+        contact: {
+            selector: 'input[name="ContactName"]',
+            required: true,
+        },
+        email: {
+            selector: 'input[name="ContactEmailAddress"]',
+            required: true,
+        },
     };
 
     get editedFormValueName(): string {
         return `${this.vendorFormValues.name} - Edited`;
+    }
+
+    get invalidContactEmail(): string {
+        return this.vendorFormValues.contact;
     }
 
     get deleteVendorConfirmationMessage(): string {
@@ -45,6 +69,11 @@ export class VendorsPage extends AdminAppPage {
         added: "Vendor added successfully",
         edited: "Vendor updated successfully",
         deleted: "Vendor removed successfully",
+    };
+
+    errorMessages = {
+        noData: "The highlighted fields are required to submit this form.",
+        invalidEmail: "'Contact Email Address' is not a valid email address.",
     };
 
     modalTitleMessages = {
@@ -104,21 +133,26 @@ export class VendorsPage extends AdminAppPage {
 
     async addNamespacePrefix(): Promise<void> {
         await this.modalSelector
-            .locator(this.vendorFormSelectors.addNamespacePrefix)
+            .locator(this.vendorFormFields.addNamespacePrefix.selector)
             .fill(this.vendorFormValues.addedNamespacePrefix);
-        await this.modalSelector.locator(this.vendorFormSelectors.addNamespacePrefixBtn).click();
+        await this.modalSelector.locator(this.vendorFormFields.addNamespacePrefixBtn.selector).click();
     }
 
     async hasPrefixAdded(): Promise<boolean> {
         return (
-            await this.modalSelector.locator(this.vendorFormSelectors.namespacePrefix).inputValue()
+            await this.modalSelector.locator(this.vendorFormFields.namespacePrefix.selector).inputValue()
         ).includes(this.vendorFormValues.addedNamespacePrefix);
     }
 
-    async saveVendorForm(): Promise<void> {
+    async fillInvalidEmail() {
+        await this.fillContactEmail(this.invalidContactEmail);
+    }
+
+    async saveVendorForm({ expectErrors = false }: { expectErrors?: boolean } = {}): Promise<void> {
         await Promise.all([
             this.waitForResponse({
                 url: "/GlobalSettings/AddVendor",
+                status: expectErrors ? 400 : 200,
             }),
             this.saveForm(),
         ]);
@@ -172,6 +206,29 @@ export class VendorsPage extends AdminAppPage {
         await Promise.all([this.clickDefineApplications(), this.page.waitForNavigation()]);
     }
 
+    async getErrorMessages(): Promise<string | null> {
+        return await this.modalSelector.locator(this.errorMsgSection).textContent();
+    }
+
+    async emailFieldHasError(): Promise<boolean> {
+        return (
+            this.modalSelector.locator(this.fieldWithError).locator(this.vendorFormFields.email.selector) !==
+            undefined
+        );
+    }
+
+    async requiredFieldsHaveError(): Promise<boolean> {
+        let fieldsWithError = true;
+        Object.values(this.vendorFormFields)
+            .filter((field) => field.required)
+            .flatMap((field) => field.selector)
+            .forEach((value) => {
+                fieldsWithError =
+                    this.modalSelector.locator(this.fieldWithError).locator(value) !== undefined;
+            });
+        return fieldsWithError;
+    }
+
     async addVendorFullSteps(): Promise<void> {
         await this.navigate();
         await this.addVendor();
@@ -198,23 +255,23 @@ export class VendorsPage extends AdminAppPage {
     }
 
     private async fillVendorName(value = this.vendorFormValues.name): Promise<void> {
-        await this.modalSelector.locator(this.vendorFormSelectors.name).fill(value);
+        await this.modalSelector.locator(this.vendorFormFields.name.selector).fill(value);
     }
 
     private async fillNamespacePrefix(): Promise<void> {
         await this.modalSelector
-            .locator(this.vendorFormSelectors.namespacePrefix)
+            .locator(this.vendorFormFields.namespacePrefix.selector)
             .fill(this.vendorFormValues.initialNamespacePrefix);
     }
 
     private async fillContactName(): Promise<void> {
         await this.modalSelector
-            .locator(this.vendorFormSelectors.contact)
+            .locator(this.vendorFormFields.contact.selector)
             .fill(this.vendorFormValues.contact);
     }
 
-    private async fillContactEmail(): Promise<void> {
-        await this.modalSelector.locator(this.vendorFormSelectors.email).fill(this.vendorFormValues.email);
+    private async fillContactEmail(value = this.vendorFormValues.email): Promise<void> {
+        await this.modalSelector.locator(this.vendorFormFields.email.selector).fill(value);
     }
 
     private async saveForm(): Promise<void> {

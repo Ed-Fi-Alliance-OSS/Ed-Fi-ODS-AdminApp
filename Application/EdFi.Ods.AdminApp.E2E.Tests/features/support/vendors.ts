@@ -81,12 +81,28 @@ When("clicking save edited vendor", async () => {
     await models.vendorsPage.saveEditedVendorForm();
 });
 
+When("clicking save vendor with errors", async () => {
+    await models.vendorsPage.saveVendorForm({ expectErrors: true });
+});
+
 When("help section is present", async () => {
     ok(await models.vendorsPage.hasHelpSection(), "Help section not found");
 });
 
 When("clicking define applications", async () => {
     await models.vendorsPage.defineApplicationsSingleInstance();
+});
+
+When("entering vendor form {string}", async (scenario: string) => {
+    switch (scenario) {
+        case "wrong email":
+            await models.vendorsPage.fillVendorForm();
+            await models.vendorsPage.fillInvalidEmail();
+            break;
+        case "no data":
+        default:
+            break;
+    }
 });
 
 Then("vendor is added", async () => {
@@ -131,11 +147,29 @@ Then("help section can be expanded", async () => {
     ok(!(await models.vendorsPage.hasHelpSectionFlag()), "Hide help set");
 });
 
-Then("help section can be expanded", async () => {
-    await models.vendorsPage.showHelpSection();
-    ok(!(await models.vendorsPage.hasHelpSectionFlag()), "Hide help set");
-});
-
 Then("it navigates to the applications page", async () => {
     ok(models.applicationsPage.isOnPage, "It did not navigate to the applications page");
+});
+
+Then("vendor validation for {string} appears", async (scenario: string) => {
+    const errors = await models.vendorsPage.getErrorMessages();
+
+    switch (scenario) {
+        case "wrong email":
+            ok(
+                errors?.includes(models.vendorsPage.errorMessages.invalidEmail),
+                `ID error message failed. Actual message: ${errors}`
+            );
+            ok(await models.vendorsPage.emailFieldHasError());
+            break;
+        case "no data":
+            ok(
+                errors?.includes(models.vendorsPage.errorMessages.noData),
+                `Error message failed. Actual message: ${errors}`
+            );
+            ok(await models.vendorsPage.requiredFieldsHaveError());
+            break;
+        default:
+            break;
+    }
 });
