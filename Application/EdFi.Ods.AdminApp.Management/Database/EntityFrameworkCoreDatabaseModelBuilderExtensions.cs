@@ -23,7 +23,11 @@ namespace EdFi.Ods.AdminApp.Management.Database
                 entity.SetTableName(entity.GetTableName().ToLowerInvariant());
 
                 foreach (var property in entity.GetProperties())
-                    property.SetColumnName(property.GetColumnName(StoreObjectIdentifier.Table(entity.GetTableName(), null)).ToLowerInvariant());
+                {
+                    var tableId = StoreObjectIdentifier.Table(entity.GetTableName());
+                    var columnName = property.GetColumnName(tableId) ?? property.GetDefaultColumnName(tableId);
+                    property.SetColumnName(columnName.ToLowerInvariant());
+                }
 
                 foreach (var key in entity.GetKeys())
                     key.SetName(key.GetName().ToLowerInvariant());
