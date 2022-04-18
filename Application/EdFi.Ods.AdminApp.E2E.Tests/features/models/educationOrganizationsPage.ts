@@ -1,19 +1,19 @@
 import { AdminAppPage } from "./adminAppPage";
 
 export class EducationOrganizationsPage extends AdminAppPage {
-    titleMsg = "div > h6";
+    titleHeader = "div > h6";
+    nameOnListHeader = ".panel-section h8";
+    edOrgDetailsSectionCollapsedSection = 'div.content[aria-expanded="false"]';
+    errorMsgSection = "div.validationSummary";
+    fieldWithErrorSelector = ".row.has-error";
+    activeTabSelector = "ul.nav li.active";
     addNewLeaBtn = 'button[data-target="#add-lea-modal"]';
     confirmBtn = 'button[type="submit"]';
-    nameOnList = ".panel-section h8";
     deleteLEABtn = "a.delete-lea-link";
     editLEABtn = ".row.heading a:has(.fa-pencil)";
     collapseBtn = 'a[data-toggle="collapse"]:has(.fa-chevron-up)';
     expandBtn = 'a[data-toggle="collapse"]:has(.fa-chevron-down)';
-    edOrgDetailsSectionCollapsed = 'div.content[aria-expanded="false"]';
-    errorMsgSection = "div.validationSummary";
-    fieldWithError = ".row.has-error";
     dismissModalBtn = "button.close";
-    activeTab = "ul.nav li.active";
 
     leaFormSelectors = {
         ID: 'input[name="LocalEducationAgencyId"]',
@@ -67,7 +67,7 @@ export class EducationOrganizationsPage extends AdminAppPage {
     async hasPageTitle(): Promise<boolean> {
         return await this.hasText({
             text: "Education Organizations",
-            selector: this.titleMsg,
+            selector: this.titleHeader,
         });
     }
 
@@ -98,7 +98,7 @@ export class EducationOrganizationsPage extends AdminAppPage {
     async hasTabSelected(): Promise<boolean> {
         return await this.hasText({
             text: "Education Organizations",
-            selector: this.activeTab,
+            selector: this.activeTabSelector,
         });
     }
 
@@ -132,11 +132,11 @@ export class EducationOrganizationsPage extends AdminAppPage {
     }
 
     async isLEAPresentOnPage(): Promise<boolean> {
-        return this.hasText({ text: this.leaFormValues.name, selector: this.nameOnList });
+        return this.hasText({ text: this.leaFormValues.name, selector: this.nameOnListHeader });
     }
 
     async isEditedLEAPresentOnPage(): Promise<boolean> {
-        return this.hasText({ text: this.editedFormValueName, selector: this.nameOnList });
+        return this.hasText({ text: this.editedFormValueName, selector: this.nameOnListHeader });
     }
 
     async clickCollapse() {
@@ -154,7 +154,7 @@ export class EducationOrganizationsPage extends AdminAppPage {
     async isSectionCollapsed(): Promise<boolean> {
         return (
             (await this.elementExists(this.expandBtn)) &&
-            (await this.page.locator(this.edOrgDetailsSectionCollapsed).count()) > 0
+            (await this.page.locator(this.edOrgDetailsSectionCollapsedSection).count()) > 0
         );
     }
 
@@ -171,14 +171,16 @@ export class EducationOrganizationsPage extends AdminAppPage {
 
     async idFieldHasError(): Promise<boolean> {
         return (
-            this.modalSelector.locator(this.fieldWithError).locator(this.leaFormSelectors.ID) !== undefined
+            this.modalSelector.locator(this.fieldWithErrorSelector).locator(this.leaFormSelectors.ID) !==
+            undefined
         );
     }
 
     async allFieldsHaveError(): Promise<boolean> {
         let fieldsWithError = true;
         Object.values(this.leaFormSelectors).forEach((selector) => {
-            fieldsWithError = this.modalSelector.locator(this.fieldWithError).locator(selector) !== undefined;
+            fieldsWithError =
+                this.modalSelector.locator(this.fieldWithErrorSelector).locator(selector) !== undefined;
         });
         return fieldsWithError;
     }

@@ -1,13 +1,13 @@
 import { AdminAppPage } from "./adminAppPage";
 
 export class LoginPage extends AdminAppPage {
+    errorMsgSection = "div.validation-summary-errors";
     emailInput = "input#Email";
     passwordInput = "input#Password";
     passwordConfirmInput = "input#ConfirmPassword";
     submitBtn = 'button[type="submit"]';
     registerNewUserBtn = "a.btn:text('Register as a new user')";
     registerBtn = 'button[type="submit"]';
-    errorMsgSection = "div.validation-summary-errors";
 
     public errorMessages = {
         missingEmail: "The Email field is required.",

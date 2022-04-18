@@ -3,13 +3,16 @@ import { Page, Locator } from "playwright";
 export abstract class AdminAppPage {
     page: Page;
 
-    title = ".container h2";
-    toast = "#toast-container";
-    mainSelector = "div.container";
-    loadingSelector = ".footable-loader";
-    validationErrors = "div#validationSummary:not(.hidden)";
-    openModal = "div.modal.fade.in";
-    modalTitleSelector = "h4.modal-title";
+    titleHeader = ".container h2";
+    bodySelector = "body";
+    toastSelector = "#toast-container";
+    mainSectionSelector = "div.container";
+    loadingIconSelector = ".footable-loader";
+    validationErrorsSection = "div#validationSummary:not(.hidden)";
+
+    //Modal
+    openModalSection = "div.modal.fade.in";
+    modalTitleHeader = "h4.modal-title";
 
     protected get url(): string {
         if (!process.env.URL) {
@@ -26,7 +29,7 @@ export abstract class AdminAppPage {
     }
 
     get modalSelector(): Locator {
-        return this.page.locator(this.openModal);
+        return this.page.locator(this.openModalSection);
     }
 
     constructor(page: Page) {
@@ -51,16 +54,20 @@ export abstract class AdminAppPage {
     }
 
     async getToastMessage(): Promise<string | null> {
-        return await this.getText(this.toast);
+        return await this.getText(this.toastSelector);
     }
 
     async modalTitle(): Promise<string> {
-        const content = await this.modalSelector.locator(this.modalTitleSelector).textContent();
+        const content = await this.modalSelector.locator(this.modalTitleHeader).textContent();
         return content ? content : "";
     }
 
     async hasModalOpen(): Promise<boolean> {
-        return this.elementExists(this.openModal);
+        return this.elementExists(this.openModalSection);
+    }
+
+    async clickOutside(): Promise<void> {
+        await this.page.locator(this.bodySelector).click();
     }
 
     protected async getText(text: string): Promise<string | null> {
@@ -74,7 +81,7 @@ export abstract class AdminAppPage {
         text: string;
         selector?: string;
     }): Promise<boolean> {
-        return await this.elementExists(`${this.mainSelector} ${selector}:has-text("${text}")`);
+        return await this.elementExists(`${this.mainSectionSelector} ${selector}:has-text("${text}")`);
     }
 
     protected async elementExists(selector: string): Promise<boolean> {

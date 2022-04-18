@@ -2,10 +2,13 @@ import { context } from "../management/setup";
 import { AdminAppPage } from "./adminAppPage";
 
 export class VendorsPage extends AdminAppPage {
-    titleMsg = "div > h7";
+    titleHeader = "div > h7";
     tableBody = "table#vendors-table tbody";
     helpSection = "#security-hint.collapse.in";
-    activeTab = "ul.nav-tabs li.active";
+    activeTabSelector = "ul.nav-tabs li.active";
+    fieldWithErrorSelector = ".row.has-error";
+    vendorOnListSelector = `${this.tableBody} .tr-custom th`;
+    deleteConfirmSelector = "div.alert:not(.hidden)";
     collapseSectionBtn = "#security-hint a#hide-security-hint-link";
     expandSectionBtn = "#show-security-hint-link a";
     addVendorBtn = 'button[data-target=".add-vendor-modal"]';
@@ -13,10 +16,7 @@ export class VendorsPage extends AdminAppPage {
     deleteVendorBtn = "a.delete-vendor-link";
     defineAppBtn = "a.btn-primary:text('Define Applications')";
     saveChangesBtn = 'button[type="submit"]';
-    fieldWithError = ".row.has-error";
     errorMsgSection = "div.validationSummary";
-    vendorOnList = `${this.tableBody} .tr-custom th`;
-    deleteConfirmSelector = "div.alert:not(.hidden)";
     closeModalBtn = 'button[aria-label="Close"]';
     cancelBtn = "button.btn-default";
 
@@ -91,7 +91,7 @@ export class VendorsPage extends AdminAppPage {
     async hasPageTitle(): Promise<boolean> {
         return await this.hasText({
             text: "Vendors",
-            selector: this.titleMsg,
+            selector: this.titleHeader,
         });
     }
 
@@ -106,7 +106,7 @@ export class VendorsPage extends AdminAppPage {
     async hasTabSelected(): Promise<boolean> {
         return await this.hasText({
             text: "Vendors",
-            selector: this.activeTab,
+            selector: this.activeTabSelector,
         });
     }
 
@@ -170,11 +170,11 @@ export class VendorsPage extends AdminAppPage {
     }
 
     async isVendorPresentOnPage(): Promise<boolean> {
-        return await this.hasText({ text: this.vendorFormValues.name, selector: this.vendorOnList });
+        return await this.hasText({ text: this.vendorFormValues.name, selector: this.vendorOnListSelector });
     }
 
     async isEditedVendorPresentOnPage(): Promise<boolean> {
-        return this.hasText({ text: this.editedFormValueName, selector: this.vendorOnList });
+        return this.hasText({ text: this.editedFormValueName, selector: this.vendorOnListSelector });
     }
 
     async noVendorsMessageVisible(): Promise<boolean> {
@@ -214,8 +214,9 @@ export class VendorsPage extends AdminAppPage {
 
     async emailFieldHasError(): Promise<boolean> {
         return (
-            this.modalSelector.locator(this.fieldWithError).locator(this.vendorFormFields.email.selector) !==
-            undefined
+            this.modalSelector
+                .locator(this.fieldWithErrorSelector)
+                .locator(this.vendorFormFields.email.selector) !== undefined
         );
     }
 
@@ -226,7 +227,7 @@ export class VendorsPage extends AdminAppPage {
             .flatMap((field) => field.selector)
             .forEach((value) => {
                 fieldsWithError =
-                    this.modalSelector.locator(this.fieldWithError).locator(value) !== undefined;
+                    this.modalSelector.locator(this.fieldWithErrorSelector).locator(value) !== undefined;
             });
         return fieldsWithError;
     }
@@ -235,11 +236,7 @@ export class VendorsPage extends AdminAppPage {
         await this.modalSelector.locator(this.closeModalBtn).click();
     }
 
-    async clickOutside(): Promise<void> {
-        await this.page.locator('body').click();
-    }
-
-    async clickCancel(): Promise<void>{
+    async clickCancel(): Promise<void> {
         await this.modalSelector.locator(this.cancelBtn).click();
     }
 
