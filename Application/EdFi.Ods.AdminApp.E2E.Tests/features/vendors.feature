@@ -62,9 +62,24 @@ Feature: Vendors
         And entering vendor form "<Scenario>"
         And clicking save vendor with errors
         Then vendor validation for "<Scenario>" appears
-        And modal is dismissed
+        And vendor modal can be closed by "clicking x"
 
         Examples:
             | Scenario    |
             | no data     |
             | wrong email |
+
+    #AA-1143
+    Scenario Outline: Add vendor modal interactions
+        Given it's on the "Vendors" page
+        And vendor page has loaded
+        And there are no vendors
+        When clicking add vendor
+        Then modal can be closed by "<Scenario>"
+        And vendor modal is closed
+
+        Examples:
+            | Scenario         |
+            | clicking outside |
+            | clicking x       |
+            | clicking cancel  |
