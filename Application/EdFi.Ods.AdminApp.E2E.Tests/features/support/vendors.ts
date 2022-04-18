@@ -173,3 +173,24 @@ Then("vendor validation for {string} appears", async (scenario: string) => {
             break;
     }
 });
+
+Then("vendor modal is closed", async () => {
+    ok(!await models.vendorsPage.hasModalOpen());
+});
+
+Then("modal can be closed by {string}", async (scenario: string) => {
+    switch (scenario) {
+        case "clicking outside":
+            await models.vendorsPage.clickOutside();
+            break;
+        case "clicking cancel":
+            await models.vendorsPage.clickCancel();
+            break;
+        case "clicking x":
+        default:
+            await models.vendorsPage.closeModal();
+            break;
+    }
+});
+
+

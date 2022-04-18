@@ -59,6 +59,10 @@ export abstract class AdminAppPage {
         return content ? content : "";
     }
 
+    async hasModalOpen(): Promise<boolean> {
+        return this.elementExists(this.openModal);
+    }
+
     protected async getText(text: string): Promise<string | null> {
         return this.page.textContent(text);
     }

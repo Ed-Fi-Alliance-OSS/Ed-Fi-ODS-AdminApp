@@ -17,6 +17,8 @@ export class VendorsPage extends AdminAppPage {
     errorMsgSection = "div.validationSummary";
     vendorOnList = `${this.tableBody} .tr-custom th`;
     deleteConfirmSelector = "div.alert:not(.hidden)";
+    closeModalBtn = 'button[aria-label="Close"]';
+    cancelBtn = "button.btn-default";
 
     vendorFormFields = {
         name: {
@@ -227,6 +229,18 @@ export class VendorsPage extends AdminAppPage {
                     this.modalSelector.locator(this.fieldWithError).locator(value) !== undefined;
             });
         return fieldsWithError;
+    }
+
+    async closeModal(): Promise<void> {
+        await this.modalSelector.locator(this.closeModalBtn).click();
+    }
+
+    async clickOutside(): Promise<void> {
+        await this.page.locator('body').click();
+    }
+
+    async clickCancel(): Promise<void>{
+        await this.modalSelector.locator(this.cancelBtn).click();
     }
 
     async addVendorFullSteps(): Promise<void> {
