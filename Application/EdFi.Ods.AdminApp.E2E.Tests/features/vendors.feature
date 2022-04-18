@@ -75,7 +75,7 @@ Feature: Vendors
         And vendor page has loaded
         And there are no vendors
         When clicking add vendor
-        Then modal can be closed by "<Scenario>"
+        Then vendor modal can be closed by "<Scenario>"
         And vendor modal is closed
 
         Examples:
