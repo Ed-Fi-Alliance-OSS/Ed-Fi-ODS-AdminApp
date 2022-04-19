@@ -1,9 +1,9 @@
 {
   "dependencies": {
-    "@cucumber/cucumber": "^7.3.1",
+    "@cucumber/cucumber": "^8.0.0",
     "chromedriver": "^100.0.0",
     "dotenv": "^16.0.0",
-    "playwright": "^1.20.2"
+    "playwright": "^1.21.1"
   },
   "description": "Playwright end-to-end test automation for Admin App. Using Commonjs, Cucumber and Assert.",
   "devDependencies": {
