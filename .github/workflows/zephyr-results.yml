@@ -1,9 +1,10 @@
 name: 'Zephyr Results'
 on:
   workflow_run:
-    workflows: ['E2E Tests']
+    workflows: [ 'E2E Tests' ]
     types:
       - completed
+    branches: [ main ]
 
 env:
   JIRA_ACCESS_TOKEN: ${{ secrets.JIRA_ACCESS_TOKEN }}
@@ -19,7 +20,6 @@ jobs:
     steps:
     - uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0
     - name: Send report to Zephyr
-      if: contains(github.ref, 'main')
       run: |
         $parameters = @{
             cycleName = '${{ env.CYCLE_NAME }}'
