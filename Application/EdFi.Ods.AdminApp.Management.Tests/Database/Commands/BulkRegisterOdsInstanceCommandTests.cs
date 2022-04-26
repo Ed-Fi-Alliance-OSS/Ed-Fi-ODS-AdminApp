@@ -35,6 +35,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
         private Mock<ICloudOdsAdminAppSettingsApiModeProvider> _apiModeProvider;
         private Mock<IDatabaseConnectionProvider> _connectionProvider;
         private Mock<IBulkRegisterOdsInstancesFiltrationService> _dataFiltrationService;
+        private readonly string _dbNamePrefix = "EdFi_Ods_";
 
         //Scenarios use District Specific mode, so the year will not be set
         //and the dependency can remain null as proof that it is not used.
@@ -80,7 +81,9 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
                     return await ScopedAsync<AdminAppDbContext, IEnumerable<BulkRegisterOdsInstancesResult>>(async database =>
                     {
                         var odsInstanceFirstTimeSetupService = GetOdsInstanceFirstTimeSetupService(encryptedSecretConfigValue, instanceName, database);
-                        RegisterOdsInstanceCommand registerOdsInstanceCommand = new RegisterOdsInstanceCommand(odsInstanceFirstTimeSetupService, _connectionProvider.Object, identity, _setCurrentSchoolYear);
+                        var inferInstanceService = GetInferInstanceService(instanceName);
+
+                        RegisterOdsInstanceCommand registerOdsInstanceCommand = new RegisterOdsInstanceCommand(odsInstanceFirstTimeSetupService, identity, _setCurrentSchoolYear, inferInstanceService);
 
                         var command = new BulkRegisterOdsInstancesCommand(registerOdsInstanceCommand, _dataFiltrationService.Object);
                         return await command.Execute(odsInstancesToRegister, odsInstancesToRegister, ApiMode.DistrictSpecific, testUsername, new CloudOdsClaimSet());
@@ -94,8 +97,16 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
                 secretConfiguration.EncryptedData.ShouldBe(encryptedSecretConfigValue);
                 addedInstance.Name.ShouldBe(instanceName);
                 addedInstance.Description.ShouldBe(newInstance1.Description);
+                addedInstance.DatabaseName.ShouldBe($"{_dbNamePrefix}{instanceName}");
             }
 
+        }
+
+        private IInferInstanceService GetInferInstanceService(string instanceName)
+        {
+            var inferInstanceService = new Mock<IInferInstanceService>();
+            inferInstanceService.Setup(x => x.DatabaseName(It.IsAny<int>(), It.IsAny<ApiMode>())).Returns($"{_dbNamePrefix}{instanceName}");
+            return inferInstanceService.Object;
         }
 
         [Test]
@@ -133,8 +144,9 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
                     return await ScopedAsync<AdminAppDbContext, int>(async database =>
                     {
                         var odsInstanceFirstTimeSetupService = GetOdsInstanceFirstTimeSetupService(encryptedSecretConfigValue, instanceName, database);
+                        var inferInstanceService = GetInferInstanceService(instanceName);
 
-                        var command = new RegisterOdsInstanceCommand(odsInstanceFirstTimeSetupService, _connectionProvider.Object, identity, _setCurrentSchoolYear);
+                        var command = new RegisterOdsInstanceCommand(odsInstanceFirstTimeSetupService, identity, _setCurrentSchoolYear, inferInstanceService);
                         return await command.Execute(newInstance, ApiMode.DistrictSpecific, testUsername, new CloudOdsClaimSet());
                     });
                 });
@@ -153,7 +165,9 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
                     return await ScopedAsync<AdminAppDbContext, IEnumerable<BulkRegisterOdsInstancesResult>>(async database =>
                     {
                         var odsInstanceFirstTimeSetupService = GetOdsInstanceFirstTimeSetupService(encryptedSecretConfigValue, instanceName, database);
-                        RegisterOdsInstanceCommand registerOdsInstanceCommand = new RegisterOdsInstanceCommand(odsInstanceFirstTimeSetupService, _connectionProvider.Object, identity, _setCurrentSchoolYear);
+                        var inferInstanceService = GetInferInstanceService(instanceName);
+
+                        RegisterOdsInstanceCommand registerOdsInstanceCommand = new RegisterOdsInstanceCommand(odsInstanceFirstTimeSetupService, identity, _setCurrentSchoolYear, inferInstanceService);
 
                         var command = new BulkRegisterOdsInstancesCommand(registerOdsInstanceCommand, _dataFiltrationService.Object);
                         return await command.Execute(odsInstancesToRegister, new List<RegisterOdsInstanceModel>(), ApiMode.DistrictSpecific, testUsername, new CloudOdsClaimSet());

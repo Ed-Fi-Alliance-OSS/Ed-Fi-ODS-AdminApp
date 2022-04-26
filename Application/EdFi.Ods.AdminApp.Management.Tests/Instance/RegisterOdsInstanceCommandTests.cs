@@ -80,8 +80,9 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Instance
                     return await ScopedAsync<AdminAppDbContext, int>(async database =>
                     {
                         var odsInstanceFirstTimeSetupService = GetOdsInstanceFirstTimeSetupService(encryptedSecretConfigValue, instanceName, database, apiMode);
-
-                        var command = new RegisterOdsInstanceCommand(odsInstanceFirstTimeSetupService, _connectionProvider.Object, identity, _setCurrentSchoolYear.Object);
+                        var inferInstanceService = GetInferInstanceService(instanceName);
+                        
+                        var command = new RegisterOdsInstanceCommand(odsInstanceFirstTimeSetupService, identity, _setCurrentSchoolYear.Object, inferInstanceService);
                         return await command.Execute(newInstance, apiMode, testUsername, new CloudOdsClaimSet());
                     });
                 });
@@ -129,8 +130,9 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Instance
                     return await ScopedAsync<AdminAppDbContext, int>(async database =>
                     {
                         var odsInstanceFirstTimeSetupService = GetOdsInstanceFirstTimeSetupService(encryptedSecretConfigValue, instanceName, database, apiMode);
+                        var inferInstanceService = GetInferInstanceService(instanceName);
 
-                        var command = new RegisterOdsInstanceCommand(odsInstanceFirstTimeSetupService, _connectionProvider.Object, identity, _setCurrentSchoolYear.Object);
+                        var command = new RegisterOdsInstanceCommand(odsInstanceFirstTimeSetupService, identity, _setCurrentSchoolYear.Object, inferInstanceService);
                         return await command.Execute(newInstance, apiMode, testUsername, new CloudOdsClaimSet());
                     });
                 });
@@ -186,6 +188,13 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Instance
             var odsInstanceFirstTimeSetupService = new OdsInstanceFirstTimeSetupService(odsSecretConfigurationProvider,
                 mockFirstTimeSetupService.Object, mockUsersContext.Object, mockReportViewsSetUp.Object, database, options);
             return odsInstanceFirstTimeSetupService;
+        }
+
+        private IInferInstanceService GetInferInstanceService(string instanceName)
+        {
+            var inferInstanceService = new Mock<IInferInstanceService>();
+            inferInstanceService.Setup(x => x.DatabaseName(It.IsAny<int>(), It.IsAny<ApiMode>())).Returns($"{_dbNamePrefix}{instanceName}");
+            return inferInstanceService.Object;
         }
 
         [Test]
