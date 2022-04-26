@@ -5,14 +5,6 @@ on:
     types:
       - completed
 
-env:
-  JIRA_ACCESS_TOKEN: ${{ secrets.JIRA_ACCESS_TOKEN }}
-  ADMIN_APP_VERSION: '2.3.1'
-  PROJECT_ID: '11900'
-  CYCLE_NAME: 'Automation Cycle'
-  TASK_NAME: 'Playwright Automation Task'
-  FOLDER_NAME: 'Playwright Automation Run'
-
 jobs:
   report:
     runs-on: ubuntu-latest
@@ -24,13 +16,3 @@ jobs:
         name: Playwright Tests
         path: '*.xml'
         reporter: java-junit
-    - name: Send report to Zephyr
-      if: contains(github.ref, 'main')
-      run: |
-        $parameters = @{
-            cycleName = '${{ env.CYCLE_NAME }}'
-            taskName = '${{ env.TASK_NAME }}'
-            folderName = '${{ env.FOLDER_NAME }}'
-        }
-        .\send-test-results.ps1 -PersonalAccessToken ${{ env.JIRA_ACCESS_TOKEN }} -ProjectId ${{ env.PROJECT_ID }} -AdminAppVersion '${{ env.ADMIN_APP_VERSION }}' -ResultsFilePath '${{ env.RESULTS_FILE }}' -ConfigParams $parameters
-      shell: pwsh
