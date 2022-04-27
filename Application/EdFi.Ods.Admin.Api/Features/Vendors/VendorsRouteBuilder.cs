@@ -5,7 +5,6 @@
 
 using EdFi.Ods.Admin.Api.Features.Vendors;
 using EdFi.Ods.AdminApp.Management.Database;
-using log4net;
 
 namespace EdFi.Ods.Admin.Api.Features
 {
@@ -13,25 +12,36 @@ namespace EdFi.Ods.Admin.Api.Features
     {      
         public void AddEndPoints(IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapGet("/Vendors", async () =>
-            {
-                var vendorsList = new string[] { "Vendor1", "Vendor2" };
-                return vendorsList;
-            }).WithName("GetVendors");
+            endpoints.MapGet("/Vendors", GetVendors);
+            endpoints.MapPost("/Vendors/add", AddVendor);
+            endpoints.MapPut("/Vendors/update", UpdateVendor);
+            endpoints.MapDelete("/Vendors/delete", DeleteVendor);
+        }
 
-            endpoints.MapPost("/Vendors/add",
-            async (AdminAppDbContext dbContext, VendorModelValidator validator, VendorModel vendor) =>
-            {
-                var context = dbContext.Database;
-                var result = validator.Validate(vendor);
+        internal async Task<string[]> GetVendors(AdminAppDbContext dbContext)
+        {
+            var vendorsList = new string[] { "Vendor1", "Vendor2" };
+            return vendorsList;
+        }
 
-                if (result.IsValid)
-                {
-                    return Results.Ok();
-                }
-                return Results.ValidationProblem(result.Errors.ToDictionary());
+        internal async Task<IResult> AddVendor(AdminAppDbContext dbContext, VendorModelValidator validator, VendorModel vendor)
+        {
+            var context = dbContext.Database;
+            await validator.GuardAsync(vendor);
+            return Results.Ok();
+        }
 
-            }).WithName("AddVendor").ProducesValidationProblem(400).Produces(201);
+        internal async Task<IResult> UpdateVendor(AdminAppDbContext dbContext, VendorModelValidator validator, VendorModel vendor)
+        {
+            var context = dbContext.Database;
+            await validator.GuardAsync(vendor);
+            return Results.Ok();
+        }
+
+        internal async Task<IResult> DeleteVendor(AdminAppDbContext dbContext, int Id)
+        {
+            var context = dbContext.Database;
+            return Results.NoContent();
         }
     }
 }

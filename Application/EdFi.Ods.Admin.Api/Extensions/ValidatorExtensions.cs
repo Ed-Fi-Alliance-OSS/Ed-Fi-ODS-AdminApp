@@ -3,17 +3,24 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
+using FluentValidation;
 using FluentValidation.Results;
 
 public static class ValidatorExtensions
 {
-    public static Dictionary<string, string[]> ToDictionary(this List<ValidationFailure> errors)
+    public static async Task GuardAsync<TRequest>(this IValidator<TRequest> validator, TRequest request)
     {
-        var result = new Dictionary<string, string[]>();
-        foreach (var error in errors)
-        {
-            result.Add(error.PropertyName, new string[] { error.ErrorMessage });
-        }
-        return result;
+        var validationResult = await validator.ValidateAsync(request);
+
+        if (!validationResult.IsValid)
+            throw new FailedValidationException(validationResult);
     }
+}
+
+public class FailedValidationException : Exception
+{
+    public FailedValidationException(ValidationResult result)
+        => Result = result;
+
+    public ValidationResult Result { get; }
 }
