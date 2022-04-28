@@ -57,7 +57,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
             const string description = "Test Description";
             var encryptedSecretConfigValue = "Encrypted string";
 
-            using (var connection = GetDatabaseConnection(instanceName, "EdFi_Ods_"))
+            await using (var connection = GetDatabaseConnection(instanceName, "EdFi_Ods_"))
             {
                 _connectionProvider.Setup(x => x.CreateNewConnection(23456, ApiMode.DistrictSpecific))
                     .Returns(connection);
@@ -106,44 +106,44 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
             const string description = "Test Description";
             var encryptedSecretConfigValue = "Encrypted string";
 
-            using (var connection = GetDatabaseConnection(instanceName))
-            using (var connection2 = GetDatabaseConnection(instanceName))
-            using (var connection3 = GetDatabaseConnection(instanceName))
-            using (var connection4 = GetDatabaseConnection(instanceName))
-            using (var connection5 = GetDatabaseConnection(instanceName))
+            await using var connection = GetDatabaseConnection(instanceName);
+            await using var connection2 = GetDatabaseConnection(instanceName);
+            await using var connection3 = GetDatabaseConnection(instanceName);
+            await using var connection4 = GetDatabaseConnection(instanceName);
+            await using var connection5 = GetDatabaseConnection(instanceName);
+
+            _connectionProvider
+                .SetupSequence(x => x.CreateNewConnection(23456, ApiMode.DistrictSpecific))
+                .Returns(connection)
+                .Returns(connection2)
+                .Returns(connection3)
+                .Returns(connection4)
+                .Returns(connection5);
+
+            var testUsername = UserTestSetup.SetupUsers(1).Single().Id;
+
+            var odsInstancesToRegister = new List<RegisterOdsInstanceModel>();
+            var repeatedInstance = new RegisterOdsInstanceModel
             {
-                _connectionProvider
-                    .SetupSequence(x => x.CreateNewConnection(23456, ApiMode.DistrictSpecific))
-                    .Returns(connection)
-                    .Returns(connection2)
-                    .Returns(connection3)
-                    .Returns(connection4)
-                    .Returns(connection5);
+                NumericSuffix = 23456,
+                Description = description
+            };
 
-                var testUsername = UserTestSetup.SetupUsers(1).Single().Id;
+            odsInstancesToRegister.Add(repeatedInstance);
 
-                List<RegisterOdsInstanceModel> odsInstancesToRegister = new List<RegisterOdsInstanceModel>();
-                var repeatedInstance = new RegisterOdsInstanceModel
+            var newInstances = await ScopedAsync<AdminAppIdentityDbContext, IEnumerable<BulkRegisterOdsInstancesResult>>(async identity =>
+            {
+                return await ScopedAsync<AdminAppDbContext, IEnumerable<BulkRegisterOdsInstancesResult>>(async database =>
                 {
-                    NumericSuffix = 23456,
-                    Description = description
-                };
+                    var odsInstanceFirstTimeSetupService = GetOdsInstanceFirstTimeSetupService(encryptedSecretConfigValue, instanceName, database);
+                    var inferInstanceService = new InferInstanceService(_connectionProvider.Object);
 
-                odsInstancesToRegister.Add(repeatedInstance);
+                    var registerOdsInstanceCommand = new RegisterOdsInstanceCommand(odsInstanceFirstTimeSetupService, identity, _setCurrentSchoolYear, inferInstanceService);
 
-                var newInstances = await ScopedAsync<AdminAppIdentityDbContext, IEnumerable<BulkRegisterOdsInstancesResult>>(async identity =>
-                {
-                    return await ScopedAsync<AdminAppDbContext, IEnumerable<BulkRegisterOdsInstancesResult>>(async database =>
-                    {
-                        var odsInstanceFirstTimeSetupService = GetOdsInstanceFirstTimeSetupService(encryptedSecretConfigValue, instanceName, database);
-                        var inferInstanceService = new InferInstanceService(_connectionProvider.Object);
-
-                        RegisterOdsInstanceCommand registerOdsInstanceCommand = new RegisterOdsInstanceCommand(odsInstanceFirstTimeSetupService, identity, _setCurrentSchoolYear, inferInstanceService);
-
-                        var command = new BulkRegisterOdsInstancesCommand(registerOdsInstanceCommand, _dataFiltrationService.Object);
-                        return await command.Execute(odsInstancesToRegister, new List<RegisterOdsInstanceModel>(), ApiMode.DistrictSpecific, testUsername, new CloudOdsClaimSet());
-                    });
+                    var command = new BulkRegisterOdsInstancesCommand(registerOdsInstanceCommand, _dataFiltrationService.Object);
+                    return await command.Execute(odsInstancesToRegister, new List<RegisterOdsInstanceModel>(), ApiMode.DistrictSpecific, testUsername, new CloudOdsClaimSet());
                 });
+            });
 
             var newInstance = newInstances.FirstOrDefault();
 
