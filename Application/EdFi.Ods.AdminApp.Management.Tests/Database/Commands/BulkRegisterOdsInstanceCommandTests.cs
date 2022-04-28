@@ -35,7 +35,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
         private Mock<ICloudOdsAdminAppSettingsApiModeProvider> _apiModeProvider;
         private Mock<IDatabaseConnectionProvider> _connectionProvider;
         private Mock<IBulkRegisterOdsInstancesFiltrationService> _dataFiltrationService;
-        private readonly string _dbNamePrefix = "EdFi_Ods_";
 
         //Scenarios use District Specific mode, so the year will not be set
         //and the dependency can remain null as proof that it is not used.
@@ -60,7 +59,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
             const string description = "Test Description";
             var encryptedSecretConfigValue = "Encrypted string";
 
-            using (var connection = GetDatabaseConnection(instanceName, _dbNamePrefix))
+            using (var connection = GetDatabaseConnection(instanceName, "EdFi_Ods_"))
             {
                 _connectionProvider.Setup(x => x.CreateNewConnection(23456, ApiMode.DistrictSpecific))
                     .Returns(connection);
@@ -97,7 +96,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
                 secretConfiguration.EncryptedData.ShouldBe(encryptedSecretConfigValue);
                 addedInstance.Name.ShouldBe(instanceName);
                 addedInstance.Description.ShouldBe(newInstance1.Description);
-                addedInstance.DatabaseName.ShouldBe($"{_dbNamePrefix}{instanceName}");
+                addedInstance.DatabaseName.ShouldBe($"EdFi_Ods_{instanceName}");
             }
         }
 
