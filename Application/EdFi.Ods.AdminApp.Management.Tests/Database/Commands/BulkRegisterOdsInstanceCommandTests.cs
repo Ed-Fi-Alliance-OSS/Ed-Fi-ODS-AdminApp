@@ -60,7 +60,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
             const string description = "Test Description";
             var encryptedSecretConfigValue = "Encrypted string";
 
-            using (var connection = GetDatabaseConnection(instanceName))
+            using (var connection = GetDatabaseConnection(instanceName, _dbNamePrefix))
             {
                 _connectionProvider.Setup(x => x.CreateNewConnection(23456, ApiMode.DistrictSpecific))
                     .Returns(connection);
