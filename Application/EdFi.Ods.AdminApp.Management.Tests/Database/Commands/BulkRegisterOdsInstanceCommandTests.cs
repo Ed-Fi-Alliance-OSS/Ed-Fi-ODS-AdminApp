@@ -81,7 +81,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
                     return await ScopedAsync<AdminAppDbContext, IEnumerable<BulkRegisterOdsInstancesResult>>(async database =>
                     {
                         var odsInstanceFirstTimeSetupService = GetOdsInstanceFirstTimeSetupService(encryptedSecretConfigValue, instanceName, database);
-                        var inferInstanceService = GetInferInstanceService(instanceName);
+                        var inferInstanceService = new InferInstanceService(_connectionProvider.Object);
 
                         RegisterOdsInstanceCommand registerOdsInstanceCommand = new RegisterOdsInstanceCommand(odsInstanceFirstTimeSetupService, identity, _setCurrentSchoolYear, inferInstanceService);
 
@@ -99,12 +99,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
                 addedInstance.Description.ShouldBe(newInstance1.Description);
                 addedInstance.DatabaseName.ShouldBe($"{_dbNamePrefix}{instanceName}");
             }
-
-        }
-
-        private IInferInstanceService GetInferInstanceService(string instanceName)
-        {
-            return new InferInstanceService(_connectionProvider.Object);
         }
 
         [Test]
@@ -142,7 +136,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
                     return await ScopedAsync<AdminAppDbContext, int>(async database =>
                     {
                         var odsInstanceFirstTimeSetupService = GetOdsInstanceFirstTimeSetupService(encryptedSecretConfigValue, instanceName, database);
-                        var inferInstanceService = GetInferInstanceService(instanceName);
+                        var inferInstanceService = new InferInstanceService(_connectionProvider.Object);
 
                         var command = new RegisterOdsInstanceCommand(odsInstanceFirstTimeSetupService, identity, _setCurrentSchoolYear, inferInstanceService);
                         return await command.Execute(newInstance, ApiMode.DistrictSpecific, testUsername, new CloudOdsClaimSet());
@@ -163,7 +157,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
                     return await ScopedAsync<AdminAppDbContext, IEnumerable<BulkRegisterOdsInstancesResult>>(async database =>
                     {
                         var odsInstanceFirstTimeSetupService = GetOdsInstanceFirstTimeSetupService(encryptedSecretConfigValue, instanceName, database);
-                        var inferInstanceService = GetInferInstanceService(instanceName);
+                        var inferInstanceService = new InferInstanceService(_connectionProvider.Object);
 
                         RegisterOdsInstanceCommand registerOdsInstanceCommand = new RegisterOdsInstanceCommand(odsInstanceFirstTimeSetupService, identity, _setCurrentSchoolYear, inferInstanceService);
 

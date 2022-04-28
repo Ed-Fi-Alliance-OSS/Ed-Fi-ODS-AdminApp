@@ -80,7 +80,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Instance
                     return await ScopedAsync<AdminAppDbContext, int>(async database =>
                     {
                         var odsInstanceFirstTimeSetupService = GetOdsInstanceFirstTimeSetupService(encryptedSecretConfigValue, instanceName, database, apiMode);
-                        var inferInstanceService = GetInferInstanceService(instanceName);
+                        var inferInstanceService = new InferInstanceService(_connectionProvider.Object);
                         
                         var command = new RegisterOdsInstanceCommand(odsInstanceFirstTimeSetupService, identity, _setCurrentSchoolYear.Object, inferInstanceService);
                         return await command.Execute(newInstance, apiMode, testUsername, new CloudOdsClaimSet());
@@ -130,7 +130,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Instance
                     return await ScopedAsync<AdminAppDbContext, int>(async database =>
                     {
                         var odsInstanceFirstTimeSetupService = GetOdsInstanceFirstTimeSetupService(encryptedSecretConfigValue, instanceName, database, apiMode);
-                        var inferInstanceService = GetInferInstanceService(instanceName);
+                        var inferInstanceService = new InferInstanceService(_connectionProvider.Object);
 
                         var command = new RegisterOdsInstanceCommand(odsInstanceFirstTimeSetupService, identity, _setCurrentSchoolYear.Object, inferInstanceService);
                         return await command.Execute(newInstance, apiMode, testUsername, new CloudOdsClaimSet());
@@ -188,11 +188,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Instance
             var odsInstanceFirstTimeSetupService = new OdsInstanceFirstTimeSetupService(odsSecretConfigurationProvider,
                 mockFirstTimeSetupService.Object, mockUsersContext.Object, mockReportViewsSetUp.Object, database, options);
             return odsInstanceFirstTimeSetupService;
-        }
-
-        private IInferInstanceService GetInferInstanceService(string instanceName)
-        {
-            return new InferInstanceService(_connectionProvider.Object);
         }
 
         [Test]
