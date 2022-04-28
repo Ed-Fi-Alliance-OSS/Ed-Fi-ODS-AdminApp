@@ -145,14 +145,13 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
                     });
                 });
 
-                var addedInstance = Query<OdsInstanceRegistration>(newInstances.FirstOrDefault().OdsInstanceRegisteredId);
+            var newInstance = newInstances.FirstOrDefault();
 
-                newInstances.FirstOrDefault().ShouldNotBeNull();
-                newInstances.FirstOrDefault().NumericSuffix.ShouldBe(repeatedInstance.NumericSuffix.ToString());
-                newInstances.FirstOrDefault().Description.ShouldBe(repeatedInstance.Description);
-                newInstances.FirstOrDefault().OdsInstanceRegisteredId.ShouldBe(0);
-                newInstances.FirstOrDefault().IndividualInstanceResult.ShouldBe(IndividualInstanceResult.Skipped);
-            }
+            newInstance.ShouldNotBeNull();
+            newInstance.NumericSuffix.ShouldBe(repeatedInstance.NumericSuffix.ToString());
+            newInstance.Description.ShouldBe(repeatedInstance.Description);
+            newInstance.OdsInstanceRegisteredId.ShouldBe(0);
+            newInstance.IndividualInstanceResult.ShouldBe(IndividualInstanceResult.Skipped);
         }
 
         private static SqlConnection GetDatabaseConnection(string instanceName, string prefix = "")
