@@ -241,6 +241,7 @@ function GetJobStatus {
 $versionId = ObtainAdminAppVersionId -AdminAppVersion $AdminAppVersion
 GetCycleId -VersionId $versionId
 $jobId = CreateAutomationJob -VersionId $versionId
+Write-Host "Created Zephyr run for job: $jobId with version: $versionId and parameters $parameters"
 UploadResultsFile -JobId $jobId
 ExecuteJob -JobId $jobId
 GetJobStatus -JobId $jobId
