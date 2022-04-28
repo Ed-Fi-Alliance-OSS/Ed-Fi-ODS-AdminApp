@@ -53,16 +53,16 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
         public async Task ShouldRegisterOneNewOdsInstanceInBulk()
         {
             ResetOdsInstanceRegistrations();
-            var instanceName = "23456";
+            const string instanceName = "23456";
             const string description = "Test Description";
-            var encryptedSecretConfigValue = "Encrypted string";
+            const string encryptedSecretConfigValue = "Encrypted string";
 
             await using (var connection = GetDatabaseConnection(instanceName, "EdFi_Ods_"))
             {
                 _connectionProvider.Setup(x => x.CreateNewConnection(23456, ApiMode.DistrictSpecific))
                     .Returns(connection);
 
-                List<RegisterOdsInstanceModel> odsInstancesToRegister = new List<RegisterOdsInstanceModel>();
+                var odsInstancesToRegister = new List<RegisterOdsInstanceModel>();
                 var newInstance1 = new RegisterOdsInstanceModel
                 {
                     NumericSuffix = 23456,
@@ -80,7 +80,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
                         var odsInstanceFirstTimeSetupService = GetOdsInstanceFirstTimeSetupService(encryptedSecretConfigValue, instanceName, database);
                         var inferInstanceService = new InferInstanceService(_connectionProvider.Object);
 
-                        RegisterOdsInstanceCommand registerOdsInstanceCommand = new RegisterOdsInstanceCommand(odsInstanceFirstTimeSetupService, identity, _setCurrentSchoolYear, inferInstanceService);
+                        var registerOdsInstanceCommand = new RegisterOdsInstanceCommand(odsInstanceFirstTimeSetupService, identity, _setCurrentSchoolYear, inferInstanceService);
 
                         var command = new BulkRegisterOdsInstancesCommand(registerOdsInstanceCommand, _dataFiltrationService.Object);
                         return await command.Execute(odsInstancesToRegister, odsInstancesToRegister, ApiMode.DistrictSpecific, testUsername, new CloudOdsClaimSet());
@@ -102,9 +102,9 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
         public async Task BulkShouldNotRegisterOneOdsInstancePreviouslyRegistered()
         {
             ResetOdsInstanceRegistrations();
-            var instanceName = "23456";
+            const string instanceName = "23456";
             const string description = "Test Description";
-            var encryptedSecretConfigValue = "Encrypted string";
+            const string encryptedSecretConfigValue = "Encrypted string";
 
             await using var connection = GetDatabaseConnection(instanceName);
             await using var connection2 = GetDatabaseConnection(instanceName);
