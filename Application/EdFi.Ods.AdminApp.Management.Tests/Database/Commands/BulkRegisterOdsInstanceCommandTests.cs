@@ -104,9 +104,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
 
         private IInferInstanceService GetInferInstanceService(string instanceName)
         {
-            var inferInstanceService = new Mock<IInferInstanceService>();
-            inferInstanceService.Setup(x => x.DatabaseName(It.IsAny<int>(), It.IsAny<ApiMode>())).Returns($"{_dbNamePrefix}{instanceName}");
-            return inferInstanceService.Object;
+            return new InferInstanceService(_connectionProvider.Object);
         }
 
         [Test]
