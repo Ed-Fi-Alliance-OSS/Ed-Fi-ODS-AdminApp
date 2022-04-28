@@ -15,11 +15,9 @@ using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 using Shouldly;
-using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using EdFi.Ods.AdminApp.Management.Database.Ods.SchoolYears;
 using static EdFi.Ods.AdminApp.Management.Tests.Instance.InstanceTestSetup;
@@ -122,25 +120,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
                     .Returns(connection4)
                     .Returns(connection5);
 
-                var newInstance = new RegisterOdsInstanceModel
-                {
-                    NumericSuffix = 23456,
-                    Description = description
-                };
-
                 var testUsername = UserTestSetup.SetupUsers(1).Single().Id;
-
-                int newInstanceId = await ScopedAsync<AdminAppIdentityDbContext, int>(async identity =>
-                {
-                    return await ScopedAsync<AdminAppDbContext, int>(async database =>
-                    {
-                        var odsInstanceFirstTimeSetupService = GetOdsInstanceFirstTimeSetupService(encryptedSecretConfigValue, instanceName, database);
-                        var inferInstanceService = new InferInstanceService(_connectionProvider.Object);
-
-                        var command = new RegisterOdsInstanceCommand(odsInstanceFirstTimeSetupService, identity, _setCurrentSchoolYear, inferInstanceService);
-                        return await command.Execute(newInstance, ApiMode.DistrictSpecific, testUsername, new CloudOdsClaimSet());
-                    });
-                });
 
                 List<RegisterOdsInstanceModel> odsInstancesToRegister = new List<RegisterOdsInstanceModel>();
                 var repeatedInstance = new RegisterOdsInstanceModel
@@ -166,8 +146,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
                 });
 
                 var addedInstance = Query<OdsInstanceRegistration>(newInstances.FirstOrDefault().OdsInstanceRegisteredId);
-                var secretConfiguration = Transaction(database =>
-                    database.SecretConfigurations.FirstOrDefault(x => x.OdsInstanceRegistrationId == newInstances.FirstOrDefault().OdsInstanceRegisteredId));
 
                 newInstances.FirstOrDefault().ShouldNotBeNull();
                 newInstances.FirstOrDefault().NumericSuffix.ShouldBe(repeatedInstance.NumericSuffix.ToString());
@@ -175,7 +153,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
                 newInstances.FirstOrDefault().OdsInstanceRegisteredId.ShouldBe(0);
                 newInstances.FirstOrDefault().IndividualInstanceResult.ShouldBe(IndividualInstanceResult.Skipped);
             }
-
         }
 
         private static SqlConnection GetDatabaseConnection(string instanceName, string prefix = "")
@@ -216,6 +193,5 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
                 mockFirstTimeSetupService.Object, mockUsersContext.Object, mockReportViewsSetUp.Object, database, options);
             return odsInstanceFirstTimeSetupService;
         }
-
     }
 }
