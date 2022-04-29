@@ -9,8 +9,8 @@ namespace EdFi.Ods.Admin.Api.Features.Vendors
 {
     public class VendorModel
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
     }
 
     public class VendorModelValidator : AbstractValidator<VendorModel>
