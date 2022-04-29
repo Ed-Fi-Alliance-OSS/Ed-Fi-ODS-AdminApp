@@ -101,7 +101,7 @@ function ObtainAdminAppVersionId {
 
 }
 
-function GetCycleId {
+function SetCycleId {
     param (
         [string]
         $VersionId
@@ -124,13 +124,15 @@ function GetCycleId {
         Write-Host "Error: $_"
     }
 
-    # Remove entries that do not bring valuable information
+    # Remove entries that do not contain valuable information
     $response.psobject.properties.remove('recordsCount')
     $response.psobject.properties.remove('-1')
     $result = $response.psobject.properties.value | where { $_.name -eq $ConfigParams.cycleName}
 
     if($result) {
-        $ConfigParams.Add("cycleId", $response.psobject.properties.name[0])
+        $cycle = $response.psobject.properties.name[0]
+        $ConfigParams.Add("cycleId", $cycle)
+        Write-Host "Using cycle: $cycle"
     } else {
         Write-Host "Could not find an existing cycle with the given name. Will create a new one"
     }
@@ -239,9 +241,9 @@ function GetJobStatus {
 }
 
 $versionId = ObtainAdminAppVersionId -AdminAppVersion $AdminAppVersion
-GetCycleId -VersionId $versionId
+SetCycleId -VersionId $versionId
 $jobId = CreateAutomationJob -VersionId $versionId
-Write-Host "Created Zephyr run for job: $jobId with version: $versionId and parameters $parameters"
+Write-Host "Created Zephyr run for Admin App version: $versionId with job: $jobId"
 UploadResultsFile -JobId $jobId
 ExecuteJob -JobId $jobId
 GetJobStatus -JobId $jobId
