@@ -76,7 +76,7 @@ function ObtainAdminAppVersionId {
     )
 
     if(-not $AdminAppVersion) {
-        return -1
+        throw "Please specify a valid Admin App version defined in Jira."
     }
 
     $getVersionURL = "$JiraURL/rest/zapi/latest/util/versionBoard-list?projectId=$ProjectId"
@@ -89,15 +89,17 @@ function ObtainAdminAppVersionId {
 
     $unreleasedVersions = $response.unreleasedVersions | where { $_.label -like "*$AdminAppVersion*"}
     if($unreleasedVersions) {
+        Write-Host "Unreleased Admin App version found"
         return $unreleasedVersions.value
     }
 
     $releasedVersions = $response.releasedVersions | where { $_.label -like "*$AdminAppVersion*"}
     if($releasedVersions) {
+        Write-Host "Released Admin App version found"
         return $releasedVersions.value
     }
 
-    return "-1"
+    throw "Please specify a valid Admin App version defined in Jira."
 
 }
 
