@@ -4,7 +4,7 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 import { Before, BeforeAll, ITestCaseHookParameter, setDefaultTimeout } from "@cucumber/cucumber";
-import { chromium, Browser, BrowserContext, Page } from "playwright";
+import { chromium, Browser, BrowserContext, Page, request, APIRequestContext } from "playwright";
 import { ModelResolver } from "../models/modelResolver";
 
 import dotenv = require("dotenv");
@@ -15,6 +15,7 @@ setDefaultTimeout(60 * 1000);
 export let browser: Browser;
 export let page: Page;
 export let context: BrowserContext;
+export let apiContext: APIRequestContext;
 export let models: ModelResolver;
 export const currentTest = {
     feature: "",
@@ -78,4 +79,10 @@ function getScenarioExample(scenario: ITestCaseHookParameter): string | undefine
         return;
     }
     return;
+}
+
+export async function setApiContext(): Promise<void> {
+    if(!apiContext) {
+        apiContext = await request.newContext({ ignoreHTTPSErrors: true });
+    }
 }

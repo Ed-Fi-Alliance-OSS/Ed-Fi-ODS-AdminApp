@@ -4,7 +4,7 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 import { Given } from "@cucumber/cucumber";
-import { models, context } from "../management/setup";
+import { models, context, setApiContext } from "../management/setup";
 import { validatePath } from "../management/validators";
 
 Given("user is registered", async () => {
@@ -19,6 +19,10 @@ Given("user is logged in", async () => {
     await models.loginPage.navigate();
     await models.loginPage.fullLogin(process.env.email, process.env.password);
     await context.storageState({ path: "./state/login-state.json" });
+});
+
+Given("has API context", async () => {
+    await setApiContext();
 });
 
 Given("setup is complete", async () => {
