@@ -81,21 +81,20 @@ function ObtainAdminAppVersionId {
 
     $getVersionURL = "$JiraURL/rest/zapi/latest/util/versionBoard-list?projectId=$ProjectId"
 
-    try {
-        $response = Invoke-RestMethod -Uri $getVersionURL -Headers $headers
-    } catch {
-        Write-Host "Error: $_"
+    $response = Invoke-RestMethod -Uri $getVersionURL -Headers $headers
+    if($response.errorDesc) {
+        throw $response.errorDesc
     }
 
     $unreleasedVersions = $response.unreleasedVersions | where { $_.label -like "*$AdminAppVersion*"}
     if($unreleasedVersions) {
-        Write-Host "Unreleased Admin App version found"
+        Write-Host "Unreleased Admin App version found: $unreleasedVersions.value"
         return $unreleasedVersions.value
     }
 
     $releasedVersions = $response.releasedVersions | where { $_.label -like "*$AdminAppVersion*"}
     if($releasedVersions) {
-        Write-Host "Released Admin App version found"
+        Write-Host "Released Admin App version found: $releasedVersions.value"
         return $releasedVersions.value
     }
 
@@ -120,10 +119,9 @@ function SetCycleId {
 
     $getCycleURL = "$JiraURL/rest/zapi/latest/cycle?projectId=$ProjectId&versionId=$VersionId"
 
-    try {
-        $response = Invoke-RestMethod -Uri $getCycleURL -Headers $headers
-    } catch {
-        Write-Host "Error: $_"
+    $response = Invoke-RestMethod -Uri $getCycleURL -Headers $headers
+    if($response.errorDesc) {
+        throw $response.errorDesc
     }
 
     # Remove entries that do not contain valuable information
@@ -134,7 +132,7 @@ function SetCycleId {
     if($result) {
         $cycle = $response.psobject.properties.name[0]
         $ConfigParams.Add("cycleId", $cycle)
-        Write-Host "Using cycle: $cycle"
+        Write-Host "Found cycle: $cycle for name: $ConfigParams.cycleName"
     } else {
         Write-Host "Could not find an existing cycle with the given name. Will create a new one"
     }
@@ -162,10 +160,9 @@ function CreateAutomationJob {
 
     $body = $ConfigParams | ConvertTo-Json
 
-    try {
-        $response = Invoke-RestMethod -Method 'Post' -Uri $createJobURL -Headers $headers -Body $body -ContentType "application/json"
-    } catch {
-        Write-Host "Error: $_"
+    $response = Invoke-RestMethod -Method 'Post' -Uri $createJobURL -Headers $headers -Body $body -ContentType "application/json"
+    if($response.errorDesc) {
+        throw $response.errorDesc
     }
 
     if($response.status -eq 200) {
@@ -181,7 +178,12 @@ function UploadResultsFile {
 
     $uploadJobUrl = "$JiraURL/rest/zapi/latest/automation/upload/$JobId"
 
-    $fileBytes = [System.IO.File]::ReadAllBytes($ResultsFilePath);
+    try {
+        $fileBytes = [System.IO.File]::ReadAllBytes($ResultsFilePath);
+    } catch {
+        throw "Results file not found. Verify that file is located in path: $ResultsFilePath"
+    }
+
     $fileEnc = [System.Text.Encoding]::GetEncoding('UTF-8').GetString($fileBytes);
     $boundary = [System.Guid]::NewGuid().ToString();
     $LF = "`r`n";
@@ -195,10 +197,9 @@ function UploadResultsFile {
         "--$boundary--$LF"
     ) -join $LF
 
-    try {
-        $response = Invoke-RestMethod -Uri $uploadJobUrl -Method Post -Headers $headers -ContentType "multipart/form-data; boundary=`"$boundary`"" -Body $bodyLines
-    } catch {
-        Write-Host "Error: $_"
+    $response = Invoke-RestMethod -Uri $uploadJobUrl -Method Post -Headers $headers -ContentType "multipart/form-data; boundary=`"$boundary`"" -Body $bodyLines
+    if($response.errorDesc) {
+        throw $response.errorDesc
     }
 
     if($response.status -eq 200) {
@@ -214,10 +215,9 @@ function ExecuteJob {
 
     $executeJobUrl = "$JiraURL/rest/zapi/latest/automation/job/execute/$JobId"
 
-    try {
-        $response = Invoke-RestMethod -Uri $executeJobUrl -Method Post -Headers $headers -ContentType "application/json"
-    } catch {
-        Write-Host "Error: $_"
+    $response = Invoke-RestMethod -Uri $executeJobUrl -Method Post -Headers $headers -ContentType "application/json"
+    if($response.errorDesc) {
+        throw $response.errorDesc
     }
 
     if($response.status -eq 200) {
@@ -233,10 +233,9 @@ function GetJobStatus {
 
     $jobStatusUrl = "$JiraURL/rest/zapi/latest/automation/job/status/$JobId"
 
-    try {
-        $response = Invoke-RestMethod -Uri $jobStatusUrl -Headers $headers
-    } catch {
-        Write-Host "Error: $_"
+    $response = Invoke-RestMethod -Uri $jobStatusUrl -Headers $headers
+    if($response.errorDesc) {
+        throw $response.errorDesc
     }
 
     Write-Host $response.Status
