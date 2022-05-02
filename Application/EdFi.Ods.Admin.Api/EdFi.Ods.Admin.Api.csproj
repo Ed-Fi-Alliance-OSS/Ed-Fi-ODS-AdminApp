@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoWrapper" Version="1.1.0" />
+    <PackageReference Include="AutoWrapper.Core" Version="4.5.0" />
     <PackageReference Include="FluentValidation" Version="10.4.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="10.4.0" />
     <PackageReference Include="log4net" Version="2.0.13" />
