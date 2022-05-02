@@ -242,10 +242,17 @@ function GetJobStatus {
     Write-Host $response.Status
 }
 
-$versionId = ObtainAdminAppVersionId -AdminAppVersion $AdminAppVersion
-SetCycleId -VersionId $versionId
-$jobId = CreateAutomationJob -VersionId $versionId
-Write-Host "Created Zephyr run for Admin App version: $versionId with job: $jobId"
-UploadResultsFile -JobId $jobId
-ExecuteJob -JobId $jobId
-GetJobStatus -JobId $jobId
+try {
+    $versionId = ObtainAdminAppVersionId -AdminAppVersion $AdminAppVersion
+    SetCycleId -VersionId $versionId
+    $jobId = CreateAutomationJob -VersionId $versionId
+    Write-Host "Created Zephyr run for Admin App version: $versionId with job: $jobId"
+    UploadResultsFile -JobId $jobId
+    ExecuteJob -JobId $jobId
+    GetJobStatus -JobId $jobId
+} catch {
+    Write-Host "Error sending test results: " -NoNewLine -ForegroundColor Red
+    Write-Host $_.Exception.Message
+    Write-Host "Please check info and try again. See full exception below`n"
+    throw $_
+}
