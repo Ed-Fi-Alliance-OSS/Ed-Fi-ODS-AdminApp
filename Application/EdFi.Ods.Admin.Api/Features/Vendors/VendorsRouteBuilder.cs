@@ -18,27 +18,27 @@ namespace EdFi.Ods.Admin.Api.Features
             endpoints.MapDelete("/Vendors/delete", DeleteVendor);
         }
 
-        internal Task<string[]> GetVendors(AdminAppDbContext dbContext)
+        internal Task<IResult> GetVendors(AdminAppDbContext dbContext)
         {
-            var vendorsList = new string[] { "Vendor1", "Vendor2" };
-            return Task.FromResult(vendorsList);
+            var vendorsList = new[] { "Vendor1", "Vendor2" };
+            return Task.FromResult(AdminApiResponse<string[]>.Ok(vendorsList));
         }
 
         internal async Task<IResult> AddVendor(AdminAppDbContext dbContext, VendorModelValidator validator, VendorModel vendor)
         {
             await validator.GuardAsync(vendor);
-            return Results.Ok();
+            return AdminApiResponse<VendorModel>.Created(vendor, "Vendor", "/Vendors/1");
         }
 
         internal async Task<IResult> UpdateVendor(AdminAppDbContext dbContext, VendorModelValidator validator, VendorModel vendor)
         {
             await validator.GuardAsync(vendor);
-            return Results.Ok();
+            return AdminApiResponse<VendorModel>.Updated(vendor, "Vendor");
         }
 
         internal Task<IResult> DeleteVendor(AdminAppDbContext dbContext, int Id)
         {
-            return Task.FromResult(Results.NoContent());
+            return  Task.FromResult(AdminApiResponse.Deleted("Vendor"));
         }
     }
 }

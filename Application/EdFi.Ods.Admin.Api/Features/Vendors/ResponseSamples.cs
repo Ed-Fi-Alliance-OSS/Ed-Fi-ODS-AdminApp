@@ -5,7 +5,6 @@
 
 using FluentValidation;
 using FluentValidation.Results;
-using Microsoft.AspNetCore.Mvc;
 
 namespace EdFi.Ods.Admin.Api.Features.Vendors;
 
@@ -15,8 +14,8 @@ public class SamplesRouteBuilder : IRouteBuilderBase
     {
         endpoints.MapGet("/samples/success", OK);
         endpoints.MapPost("/samples/success", Created);
-        endpoints.MapPut("/samples/success", NoContent);
-        endpoints.MapDelete("/samples/success", NoContent);
+        endpoints.MapPut("/samples/success", Updated);
+        endpoints.MapDelete("/samples/success", Deleted);
 
         endpoints.MapPost("/samples/badrequest", BadRequest);
         endpoints.MapPut("/samples/badrequest", BadRequest);
@@ -32,11 +31,13 @@ public class SamplesRouteBuilder : IRouteBuilderBase
         endpoints.MapDelete("/samples/error", Error);
     }
 
-    internal IResult OK(HttpContext context) => Results.Ok(new SampleObject());
+    internal IResult OK(HttpContext context) => AdminApiResponse<SampleObject>.Ok(new SampleObject());
 
-    internal IResult Created(HttpContext context) => Results.Created("samples/success/1", new SampleObject());
+    internal IResult Created(HttpContext context) => AdminApiResponse<SampleObject>.Created(new SampleObject(), "Sample", "samples/success/1");
 
-    internal IResult NoContent(HttpContext context) => Results.NoContent();
+    internal IResult Updated(HttpContext context) => AdminApiResponse<SampleObject>.Updated(new SampleObject(), "Sample");
+
+    internal IResult Deleted(HttpContext context) => AdminApiResponse.Deleted("Sample");
 
     internal IResult BadRequest(HttpContext context) => throw new ValidationException(
         new[] {new ValidationFailure("Prop1", "Error 1"), new ValidationFailure("Prop2", "Error 2")});
