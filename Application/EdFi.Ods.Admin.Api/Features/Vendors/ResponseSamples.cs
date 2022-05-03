@@ -43,7 +43,7 @@ public class SamplesRouteBuilder : IRouteBuilderBase
 
     internal IResult NotFound(HttpContext context) => Results.NotFound();
 
-    internal Task Error(HttpContext context) => throw new Exception("This is the exception message");
+    internal IResult Error(HttpContext context) => throw new Exception("This is the exception message");
 
     internal class SampleObject
     {
