@@ -24,9 +24,7 @@ if (app.Environment.IsDevelopment())
 }
 app.UseHttpsRedirection();
 
-app.UseExceptionHandler(exceptionHandlerApp =>{
-    exceptionHandlerApp.Run(async context => await ExceptionHandler.ExecuteAsync(context, _logger));
-});
+app.UseExceptionHandler("/error");
 
 app.UseRouting();
 app.UseRouteBuilders();
