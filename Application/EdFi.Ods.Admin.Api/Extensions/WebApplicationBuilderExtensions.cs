@@ -35,32 +35,36 @@ namespace EdFi.Ods.Admin.Api.Extensions
 
             // Services
             var databaseEngine = webApplicationBuilder.Configuration["AppSettings:DatabaseEngine"];
+            webApplicationBuilder.AddDatabases(databaseEngine);
+        }
+
+        private static void AddDatabases(this WebApplicationBuilder webApplicationBuilder, string databaseEngine)
+        {
             var adminConnectionString = webApplicationBuilder.Configuration.GetConnectionString("Admin");
             var securityConnectionString = webApplicationBuilder.Configuration.GetConnectionString("Security");
 
-            webApplicationBuilder.Services.AddDbContext<AdminAppDbContext>(options =>
+            if (DatabaseEngineEnum.Parse(databaseEngine).Equals(DatabaseEngineEnum.PostgreSql))
             {
-                if (DatabaseEngineEnum.Parse(databaseEngine).Equals(DatabaseEngineEnum.PostgreSql))
-                    options.UseNpgsql(adminConnectionString);
-                else if(DatabaseEngineEnum.Parse(databaseEngine).Equals(DatabaseEngineEnum.SqlServer))
-                    options.UseSqlServer(adminConnectionString);
-            });
+                webApplicationBuilder.Services.AddDbContext<AdminAppDbContext>(
+                    options => options.UseNpgsql(adminConnectionString));
 
-            webApplicationBuilder.Services.AddScoped<ISecurityContext>(x =>
+                webApplicationBuilder.Services.AddScoped<ISecurityContext>(
+                    sp => new PostgresSecurityContext(securityConnectionString));
+
+                webApplicationBuilder.Services.AddScoped<IUsersContext>(
+                    sp => new PostgresUsersContext(adminConnectionString));
+            }
+            else if (DatabaseEngineEnum.Parse(databaseEngine).Equals(DatabaseEngineEnum.SqlServer))
             {
-                if (DatabaseEngineEnum.Parse(databaseEngine).Equals(DatabaseEngineEnum.SqlServer))
-                    return new SqlServerSecurityContext(securityConnectionString);
+                webApplicationBuilder.Services.AddDbContext<AdminAppDbContext>(
+                    options => options.UseSqlServer(adminConnectionString));
 
-                return new PostgresSecurityContext(securityConnectionString);
-            });
+                webApplicationBuilder.Services.AddScoped<ISecurityContext>(
+                    sp => new SqlServerSecurityContext(securityConnectionString));
 
-            webApplicationBuilder.Services.AddScoped<IUsersContext>(x =>
-            {
-                if (DatabaseEngineEnum.Parse(databaseEngine).Equals(DatabaseEngineEnum.SqlServer))
-                    return new SqlServerUsersContext(adminConnectionString);
-
-                return new PostgresUsersContext(adminConnectionString);
-            });
+                webApplicationBuilder.Services.AddScoped<IUsersContext>(
+                    sp => new SqlServerUsersContext(adminConnectionString));
+            }
         }
     }
 }
