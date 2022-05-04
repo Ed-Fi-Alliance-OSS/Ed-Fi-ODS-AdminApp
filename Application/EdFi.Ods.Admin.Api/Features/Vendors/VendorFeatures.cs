@@ -40,7 +40,7 @@ public class VendorFeatures : IFeature
     internal async Task<IResult> UpdateVendor(AdminAppDbContext dbContext, VendorModelValidator validator, VendorModel vendor)
     {
         await validator.GuardAsync(vendor);
-        CheckIfExists(vendor.Id.Value);
+        CheckIfExists(vendor.Id!.Value);
         return AdminApiResponse<VendorModel>.Updated(vendor, "Vendor");
     }
 
