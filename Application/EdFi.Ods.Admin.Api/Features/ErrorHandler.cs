@@ -3,6 +3,7 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
+using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 
 namespace EdFi.Ods.Admin.Api.Features
@@ -19,10 +20,10 @@ namespace EdFi.Ods.Admin.Api.Features
             var exceptionHandlerFeature = context.Features.Get<IExceptionHandlerPathFeature>();
             var exception = exceptionHandlerFeature?.Error ?? new Exception();
 
-            if (exception is FailedValidationException validationException)
+            if (exception is ValidationException validationException)
             {
                 logger.LogDebug(exception, "Validation error");
-                return Task.FromResult(AdminApiError.Validation(validationException.Result.Errors));
+                return Task.FromResult(AdminApiError.Validation(validationException.Errors));
             }
 
             logger.LogError(exception, "An uncaught error has occurred");

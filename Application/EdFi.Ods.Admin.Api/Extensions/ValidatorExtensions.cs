@@ -4,7 +4,6 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using FluentValidation;
-using FluentValidation.Results;
 
 public static class ValidatorExtensions
 {
@@ -13,14 +12,6 @@ public static class ValidatorExtensions
         var validationResult = await validator.ValidateAsync(request);
 
         if (!validationResult.IsValid)
-            throw new FailedValidationException(validationResult);
+            throw new ValidationException(validationResult.Errors);
     }
-}
-
-public class FailedValidationException : Exception
-{
-    public FailedValidationException(ValidationResult result)
-        => Result = result;
-
-    public ValidationResult Result { get; }
 }
