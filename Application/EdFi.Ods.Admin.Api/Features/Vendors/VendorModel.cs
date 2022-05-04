@@ -18,7 +18,7 @@ namespace EdFi.Ods.Admin.Api.Features.Vendors
         public VendorModelValidator()
         {
             RuleFor(m => m.Name).NotEmpty();
-            RuleFor(m => m.Description).NotEmpty();                
+            RuleFor(m => m.Description).NotEmpty();
         }
     }
 }

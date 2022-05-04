@@ -13,7 +13,7 @@ namespace EdFi.Ods.Admin.Api.Extensions
         public static void UseRouteBuilders(this WebApplication application)
         {
             var type = typeof(IRouteBuilderBase);
-            var routeBuilderTypes = Assembly.GetExecutingAssembly().GetTypes()                
+            var routeBuilderTypes = Assembly.GetExecutingAssembly().GetTypes()
                 .Where(p => type.IsAssignableFrom(p) && p.IsClass);
 
             var routeBuilders = new List<IRouteBuilderBase>();
@@ -21,7 +21,7 @@ namespace EdFi.Ods.Admin.Api.Extensions
             foreach (var routeBuilderType in routeBuilderTypes)
             {
                 var routeBuilder = Activator.CreateInstance(routeBuilderType) as IRouteBuilderBase;
-                if(routeBuilder != null)                    
+                if(routeBuilder != null)
                   routeBuilders.Add(routeBuilder);
             }
 
@@ -31,7 +31,7 @@ namespace EdFi.Ods.Admin.Api.Extensions
                 {
                     routeBuilder.AddEndPoints(endpoints);
                 }
-            });   
+            });
         }
     }
 }

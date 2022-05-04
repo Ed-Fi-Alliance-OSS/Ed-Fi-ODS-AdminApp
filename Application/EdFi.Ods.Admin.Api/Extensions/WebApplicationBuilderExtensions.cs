@@ -38,16 +38,16 @@ namespace EdFi.Ods.Admin.Api.Extensions
             var adminConnectionString = webApplicationBuilder.Configuration.GetConnectionString("Admin");
             var securityConnectionString = webApplicationBuilder.Configuration.GetConnectionString("Security");
 
-            webApplicationBuilder.Services.AddDbContext<AdminAppDbContext>(options =>       
-            {                              
-                if (DatabaseEngineEnum.Parse(databaseEngine).Equals(DatabaseEngineEnum.PostgreSql))                
-                    options.UseNpgsql(adminConnectionString);                
+            webApplicationBuilder.Services.AddDbContext<AdminAppDbContext>(options =>
+            {
+                if (DatabaseEngineEnum.Parse(databaseEngine).Equals(DatabaseEngineEnum.PostgreSql))
+                    options.UseNpgsql(adminConnectionString);
                 else if(DatabaseEngineEnum.Parse(databaseEngine).Equals(DatabaseEngineEnum.SqlServer))
-                    options.UseSqlServer(adminConnectionString);                
+                    options.UseSqlServer(adminConnectionString);
             });
 
             webApplicationBuilder.Services.AddScoped<ISecurityContext>(x =>
-            {               
+            {
                 if (DatabaseEngineEnum.Parse(databaseEngine).Equals(DatabaseEngineEnum.SqlServer))
                     return new SqlServerSecurityContext(securityConnectionString);
 
@@ -61,6 +61,6 @@ namespace EdFi.Ods.Admin.Api.Extensions
 
                 return new PostgresUsersContext(adminConnectionString);
             });
-        }       
+        }
     }
 }

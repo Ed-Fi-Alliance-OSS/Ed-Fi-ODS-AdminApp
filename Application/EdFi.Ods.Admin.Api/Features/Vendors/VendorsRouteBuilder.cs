@@ -3,19 +3,18 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
-using EdFi.Ods.Admin.Api.Features.Vendors;
 using EdFi.Ods.AdminApp.Management.Database;
 
-namespace EdFi.Ods.Admin.Api.Features
+namespace EdFi.Ods.Admin.Api.Features.Vendors
 {
     public class VendorsRouteBuilder : IRouteBuilderBase
-    {      
+    {
         public void AddEndPoints(IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapGet("/Vendors", GetVendors);
-            endpoints.MapPost("/Vendors/add", AddVendor);
-            endpoints.MapPut("/Vendors/update", UpdateVendor);
-            endpoints.MapDelete("/Vendors/delete", DeleteVendor);
+            endpoints.MapGet("/vendors", GetVendors);
+            endpoints.MapPost("/vendors/add", AddVendor);
+            endpoints.MapPut("/vendors/update", UpdateVendor);
+            endpoints.MapDelete("/vendors/delete", DeleteVendor);
         }
 
         internal Task<IResult> GetVendors(AdminAppDbContext dbContext)
@@ -36,7 +35,7 @@ namespace EdFi.Ods.Admin.Api.Features
             return AdminApiResponse<VendorModel>.Updated(vendor, "Vendor");
         }
 
-        internal Task<IResult> DeleteVendor(AdminAppDbContext dbContext, int Id)
+        internal Task<IResult> DeleteVendor(AdminAppDbContext dbContext, int id)
         {
             return  Task.FromResult(AdminApiResponse.Deleted("Vendor"));
         }
