@@ -13,6 +13,7 @@ public class AdminApiError
     {
         Status = status;
         Title = title;
+        Errors = new[] { title };
     }
 
     protected AdminApiError(int status, string title, IEnumerable<string> errors) : this(status, title)
