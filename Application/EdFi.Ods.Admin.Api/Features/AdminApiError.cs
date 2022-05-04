@@ -21,7 +21,8 @@ public class AdminApiError
     public IEnumerable<string> Errors { get; }
 
     public static IResult Validation(IEnumerable<ValidationFailure> errors)
-        => Results.BadRequest(new AdminApiError(400, "A validation error has occurred", errors.Select(f => f.ErrorMessage)));
+        => Results.ValidationProblem(errors
+            .GroupBy(e => e.PropertyName).ToDictionary(g => g.Key, g => g.Select(f => f.ErrorMessage).ToArray()));
 
     public static IResult Unexpected(string message)
         => Results.Problem(statusCode: 500, title: message);
