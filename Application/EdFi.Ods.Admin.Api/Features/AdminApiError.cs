@@ -9,10 +9,14 @@ namespace EdFi.Ods.Admin.Api.Features;
 
 public class AdminApiError
 {
-    protected AdminApiError(int status, string title, IEnumerable<string> errors)
+    protected AdminApiError(int status, string title)
     {
         Status = status;
         Title = title;
+    }
+
+    protected AdminApiError(int status, string title, IEnumerable<string> errors) : this(status, title)
+    {
         Errors = errors;
     }
 
@@ -32,4 +36,7 @@ public class AdminApiError
 
     public static IResult Unexpected(Exception exception)
         => Results.Problem(statusCode: 500, title: exception.Message);
+
+    public static IResult NotFound<T>(string resourceName, T id)
+        => Results.NotFound(new AdminApiError(404, $"Not found: {resourceName} with ID {id}"));
 }

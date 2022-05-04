@@ -26,8 +26,24 @@ namespace EdFi.Ods.Admin.Api.Features
                 return Task.FromResult(AdminApiError.Validation(validationException.Errors));
             }
 
+            if (exception is NotFoundException<int>)
+                return HandleNotFound<int>(logger, exception);
+            if (exception is NotFoundException<Guid>)
+                return HandleNotFound<Guid>(logger, exception);
+            if (exception is NotFoundException<string>)
+                return HandleNotFound<string>(logger, exception);
+
             logger.LogError(exception, "An uncaught error has occurred");
             return Task.FromResult(AdminApiError.Unexpected(exception));
+        }
+
+        private Task<IResult> HandleNotFound<T>(ILogger<ErrorHandler> logger, Exception exception)
+        {
+            if(exception is not NotFoundException<T> notFoundException)
+                throw new ArgumentException("HandleNotFound<T>() must be called with a NotFoundException");
+
+            logger.LogDebug(notFoundException, "Resource not found");
+            return Task.FromResult(AdminApiError.NotFound(notFoundException.ResourceName, notFoundException.Id));
         }
     }
 }

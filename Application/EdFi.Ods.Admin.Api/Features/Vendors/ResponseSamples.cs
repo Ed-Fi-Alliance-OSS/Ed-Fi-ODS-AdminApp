@@ -42,7 +42,7 @@ public class SamplesRouteBuilder : IRouteBuilderBase
     internal IResult BadRequest(HttpContext context) => throw new ValidationException(
         new[] {new ValidationFailure("Prop1", "Error 1"), new ValidationFailure("Prop2", "Error 2")});
 
-    internal IResult NotFound(HttpContext context) => Results.NotFound();
+    internal IResult NotFound(HttpContext context) => throw new NotFoundException<int>("Sample", 2);
 
     internal IResult Error(HttpContext context) => throw new Exception("This is the exception message");
 
