@@ -5,7 +5,7 @@
 
 namespace EdFi.Ods.Admin.Api.Features;
 
-public class SamplesRouteBuilder : IFeature
+public class ResponseSamplesFeature : IFeature
 {
     public void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
