@@ -8,9 +8,9 @@ using FluentValidation.Results;
 
 namespace EdFi.Ods.Admin.Api.Features.Vendors;
 
-public class SamplesRouteBuilder : IRouteBuilderBase
+public class SamplesRouteBuilder : IFeature
 {
-    public void AddEndPoints(IEndpointRouteBuilder endpoints)
+    public void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
         endpoints.MapGet("/samples/success", OK);
         endpoints.MapPost("/samples/success", Created);

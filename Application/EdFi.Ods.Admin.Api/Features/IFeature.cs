@@ -5,8 +5,8 @@
 
 namespace EdFi.Ods.Admin.Api.Features
 {
-    public interface IRouteBuilderBase
+    public interface IFeature
     {
-        void AddEndPoints(IEndpointRouteBuilder endpoints);
+        void MapEndpoints(IEndpointRouteBuilder endpoints);
     }
 }

@@ -7,9 +7,9 @@ using EdFi.Ods.AdminApp.Management.Database;
 
 namespace EdFi.Ods.Admin.Api.Features.Vendors
 {
-    public class VendorsRouteBuilder : IRouteBuilderBase
+    public class VendorsRouteBuilder : IFeature
     {
-        public void AddEndPoints(IEndpointRouteBuilder endpoints)
+        public void MapEndpoints(IEndpointRouteBuilder endpoints)
         {
             endpoints.MapGet("/vendors", GetVendors);
             endpoints.MapPost("/vendors/add", AddVendor);

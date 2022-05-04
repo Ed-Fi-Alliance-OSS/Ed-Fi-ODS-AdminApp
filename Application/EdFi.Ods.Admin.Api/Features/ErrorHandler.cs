@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Diagnostics;
 
 namespace EdFi.Ods.Admin.Api.Features
 {
-    public class ErrorHandler : IRouteBuilderBase
+    public class ErrorHandler : IFeature
     {
-        public void AddEndPoints(IEndpointRouteBuilder endpoints)
+        public void MapEndpoints(IEndpointRouteBuilder endpoints)
         {
             endpoints.Map("/error", HandleError);
         }

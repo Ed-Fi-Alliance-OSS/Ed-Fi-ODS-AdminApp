@@ -31,6 +31,6 @@ else
 app.UseHttpsRedirection();
 
 app.UseRouting();
-app.UseRouteBuilders();
+app.MapFeatureEndpoints();
 
 app.Run();

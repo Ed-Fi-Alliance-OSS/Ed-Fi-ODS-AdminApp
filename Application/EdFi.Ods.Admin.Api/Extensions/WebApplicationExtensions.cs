@@ -10,26 +10,24 @@ namespace EdFi.Ods.Admin.Api.Extensions
 {
     public static class WebApplicationExtensions
     {
-        public static void UseRouteBuilders(this WebApplication application)
+        public static void MapFeatureEndpoints(this WebApplication application)
         {
-            var type = typeof(IRouteBuilderBase);
-            var routeBuilderTypes = Assembly.GetExecutingAssembly().GetTypes()
-                .Where(p => type.IsAssignableFrom(p) && p.IsClass);
+            var featureInterface = typeof(IFeature);
+            var featureImpls = Assembly.GetExecutingAssembly().GetTypes()
+                .Where(p => featureInterface.IsAssignableFrom(p) && p.IsClass);
 
-            var routeBuilders = new List<IRouteBuilderBase>();
+            var features = new List<IFeature>();
 
-            foreach (var routeBuilderType in routeBuilderTypes)
+            foreach (var featureImpl in featureImpls)
             {
-                var routeBuilder = Activator.CreateInstance(routeBuilderType) as IRouteBuilderBase;
-                if(routeBuilder != null)
-                  routeBuilders.Add(routeBuilder);
+                if(Activator.CreateInstance(featureImpl) is IFeature feature)
+                  features.Add(feature);
             }
 
             application.UseEndpoints(endpoints => {
-
-                foreach (var routeBuilder in routeBuilders)
+                foreach (var routeBuilder in features)
                 {
-                    routeBuilder.AddEndPoints(endpoints);
+                    routeBuilder.MapEndpoints(endpoints);
                 }
             });
         }
