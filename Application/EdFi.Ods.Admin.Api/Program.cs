@@ -19,8 +19,6 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
     app.UseDeveloperExceptionPage();
 }
 else
@@ -32,5 +30,11 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 app.MapFeatureEndpoints();
+
+if (app.Configuration.GetValue<bool>("EnableSwagger"))
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.Run();
