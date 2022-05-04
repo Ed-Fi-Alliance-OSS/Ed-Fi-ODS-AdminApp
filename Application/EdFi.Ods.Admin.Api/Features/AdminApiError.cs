@@ -9,15 +9,15 @@ namespace EdFi.Ods.Admin.Api.Features;
 
 public class AdminApiError
 {
-    protected AdminApiError(int code, string message, IEnumerable<string> errors)
+    protected AdminApiError(int status, string title, IEnumerable<string> errors)
     {
-        Code = code;
-        Message = message;
+        Status = status;
+        Title = title;
         Errors = errors;
     }
 
-    public int Code { get; }
-    public string Message { get; }
+    public int Status { get; }
+    public string Title { get; }
     public IEnumerable<string> Errors { get; }
 
     public static IResult Validation(IEnumerable<ValidationFailure> errors)

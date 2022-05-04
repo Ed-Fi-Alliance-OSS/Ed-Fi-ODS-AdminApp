@@ -7,11 +7,11 @@ namespace EdFi.Ods.Admin.Api.Features;
 
 public class AdminApiResponse
 {
-    protected AdminApiResponse(int code) { Code = code; Message = ""; }
-    protected AdminApiResponse(int code, string message) : this(code) { Message = message; }
+    protected AdminApiResponse(int status) { Status = status; Title = $"Status {status}"; }
+    protected AdminApiResponse(int status, string title) : this(status) { Title = title; }
 
-    public int Code { get; }
-    public string Message { get; }
+    public int Status { get; }
+    public string Title { get; }
 
     public static IResult Ok(string message)
         => Results.Ok(new AdminApiResponse(200, message));
@@ -24,8 +24,8 @@ public class AdminApiResponse<T> : AdminApiResponse
 {
     public T Result { get; }
 
-    protected AdminApiResponse(int code, T result) : base(code) { Result = result; }
-    protected AdminApiResponse(int code, string message, T result) : base(code, message) { Result = result; }
+    protected AdminApiResponse(int status, T result) : base(status) { Result = result; }
+    protected AdminApiResponse(int status, string title, T result) : base(status, title) { Result = result; }
 
     public static IResult Ok(T result)
         => Results.Ok(new AdminApiResponse<T>(200, "Request successful", result));
@@ -36,4 +36,3 @@ public class AdminApiResponse<T> : AdminApiResponse
     public static IResult Updated(T result, string name)
         => Results.Ok(new AdminApiResponse<T>(200, $"{name} updated successfully", result));
 }
-
