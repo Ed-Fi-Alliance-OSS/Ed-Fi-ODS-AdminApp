@@ -31,5 +31,5 @@ public class AdminApiError
         => Results.Problem(statusCode: 500, title: message, extensions: new Dictionary<string, object?> { { "errors", errors } });
 
     public static IResult Unexpected(Exception exception)
-        => Results.Problem(statusCode: 500, title: exception.Message, extensions: new Dictionary<string, object?> { { "stacktrace", exception.StackTrace } });
+        => Results.Problem(statusCode: 500, title: exception.Message);
 }

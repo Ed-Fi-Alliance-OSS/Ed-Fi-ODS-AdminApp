@@ -21,10 +21,14 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
 }
-app.UseHttpsRedirection();
+else
+{
+    app.UseExceptionHandler("/error");
+}
 
-app.UseExceptionHandler("/error");
+app.UseHttpsRedirection();
 
 app.UseRouting();
 app.UseRouteBuilders();
