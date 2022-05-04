@@ -12,10 +12,10 @@ namespace EdFi.Ods.Admin.Api.Features.Vendors
         public void MapEndpoints(IEndpointRouteBuilder endpoints)
         {
             endpoints.MapGet("/vendors", GetVendors);
-            endpoints.MapPost("/vendors/add", AddVendor);
-            endpoints.MapPut("/vendors/update", UpdateVendor);
-            endpoints.MapDelete("/vendors/delete/{id}", DeleteVendor);
             endpoints.MapGet("/vendors/{id}", GetVendor);
+            endpoints.MapPost("/vendors", AddVendor);
+            endpoints.MapPut("/vendors", UpdateVendor);
+            endpoints.MapDelete("/vendors/{id}", DeleteVendor);
         }
 
         internal Task<IResult> GetVendors(AdminAppDbContext dbContext)
