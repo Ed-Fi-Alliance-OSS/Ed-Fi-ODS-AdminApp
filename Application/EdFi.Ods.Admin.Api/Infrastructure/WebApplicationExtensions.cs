@@ -6,30 +6,29 @@
 using System.Reflection;
 using EdFi.Ods.Admin.Api.Features;
 
-namespace EdFi.Ods.Admin.Api.Infrastructure
+namespace EdFi.Ods.Admin.Api.Infrastructure;
+
+public static class WebApplicationExtensions
 {
-    public static class WebApplicationExtensions
+    public static void MapFeatureEndpoints(this WebApplication application)
     {
-        public static void MapFeatureEndpoints(this WebApplication application)
+        var featureInterface = typeof(IFeature);
+        var featureImpls = Assembly.GetExecutingAssembly().GetTypes()
+            .Where(p => featureInterface.IsAssignableFrom(p) && p.IsClass);
+
+        var features = new List<IFeature>();
+
+        foreach (var featureImpl in featureImpls)
         {
-            var featureInterface = typeof(IFeature);
-            var featureImpls = Assembly.GetExecutingAssembly().GetTypes()
-                .Where(p => featureInterface.IsAssignableFrom(p) && p.IsClass);
-
-            var features = new List<IFeature>();
-
-            foreach (var featureImpl in featureImpls)
-            {
-                if(Activator.CreateInstance(featureImpl) is IFeature feature)
-                  features.Add(feature);
-            }
-
-            application.UseEndpoints(endpoints => {
-                foreach (var routeBuilder in features)
-                {
-                    routeBuilder.MapEndpoints(endpoints);
-                }
-            });
+            if(Activator.CreateInstance(featureImpl) is IFeature feature)
+                features.Add(feature);
         }
+
+        application.UseEndpoints(endpoints => {
+            foreach (var routeBuilder in features)
+            {
+                routeBuilder.MapEndpoints(endpoints);
+            }
+        });
     }
 }

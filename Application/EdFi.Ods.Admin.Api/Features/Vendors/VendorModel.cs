@@ -5,21 +5,20 @@
 
 using FluentValidation;
 
-namespace EdFi.Ods.Admin.Api.Features.Vendors
-{
-    public class VendorModel
-    {
-        public int? Id { get; set; }
-        public string? Name { get; set; }
-        public string? Description { get; set; }
-    }
+namespace EdFi.Ods.Admin.Api.Features.Vendors;
 
-    public class VendorModelValidator : AbstractValidator<VendorModel>
+public class VendorModel
+{
+    public int? Id { get; set; }
+    public string? Name { get; set; }
+    public string? Description { get; set; }
+}
+
+public class VendorModelValidator : AbstractValidator<VendorModel>
+{
+    public VendorModelValidator()
     {
-        public VendorModelValidator()
-        {
-            RuleFor(m => m.Name).NotEmpty();
-            RuleFor(m => m.Description).NotEmpty();
-        }
+        RuleFor(m => m.Name).NotEmpty();
+        RuleFor(m => m.Description).NotEmpty();
     }
 }

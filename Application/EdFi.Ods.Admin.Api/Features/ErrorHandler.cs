@@ -6,44 +6,43 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 
-namespace EdFi.Ods.Admin.Api.Features
+namespace EdFi.Ods.Admin.Api.Features;
+
+public class ErrorHandler : IFeature
 {
-    public class ErrorHandler : IFeature
+    public void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
-        public void MapEndpoints(IEndpointRouteBuilder endpoints)
+        endpoints.Map("/error", HandleError);
+    }
+
+    internal Task<IResult> HandleError(HttpContext context, ILogger<ErrorHandler> logger)
+    {
+        var exceptionHandlerFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+        var exception = exceptionHandlerFeature?.Error ?? new Exception();
+
+        if (exception is ValidationException validationException)
         {
-            endpoints.Map("/error", HandleError);
+            logger.LogDebug(exception, "Validation error");
+            return Task.FromResult(AdminApiError.Validation(validationException.Errors));
         }
 
-        internal Task<IResult> HandleError(HttpContext context, ILogger<ErrorHandler> logger)
-        {
-            var exceptionHandlerFeature = context.Features.Get<IExceptionHandlerPathFeature>();
-            var exception = exceptionHandlerFeature?.Error ?? new Exception();
+        if (exception is NotFoundException<int>)
+            return HandleNotFound<int>(logger, exception);
+        if (exception is NotFoundException<Guid>)
+            return HandleNotFound<Guid>(logger, exception);
+        if (exception is NotFoundException<string>)
+            return HandleNotFound<string>(logger, exception);
 
-            if (exception is ValidationException validationException)
-            {
-                logger.LogDebug(exception, "Validation error");
-                return Task.FromResult(AdminApiError.Validation(validationException.Errors));
-            }
+        logger.LogError(exception, "An uncaught error has occurred");
+        return Task.FromResult(AdminApiError.Unexpected(exception));
+    }
 
-            if (exception is NotFoundException<int>)
-                return HandleNotFound<int>(logger, exception);
-            if (exception is NotFoundException<Guid>)
-                return HandleNotFound<Guid>(logger, exception);
-            if (exception is NotFoundException<string>)
-                return HandleNotFound<string>(logger, exception);
+    private Task<IResult> HandleNotFound<T>(ILogger<ErrorHandler> logger, Exception exception)
+    {
+        if(exception is not NotFoundException<T> notFoundException)
+            throw new ArgumentException("HandleNotFound<T>() must be called with a NotFoundException");
 
-            logger.LogError(exception, "An uncaught error has occurred");
-            return Task.FromResult(AdminApiError.Unexpected(exception));
-        }
-
-        private Task<IResult> HandleNotFound<T>(ILogger<ErrorHandler> logger, Exception exception)
-        {
-            if(exception is not NotFoundException<T> notFoundException)
-                throw new ArgumentException("HandleNotFound<T>() must be called with a NotFoundException");
-
-            logger.LogDebug(notFoundException, "Resource not found");
-            return Task.FromResult(AdminApiError.NotFound(notFoundException.ResourceName, notFoundException.Id));
-        }
+        logger.LogDebug(notFoundException, "Resource not found");
+        return Task.FromResult(AdminApiError.NotFound(notFoundException.ResourceName, notFoundException.Id));
     }
 }

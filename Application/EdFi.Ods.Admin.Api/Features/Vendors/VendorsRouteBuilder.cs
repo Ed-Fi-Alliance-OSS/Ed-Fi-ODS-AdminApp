@@ -5,55 +5,54 @@
 
 using EdFi.Ods.AdminApp.Management.Database;
 
-namespace EdFi.Ods.Admin.Api.Features.Vendors
+namespace EdFi.Ods.Admin.Api.Features.Vendors;
+
+public class VendorsRouteBuilder : IFeature
 {
-    public class VendorsRouteBuilder : IFeature
+    public void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
-        public void MapEndpoints(IEndpointRouteBuilder endpoints)
-        {
-            endpoints.MapGet("/vendors", GetVendors);
-            endpoints.MapGet("/vendors/{id}", GetVendor);
-            endpoints.MapPost("/vendors", AddVendor);
-            endpoints.MapPut("/vendors", UpdateVendor);
-            endpoints.MapDelete("/vendors/{id}", DeleteVendor);
-        }
+        endpoints.MapGet("/vendors", GetVendors);
+        endpoints.MapGet("/vendors/{id}", GetVendor);
+        endpoints.MapPost("/vendors", AddVendor);
+        endpoints.MapPut("/vendors", UpdateVendor);
+        endpoints.MapDelete("/vendors/{id}", DeleteVendor);
+    }
 
-        internal Task<IResult> GetVendors(AdminAppDbContext dbContext)
-        {
-            var vendorsList = new[] { "Vendor1", "Vendor2" };
-            return Task.FromResult(AdminApiResponse<string[]>.Ok(vendorsList));
-        }
+    internal Task<IResult> GetVendors(AdminAppDbContext dbContext)
+    {
+        var vendorsList = new[] { "Vendor1", "Vendor2" };
+        return Task.FromResult(AdminApiResponse<string[]>.Ok(vendorsList));
+    }
 
-        internal Task<IResult> GetVendor(AdminAppDbContext dbContext, int id)
-        {
-            CheckIfExists(id);
-            return Task.FromResult(AdminApiResponse<VendorModel>.Ok(new VendorModel { Id = id, Name = $"Vendor {id}", Description = "A vendor"}));
-        }
+    internal Task<IResult> GetVendor(AdminAppDbContext dbContext, int id)
+    {
+        CheckIfExists(id);
+        return Task.FromResult(AdminApiResponse<VendorModel>.Ok(new VendorModel { Id = id, Name = $"Vendor {id}", Description = "A vendor"}));
+    }
 
-        internal async Task<IResult> AddVendor(AdminAppDbContext dbContext, VendorModelValidator validator, VendorModel vendor)
-        {
-            await validator.GuardAsync(vendor);
-            vendor.Id = 1;
-            return AdminApiResponse<VendorModel>.Created(vendor, "Vendor", "/Vendors/1");
-        }
+    internal async Task<IResult> AddVendor(AdminAppDbContext dbContext, VendorModelValidator validator, VendorModel vendor)
+    {
+        await validator.GuardAsync(vendor);
+        vendor.Id = 1;
+        return AdminApiResponse<VendorModel>.Created(vendor, "Vendor", "/Vendors/1");
+    }
 
-        internal async Task<IResult> UpdateVendor(AdminAppDbContext dbContext, VendorModelValidator validator, VendorModel vendor)
-        {
-            await validator.GuardAsync(vendor);
-            CheckIfExists(vendor.Id.Value);
-            return AdminApiResponse<VendorModel>.Updated(vendor, "Vendor");
-        }
+    internal async Task<IResult> UpdateVendor(AdminAppDbContext dbContext, VendorModelValidator validator, VendorModel vendor)
+    {
+        await validator.GuardAsync(vendor);
+        CheckIfExists(vendor.Id.Value);
+        return AdminApiResponse<VendorModel>.Updated(vendor, "Vendor");
+    }
 
-        internal Task<IResult> DeleteVendor(AdminAppDbContext dbContext, int id)
-        {
-            CheckIfExists(id);
-            return  Task.FromResult(AdminApiResponse.Deleted("Vendor"));
-        }
+    internal Task<IResult> DeleteVendor(AdminAppDbContext dbContext, int id)
+    {
+        CheckIfExists(id);
+        return  Task.FromResult(AdminApiResponse.Deleted("Vendor"));
+    }
 
-        private void CheckIfExists(int id)
-        {
-            if (id < 0)
-                throw new NotFoundException<int>("Vendor", id);
-        }
+    private void CheckIfExists(int id)
+    {
+        if (id < 0)
+            throw new NotFoundException<int>("Vendor", id);
     }
 }
