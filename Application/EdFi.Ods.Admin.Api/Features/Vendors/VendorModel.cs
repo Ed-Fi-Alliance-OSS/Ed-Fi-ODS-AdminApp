@@ -9,6 +9,7 @@ namespace EdFi.Ods.Admin.Api.Features.Vendors
 {
     public class VendorModel
     {
+        public int? Id { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }
     }
