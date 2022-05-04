@@ -8,7 +8,7 @@ using log4net;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.UseServicesConfigurator();
+builder.AddServices();
 
 // logging
 ILog _logger = LogManager.GetLogger("Program");

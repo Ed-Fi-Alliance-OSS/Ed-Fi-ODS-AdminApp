@@ -10,7 +10,7 @@ namespace EdFi.Ods.Admin.Api.Extensions
 {
     public static class WebApplicationBuilderExtensions
     {
-        public static void UseServicesConfigurator(this WebApplicationBuilder webApplicationBuilder)
+        public static void AddServices(this WebApplicationBuilder webApplicationBuilder)
         {
             // Add services to the container.
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
