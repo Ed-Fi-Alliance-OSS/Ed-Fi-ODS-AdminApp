@@ -1,12 +1,11 @@
+using System.Reflection;
 using EdFi.Admin.DataAccess.Contexts;
-using EdFi.Ods.Admin.Api.Enums;
 using EdFi.Ods.AdminApp.Management.Database;
 using EdFi.Security.DataAccess.Contexts;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
-namespace EdFi.Ods.Admin.Api.Extensions
+namespace EdFi.Ods.Admin.Api.Infrastructure
 {
     public static class WebApplicationBuilderExtensions
     {

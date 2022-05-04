@@ -1,4 +1,4 @@
-namespace EdFi.Ods.Admin.Api.Enums
+namespace EdFi.Ods.Admin.Api.Infrastructure
 {
     public static class DatabaseEngineEnum
     {
