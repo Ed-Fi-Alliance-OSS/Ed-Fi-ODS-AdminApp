@@ -59,12 +59,12 @@ export abstract class AdminAppPage {
     }
 
     async getToastMessage(): Promise<string | null> {
-        return await this.getText(this.toastSelector);
+        return await this.getText({ selector: this.toastSelector });
     }
 
     async modalTitle(): Promise<string> {
-        const content = await this.modalSelector.locator(this.modalTitleHeader).textContent();
-        return content ? content : "";
+        const content = this.getText({ section: this.modalSelector, selector: this.modalTitleHeader });
+        return content;
     }
 
     async hasModalOpen(): Promise<boolean> {
@@ -75,8 +75,18 @@ export abstract class AdminAppPage {
         await this.page.locator(this.bodySelector).click();
     }
 
-    protected async getText(text: string): Promise<string | null> {
-        return this.page.textContent(text);
+    protected async getText({
+        section = this.page,
+        selector,
+    }: {
+        section?: Locator | Page;
+        selector: string;
+    }): Promise<string> {
+        const content = await section.locator(selector).textContent();
+        if (!content) {
+            throw `Text for selector ${selector} not found`;
+        }
+        return content;
     }
 
     protected async hasText({

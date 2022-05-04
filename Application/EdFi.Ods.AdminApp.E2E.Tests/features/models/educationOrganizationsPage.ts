@@ -31,7 +31,7 @@ export class EducationOrganizationsPage extends AdminAppPage {
 
     leaFormValues = {
         ID: "1",
-        name: "LEA Test",
+        name: "Automated LEA",
         address: "123 street",
         city: "Austin",
         state: "TX",
@@ -170,10 +170,6 @@ export class EducationOrganizationsPage extends AdminAppPage {
         ]);
     }
 
-    async getErrorMessages(): Promise<string | null> {
-        return await this.modalSelector.locator(this.errorMsgSection).textContent();
-    }
-
     async idFieldHasError(): Promise<boolean> {
         return (
             this.modalSelector.locator(this.fieldWithErrorSelector).locator(this.leaFormSelectors.ID) !==
@@ -206,6 +202,10 @@ export class EducationOrganizationsPage extends AdminAppPage {
         await this.fillLEAForm();
         await this.saveLEAForm();
         await this.waitForListLoad();
+    }
+
+    async getErrorMessages(): Promise<string | null> {
+        return await this.getText({ section: this.modalSelector, selector: this.errorMsgSection });
     }
 
     private async clickConfirmDelete(): Promise<void> {

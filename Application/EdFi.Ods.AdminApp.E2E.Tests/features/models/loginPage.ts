@@ -85,7 +85,7 @@ export class LoginPage extends AdminAppPage {
     }
 
     async getErrorMessages(): Promise<string | null> {
-        return await this.getText(this.errorMsgSection);
+        return await this.getText({ selector: this.errorMsgSection });
     }
 
     private async clickLogin(): Promise<void> {

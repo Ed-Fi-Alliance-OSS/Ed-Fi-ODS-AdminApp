@@ -65,10 +65,10 @@ export class VendorsPage extends AdminAppPage {
     }
 
     vendorFormValues = {
-        name: "Test Vendor",
+        name: "Automated Vendor",
         initialNamespacePrefix: "uri://ed-fi.org",
         addedNamespacePrefix: "uri://added.ed-fi.org",
-        email: "test@ed-fi.org",
+        email: "test@test-ed-fi.org",
         contact: "Test Contact",
     };
 
@@ -198,7 +198,7 @@ export class VendorsPage extends AdminAppPage {
     }
 
     async getDeleteVendorMessage(): Promise<string | null> {
-        return await this.modalSelector.locator(this.deleteConfirmSelector).textContent();
+        return await this.getText({ section: this.modalSelector, selector: this.deleteConfirmSelector });
     }
 
     async clickEdit(): Promise<void> {
@@ -214,7 +214,7 @@ export class VendorsPage extends AdminAppPage {
     }
 
     async getErrorMessages(): Promise<string | null> {
-        return await this.modalSelector.locator(this.errorMsgSection).textContent();
+        return await this.getText({ section: this.modalSelector, selector: this.errorMsgSection });
     }
 
     async emailFieldHasError(): Promise<boolean> {

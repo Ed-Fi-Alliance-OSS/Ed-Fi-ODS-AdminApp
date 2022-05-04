@@ -11,9 +11,28 @@ Feature: Applications
         And has API context
 
     #AA-868
-    Scenario: Copy API URL
+    Scenario: API URL
         Given it's on the "Applications" page
         And applications page has loaded
         When clicking API URL
         Then copied URL message appears
         And copied URL is valid
+
+    @WIP
+    Rule: Application interaction
+
+    Background:
+        Given there's a local education agency added
+        And there's a vendor added
+
+    #AA-889
+    Scenario: Add Application
+        Given it's on the "Applications" page
+        And applications page has loaded
+        When adding new application
+        And filling application form
+        And clicking save application
+        Then key/secret modal appears
+        And generated key/secret is valid
+        And application appears on list
+

@@ -17,6 +17,7 @@ export let page: Page;
 export let context: BrowserContext;
 export let apiContext: APIRequestContext;
 export let models: ModelResolver;
+//Make interface
 export const currentTest = {
     feature: "",
     scenario: "",
@@ -81,8 +82,7 @@ function getScenarioExample(scenario: ITestCaseHookParameter): string | undefine
     return;
 }
 
-export async function setApiContext(): Promise<void> {
-    if(!apiContext) {
-        apiContext = await request.newContext({ ignoreHTTPSErrors: true });
-    }
+export async function setApiContext(token?: string): Promise<void> {
+    apiContext = token ? await request.newContext({ ignoreHTTPSErrors: true, extraHTTPHeaders: { 'Authorization': `Bearer ${token}` } }):
+                         await request.newContext({ ignoreHTTPSErrors: true });
 }
