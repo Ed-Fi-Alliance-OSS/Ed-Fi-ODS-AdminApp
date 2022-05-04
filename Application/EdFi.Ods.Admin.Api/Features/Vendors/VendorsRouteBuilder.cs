@@ -14,13 +14,19 @@ namespace EdFi.Ods.Admin.Api.Features.Vendors
             endpoints.MapGet("/vendors", GetVendors);
             endpoints.MapPost("/vendors/add", AddVendor);
             endpoints.MapPut("/vendors/update", UpdateVendor);
-            endpoints.MapDelete("/vendors/delete", DeleteVendor);
+            endpoints.MapDelete("/vendors/delete/{id}", DeleteVendor);
+            endpoints.MapGet("/vendors/{id}", GetVendor);
         }
 
         internal Task<IResult> GetVendors(AdminAppDbContext dbContext)
         {
             var vendorsList = new[] { "Vendor1", "Vendor2" };
             return Task.FromResult(AdminApiResponse<string[]>.Ok(vendorsList));
+        }
+
+        internal Task<IResult> GetVendor(AdminAppDbContext dbContext, int id)
+        {
+            return Task.FromResult(AdminApiResponse<VendorModel>.Ok(new VendorModel { Id = id, Name = $"Vendor {id}", Description = "A vendor"}));
         }
 
         internal async Task<IResult> AddVendor(AdminAppDbContext dbContext, VendorModelValidator validator, VendorModel vendor)
