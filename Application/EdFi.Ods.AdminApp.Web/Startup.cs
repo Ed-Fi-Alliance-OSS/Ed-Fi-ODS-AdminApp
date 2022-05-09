@@ -164,7 +164,8 @@ namespace EdFi.Ods.AdminApp.Web
 
             services.AddHealthCheck(Configuration.GetConnectionString("Admin"), IsSqlServer(databaseEngine));
 
-            CommonConfigurationInstaller.ConfigureLearningStandards(services);
+            // This statement should be kept last to ensure that the IHttpClientFactory and IInferOdsApiVersion services are registered. 
+            CommonConfigurationInstaller.ConfigureLearningStandards(services).Wait();
         }
 
         private void ConfigureForAdminDatabase(DbContextOptionsBuilder options)
