@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using EdFi.Ods.AdminApp.Management.Api;
 using EdFi.Ods.AdminApp.Management.Workflow;
 using EdFi.Ods.AdminApp.Web.Infrastructure.Jobs;
@@ -93,7 +94,7 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure.IO
                     StatusMessage = "Validating XML",
                     FailureMessage = "An error occured validating XML file content.",
                     RollBackAction = CleanUp,
-                    ExecuteAction = context => ValidateBulkDataXml(context, fileImportService),
+                    ExecuteAction = async context => await ValidateBulkDataXml(context, fileImportService),
                     RollbackFailureMessage = "An error occured validating XML file content",
                     RollbackStatusMessage = "An error occured validating XML file content"
                 })
@@ -163,11 +164,11 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure.IO
             }
         }
 
-        private void ValidateBulkDataXml(BulkUploadJobContext jobContext, FileImportService fileImportService)
+        private async Task ValidateBulkDataXml(BulkUploadJobContext jobContext, FileImportService fileImportService)
         {
             try
             {
-                jobContext.ValidationResult = fileImportService.Validate();
+                jobContext.ValidationResult = await fileImportService.Validate();
 
                 if (jobContext.ValidationResult != null && !jobContext.ValidationResult.Valid)
                 {
