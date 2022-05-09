@@ -43,7 +43,7 @@ Feature: Vendors
         Then vendor is deleted
 
     #AA-880
-    Scenario: Help Section
+    Scenario: Help section
         Given it's on the "Vendors" page
         And vendor page has loaded
         When help section is present
@@ -74,7 +74,7 @@ Feature: Vendors
             | no data     |
             | wrong email |
 
-    #AA-1143
+    #AA-1503
     Scenario Outline: Add vendor modal interactions
         Given it's on the "Vendors" page
         And vendor page has loaded
