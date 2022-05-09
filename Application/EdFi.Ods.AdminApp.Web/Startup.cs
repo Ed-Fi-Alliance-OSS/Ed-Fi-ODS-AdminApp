@@ -140,6 +140,8 @@ namespace EdFi.Ods.AdminApp.Web
 
             services.AddSignalR();
 
+            services.AddHttpClient();
+
             var appSettings = new AppSettings();
             Configuration.GetSection("AppSettings").Bind(appSettings);
             ConfigurationAppSettings = appSettings;
