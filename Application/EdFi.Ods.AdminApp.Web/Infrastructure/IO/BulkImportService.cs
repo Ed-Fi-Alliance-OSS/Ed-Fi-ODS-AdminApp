@@ -94,7 +94,7 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure.IO
                     StatusMessage = "Validating XML",
                     FailureMessage = "An error occured validating XML file content.",
                     RollBackAction = CleanUp,
-                    ExecuteAction = async context => await ValidateBulkDataXml(context, fileImportService),
+                    ExecuteAction = context => ValidateBulkDataXml(context, fileImportService),
                     RollbackFailureMessage = "An error occured validating XML file content",
                     RollbackStatusMessage = "An error occured validating XML file content"
                 })
@@ -164,11 +164,11 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure.IO
             }
         }
 
-        private async Task ValidateBulkDataXml(BulkUploadJobContext jobContext, FileImportService fileImportService)
+        private void ValidateBulkDataXml(BulkUploadJobContext jobContext, FileImportService fileImportService)
         {
             try
             {
-                jobContext.ValidationResult = await fileImportService.Validate();
+                jobContext.ValidationResult = fileImportService.Validate();
 
                 if (jobContext.ValidationResult != null && !jobContext.ValidationResult.Valid)
                 {

@@ -32,13 +32,13 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure.IO
             });
         }
 
-        public async Task<BulkLoadValidationResult> Validate()
+        public BulkLoadValidationResult Validate()
         {
             var xsdFolderPath = _configuration.GetValue<string>("Folders:Xsd");
 
             var xsdDirectoryExistWithFiles =
                 Directory.Exists(xsdFolderPath) && Directory.GetFiles(xsdFolderPath).Length > 0;
-            var odsVersion = new OdsVersion(await _inferOdsApiVersion.Version(_configuration.GetValue<string>("OdsApi:Url")));
+            var odsVersion = new OdsVersion(_inferOdsApiVersion.Version(_configuration.GetValue<string>("OdsApi:Url")).GetAwaiter().GetResult());
             var requiredVersion = new OdsVersion("5.1.0");
             if(odsVersion < requiredVersion)
             {
