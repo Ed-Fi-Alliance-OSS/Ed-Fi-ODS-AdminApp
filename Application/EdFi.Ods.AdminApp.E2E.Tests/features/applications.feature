@@ -32,7 +32,7 @@ Feature: Applications
         When adding new application
         And filling application form
         And clicking save application
-        Then key/secret modal appears
-        And generated key/secret is valid
+        Then key-secret modal appears
+        And generated key-secret is valid
         And application appears on list
 

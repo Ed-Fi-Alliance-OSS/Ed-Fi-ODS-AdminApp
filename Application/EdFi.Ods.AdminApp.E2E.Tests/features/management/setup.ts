@@ -83,6 +83,10 @@ function getScenarioExample(scenario: ITestCaseHookParameter): string | undefine
 }
 
 export async function setApiContext(token?: string): Promise<void> {
-    apiContext = token ? await request.newContext({ ignoreHTTPSErrors: true, extraHTTPHeaders: { 'Authorization': `Bearer ${token}` } }):
-                         await request.newContext({ ignoreHTTPSErrors: true });
+    apiContext = token
+        ? await request.newContext({
+              ignoreHTTPSErrors: true,
+              extraHTTPHeaders: { Authorization: `Bearer ${token}` },
+          })
+        : await request.newContext({ ignoreHTTPSErrors: true });
 }

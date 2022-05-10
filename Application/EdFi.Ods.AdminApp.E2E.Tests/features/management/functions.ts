@@ -4,8 +4,9 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 import { mkdir } from "fs/promises";
-import {request} from "playwright";
-import { apiContext, context, currentTest, page } from "./setup";
+import { request } from "playwright";
+import { Credentials } from "../models/applicationsPage";
+import { context, currentTest, page } from "./setup";
 
 export async function saveTrace(): Promise<void> {
     if (process.env.TRACE) {
@@ -23,26 +24,28 @@ export async function takeScreenshot(name: string): Promise<void> {
     });
 }
 
-export async function getAccessToken({clientKey, clientSecret}: {clientKey: string; clientSecret: string;}) {
-    const api = process.env.API_URL;
-    let tokenURL = `${api}/oauth/token`;
+export async function getAccessToken(credentials: Credentials) {
+    //May need to refactor for year specific mode
+    const apiURL = credentials.URL.substring(0, credentials.URL.indexOf("data") - 1);
+    const tokenURL = `${apiURL}/oauth/token`;
+    const encryptedCredentials = Buffer.from(credentials.Key + ":" + credentials.Secret).toString("base64");
 
-    var credentials = encodeURI(clientKey + ":" + clientSecret);
+    const context = await request.newContext({
+        ignoreHTTPSErrors: true,
+        extraHTTPHeaders: {
+            Authorization: `Basic ${encryptedCredentials}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+    });
+    const data = "grant_type=client_credentials";
 
-    let context = await request.newContext({ ignoreHTTPSErrors: true, extraHTTPHeaders: { 'Authorization': `Basic ${credentials}`, 'Content-Type': 'application/x-www-form-urlencoded' } });
-    var data = "grant_type=client_credentials";
+    const response = await context.post(tokenURL, { data });
 
-    var response = await context.post(tokenURL, { data });
-
-    console.log(response);
-
-    if(response.ok()){
-
-    let responseText = response.body.toString();
-    console.log(responseText);
-
-    var json = JSON.parse(responseText);
-    var token = json.access_token;
-    return token;
+    if (response.ok()) {
+        const jsonResponse = await response.json();
+        const token = jsonResponse.access_token;
+        return token;
+    } else {
+        throw `Unable to get Access Token. Response: ${response.status}`;
     }
-  }
+}

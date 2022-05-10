@@ -40,7 +40,7 @@ Then("copied URL is valid", async () => {
     ok(await models.applicationsPage.apiURLIsValid(), "API URL is valid");
 });
 
-Then("key/secret modal appears", async () => {
+Then("key-secret modal appears", async () => {
     strictEqual(
         await models.applicationsPage.modalTitle(),
         models.applicationsPage.modalTitleMessages.addedSecret,
@@ -58,6 +58,6 @@ Then("application appears on list", async () => {
     ok(await models.applicationsPage.isApplicationPresentOnPage(), "Application not found");
 });
 
-Then("generated key\/secret is valid", async () => {
+Then("generated key-secret is valid", async () => {
     ok(await models.applicationsPage.isKeyAndSecretValid(), "Credentials not valid");
 });

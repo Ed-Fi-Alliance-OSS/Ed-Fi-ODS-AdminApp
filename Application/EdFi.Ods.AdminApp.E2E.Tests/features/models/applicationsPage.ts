@@ -3,13 +3,14 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
+import { getAccessToken } from "../management/functions";
 import { apiContext, setApiContext } from "../management/setup";
 import { AdminAppPage } from "./adminAppPage";
 
-interface Credentials {
+export interface Credentials {
     Key: string;
     Secret: string;
-    ODS_URL: string;
+    URL: string;
 }
 
 export class ApplicationsPage extends AdminAppPage {
@@ -18,10 +19,23 @@ export class ApplicationsPage extends AdminAppPage {
     errorMsgSection = "div.validationSummary";
     addApplicationBtn = 'button[type="submit"]';
     addNewApplicationBtn = "button.loads-ajax-modal";
-    keySelector = ".key-generated:has-text('Key')";
-    secretSelector = ".key-generated:has-text('Secret')";
-    odsURLSelector = ".key-generated:has-text('API URL')";
     credentials!: Credentials;
+
+    credentialsSelector(text: string) {
+        return `.key-text div:has-text('${text}') .key-generated`;
+    }
+
+    get keySelector() {
+        return this.credentialsSelector("Key");
+    }
+
+    get secretSelector() {
+        return this.credentialsSelector("Secret");
+    }
+
+    get odsURLSelector() {
+        return this.credentialsSelector("API URL");
+    }
 
     applicationFormSelectors = {
         name: 'input[name="ApplicationName"]',
@@ -118,17 +132,19 @@ export class ApplicationsPage extends AdminAppPage {
 
     async saveKeyAndSecret() {
         this.credentials = {
-            Key: await this.getText({ section: this.modalSelector, selector: this.keySelector  }),
+            Key: await this.getText({ section: this.modalSelector, selector: this.keySelector }),
             Secret: await this.getText({ section: this.modalSelector, selector: this.secretSelector }),
-            ODS_URL: await this.getText({ section: this.modalSelector, selector: this.odsURLSelector }),
+            URL: await this.getText({ section: this.modalSelector, selector: this.odsURLSelector }),
         };
     }
 
     async isKeyAndSecretValid() {
-        setApiContext()
-        const testAPI = await apiContext.get(this.credentials.ODS_URL);
-        testAPI.()
-        return testAPI.ok();
+        const token = await getAccessToken(this.credentials);
+        console.log(token);
+
+        setApiContext();
+        // const testAPI = await apiContext.get(this.credentials.ODS_URL);
+        // return testAPI.ok();
     }
 
     private async fillApplicationName() {
