@@ -32,15 +32,7 @@ When("clicking save application", async () => {
     await models.applicationsPage.saveApplicationForm();
 });
 
-Then("copied URL message appears", async () => {
-    ok(await models.applicationsPage.hasCopiedURLMessage(), "Message not found");
-});
-
-Then("copied URL is valid", async () => {
-    ok(await models.applicationsPage.apiURLIsValid(), "API URL is valid");
-});
-
-Then("key-secret modal appears", async () => {
+When("key-secret modal appears", async () => {
     strictEqual(
         await models.applicationsPage.modalTitle(),
         models.applicationsPage.modalTitleMessages.addedSecret,
@@ -53,8 +45,19 @@ Then("key-secret modal appears", async () => {
     await models.applicationsPage.saveKeyAndSecret();
 });
 
+When("clicking modal message", async () => {
+    await models.applicationsPage.clickKeySecretCopied();
+});
+
+Then("copied URL message appears", async () => {
+    ok(await models.applicationsPage.hasCopiedURLMessage(), "Message not found");
+});
+
+Then("copied URL is valid", async () => {
+    ok(await models.applicationsPage.apiURLIsValid(), "API URL is valid");
+});
+
 Then("application appears on list", async () => {
-    await models.applicationsPage.waitForListLoad();
     ok(await models.applicationsPage.isApplicationPresentOnPage(), "Application not found");
 });
 

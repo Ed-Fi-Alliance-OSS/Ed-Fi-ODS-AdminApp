@@ -5,7 +5,7 @@
 
 import { mkdir } from "fs/promises";
 import { request } from "playwright";
-import { Credentials } from "../models/applicationsPage";
+import { Credentials } from "../interfaces";
 import { context, currentTest, page } from "./setup";
 
 export async function saveTrace(): Promise<void> {
@@ -24,7 +24,7 @@ export async function takeScreenshot(name: string): Promise<void> {
     });
 }
 
-export async function getAccessToken(credentials: Credentials) {
+export async function getAccessToken(credentials: Credentials): Promise<string> {
     //May need to refactor for year specific mode
     const apiURL = credentials.URL.substring(0, credentials.URL.indexOf("data") - 1);
     const tokenURL = `${apiURL}/oauth/token`;
@@ -48,4 +48,16 @@ export async function getAccessToken(credentials: Credentials) {
     } else {
         throw `Unable to get Access Token. Response: ${response.status}`;
     }
+}
+
+export async function isTokenValid({ api, token }: { api: string; token: string }): Promise<boolean> {
+    const context = await request.newContext({
+        ignoreHTTPSErrors: true,
+        extraHTTPHeaders: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    const response = await context.get(`${api}/ed-fi/academicWeeks`);
+
+    return response.status() !== 401 && response.status() !== 404;
 }

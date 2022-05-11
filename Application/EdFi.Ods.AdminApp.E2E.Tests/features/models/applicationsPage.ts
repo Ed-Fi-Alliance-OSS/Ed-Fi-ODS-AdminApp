@@ -3,15 +3,10 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
-import { getAccessToken } from "../management/functions";
+import { Credentials } from "../interfaces";
+import { getAccessToken, isTokenValid } from "../management/functions";
 import { apiContext, setApiContext } from "../management/setup";
 import { AdminAppPage } from "./adminAppPage";
-
-export interface Credentials {
-    Key: string;
-    Secret: string;
-    URL: string;
-}
 
 export class ApplicationsPage extends AdminAppPage {
     activeTabSelector = "ul.nav li.active";
@@ -19,21 +14,23 @@ export class ApplicationsPage extends AdminAppPage {
     errorMsgSection = "div.validationSummary";
     addApplicationBtn = 'button[type="submit"]';
     addNewApplicationBtn = "button.loads-ajax-modal";
+    applicationOnListSelector = ".vendor-application h8";
+    keySecretCopiedBtn = "#key-and-secret-dismiss-button";
     credentials!: Credentials;
 
-    credentialsSelector(text: string) {
+    credentialsSelector(text: string): string {
         return `.key-text div:has-text('${text}') .key-generated`;
     }
 
-    get keySelector() {
+    get keySelector(): string {
         return this.credentialsSelector("Key");
     }
 
-    get secretSelector() {
+    get secretSelector(): string {
         return this.credentialsSelector("Secret");
     }
 
-    get odsURLSelector() {
+    get odsURLSelector(): string {
         return this.credentialsSelector("API URL");
     }
 
@@ -91,7 +88,10 @@ export class ApplicationsPage extends AdminAppPage {
     }
 
     async isApplicationPresentOnPage(): Promise<boolean> {
-        throw new Error("Method not implemented.");
+        return await this.hasText({
+            text: this.applicationFormValues.name,
+            selector: this.applicationOnListSelector,
+        });
     }
 
     async hasTabSelected(): Promise<boolean> {
@@ -122,15 +122,15 @@ export class ApplicationsPage extends AdminAppPage {
         return await this.getText({ section: this.modalSelector, selector: this.errorMsgSection });
     }
 
-    async hasKey() {
+    async hasKey(): Promise<boolean> {
         return await this.elementExists(this.keySelector);
     }
 
-    async hasSecret() {
+    async hasSecret(): Promise<boolean> {
         return await this.elementExists(this.secretSelector);
     }
 
-    async saveKeyAndSecret() {
+    async saveKeyAndSecret(): Promise<void> {
         this.credentials = {
             Key: await this.getText({ section: this.modalSelector, selector: this.keySelector }),
             Secret: await this.getText({ section: this.modalSelector, selector: this.secretSelector }),
@@ -138,39 +138,41 @@ export class ApplicationsPage extends AdminAppPage {
         };
     }
 
-    async isKeyAndSecretValid() {
+    async isKeyAndSecretValid(): Promise<boolean> {
         const token = await getAccessToken(this.credentials);
-        console.log(token);
 
         setApiContext();
-        // const testAPI = await apiContext.get(this.credentials.ODS_URL);
-        // return testAPI.ok();
+        return isTokenValid({ token, api: this.credentials.URL });
     }
 
-    private async fillApplicationName() {
+    async clickKeySecretCopied(): Promise<void> {
+        await this.modalSelector.locator(this.keySecretCopiedBtn).click();
+    }
+
+    private async fillApplicationName(): Promise<void> {
         await this.modalSelector
             .locator(this.applicationFormSelectors.name)
             .fill(this.applicationFormValues.name);
     }
 
-    private async selectLEA() {
+    private async selectLEA(): Promise<void> {
         await this.modalSelector.locator(this.applicationFormSelectors.lea).click();
     }
 
-    private async selectOrganizationId() {
+    private async selectOrganizationId(): Promise<void> {
         await this.modalSelector.locator(this.applicationFormSelectors.leaSelectBtn).click();
         await this.modalSelector
             .locator(this.applicationFormSelectors.leaSelect)
             .selectOption({ label: this.applicationFormValues.lea });
     }
 
-    private async selectClaimSet(claimSetName: string) {
+    private async selectClaimSet(claimSetName: string): Promise<void> {
         await this.modalSelector
             .locator(this.applicationFormSelectors.claimSetSelect)
             .selectOption({ label: claimSetName });
     }
 
-    private async saveForm() {
+    private async saveForm(): Promise<void> {
         await this.modalSelector.locator(this.addApplicationBtn).click();
     }
 }

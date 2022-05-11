@@ -8,7 +8,6 @@ Feature: Applications
         Given user is registered
         And user is logged in
         And setup is complete
-        And has API context
 
     #AA-868
     Scenario: API URL
@@ -32,7 +31,8 @@ Feature: Applications
         When adding new application
         And filling application form
         And clicking save application
-        Then key-secret modal appears
-        And generated key-secret is valid
+        And key-secret modal appears
+        And clicking modal message
+        Then generated key-secret is valid
         And application appears on list
 
