@@ -14,12 +14,17 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
         private readonly AddClaimSetCommand _addClaimSetCommand;
         private readonly EditResourceOnClaimSetCommand _editResourceOnClaimSetCommand;
         private readonly GetResourceClaimsQuery _getResourceClaimsQuery;
+        private readonly OverrideDefaultAuthorizationStrategyCommand _overrideDefaultAuthorizationStrategyCommand;
 
-        public ClaimSetFileImportCommand(AddClaimSetCommand addClaimSetCommand, EditResourceOnClaimSetCommand editResourceOnClaimSetCommand, GetResourceClaimsQuery getResourceClaimsQuery)
+        public ClaimSetFileImportCommand(AddClaimSetCommand addClaimSetCommand,
+            EditResourceOnClaimSetCommand editResourceOnClaimSetCommand,
+            GetResourceClaimsQuery getResourceClaimsQuery,
+            OverrideDefaultAuthorizationStrategyCommand overrideDefaultAuthorizationStrategyCommand)
         {
             _addClaimSetCommand = addClaimSetCommand;
             _editResourceOnClaimSetCommand = editResourceOnClaimSetCommand;
             _getResourceClaimsQuery = getResourceClaimsQuery;
+            _overrideDefaultAuthorizationStrategyCommand = overrideDefaultAuthorizationStrategyCommand;
         }
 
         public void Execute(SharingModel model)
@@ -62,6 +67,25 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
                     };
 
                     _editResourceOnClaimSetCommand.Execute(editResourceModel);
+
+                    if (resource.AuthStrategyOverridesForCRUD != null && resource.AuthStrategyOverridesForCRUD.Any())
+                    {
+                        var overrideAuthStrategyModel = new OverrideAuthorizationStrategyModel
+                        {
+                            ClaimSetId = claimSetId,
+                            ResourceClaimId = resource.Id,
+                            AuthorizationStrategyForCreate = AuthStrategyOverrideForAction(resource.AuthStrategyOverridesForCRUD, 0),
+                            AuthorizationStrategyForRead = AuthStrategyOverrideForAction(resource.AuthStrategyOverridesForCRUD, 1),
+                            AuthorizationStrategyForUpdate = AuthStrategyOverrideForAction(resource.AuthStrategyOverridesForCRUD, 2),
+                            AuthorizationStrategyForDelete = AuthStrategyOverrideForAction(resource.AuthStrategyOverridesForCRUD, 3)
+                        };
+                        _overrideDefaultAuthorizationStrategyCommand.Execute(overrideAuthStrategyModel);
+                    }
+                }
+
+                static int AuthStrategyOverrideForAction(AuthorizationStrategy[] authorizationStrategies, int actionIndex)
+                {
+                   return authorizationStrategies[actionIndex] != null? authorizationStrategies[actionIndex].AuthStrategyId : 0;
                 }
             }
         }
@@ -89,5 +113,15 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
     {
         public int ClaimSetId { get; set; }
         public ResourceClaim ResourceClaim { get; set; }
+    }
+
+    public class OverrideAuthorizationStrategyModel : IOverrideDefaultAuthorizationStrategyModel
+    {
+        public int ClaimSetId { get; set; }
+        public int ResourceClaimId { get; set; }
+        public int AuthorizationStrategyForCreate { get; set; }
+        public int AuthorizationStrategyForRead { get; set; }
+        public int AuthorizationStrategyForUpdate { get; set; }
+        public int AuthorizationStrategyForDelete { get; set; }
     }
 }
