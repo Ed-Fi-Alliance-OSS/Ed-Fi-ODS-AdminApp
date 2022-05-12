@@ -12,7 +12,7 @@ export async function saveTrace(): Promise<void> {
     if (process.env.TRACE) {
         const traceFolder = "./traces";
         mkdir(traceFolder).catch(() => {});
-        const path = `${traceFolder}/${currentTest.feature}/${currentTest.scenario}/trace.zip`;
+        const path = `${traceFolder}/${currentTest.Feature}/${currentTest.Scenario}/trace.zip`;
 
         await context.tracing.stop({ path });
     }
@@ -20,7 +20,7 @@ export async function saveTrace(): Promise<void> {
 
 export async function takeScreenshot(name: string): Promise<void> {
     await page.screenshot({
-        path: `./screenshots/${currentTest.feature}/${currentTest.scenario}/${name}.png`,
+        path: `./screenshots/${currentTest.Feature}/${currentTest.Scenario}/${name}.png`,
     });
 }
 

@@ -7,3 +7,8 @@ export interface Credentials {
     Secret: string;
     URL: string;
 }
+
+export interface Test {
+    Feature: string;
+    Scenario: string;
+}
