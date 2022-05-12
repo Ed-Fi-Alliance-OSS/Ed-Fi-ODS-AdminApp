@@ -11,13 +11,13 @@ Feature: Applications
 
     #AA-868
     Scenario: API URL
-        Given it's on the "Applications" page
+        Given has API context
+        And it's on the "Applications" page
         And applications page has loaded
         When clicking API URL
         Then copied URL message appears
         And copied URL is valid
 
-    @WIP
     Rule: Application interaction
 
     Background:
@@ -35,4 +35,14 @@ Feature: Applications
         And clicking modal message
         Then generated key-secret is valid
         And application appears on list
+
+    #AA-896
+    Scenario: Delete Application
+        Given there's an application added
+        And it's on the "Applications" page
+        And applications page has loaded
+        When clicking delete application
+        And delete application modal is open
+        And confirming delete application
+        Then application is deleted
 

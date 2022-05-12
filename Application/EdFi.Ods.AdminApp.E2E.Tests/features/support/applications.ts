@@ -7,6 +7,14 @@ import { Given, Then, When } from "@cucumber/cucumber";
 import { ok, strictEqual } from "assert";
 import { models } from "../management/setup";
 
+Given("there's an application added", async () => {
+    await models.applicationsPage.navigate();
+    if (await models.applicationsPage.isApplicationPresentOnPage()) {
+        return Promise.resolve("Application is already added");
+    }
+    await models.applicationsPage.addApplicationFullSteps();
+});
+
 Given("applications page has loaded", async () => {
     ok(await models.applicationsPage.hasTabSelected(), "Applications tab not selected");
 });
@@ -16,7 +24,7 @@ When("clicking API URL", async () => {
 });
 
 When("adding new application", async () => {
-    await models.applicationsPage.addNewApplication();
+    await models.applicationsPage.addApplication();
 });
 
 When("filling application form", async () => {
@@ -32,6 +40,10 @@ When("clicking save application", async () => {
     await models.applicationsPage.saveApplicationForm();
 });
 
+When("clicking delete application", async () => {
+    await models.applicationsPage.clickDelete();
+});
+
 When("key-secret modal appears", async () => {
     strictEqual(
         await models.applicationsPage.modalTitle(),
@@ -43,6 +55,25 @@ When("key-secret modal appears", async () => {
     ok(await models.applicationsPage.hasSecret(), "Secret not found in modal");
 
     await models.applicationsPage.saveKeyAndSecret();
+});
+
+When("delete application modal is open", async () => {
+    strictEqual(
+        await models.applicationsPage.modalTitle(),
+        models.applicationsPage.modalTitleMessages.deleteApplication,
+        "Delete modal title not found"
+    );
+
+    ok(
+        (await models.applicationsPage.getDeleteApplicationMessage())?.includes(
+            models.applicationsPage.deleteApplicationConfirmationMessage
+        ),
+        "Validation message not correct"
+    );
+});
+
+When("confirming delete application", async () => {
+    await models.applicationsPage.deleteApplication();
 });
 
 When("clicking modal message", async () => {
@@ -63,4 +94,12 @@ Then("application appears on list", async () => {
 
 Then("generated key-secret is valid", async () => {
     ok(await models.applicationsPage.isKeyAndSecretValid(), "Credentials not valid");
+});
+
+Then("application is deleted", async () => {
+    strictEqual(
+        await models.applicationsPage.getToastMessage(),
+        models.applicationsPage.confirmationMessages.deleted,
+        "Confirmation message not found"
+    );
 });

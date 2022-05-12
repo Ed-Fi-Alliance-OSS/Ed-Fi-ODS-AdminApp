@@ -16,6 +16,10 @@ export class ApplicationsPage extends AdminAppPage {
     addNewApplicationBtn = "button.loads-ajax-modal";
     applicationOnListSelector = ".vendor-application h8";
     keySecretCopiedBtn = "#key-and-secret-dismiss-button";
+    deleteApplicationBtn = "a.delete-application-link";
+    deleteConfirmSelector = "div.alert:not(.hidden)";
+    confirmDeleteBtn = 'button[type="submit"]';
+
     credentials!: Credentials;
 
     credentialsSelector(text: string): string {
@@ -34,6 +38,10 @@ export class ApplicationsPage extends AdminAppPage {
         return this.credentialsSelector("API URL");
     }
 
+    get deleteApplicationConfirmationMessage(): string {
+        return `Are you sure you want to permanently delete ${this.applicationFormValues.name}?`;
+    }
+
     applicationFormSelectors = {
         name: 'input[name="ApplicationName"]',
         lea: 'span label:text("Local Education Agency")',
@@ -47,11 +55,14 @@ export class ApplicationsPage extends AdminAppPage {
         lea: "Automated LEA",
     };
 
-    confirmationMessages = {};
+    confirmationMessages = {
+        deleted: "Application deleted successfully",
+    };
 
     modalTitleMessages = {
         addApplication: "Add Application to Vendor",
         addedSecret: "Add Application",
+        deleteApplication: "Delete Application",
     };
 
     path(): string {
@@ -62,7 +73,7 @@ export class ApplicationsPage extends AdminAppPage {
         await this.waitForResponse({ url: "/Application/ApplicationList" });
     }
 
-    async addNewApplication(): Promise<void> {
+    async addApplication(): Promise<void> {
         await this.page.locator(this.addNewApplicationBtn).click();
     }
 
@@ -115,6 +126,11 @@ export class ApplicationsPage extends AdminAppPage {
             return false;
         }
         const getAPI = await apiContext.get(apiURL);
+
+        if (!getAPI.ok()) {
+            console.error(`Unable to verify API URL. Response: ${getAPI.status()}`);
+        }
+
         return getAPI.ok();
     }
 
@@ -149,6 +165,28 @@ export class ApplicationsPage extends AdminAppPage {
         await this.modalSelector.locator(this.keySecretCopiedBtn).click();
     }
 
+    async clickDelete(): Promise<void> {
+        await this.page.locator(this.deleteApplicationBtn).click();
+    }
+
+    async deleteApplication(): Promise<void> {
+        await Promise.all([this.clickConfirmDelete(), this.waitForResponse({ url: "Application/Delete" })]);
+    }
+
+    async getDeleteApplicationMessage(): Promise<string | null> {
+        return await this.getText({ section: this.modalSelector, selector: this.deleteConfirmSelector });
+    }
+
+    async addApplicationFullSteps(): Promise<void> {
+        await this.navigate();
+        await this.addApplication();
+        await this.fillApplicationForm();
+        await this.saveApplicationForm();
+        await this.saveKeyAndSecret();
+        await this.clickKeySecretCopied();
+        await this.isApplicationPresentOnPage();
+    }
+
     private async fillApplicationName(): Promise<void> {
         await this.modalSelector
             .locator(this.applicationFormSelectors.name)
@@ -174,5 +212,9 @@ export class ApplicationsPage extends AdminAppPage {
 
     private async saveForm(): Promise<void> {
         await this.modalSelector.locator(this.addApplicationBtn).click();
+    }
+
+    private async clickConfirmDelete(): Promise<void> {
+        await this.modalSelector.locator(this.confirmDeleteBtn).click();
     }
 }
