@@ -89,6 +89,7 @@ Then("copied URL is valid", async () => {
 });
 
 Then("application appears on list", async () => {
+    await models.applicationsPage.waitForListLoad();
     ok(await models.applicationsPage.isApplicationPresentOnPage(), "Application not found");
 });
 
@@ -97,7 +98,7 @@ Then("generated key-secret is valid", async () => {
 });
 
 Then("generated key-secret is not valid", async () => {
-    ok(!await models.applicationsPage.isKeyAndSecretValid(), "Credentials are still valid");
+    ok(!(await models.applicationsPage.isKeyAndSecretValid()), "Credentials are still valid");
 });
 
 Then("application is deleted", async () => {

@@ -4,9 +4,8 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 import { mkdir } from "fs/promises";
-import { request } from "playwright";
 import { Credentials } from "../interfaces";
-import { context, currentTest, page } from "./setup";
+import { context, currentTest, page, getApiContext } from "./setup";
 
 export async function saveTrace(): Promise<void> {
     if (process.env.TRACE) {
@@ -24,40 +23,43 @@ export async function takeScreenshot(name: string): Promise<void> {
     });
 }
 
+export async function testURL(url: string): Promise<boolean> {
+    const apiContext = await getApiContext();
+    const getAPI = await apiContext.get(url);
+
+    if (!getAPI.ok()) {
+        console.error(`Unable to verify URL. Response: ${getAPI.status()}`);
+    }
+
+    return getAPI.ok();
+}
+
 export async function getAccessToken(credentials: Credentials): Promise<string | null> {
     //May need to refactor for year specific mode
     const apiURL = credentials.URL.substring(0, credentials.URL.indexOf("data") - 1);
     const tokenURL = `${apiURL}/oauth/token`;
     const encryptedCredentials = Buffer.from(credentials.Key + ":" + credentials.Secret).toString("base64");
 
-    const context = await request.newContext({
-        ignoreHTTPSErrors: true,
-        extraHTTPHeaders: {
-            Authorization: `Basic ${encryptedCredentials}`,
-            "Content-Type": "application/x-www-form-urlencoded",
-        },
+    const apiContext = await getApiContext({
+        Authorization: `Basic ${encryptedCredentials}`,
+        "Content-Type": "application/x-www-form-urlencoded",
     });
-    const data = "grant_type=client_credentials";
 
-    const response = await context.post(tokenURL, { data });
+    const response = await apiContext.post(tokenURL, { data: "grant_type=client_credentials" });
 
+    let token = null;
     if (response.ok()) {
         const jsonResponse = await response.json();
-        const token = jsonResponse.access_token;
-        return token;
-    } else {
-        return null;
+        token = jsonResponse.access_token;
     }
+    return token;
 }
 
 export async function isTokenValid({ api, token }: { api: string; token: string }): Promise<boolean> {
-    const context = await request.newContext({
-        ignoreHTTPSErrors: true,
-        extraHTTPHeaders: {
-            Authorization: `Bearer ${token}`,
-        },
+    const apiContext = await getApiContext({
+        Authorization: `Bearer ${token}`,
     });
-    const response = await context.get(`${api}/ed-fi/academicWeeks`);
 
+    const response = await apiContext.get(`${api}/ed-fi/academicWeeks`);
     return response.status() !== 401 && response.status() !== 404;
 }

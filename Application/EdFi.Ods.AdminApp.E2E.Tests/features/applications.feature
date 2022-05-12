@@ -11,7 +11,6 @@ Feature: Applications
 
     #AA-868
     Scenario: API URL
-        Given has API context
         And it's on the "Applications" page
         And applications page has loaded
         When clicking API URL
@@ -25,6 +24,7 @@ Feature: Applications
         And there's a vendor added
 
     #AA-889
+    @Sanity
     Scenario: Add Application
         Given it's on the "Applications" page
         And applications page has loaded

@@ -6,7 +6,7 @@
 import { After, AfterAll } from "@cucumber/cucumber";
 import { TestStepResultStatus } from "@cucumber/messages";
 import { saveTrace, takeScreenshot } from "./functions";
-import { page, browser, models, currentTest } from "./setup";
+import { page, browser, models, currentTest, getApiContext } from "./setup";
 
 After(async (scenario) => {
     if (scenario.result?.status === TestStepResultStatus.PASSED) {
@@ -20,9 +20,14 @@ After(async (scenario) => {
     await saveTrace();
 });
 
-AfterAll(() => {
+AfterAll(async () => {
     if (!page?.isClosed()) {
         browser.close();
+    }
+
+    const apiContext = await getApiContext();
+    if (apiContext) {
+        apiContext.dispose();
     }
 });
 

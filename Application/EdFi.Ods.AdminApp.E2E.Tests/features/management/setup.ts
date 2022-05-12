@@ -5,7 +5,7 @@
 
 import dotenv = require("dotenv");
 import { Before, BeforeAll, ITestCaseHookParameter, setDefaultTimeout } from "@cucumber/cucumber";
-import { chromium, Browser, BrowserContext, Page, request, APIRequestContext } from "playwright";
+import { chromium, Browser, BrowserContext, Page, APIRequestContext, request } from "playwright";
 import { ModelResolver } from "../models/modelResolver";
 import { Test } from "../interfaces";
 
@@ -15,7 +15,6 @@ setDefaultTimeout(60 * 1000);
 export let browser: Browser;
 export let page: Page;
 export let context: BrowserContext;
-export let apiContext: APIRequestContext;
 export let models: ModelResolver;
 export const currentTest: Test = {
     Feature: "",
@@ -81,11 +80,12 @@ function getScenarioExample(scenario: ITestCaseHookParameter): string | undefine
     return;
 }
 
-export async function setApiContext(token?: string): Promise<void> {
-    apiContext = token
-        ? await request.newContext({
-              ignoreHTTPSErrors: true,
-              extraHTTPHeaders: { Authorization: `Bearer ${token}` },
-          })
-        : await request.newContext({ ignoreHTTPSErrors: true });
+export async function getApiContext(extraHTTPHeaders?: {
+    Authorization: string;
+    "Content-Type"?: string;
+}): Promise<APIRequestContext> {
+    return await request.newContext({
+        ignoreHTTPSErrors: true,
+        extraHTTPHeaders,
+    });
 }

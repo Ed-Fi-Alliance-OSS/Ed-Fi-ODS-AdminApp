@@ -4,8 +4,7 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 import { Credentials } from "../interfaces";
-import { getAccessToken, isTokenValid } from "../management/functions";
-import { apiContext, setApiContext } from "../management/setup";
+import { getAccessToken, isTokenValid, testURL } from "../management/functions";
 import { AdminAppPage } from "./adminAppPage";
 
 export class ApplicationsPage extends AdminAppPage {
@@ -125,13 +124,7 @@ export class ApplicationsPage extends AdminAppPage {
         if (!apiURL) {
             return false;
         }
-        const getAPI = await apiContext.get(apiURL);
-
-        if (!getAPI.ok()) {
-            console.error(`Unable to verify API URL. Response: ${getAPI.status()}`);
-        }
-
-        return getAPI.ok();
+        return await testURL(apiURL);
     }
 
     async getErrorMessages(): Promise<string | null> {
@@ -157,11 +150,10 @@ export class ApplicationsPage extends AdminAppPage {
     async isKeyAndSecretValid(): Promise<boolean> {
         const token = await getAccessToken(this.credentials);
 
-        if(!token) {
+        if (!token) {
             return false;
         }
 
-        setApiContext();
         return isTokenValid({ token, api: this.credentials.URL });
     }
 
@@ -188,7 +180,7 @@ export class ApplicationsPage extends AdminAppPage {
         await this.saveApplicationForm();
         await this.saveKeyAndSecret();
         await this.clickKeySecretCopied();
-        if (!await this.isKeyAndSecretValid()) {
+        if (!(await this.isKeyAndSecretValid())) {
             throw "Key and secret not valid";
         }
         await this.isApplicationPresentOnPage();
