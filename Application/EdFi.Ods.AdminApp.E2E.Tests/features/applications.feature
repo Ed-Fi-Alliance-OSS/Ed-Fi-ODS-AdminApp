@@ -45,4 +45,5 @@ Feature: Applications
         And delete application modal is open
         And confirming delete application
         Then application is deleted
+        And generated key-secret is not valid
 

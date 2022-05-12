@@ -24,7 +24,7 @@ export async function takeScreenshot(name: string): Promise<void> {
     });
 }
 
-export async function getAccessToken(credentials: Credentials): Promise<string> {
+export async function getAccessToken(credentials: Credentials): Promise<string | null> {
     //May need to refactor for year specific mode
     const apiURL = credentials.URL.substring(0, credentials.URL.indexOf("data") - 1);
     const tokenURL = `${apiURL}/oauth/token`;
@@ -46,7 +46,7 @@ export async function getAccessToken(credentials: Credentials): Promise<string> 
         const token = jsonResponse.access_token;
         return token;
     } else {
-        throw `Unable to get Access Token. Response: ${response.status}`;
+        return null;
     }
 }
 

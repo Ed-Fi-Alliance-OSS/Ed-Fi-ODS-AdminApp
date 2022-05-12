@@ -96,6 +96,10 @@ Then("generated key-secret is valid", async () => {
     ok(await models.applicationsPage.isKeyAndSecretValid(), "Credentials not valid");
 });
 
+Then("generated key-secret is not valid", async () => {
+    ok(!await models.applicationsPage.isKeyAndSecretValid(), "Credentials are still valid");
+});
+
 Then("application is deleted", async () => {
     strictEqual(
         await models.applicationsPage.getToastMessage(),

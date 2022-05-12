@@ -157,6 +157,10 @@ export class ApplicationsPage extends AdminAppPage {
     async isKeyAndSecretValid(): Promise<boolean> {
         const token = await getAccessToken(this.credentials);
 
+        if(!token) {
+            return false;
+        }
+
         setApiContext();
         return isTokenValid({ token, api: this.credentials.URL });
     }
@@ -184,6 +188,9 @@ export class ApplicationsPage extends AdminAppPage {
         await this.saveApplicationForm();
         await this.saveKeyAndSecret();
         await this.clickKeySecretCopied();
+        if (!await this.isKeyAndSecretValid()) {
+            throw "Key and secret not valid";
+        }
         await this.isApplicationPresentOnPage();
     }
 
