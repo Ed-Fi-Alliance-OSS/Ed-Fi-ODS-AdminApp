@@ -102,6 +102,121 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
         }
 
+        [Test]
+        public void ShouldImportClaimSetWithAuthrozationStrategyOverrides()
+        {
+            var testApplication = new Application
+            {
+                ApplicationName = $"Test Application {DateTime.Now:O}"
+            };
+            Save(testApplication);
+
+            var appAuthorizationStrategies = SetupApplicationAuthorizationStrategies(testApplication,2).ToList();
+
+            SetupResourceClaims(testApplication, new List<string> { "TestParent1234", "TestParent5678", "TestParent9101" }, UniqueNameList("Child", 1));
+
+            var testJSON = @"{
+                ""title"": ""testfile"",
+                ""template"": {
+                    ""claimSets"": [
+                      {
+                        ""name"": ""Test Claimset"",
+                        ""resourceClaims"": [
+                          {
+                            ""Name"": ""TestParent1234"",
+                            ""Read"": true,
+                            ""Create"": true,
+                            ""Update"": false,
+                            ""Delete"": false,
+                            ""AuthStrategyOverridesForCRUD"": [
+                                  {
+                                    ""AuthStrategyId"": {0},
+                                    ""AuthStrategyName"": ""{1}"",
+                                    ""DisplayName"": ""{1}"",
+                                    ""IsInheritedFromParent"": false
+                                  },
+                                  {
+                                    ""AuthStrategyId"": {2},
+                                    ""AuthStrategyName"": ""{3}"",
+                                    ""DisplayName"": ""{3}"",
+                                    ""IsInheritedFromParent"": false
+                                  },
+                                  null,
+                                  null
+                                ],
+                             ""Children"": []
+                          },
+                          {
+                            ""Name"": ""TestParent5678"",
+                            ""Read"": true,
+                            ""Create"": false,
+                            ""Update"": false,
+                            ""Delete"": false,
+                            ""Children"": []
+                          },
+                          {
+                            ""Name"": ""TestParent9101"",
+                            ""Read"": true,
+                            ""Create"": true,
+                            ""Update"": true,
+                            ""Delete"": true,
+                            ""Children"": []
+                          }
+                        ]
+                      }
+                    ]
+                }
+            }";
+            var authStrategy1Id = appAuthorizationStrategies.First().AuthorizationStrategyId;
+            var authStrategy1Name = appAuthorizationStrategies.First().AuthorizationStrategyName.ToString();
+
+            var authStrategy2Id = appAuthorizationStrategies.Last().AuthorizationStrategyId;
+            var authStrategy2Name = appAuthorizationStrategies.Last().AuthorizationStrategyName.ToString();
+
+            var formattedJson = testJSON.Replace("{0}", authStrategy1Id.ToString())
+                                        .Replace("{1}", authStrategy1Name)
+                                        .Replace("{2}", authStrategy2Id.ToString())
+                                        .Replace("{3}", authStrategy2Name);
+
+            var importModel = GetImportModel(formattedJson);
+            var importSharingModel = SharingModel.DeserializeToSharingModel(importModel.ImportFile.OpenReadStream());
+
+            Scoped<ClaimSetFileImportCommand>(command => command.Execute(importSharingModel));
+
+            var testClaimSet = Transaction(securityContext => securityContext.ClaimSets.SingleOrDefault(x => x.ClaimSetName == "Test Claimset"));
+            testClaimSet.ShouldNotBeNull();
+
+            var resourcesForClaimSet =
+                Scoped<IGetResourcesByClaimSetIdQuery, List<ResourceClaim>>(
+                    query => query.AllResources(testClaimSet.ClaimSetId).ToList());
+
+            resourcesForClaimSet.Count.ShouldBeGreaterThan(0);
+            var testResources = resourcesForClaimSet.Where(x => x.ParentId == 0).ToArray();
+            testResources.Count().ShouldBe(3);
+
+            var testResource1 = testResources[0];
+            MatchActions(testResource1, "TestParent1234", new bool[] { true, true, false, false });
+
+            testResource1.AuthStrategyOverridesForCRUD.ShouldNotBeNull();
+            testResource1.AuthStrategyOverridesForCRUD.Length.ShouldBe(4);
+
+            var authStrategyOverrideForCreate = testResource1.AuthStrategyOverridesForCRUD.Create();
+            authStrategyOverrideForCreate.ShouldNotBeNull();
+            authStrategyOverrideForCreate.AuthStrategyId.ShouldBe(authStrategy1Id);
+            authStrategyOverrideForCreate.AuthStrategyName.ShouldBe(authStrategy1Name);
+
+            var authStrategyOverrideForRead = testResource1.AuthStrategyOverridesForCRUD.Read();
+            authStrategyOverrideForRead.ShouldNotBeNull();
+            authStrategyOverrideForRead.AuthStrategyId.ShouldBe(authStrategy2Id);
+            authStrategyOverrideForRead.AuthStrategyName.ShouldBe(authStrategy2Name);
+
+            var testResource2 = testResources[1];
+            MatchActions(testResource2, "TestParent5678", new bool[] { false, true, false, false });
+
+            var testResource3 = testResources[2];
+            MatchActions(testResource3, "TestParent9101", new bool[] { true, true, true, true });
+        }
+
         private void MatchActions(ResourceClaim dbResource, string expectedResourceName, bool[] expectedCrudArray)
         {
             dbResource.Name.ShouldBe(expectedResourceName);
