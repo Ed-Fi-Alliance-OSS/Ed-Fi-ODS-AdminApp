@@ -47,3 +47,14 @@ Feature: Applications
         Then application is deleted
         And generated key-secret is not valid
 
+    #AA-892
+    Scenario: Edit Application
+        Given there's an application added
+        And it's on the "Applications" page
+        And applications page has loaded
+        When clicking edit application
+        And modifying added application
+        And clicking save edited application
+        Then application is edited
+        And edited application appears on list
+

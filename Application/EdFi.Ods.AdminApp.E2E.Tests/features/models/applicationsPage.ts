@@ -15,6 +15,7 @@ export class ApplicationsPage extends AdminAppPage {
     addNewApplicationBtn = "button.loads-ajax-modal";
     applicationOnListSelector = ".vendor-application h8";
     keySecretCopiedBtn = "#key-and-secret-dismiss-button";
+    editApplicationBtn = "a.edit-table";
     deleteApplicationBtn = "a.delete-application-link";
     deleteConfirmSelector = "div.alert:not(.hidden)";
     confirmDeleteBtn = 'button[type="submit"]';
@@ -37,6 +38,10 @@ export class ApplicationsPage extends AdminAppPage {
         return this.credentialsSelector("API URL");
     }
 
+    get editedFormValueName(): string {
+        return `${this.applicationFormValues.name} - Edited`;
+    }
+
     get deleteApplicationConfirmationMessage(): string {
         return `Are you sure you want to permanently delete ${this.applicationFormValues.name}?`;
     }
@@ -56,12 +61,14 @@ export class ApplicationsPage extends AdminAppPage {
 
     confirmationMessages = {
         deleted: "Application deleted successfully",
+        updated: "Application updated successfully",
     };
 
     modalTitleMessages = {
         addApplication: "Add Application to Vendor",
         addedSecret: "Add Application",
         deleteApplication: "Delete Application",
+        editApplication: "Edit Application",
     };
 
     path(): string {
@@ -83,6 +90,10 @@ export class ApplicationsPage extends AdminAppPage {
         await this.selectClaimSet("Ed-Fi Sandbox");
     }
 
+    async editApplicationForm(): Promise<void> {
+        await this.fillApplicationName(this.editedFormValueName);
+    }
+
     async saveApplicationForm({ expectErrors = false }: { expectErrors?: boolean } = {}): Promise<void> {
         try {
             await Promise.all([
@@ -100,6 +111,13 @@ export class ApplicationsPage extends AdminAppPage {
     async isApplicationPresentOnPage(): Promise<boolean> {
         return await this.hasText({
             text: this.applicationFormValues.name,
+            selector: this.applicationOnListSelector,
+        });
+    }
+
+    async isEditedApplicationPresentOnPage(): Promise<boolean> {
+        return await this.hasText({
+            text: this.editedFormValueName,
             selector: this.applicationOnListSelector,
         });
     }
@@ -129,6 +147,10 @@ export class ApplicationsPage extends AdminAppPage {
 
     async getErrorMessages(): Promise<string | null> {
         return await this.getText({ section: this.modalSelector, selector: this.errorMsgSection });
+    }
+
+    async saveEditedApplicationForm(): Promise<void> {
+        await Promise.all([this.waitForResponse({ url: "/Application/Edit" }), this.saveForm()]);
     }
 
     async hasKey(): Promise<boolean> {
@@ -161,6 +183,10 @@ export class ApplicationsPage extends AdminAppPage {
         await this.modalSelector.locator(this.keySecretCopiedBtn).click();
     }
 
+    async clickEdit(): Promise<void> {
+        await this.page.locator(this.editApplicationBtn).click();
+    }
+
     async clickDelete(): Promise<void> {
         await this.page.locator(this.deleteApplicationBtn).click();
     }
@@ -186,10 +212,8 @@ export class ApplicationsPage extends AdminAppPage {
         await this.isApplicationPresentOnPage();
     }
 
-    private async fillApplicationName(): Promise<void> {
-        await this.modalSelector
-            .locator(this.applicationFormSelectors.name)
-            .fill(this.applicationFormValues.name);
+    private async fillApplicationName(name = this.applicationFormValues.name): Promise<void> {
+        await this.modalSelector.locator(this.applicationFormSelectors.name).fill(name);
     }
 
     private async selectLEA(): Promise<void> {

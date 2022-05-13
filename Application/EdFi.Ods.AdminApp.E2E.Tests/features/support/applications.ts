@@ -36,8 +36,25 @@ When("filling application form", async () => {
     await models.applicationsPage.fillApplicationForm();
 });
 
+When("modifying added application", async () => {
+    strictEqual(
+        await models.applicationsPage.modalTitle(),
+        models.applicationsPage.modalTitleMessages.editApplication,
+        "Modal title not found"
+    );
+    await models.applicationsPage.editApplicationForm();
+});
+
 When("clicking save application", async () => {
     await models.applicationsPage.saveApplicationForm();
+});
+
+When("clicking save edited application", async () => {
+    await models.applicationsPage.saveEditedApplicationForm();
+});
+
+When("clicking edit application", async () => {
+    await models.applicationsPage.clickEdit();
 });
 
 When("clicking delete application", async () => {
@@ -93,6 +110,11 @@ Then("application appears on list", async () => {
     ok(await models.applicationsPage.isApplicationPresentOnPage(), "Application not found");
 });
 
+Then("edited application appears on list", async () => {
+    await models.applicationsPage.waitForListLoad();
+    ok(await models.applicationsPage.isEditedApplicationPresentOnPage(), "Application not found");
+});
+
 Then("generated key-secret is valid", async () => {
     ok(await models.applicationsPage.isKeyAndSecretValid(), "Credentials not valid");
 });
@@ -105,6 +127,14 @@ Then("application is deleted", async () => {
     strictEqual(
         await models.applicationsPage.getToastMessage(),
         models.applicationsPage.confirmationMessages.deleted,
+        "Confirmation message not found"
+    );
+});
+
+Then("application is edited", async () => {
+    strictEqual(
+        await models.applicationsPage.getToastMessage(),
+        models.applicationsPage.confirmationMessages.updated,
         "Confirmation message not found"
     );
 });
