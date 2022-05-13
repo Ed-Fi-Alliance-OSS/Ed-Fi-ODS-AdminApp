@@ -74,18 +74,18 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
                         {
                             ClaimSetId = claimSetId,
                             ResourceClaimId = resource.Id,
-                            AuthorizationStrategyForCreate = AuthStrategyOverrideForAction(resource.AuthStrategyOverridesForCRUD, 0),
-                            AuthorizationStrategyForRead = AuthStrategyOverrideForAction(resource.AuthStrategyOverridesForCRUD, 1),
-                            AuthorizationStrategyForUpdate = AuthStrategyOverrideForAction(resource.AuthStrategyOverridesForCRUD, 2),
-                            AuthorizationStrategyForDelete = AuthStrategyOverrideForAction(resource.AuthStrategyOverridesForCRUD, 3)
+                            AuthorizationStrategyForCreate = AuthStrategyOverrideForAction(resource.AuthStrategyOverridesForCRUD.Create()),
+                            AuthorizationStrategyForRead = AuthStrategyOverrideForAction(resource.AuthStrategyOverridesForCRUD.Read()),
+                            AuthorizationStrategyForUpdate = AuthStrategyOverrideForAction(resource.AuthStrategyOverridesForCRUD.Update()),
+                            AuthorizationStrategyForDelete = AuthStrategyOverrideForAction(resource.AuthStrategyOverridesForCRUD.Delete())
                         };
                         _overrideDefaultAuthorizationStrategyCommand.Execute(overrideAuthStrategyModel);
                     }
                 }
 
-                static int AuthStrategyOverrideForAction(AuthorizationStrategy[] authorizationStrategies, int actionIndex)
+                static int AuthStrategyOverrideForAction(AuthorizationStrategy authorizationStrategy)
                 {
-                   return authorizationStrategies[actionIndex] != null? authorizationStrategies[actionIndex].AuthStrategyId : 0;
+                   return authorizationStrategy != null ? authorizationStrategy.AuthStrategyId : 0;
                 }
             }
         }
