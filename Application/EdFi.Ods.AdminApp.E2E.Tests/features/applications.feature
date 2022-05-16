@@ -58,3 +58,15 @@ Feature: Applications
         Then application is edited
         And edited application appears on list
 
+    #AA-894
+    Scenario: Regenerate Application Secret
+        Given there's an application added
+        And it's on the "Applications" page
+        And applications page has loaded
+        When clicking regenerate
+        And regenerate application modal appears
+        And clicking confirm regeneration
+        And key-secret modal appears
+        And clicking modal message
+        Then credentials are updated
+        And generated key-secret is valid

@@ -82,7 +82,7 @@ When("delete application modal is open", async () => {
     );
 
     ok(
-        (await models.applicationsPage.getDeleteApplicationMessage())?.includes(
+        (await models.applicationsPage.getModalConfirmationMessage())?.includes(
             models.applicationsPage.deleteApplicationConfirmationMessage
         ),
         "Validation message not correct"
@@ -94,7 +94,36 @@ When("confirming delete application", async () => {
 });
 
 When("clicking modal message", async () => {
-    await models.applicationsPage.clickKeySecretCopied();
+    await models.applicationsPage.confirmKeySecretCopied();
+});
+
+When("clicking regenerate", async () => {
+    models.applicationsPage.saveOldCredentials();
+    await models.applicationsPage.clickRegenerate();
+});
+
+When("regenerate application modal appears", async () => {
+    strictEqual(
+        await models.applicationsPage.modalTitle(),
+        models.applicationsPage.modalTitleMessages.regenerateApplication,
+        "Regenerate modal title not found"
+    );
+
+    ok(
+        (await models.applicationsPage.getModalConfirmationMessage())?.includes(
+            models.applicationsPage.regenerateApplicationConfirmationMessage
+        ),
+        "Validation message not correct"
+    );
+});
+
+When("clicking confirm regeneration", async () => {
+    await models.applicationsPage.confirmRegenerate();
+});
+
+Then("credentials are updated", async () => {
+    ok(!models.applicationsPage.keyIsUpdated(), "Key was updated");
+    ok(models.applicationsPage.secretIsUpdated(), "Secret was not updated");
 });
 
 Then("copied URL message appears", async () => {

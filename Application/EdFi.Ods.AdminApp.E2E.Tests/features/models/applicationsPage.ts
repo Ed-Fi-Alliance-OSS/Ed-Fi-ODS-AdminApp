@@ -12,18 +12,22 @@ export class ApplicationsPage extends AdminAppPage {
     activeTabSelector = "ul.nav li.active";
     apiURLSelector = "a.copy-to-clipboard";
     errorMsgSection = "div.validationSummary";
-    addApplicationBtn = 'button[type="submit"]';
+    modalConfirmationBtn = 'button[type="submit"]';
+    addApplicationBtn = this.modalConfirmationBtn;
+    confirmRegenerateBtn = this.modalConfirmationBtn;
+    confirmDeleteBtn = this.modalConfirmationBtn;
     addNewApplicationBtn = "button.loads-ajax-modal";
     applicationOnListSelector = ".vendor-application h8";
     keySecretCopiedBtn = "#key-and-secret-dismiss-button";
     editApplicationBtn = "a.edit-table";
     deleteApplicationBtn = "a.delete-application-link";
-    deleteConfirmSelector = "div.alert:not(.hidden)";
-    confirmDeleteBtn = 'button[type="submit"]';
+    confirmSelector = "div.alert:not(.hidden)";
+    regenerateBtn = "a.regenerate-application-secret-link";
 
     applicationListURL = "/Application/ApplicationList";
 
     credentials!: Credentials;
+    oldCredentials!: Credentials;
 
     get keySelector(): string {
         return this.credentialsSelector("Key");
@@ -43,6 +47,10 @@ export class ApplicationsPage extends AdminAppPage {
 
     get deleteApplicationConfirmationMessage(): string {
         return `Are you sure you want to permanently delete ${this.formValues.name}?`;
+    }
+
+    get regenerateApplicationConfirmationMessage(): string {
+        return `Are you sure you want to regenerate the Key/Secret for ${this.formValues.name}?`;
     }
 
     formSelectors = {
@@ -68,6 +76,7 @@ export class ApplicationsPage extends AdminAppPage {
         addedSecret: "Add Application",
         deleteApplication: "Delete Application",
         editApplication: "Edit Application",
+        regenerateApplication: "Regenerate Application Key/Secret",
     };
 
     path(): string {
@@ -184,8 +193,11 @@ export class ApplicationsPage extends AdminAppPage {
         return isTokenValid({ token, api: this.credentials.URL });
     }
 
-    async clickKeySecretCopied(): Promise<void> {
-        await this.modalSelector.locator(this.keySecretCopiedBtn).click();
+    async confirmKeySecretCopied() {
+        await Promise.all([
+            network.waitForResponse({ url: "/Application" }),
+            this.clickKeySecretCopiedButton(),
+        ]);
     }
 
     async clickEdit(): Promise<void> {
@@ -196,6 +208,30 @@ export class ApplicationsPage extends AdminAppPage {
         await this.page.locator(this.deleteApplicationBtn).click();
     }
 
+    async clickRegenerate() {
+        await this.page.locator(this.regenerateBtn).click();
+    }
+
+    async confirmRegenerate() {
+        await Promise.all([
+            network.waitForResponse({ url: "/RegenerateSecret" }),
+            this.clickConfirmRegenerate(),
+        ]);
+    }
+
+    saveOldCredentials() {
+        this.oldCredentials = this.credentials;
+        console.log(this.credentials);
+    }
+
+    keyIsUpdated(): boolean {
+        return this.oldCredentials && this.oldCredentials.Key !== this.credentials.Key;
+    }
+
+    secretIsUpdated(): boolean {
+        return this.oldCredentials && this.oldCredentials.Secret !== this.credentials.Secret;
+    }
+
     async deleteApplication(): Promise<void> {
         await Promise.all([
             this.clickConfirmDelete(),
@@ -203,8 +239,8 @@ export class ApplicationsPage extends AdminAppPage {
         ]);
     }
 
-    async getDeleteApplicationMessage(): Promise<string | null> {
-        return await this.getText({ section: this.modalSelector, selector: this.deleteConfirmSelector });
+    async getModalConfirmationMessage(): Promise<string | null> {
+        return await this.getText({ section: this.modalSelector, selector: this.confirmSelector });
     }
 
     async addApplicationFullSteps(): Promise<void> {
@@ -213,11 +249,19 @@ export class ApplicationsPage extends AdminAppPage {
         await this.fillApplicationForm();
         await this.saveApplicationForm();
         await this.saveKeyAndSecret();
-        await this.clickKeySecretCopied();
+        await this.confirmKeySecretCopied();
         if (!(await this.isKeyAndSecretValid())) {
             throw "Key and secret not valid";
         }
         await this.isApplicationPresentOnPage();
+    }
+
+    private async clickKeySecretCopiedButton(): Promise<void> {
+        await this.modalSelector.locator(this.keySecretCopiedBtn).click();
+    }
+
+    private async clickConfirmRegenerate() {
+        await this.modalSelector.locator(this.confirmRegenerateBtn).click();
     }
 
     private async fillApplicationName(name = this.formValues.name): Promise<void> {
