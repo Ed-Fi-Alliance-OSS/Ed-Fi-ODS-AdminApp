@@ -25,10 +25,6 @@ export class ApplicationsPage extends AdminAppPage {
 
     credentials!: Credentials;
 
-    credentialsSelector(text: string): string {
-        return `.key-text div:has-text('${text}') .key-generated`;
-    }
-
     get keySelector(): string {
         return this.credentialsSelector("Key");
     }
@@ -42,14 +38,14 @@ export class ApplicationsPage extends AdminAppPage {
     }
 
     get editedFormValueName(): string {
-        return `${this.applicationFormValues.name} - Edited`;
+        return `${this.formValues.name} - Edited`;
     }
 
     get deleteApplicationConfirmationMessage(): string {
-        return `Are you sure you want to permanently delete ${this.applicationFormValues.name}?`;
+        return `Are you sure you want to permanently delete ${this.formValues.name}?`;
     }
 
-    applicationFormSelectors = {
+    formSelectors = {
         name: 'input[name="ApplicationName"]',
         lea: 'span label:text("Local Education Agency")',
         leaSelectBtn: 'div[data-edorg-type="1"] button.dropdown-toggle',
@@ -57,7 +53,7 @@ export class ApplicationsPage extends AdminAppPage {
         claimSetSelect: 'select[name="ClaimSetName"]',
     };
 
-    applicationFormValues = {
+    formValues = {
         name: "Automated Application",
         lea: "Automated LEA",
     };
@@ -123,7 +119,7 @@ export class ApplicationsPage extends AdminAppPage {
 
     async isApplicationPresentOnPage(): Promise<boolean> {
         return await this.hasText({
-            text: this.applicationFormValues.name,
+            text: this.formValues.name,
             selector: this.applicationOnListSelector,
         });
     }
@@ -224,24 +220,24 @@ export class ApplicationsPage extends AdminAppPage {
         await this.isApplicationPresentOnPage();
     }
 
-    private async fillApplicationName(name = this.applicationFormValues.name): Promise<void> {
-        await this.modalSelector.locator(this.applicationFormSelectors.name).fill(name);
+    private async fillApplicationName(name = this.formValues.name): Promise<void> {
+        await this.modalSelector.locator(this.formSelectors.name).fill(name);
     }
 
     private async selectLEA(): Promise<void> {
-        await this.modalSelector.locator(this.applicationFormSelectors.lea).click();
+        await this.modalSelector.locator(this.formSelectors.lea).click();
     }
 
     private async selectOrganizationId(): Promise<void> {
-        await this.modalSelector.locator(this.applicationFormSelectors.leaSelectBtn).click();
+        await this.modalSelector.locator(this.formSelectors.leaSelectBtn).click();
         await this.modalSelector
-            .locator(this.applicationFormSelectors.leaSelect)
-            .selectOption({ label: this.applicationFormValues.lea });
+            .locator(this.formSelectors.leaSelect)
+            .selectOption({ label: this.formValues.lea });
     }
 
     private async selectClaimSet(claimSetName: string): Promise<void> {
         await this.modalSelector
-            .locator(this.applicationFormSelectors.claimSetSelect)
+            .locator(this.formSelectors.claimSetSelect)
             .selectOption({ label: claimSetName });
     }
 
@@ -251,5 +247,9 @@ export class ApplicationsPage extends AdminAppPage {
 
     private async clickConfirmDelete(): Promise<void> {
         await this.modalSelector.locator(this.confirmDeleteBtn).click();
+    }
+
+    private credentialsSelector(text: string): string {
+        return `.key-text div:has-text('${text}') .key-generated`;
     }
 }

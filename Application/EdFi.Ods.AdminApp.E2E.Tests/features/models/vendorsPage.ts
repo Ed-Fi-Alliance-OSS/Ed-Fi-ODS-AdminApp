@@ -25,7 +25,19 @@ export class VendorsPage extends AdminAppPage {
     closeModalBtn = 'button[aria-label="Close"]';
     cancelBtn = "button.btn-default";
 
-    vendorFormFields = {
+    get editedFormValueName(): string {
+        return `${this.formValues.name} - Edited`;
+    }
+
+    get invalidContactEmail(): string {
+        return this.formValues.contact;
+    }
+
+    get deleteVendorConfirmationMessage(): string {
+        return `Are you sure you want to permanently delete vendor ${this.formValues.name}?`;
+    }
+
+    formFields = {
         name: {
             selector: 'input[name="Company"]',
             required: true,
@@ -52,19 +64,7 @@ export class VendorsPage extends AdminAppPage {
         },
     };
 
-    get editedFormValueName(): string {
-        return `${this.vendorFormValues.name} - Edited`;
-    }
-
-    get invalidContactEmail(): string {
-        return this.vendorFormValues.contact;
-    }
-
-    get deleteVendorConfirmationMessage(): string {
-        return `Are you sure you want to permanently delete vendor ${this.vendorFormValues.name}?`;
-    }
-
-    vendorFormValues = {
+    formValues = {
         name: "Automated Vendor",
         initialNamespacePrefix: "uri://ed-fi.org",
         addedNamespacePrefix: "uri://added.ed-fi.org",
@@ -140,15 +140,15 @@ export class VendorsPage extends AdminAppPage {
 
     async addNamespacePrefix(): Promise<void> {
         await this.modalSelector
-            .locator(this.vendorFormFields.addNamespacePrefix.selector)
-            .fill(this.vendorFormValues.addedNamespacePrefix);
-        await this.modalSelector.locator(this.vendorFormFields.addNamespacePrefixBtn.selector).click();
+            .locator(this.formFields.addNamespacePrefix.selector)
+            .fill(this.formValues.addedNamespacePrefix);
+        await this.modalSelector.locator(this.formFields.addNamespacePrefixBtn.selector).click();
     }
 
     async hasPrefixAdded(): Promise<boolean> {
         return (
-            await this.modalSelector.locator(this.vendorFormFields.namespacePrefix.selector).inputValue()
-        ).includes(this.vendorFormValues.addedNamespacePrefix);
+            await this.modalSelector.locator(this.formFields.namespacePrefix.selector).inputValue()
+        ).includes(this.formValues.addedNamespacePrefix);
     }
 
     async fillInvalidEmail() {
@@ -175,7 +175,7 @@ export class VendorsPage extends AdminAppPage {
     }
 
     async isVendorPresentOnPage(): Promise<boolean> {
-        return await this.hasText({ text: this.vendorFormValues.name, selector: this.vendorOnListSelector });
+        return await this.hasText({ text: this.formValues.name, selector: this.vendorOnListSelector });
     }
 
     async isEditedVendorPresentOnPage(): Promise<boolean> {
@@ -221,13 +221,13 @@ export class VendorsPage extends AdminAppPage {
         return (
             this.modalSelector
                 .locator(this.fieldWithErrorSelector)
-                .locator(this.vendorFormFields.email.selector) !== undefined
+                .locator(this.formFields.email.selector) !== undefined
         );
     }
 
     async requiredFieldsHaveError(): Promise<boolean> {
         let fieldsWithError = true;
-        Object.values(this.vendorFormFields)
+        Object.values(this.formFields)
             .filter((field) => field.required)
             .flatMap((field) => field.selector)
             .forEach((value) => {
@@ -270,24 +270,22 @@ export class VendorsPage extends AdminAppPage {
         await this.page.locator(this.defineAppBtn).click();
     }
 
-    private async fillVendorName(value = this.vendorFormValues.name): Promise<void> {
-        await this.modalSelector.locator(this.vendorFormFields.name.selector).fill(value);
+    private async fillVendorName(value = this.formValues.name): Promise<void> {
+        await this.modalSelector.locator(this.formFields.name.selector).fill(value);
     }
 
     private async fillNamespacePrefix(): Promise<void> {
         await this.modalSelector
-            .locator(this.vendorFormFields.namespacePrefix.selector)
-            .fill(this.vendorFormValues.initialNamespacePrefix);
+            .locator(this.formFields.namespacePrefix.selector)
+            .fill(this.formValues.initialNamespacePrefix);
     }
 
     private async fillContactName(): Promise<void> {
-        await this.modalSelector
-            .locator(this.vendorFormFields.contact.selector)
-            .fill(this.vendorFormValues.contact);
+        await this.modalSelector.locator(this.formFields.contact.selector).fill(this.formValues.contact);
     }
 
-    private async fillContactEmail(value = this.vendorFormValues.email): Promise<void> {
-        await this.modalSelector.locator(this.vendorFormFields.email.selector).fill(value);
+    private async fillContactEmail(value = this.formValues.email): Promise<void> {
+        await this.modalSelector.locator(this.formFields.email.selector).fill(value);
     }
 
     private async saveForm(): Promise<void> {
