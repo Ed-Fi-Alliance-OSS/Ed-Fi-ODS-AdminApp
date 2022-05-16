@@ -3,7 +3,7 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
-import { context } from "../management/setup";
+import { context, network } from "../management/setup";
 import { AdminAppPage } from "./adminAppPage";
 
 export class VendorsPage extends AdminAppPage {
@@ -157,7 +157,7 @@ export class VendorsPage extends AdminAppPage {
 
     async saveVendorForm({ expectErrors = false }: { expectErrors?: boolean } = {}): Promise<void> {
         await Promise.all([
-            this.waitForResponse({
+            network.waitForResponse({
                 url: "/GlobalSettings/AddVendor",
                 status: expectErrors ? 400 : 200,
             }),
@@ -167,7 +167,7 @@ export class VendorsPage extends AdminAppPage {
 
     async saveEditedVendorForm(): Promise<void> {
         await Promise.all([
-            this.waitForResponse({
+            network.waitForResponse({
                 url: "/GlobalSettings/EditVendor",
             }),
             this.saveForm(),
@@ -193,7 +193,7 @@ export class VendorsPage extends AdminAppPage {
     async deleteVendor(): Promise<void> {
         await Promise.all([
             this.clickConfirmDelete(),
-            this.waitForResponse({ url: "GlobalSettings/DeleteVendor" }),
+            network.waitForResponse({ url: "GlobalSettings/DeleteVendor" }),
         ]);
     }
 

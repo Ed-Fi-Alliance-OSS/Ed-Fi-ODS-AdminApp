@@ -5,6 +5,7 @@
 
 import { Credentials } from "../interfaces";
 import { getAccessToken, isTokenValid, testURL } from "../management/functions";
+import { network } from "../management/setup";
 import { AdminAppPage } from "./adminAppPage";
 
 export class ApplicationsPage extends AdminAppPage {
@@ -19,6 +20,8 @@ export class ApplicationsPage extends AdminAppPage {
     deleteApplicationBtn = "a.delete-application-link";
     deleteConfirmSelector = "div.alert:not(.hidden)";
     confirmDeleteBtn = 'button[type="submit"]';
+
+    applicationListURL = "/Application/ApplicationList";
 
     credentials!: Credentials;
 
@@ -76,7 +79,7 @@ export class ApplicationsPage extends AdminAppPage {
     }
 
     async waitForListLoad(): Promise<void> {
-        await this.waitForResponse({ url: "/Application/ApplicationList" });
+        await network.waitForResponse({ url: this.applicationListURL });
     }
 
     async addApplication(): Promise<void> {
@@ -97,12 +100,22 @@ export class ApplicationsPage extends AdminAppPage {
     async saveApplicationForm({ expectErrors = false }: { expectErrors?: boolean } = {}): Promise<void> {
         try {
             await Promise.all([
-                this.waitForResponse({
+                network.waitForResponse({
                     url: "/Application/Add",
                     status: expectErrors ? 400 : 200,
                 }),
                 this.saveForm(),
             ]);
+            network.startResponseTracking(this.applicationListURL);
+        } catch (error) {
+            throw `${error}\nErrors saving form:\n${await this.getErrorMessages()}`;
+        }
+    }
+
+    async saveEditedApplicationForm(): Promise<void> {
+        try {
+            await Promise.all([network.waitForResponse({ url: "/Application/Edit" }), this.saveForm()]);
+            network.startResponseTracking(this.applicationListURL);
         } catch (error) {
             throw `${error}\nErrors saving form:\n${await this.getErrorMessages()}`;
         }
@@ -149,10 +162,6 @@ export class ApplicationsPage extends AdminAppPage {
         return await this.getText({ section: this.modalSelector, selector: this.errorMsgSection });
     }
 
-    async saveEditedApplicationForm(): Promise<void> {
-        await Promise.all([this.waitForResponse({ url: "/Application/Edit" }), this.saveForm()]);
-    }
-
     async hasKey(): Promise<boolean> {
         return await this.elementExists(this.keySelector);
     }
@@ -192,7 +201,10 @@ export class ApplicationsPage extends AdminAppPage {
     }
 
     async deleteApplication(): Promise<void> {
-        await Promise.all([this.clickConfirmDelete(), this.waitForResponse({ url: "Application/Delete" })]);
+        await Promise.all([
+            this.clickConfirmDelete(),
+            network.waitForResponse({ url: "Application/Delete" }),
+        ]);
     }
 
     async getDeleteApplicationMessage(): Promise<string | null> {

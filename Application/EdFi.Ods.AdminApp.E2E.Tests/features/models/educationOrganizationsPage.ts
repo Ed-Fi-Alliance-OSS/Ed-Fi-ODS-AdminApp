@@ -3,6 +3,7 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
+import { network } from "../management/setup";
 import { AdminAppPage } from "./adminAppPage";
 
 export class EducationOrganizationsPage extends AdminAppPage {
@@ -77,7 +78,7 @@ export class EducationOrganizationsPage extends AdminAppPage {
     }
 
     async waitForListLoad(): Promise<void> {
-        await this.waitForResponse({ url: "/EducationOrganizations/LocalEducationAgency" });
+        await network.waitForResponse({ url: "/EducationOrganizations/LocalEducationAgency" });
     }
 
     async addNewLEA(): Promise<void> {
@@ -118,7 +119,7 @@ export class EducationOrganizationsPage extends AdminAppPage {
     async saveLEAForm({ expectErrors = false }: { expectErrors?: boolean } = {}): Promise<void> {
         try {
             await Promise.all([
-                this.waitForResponse({
+                network.waitForResponse({
                     url: "/EducationOrganizations/AddLocalEducationAgency",
                     status: expectErrors ? 400 : 200,
                 }),
@@ -131,7 +132,7 @@ export class EducationOrganizationsPage extends AdminAppPage {
 
     async saveEditedLEAForm(): Promise<void> {
         await Promise.all([
-            this.waitForResponse({ url: "/EducationOrganizations/EditLocalEducationAgency" }),
+            network.waitForResponse({ url: "/EducationOrganizations/EditLocalEducationAgency" }),
             this.saveForm(),
         ]);
     }
@@ -166,7 +167,7 @@ export class EducationOrganizationsPage extends AdminAppPage {
     async deleteLEA(): Promise<void> {
         await Promise.all([
             this.clickConfirmDelete(),
-            this.waitForResponse({ url: "/EducationOrganizations/DeleteLocalEducationAgency" }),
+            network.waitForResponse({ url: "/EducationOrganizations/DeleteLocalEducationAgency" }),
         ]);
     }
 

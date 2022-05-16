@@ -8,6 +8,7 @@ import { Before, BeforeAll, ITestCaseHookParameter, setDefaultTimeout } from "@c
 import { chromium, Browser, BrowserContext, Page, APIRequestContext, request } from "playwright";
 import { ModelResolver } from "../models/modelResolver";
 import { Test } from "../interfaces";
+import { Network } from "./network";
 
 dotenv.config();
 setDefaultTimeout(60 * 1000);
@@ -16,6 +17,8 @@ export let browser: Browser;
 export let page: Page;
 export let context: BrowserContext;
 export let models: ModelResolver;
+export let network: Network;
+
 export const currentTest: Test = {
     Feature: "",
     Scenario: "",
@@ -35,7 +38,9 @@ Before(async (scenario) => {
     }
 
     page = await context.newPage();
+
     models = new ModelResolver(page);
+    network = new Network();
 
     setScenarioName(scenario);
 });
