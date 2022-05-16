@@ -19,6 +19,7 @@ using EdFi.Security.DataAccess.Contexts;
 using Moq;
 using static EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets.ClaimSetFileImportModel;
 using static EdFi.Ods.AdminApp.Management.Tests.Testing;
+using EdFi.Ods.AdminApp.Management.ClaimSetEditor.Extensions;
 
 namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 {

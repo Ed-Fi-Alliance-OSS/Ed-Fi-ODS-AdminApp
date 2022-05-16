@@ -9,6 +9,7 @@ using System.Linq;
 using AutoMapper;
 using EdFi.Security.DataAccess.Contexts;
 using EdFi.Security.DataAccess.Models;
+using EdFi.Ods.AdminApp.Management.ClaimSetEditor.Extensions;
 
 namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
 {
