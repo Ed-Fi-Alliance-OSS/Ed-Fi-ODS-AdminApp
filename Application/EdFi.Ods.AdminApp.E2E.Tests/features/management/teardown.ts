@@ -9,13 +9,19 @@ import { saveTrace, takeScreenshot } from "./functions";
 import { page, browser, models, currentTest, getApiContext } from "./setup";
 
 After(async (scenario) => {
-    if (scenario.result?.status === TestStepResultStatus.PASSED) {
-        await takeScreenshot("SUCCESS");
-        const steps = scenario.pickle.steps.map((step) => step.text);
-        await cleanup(steps);
-    } else if (scenario.result?.status === TestStepResultStatus.FAILED) {
-        await takeScreenshot("FAIL");
+    switch (scenario.result?.status) {
+        case TestStepResultStatus.PASSED:
+            await takeScreenshot("SUCCESS");
+            break;
+        case TestStepResultStatus.FAILED:
+            await takeScreenshot("FAIL");
+            break;
+        default:
+            break;
     }
+
+    const steps = scenario.pickle.steps.map((step) => step.text);
+    await cleanup(steps);
 
     await saveTrace();
 });
