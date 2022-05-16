@@ -10,6 +10,7 @@ import { models } from "../management/setup";
 Given("there's an application added", async () => {
     await models.applicationsPage.navigate();
     if (await models.applicationsPage.isApplicationPresentOnPage()) {
+        await models.applicationsPage.regenerateApplicationFullSteps();
         return Promise.resolve("Application is already added");
     }
     await models.applicationsPage.addApplicationFullSteps();

@@ -70,3 +70,4 @@ Feature: Applications
         And clicking modal message
         Then credentials are updated
         And generated key-secret is valid
+        And application appears on list

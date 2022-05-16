@@ -221,7 +221,6 @@ export class ApplicationsPage extends AdminAppPage {
 
     saveOldCredentials() {
         this.oldCredentials = this.credentials;
-        console.log(this.credentials);
     }
 
     keyIsUpdated(): boolean {
@@ -254,6 +253,16 @@ export class ApplicationsPage extends AdminAppPage {
             throw "Key and secret not valid";
         }
         await this.isApplicationPresentOnPage();
+    }
+
+    async regenerateApplicationFullSteps() {
+        await this.clickRegenerate();
+        await this.confirmRegenerate();
+        await this.saveKeyAndSecret();
+        await this.confirmKeySecretCopied();
+        if (!(await this.isKeyAndSecretValid())) {
+            throw "Key and secret not valid";
+        }
     }
 
     private async clickKeySecretCopiedButton(): Promise<void> {
