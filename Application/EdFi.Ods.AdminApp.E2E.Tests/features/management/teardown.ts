@@ -26,14 +26,9 @@ After(async (scenario) => {
     await saveTrace();
 });
 
-AfterAll(async () => {
+AfterAll(() => {
     if (!page?.isClosed()) {
         browser.close();
-    }
-
-    const apiContext = await getApiContext();
-    if (apiContext) {
-        apiContext.dispose();
     }
 });
 
