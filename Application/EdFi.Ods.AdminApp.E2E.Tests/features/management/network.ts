@@ -7,17 +7,12 @@ import { Response } from "playwright";
 import { page } from "./setup";
 
 export class Network {
-    expectedURL: string;
-    previousCallFound: boolean;
-
-    public constructor() {
-        this.expectedURL = "";
-        this.previousCallFound = false;
-    }
+    expectedURL = "";
+    urlCallFound = false;
 
     tracker = (response: Response) => {
-        if (!this.previousCallFound && response.url().includes(this.expectedURL)) {
-            this.previousCallFound = true;
+        if (response.url().includes(this.expectedURL)) {
+            this.urlCallFound = true;
         }
     };
 
@@ -27,21 +22,16 @@ export class Network {
     }
 
     stopResponseTracking() {
-        this.expectedURL = "";
-        this.previousCallFound = false;
-        page.removeListener("response", this.tracker);
-    }
-
-    isExpectingPath(): boolean {
-        return this.expectedURL !== "";
+        if(this.expectedURL) {
+            page.removeListener("response", this.tracker);
+            this.expectedURL = "";
+        }
     }
 
     async waitForResponse({ url, status = 200 }: { url: string; status?: number }): Promise<void> {
-        if (this.isExpectingPath()) {
-            if (this.expectedURL === url && this.previousCallFound) {
+        if (this.expectedURL && this.urlCallFound && this.expectedURL === url) {
                 this.stopResponseTracking();
                 return Promise.resolve();
-            }
         }
 
         await page.waitForResponse((response) => {

@@ -265,6 +265,11 @@ export class ApplicationsPage extends AdminAppPage {
         }
     }
 
+    async deleteApplicationFullSteps() {
+        await this.clickDelete();
+        await this.deleteApplication();
+    }
+
     private async clickKeySecretCopiedButton(): Promise<void> {
         await this.modalSelector.locator(this.keySecretCopiedBtn).click();
     }

@@ -257,7 +257,6 @@ export class VendorsPage extends AdminAppPage {
     }
 
     async deleteVendorFullSteps(): Promise<void> {
-        await this.hasPageTitle();
         await this.clickDelete();
         await this.deleteVendor();
     }

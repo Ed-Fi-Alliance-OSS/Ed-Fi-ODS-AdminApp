@@ -192,7 +192,6 @@ export class EducationOrganizationsPage extends AdminAppPage {
     }
 
     async deleteLEAFullSteps(): Promise<void> {
-        await this.hasPageTitle();
         await this.clickDelete();
         await this.deleteLEA();
     }
