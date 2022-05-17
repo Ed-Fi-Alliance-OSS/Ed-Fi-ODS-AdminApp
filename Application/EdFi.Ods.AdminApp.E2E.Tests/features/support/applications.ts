@@ -139,6 +139,10 @@ When("entering application form {string}", async (scenario: string) => {
     }
 });
 
+When("clicking collapse application", async () => {
+    await models.applicationsPage.clickCollapse();
+});
+
 Then("credentials are updated", async () => {
     ok(!models.applicationsPage.keyIsUpdated(), "Key was updated");
     ok(models.applicationsPage.secretIsUpdated(), "Secret was not updated");
@@ -227,4 +231,12 @@ Then("application modal can be closed by {string}", async (scenario: string) => 
 
 Then("application modal is closed", async () => {
     ok(!(await models.applicationsPage.hasModalOpen()), "Modal is still open");
+});
+
+Then("application is collapsed", async () => {
+    ok(await models.applicationsPage.isCollapsed(), "Section collapsed");
+});
+
+Then("section is divided by vendor", async () => {
+    ok(await models.applicationsPage.hasVendorDivision(), "Division not found");
 });

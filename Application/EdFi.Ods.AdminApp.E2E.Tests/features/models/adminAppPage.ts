@@ -59,7 +59,7 @@ export abstract class AdminAppPage {
     }
 
     async hasModalOpen(): Promise<boolean> {
-        return this.elementExists(this.openModalSection);
+        return await this.elementExists(this.openModalSection);
     }
 
     async waitForModalVisible(): Promise<void> {
@@ -95,7 +95,7 @@ export abstract class AdminAppPage {
         text: string;
         selector?: string;
     }): Promise<boolean> {
-        return await this.elementExists(`${this.mainSectionSelector} ${selector}:has-text("${text}")`);
+        return await this.elementExists(`${this.mainSectionSelector} ${selector}:has-text("${text.trim()}")`);
     }
 
     protected async elementExists(selector: string): Promise<boolean> {

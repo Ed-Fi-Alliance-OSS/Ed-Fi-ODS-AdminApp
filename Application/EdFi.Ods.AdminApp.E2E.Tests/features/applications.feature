@@ -99,3 +99,12 @@ Feature: Applications
                 | Scenario        |
                 | clicking x      |
                 | clicking cancel |
+
+        #AA-1299
+        Scenario: Vendor divider
+            Given there's an application added
+            And it's on the "Applications" page
+            And applications page has loaded
+            When clicking collapse application
+            Then application is collapsed
+            And section is divided by vendor

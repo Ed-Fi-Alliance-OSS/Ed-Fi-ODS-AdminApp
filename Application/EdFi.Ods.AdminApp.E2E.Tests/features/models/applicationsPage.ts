@@ -5,7 +5,7 @@
 
 import { Credentials } from "../interfaces";
 import { getAccessToken, getRandomString, isTokenValid, testURL } from "../management/functions";
-import { network } from "../management/setup";
+import { models, network } from "../management/setup";
 import { AdminAppPage } from "./adminAppPage";
 
 export class ApplicationsPage extends AdminAppPage {
@@ -26,6 +26,9 @@ export class ApplicationsPage extends AdminAppPage {
     regenerateBtn = "a.regenerate-application-secret-link";
     closeModalBtn = 'button[aria-label="Close"]';
     cancelBtn = 'button.btn-default[data-dismiss="modal"]';
+    collapseBtn = 'a[data-toggle="collapse"]:has(.fa-chevron-up)';
+    expandBtn = 'a[data-toggle="collapse"]:has(.fa-chevron-down)';
+    vendorHeadingSelector = ".vendor-heading";
 
     applicationListURL = "/Application/ApplicationList";
 
@@ -276,6 +279,21 @@ export class ApplicationsPage extends AdminAppPage {
 
     async clickCancel(): Promise<void> {
         await this.modalSelector.locator(this.cancelBtn).click();
+    }
+
+    async clickCollapse(): Promise<void> {
+        await this.page.locator(this.collapseBtn).click();
+    }
+
+    async isCollapsed(): Promise<boolean> {
+        return (await this.elementExists(this.expandBtn)) && (await this.isApplicationPresentOnPage());
+    }
+
+    async hasVendorDivision(): Promise<boolean> {
+        return await this.hasText({
+            text: `Vendor: ${models.vendorsPage.formValues.name}`,
+            selector: this.vendorHeadingSelector,
+        });
     }
 
     async addApplicationFullSteps(): Promise<void> {
