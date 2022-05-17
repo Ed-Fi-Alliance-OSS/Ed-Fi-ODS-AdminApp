@@ -22,7 +22,7 @@ export class Network {
     }
 
     stopResponseTracking() {
-        if(this.expectedURL) {
+        if (this.expectedURL) {
             page.removeListener("response", this.tracker);
             this.expectedURL = "";
         }
@@ -30,8 +30,8 @@ export class Network {
 
     async waitForResponse({ url, status = 200 }: { url: string; status?: number }): Promise<void> {
         if (this.expectedURL && this.urlCallFound && this.expectedURL === url) {
-                this.stopResponseTracking();
-                return Promise.resolve();
+            this.stopResponseTracking();
+            return Promise.resolve();
         }
 
         await page.waitForResponse((response) => {

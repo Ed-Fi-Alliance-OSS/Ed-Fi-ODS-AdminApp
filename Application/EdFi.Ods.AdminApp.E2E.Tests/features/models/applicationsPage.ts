@@ -4,7 +4,7 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 import { Credentials } from "../interfaces";
-import { getAccessToken, isTokenValid, testURL } from "../management/functions";
+import { getAccessToken, getRandomString, isTokenValid, testURL } from "../management/functions";
 import { network } from "../management/setup";
 import { AdminAppPage } from "./adminAppPage";
 
@@ -12,6 +12,7 @@ export class ApplicationsPage extends AdminAppPage {
     activeTabSelector = "ul.nav li.active";
     apiURLSelector = "a.copy-to-clipboard";
     errorMsgSection = "div.validationSummary";
+    fieldWithErrorSelector = ".row.has-error";
     modalConfirmationBtn = 'button[type="submit"]';
     addApplicationBtn = this.modalConfirmationBtn;
     confirmRegenerateBtn = this.modalConfirmationBtn;
@@ -23,6 +24,8 @@ export class ApplicationsPage extends AdminAppPage {
     deleteApplicationBtn = "a.delete-application-link";
     confirmSelector = "div.alert:not(.hidden)";
     regenerateBtn = "a.regenerate-application-secret-link";
+    closeModalBtn = 'button[aria-label="Close"]';
+    cancelBtn = "button.btn-default";
 
     applicationListURL = "/Application/ApplicationList";
 
@@ -71,6 +74,13 @@ export class ApplicationsPage extends AdminAppPage {
         updated: "Application updated successfully",
     };
 
+    errorMessages = {
+        noData: "The highlighted fields are required to submit this form.",
+        noOrgSelected: "You must choose at least one Education Organization",
+        longAppName:
+            "would be too long for Admin App to set up necessary Application records. Consider shortening the name by 1 character(s).",
+    };
+
     modalTitleMessages = {
         addApplication: "Add Application to Vendor",
         addedSecret: "Add Application",
@@ -100,6 +110,10 @@ export class ApplicationsPage extends AdminAppPage {
 
     async editApplicationForm(): Promise<void> {
         await this.fillApplicationName(this.editedFormValueName);
+    }
+
+    async enterLongApplicationName(): Promise<void> {
+        await this.fillApplicationName(getRandomString(51));
     }
 
     async saveApplicationForm({ expectErrors = false }: { expectErrors?: boolean } = {}): Promise<void> {
@@ -165,6 +179,20 @@ export class ApplicationsPage extends AdminAppPage {
 
     async getErrorMessages(): Promise<string | null> {
         return await this.getText({ section: this.modalSelector, selector: this.errorMsgSection });
+    }
+
+    async applicationFieldHasError(): Promise<boolean> {
+        return (
+            this.modalSelector.locator(this.fieldWithErrorSelector).locator(this.formSelectors.name) !==
+            undefined
+        );
+    }
+
+    async requiredFieldsHaveError(): Promise<boolean> {
+        return (
+            this.modalSelector.locator(this.fieldWithErrorSelector).locator(this.formSelectors.name) !==
+            undefined
+        );
     }
 
     async hasKey(): Promise<boolean> {
@@ -240,6 +268,14 @@ export class ApplicationsPage extends AdminAppPage {
 
     async getModalConfirmationMessage(): Promise<string | null> {
         return await this.getText({ section: this.modalSelector, selector: this.confirmSelector });
+    }
+
+    async closeModal(): Promise<void> {
+        await this.modalSelector.locator(this.closeModalBtn).click();
+    }
+
+    async clickCancel(): Promise<void> {
+        await this.modalSelector.locator(this.cancelBtn).click();
     }
 
     async addApplicationFullSteps(): Promise<void> {

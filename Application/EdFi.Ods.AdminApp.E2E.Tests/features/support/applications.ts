@@ -26,6 +26,7 @@ When("clicking API URL", async () => {
 
 When("adding new application", async () => {
     await models.applicationsPage.addApplication();
+    await models.applicationsPage.waitForModalVisible();
 });
 
 When("filling application form", async () => {
@@ -52,6 +53,10 @@ When("clicking save application", async () => {
 
 When("clicking save edited application", async () => {
     await models.applicationsPage.saveEditedApplicationForm();
+});
+
+When("clicking save application with errors", async () => {
+    await models.applicationsPage.saveApplicationForm({ expectErrors: true });
 });
 
 When("clicking edit application", async () => {
@@ -122,6 +127,18 @@ When("clicking confirm regeneration", async () => {
     await models.applicationsPage.confirmRegenerate();
 });
 
+When("entering application form {string}", async (scenario: string) => {
+    switch (scenario) {
+        case "long app name":
+            await models.applicationsPage.fillApplicationForm();
+            await models.applicationsPage.enterLongApplicationName();
+            break;
+        case "no data":
+        default:
+            break;
+    }
+});
+
 Then("credentials are updated", async () => {
     ok(!models.applicationsPage.keyIsUpdated(), "Key was updated");
     ok(models.applicationsPage.secretIsUpdated(), "Secret was not updated");
@@ -167,4 +184,46 @@ Then("application is edited", async () => {
         models.applicationsPage.confirmationMessages.updated,
         "Confirmation message not found"
     );
+});
+
+Then("application validation for {string} appears", async (scenario: string) => {
+    const errors = await models.applicationsPage.getErrorMessages();
+
+    switch (scenario) {
+        case "long app name":
+            ok(
+                errors?.includes(models.applicationsPage.errorMessages.longAppName),
+                `long application name error message failed. Actual message: ${errors}`
+            );
+            ok(await models.applicationsPage.applicationFieldHasError());
+            break;
+        case "no data":
+            ok(
+                errors?.includes(models.applicationsPage.errorMessages.noData),
+                `Error message failed. Actual message: ${errors}`
+            );
+            ok(
+                errors?.includes(models.applicationsPage.errorMessages.noOrgSelected),
+                `Error message failed. Actual message: ${errors}`
+            );
+            ok(await models.applicationsPage.requiredFieldsHaveError());
+            break;
+        default:
+            break;
+    }
+});
+
+Then("application modal can be closed by {string}", async (scenario: string) => {
+    switch (scenario) {
+        case "clicking outside":
+            await models.applicationsPage.clickOutside();
+            break;
+        case "clicking cancel":
+            await models.applicationsPage.clickCancel();
+            break;
+        case "clicking x":
+        default:
+            await models.applicationsPage.closeModal();
+            break;
+    }
 });

@@ -62,6 +62,14 @@ export abstract class AdminAppPage {
         return this.elementExists(this.openModalSection);
     }
 
+    async waitForModalVisible(): Promise<void> {
+        await this.waitForElementToBeVisible(this.openModalSection);
+    }
+
+    async waitForElementToBeVisible(element: string): Promise<void> {
+        await this.page.locator(element).waitFor({ state: "visible" });
+    }
+
     async clickOutside(): Promise<void> {
         await this.page.locator(this.bodySelector).click();
     }

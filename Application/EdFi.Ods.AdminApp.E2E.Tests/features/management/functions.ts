@@ -17,6 +17,14 @@ export async function saveTrace(): Promise<void> {
     }
 }
 
+export function getRandomString(len: number): string {
+    let randomWord = "";
+    for (let i = 0; i < len; ++i) {
+        randomWord += "a";
+    }
+    return randomWord;
+}
+
 export async function takeScreenshot(name: string): Promise<void> {
     await page.screenshot({
         path: `./screenshots/${currentTest.Feature}/${currentTest.Scenario}/${name}.png`,
