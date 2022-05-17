@@ -75,7 +75,7 @@ Feature: Vendors
             | wrong email |
 
     #AA-1503
-    Scenario Outline: Add vendor modal interactions
+    Scenario Outline: Modal interactions
         Given it's on the "Vendors" page
         And vendor page has loaded
         And there are no vendors

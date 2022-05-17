@@ -86,3 +86,16 @@ Feature: Applications
                 | Scenario      |
                 | no data       |
                 | long app name |
+
+        #AA-1298
+        Scenario Outline: Modal interactions
+            Given it's on the "Applications" page
+            And applications page has loaded
+            When adding new application
+            Then application modal can be closed by "<Scenario>"
+            And application modal is closed
+
+            Examples:
+                | Scenario        |
+                | clicking x      |
+                | clicking cancel |

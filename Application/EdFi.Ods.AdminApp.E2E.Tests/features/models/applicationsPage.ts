@@ -25,7 +25,7 @@ export class ApplicationsPage extends AdminAppPage {
     confirmSelector = "div.alert:not(.hidden)";
     regenerateBtn = "a.regenerate-application-secret-link";
     closeModalBtn = 'button[aria-label="Close"]';
-    cancelBtn = "button.btn-default";
+    cancelBtn = 'button.btn-default[data-dismiss="modal"]';
 
     applicationListURL = "/Application/ApplicationList";
 

@@ -215,9 +215,6 @@ Then("application validation for {string} appears", async (scenario: string) => 
 
 Then("application modal can be closed by {string}", async (scenario: string) => {
     switch (scenario) {
-        case "clicking outside":
-            await models.applicationsPage.clickOutside();
-            break;
         case "clicking cancel":
             await models.applicationsPage.clickCancel();
             break;
@@ -226,4 +223,8 @@ Then("application modal can be closed by {string}", async (scenario: string) => 
             await models.applicationsPage.closeModal();
             break;
     }
+});
+
+Then("application modal is closed", async () => {
+    ok(!(await models.applicationsPage.hasModalOpen()), "Modal is still open");
 });
