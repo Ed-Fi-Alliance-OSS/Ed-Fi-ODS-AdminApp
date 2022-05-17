@@ -40,15 +40,6 @@ AfterAll(async () => {
 async function cleanup(steps: string[]): Promise<void> {
     try {
         if (
-            currentTest.Scenario.match(".*Add Application$") ||
-            (steps.includes("there's an application added") &&
-                !currentTest.Scenario.match(".*Delete Application$"))
-        ) {
-            await models.applicationsPage.navigate();
-            await models.applicationsPage.deleteApplicationFullSteps();
-        }
-
-        if (
             currentTest.Scenario.match(".*Add local education agency$") ||
             (steps.includes("there's a local education agency added") &&
                 !currentTest.Scenario.match(".*Delete local education agency$"))
