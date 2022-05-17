@@ -160,7 +160,7 @@ export class EducationOrganizationsPage extends AdminAppPage {
     async isSectionCollapsed(): Promise<boolean> {
         return (
             (await this.elementExists(this.expandBtn)) &&
-            (await this.page.locator(this.edOrgDetailsSectionCollapsedSection).count()) > 0
+            (await this.elementExists(this.edOrgDetailsSectionCollapsedSection))
         );
     }
 
