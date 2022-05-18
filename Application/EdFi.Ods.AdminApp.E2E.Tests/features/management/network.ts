@@ -29,10 +29,10 @@ export class Network {
     }
 
     async waitForResponse({ url, status = 200 }: { url: string; status?: number }): Promise<void> {
-        if (this.expectedURL && this.urlCallFound && this.expectedURL === url) {
-            this.stopResponseTracking();
-            return Promise.resolve();
-        }
+        // if (this.expectedURL && this.urlCallFound && this.expectedURL === url) {
+        //     this.stopResponseTracking();
+        //     return Promise.resolve();
+        // }
 
         await page.waitForResponse((response) => {
             const hasURL = response.url().includes(url);
