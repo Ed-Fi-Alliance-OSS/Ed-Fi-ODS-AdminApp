@@ -4,8 +4,9 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 import { mkdir } from "fs/promises";
+import { APIRequestContext, request } from "playwright";
 import { Credentials } from "../interfaces";
-import { context, currentTest, page, getApiContext } from "./setup";
+import { context, currentTest, page } from "./setup";
 
 export async function saveTrace(): Promise<void> {
     if (process.env.TRACE) {
@@ -17,6 +18,12 @@ export async function saveTrace(): Promise<void> {
     }
 }
 
+export async function takeScreenshot(name: string): Promise<void> {
+    await page.screenshot({
+        path: `./screenshots/${currentTest.Feature}/${currentTest.Scenario}/${name}.png`,
+    });
+}
+
 export function getRandomString(len: number): string {
     let randomWord = "";
     for (let i = 0; i < len; ++i) {
@@ -25,9 +32,14 @@ export function getRandomString(len: number): string {
     return randomWord;
 }
 
-export async function takeScreenshot(name: string): Promise<void> {
-    await page.screenshot({
-        path: `./screenshots/${currentTest.Feature}/${currentTest.Scenario}/${name}.png`,
+
+export async function getApiContext(extraHTTPHeaders?: {
+    Authorization: string;
+    "Content-Type"?: string;
+}): Promise<APIRequestContext> {
+    return await request.newContext({
+        ignoreHTTPSErrors: true,
+        extraHTTPHeaders,
     });
 }
 

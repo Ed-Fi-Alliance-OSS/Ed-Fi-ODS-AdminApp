@@ -84,13 +84,3 @@ function getScenarioExample(scenario: ITestCaseHookParameter): string | undefine
     }
     return;
 }
-
-export async function getApiContext(extraHTTPHeaders?: {
-    Authorization: string;
-    "Content-Type"?: string;
-}): Promise<APIRequestContext> {
-    return await request.newContext({
-        ignoreHTTPSErrors: true,
-        extraHTTPHeaders,
-    });
-}
