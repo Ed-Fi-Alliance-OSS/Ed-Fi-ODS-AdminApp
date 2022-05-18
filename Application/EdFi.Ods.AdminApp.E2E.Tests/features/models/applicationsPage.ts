@@ -98,7 +98,7 @@ export class ApplicationsPage extends AdminAppPage {
 
     async waitForListLoad(): Promise<void> {
         if (await this.hasLoadingSpinner()) {
-            await network.waitForResponse({ url: this.applicationListURL });
+            await network.waitForResponse({ url: this.applicationListURL, trackingResponse: true });
         }
     }
 

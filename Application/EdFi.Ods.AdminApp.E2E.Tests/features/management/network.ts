@@ -22,17 +22,15 @@ export class Network {
     }
 
     stopResponseTracking() {
-        if (this.expectedURL) {
             page.removeListener("response", this.tracker);
             this.expectedURL = "";
-        }
     }
 
-    async waitForResponse({ url, status = 200 }: { url: string; status?: number }): Promise<void> {
-        // if (this.expectedURL && this.urlCallFound && this.expectedURL === url) {
-        //     this.stopResponseTracking();
-        //     return Promise.resolve();
-        // }
+    async waitForResponse({ url, status = 200, trackingResponse = false }: { url: string; status?: number, trackingResponse?: boolean }): Promise<void> {
+        if (trackingResponse && this.urlCallFound && this.expectedURL === url) {
+            this.stopResponseTracking();
+            return Promise.resolve();
+        }
 
         await page.waitForResponse((response) => {
             const hasURL = response.url().includes(url);
