@@ -32,7 +32,6 @@ export function getRandomString(len: number): string {
     return randomWord;
 }
 
-
 export async function getApiContext(extraHTTPHeaders?: {
     Authorization: string;
     "Content-Type"?: string;

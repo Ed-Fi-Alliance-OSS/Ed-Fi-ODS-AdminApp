@@ -28,6 +28,7 @@ export class ApplicationsPage extends AdminAppPage {
     cancelBtn = 'button.btn-default[data-dismiss="modal"]';
     collapseBtn = 'a[data-toggle="collapse"]:has(.fa-chevron-up)';
     expandBtn = 'a[data-toggle="collapse"]:has(.fa-chevron-down)';
+    loadingIconSelector = "div h6";
     vendorHeadingSelector = ".vendor-heading";
 
     get keySelector(): string {
@@ -103,7 +104,10 @@ export class ApplicationsPage extends AdminAppPage {
     }
 
     async hasLoadingSpinner(): Promise<boolean> {
-        return await this.hasText({ text: "Warming up Production API....", selector: "div h6" });
+        return await this.hasText({
+            text: "Warming up Production API....",
+            selector: this.loadingIconSelector,
+        });
     }
 
     async addApplication(): Promise<void> {

@@ -5,7 +5,7 @@
 
 import dotenv = require("dotenv");
 import { Before, BeforeAll, ITestCaseHookParameter, setDefaultTimeout } from "@cucumber/cucumber";
-import { chromium, Browser, BrowserContext, Page, APIRequestContext, request } from "playwright";
+import { chromium, Browser, BrowserContext, Page } from "playwright";
 import { ModelResolver } from "../models/modelResolver";
 import { Test } from "../interfaces";
 import { Network } from "./network";
