@@ -17,6 +17,7 @@ Given("there's an application added", async () => {
 });
 
 Given("applications page has loaded", async () => {
+    await models.applicationsPage.waitForListLoad();
     ok(await models.applicationsPage.hasTabSelected(), "Applications tab not selected");
 });
 

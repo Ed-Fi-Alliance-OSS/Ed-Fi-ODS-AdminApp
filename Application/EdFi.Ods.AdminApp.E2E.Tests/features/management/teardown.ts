@@ -9,7 +9,9 @@ import { saveTrace, takeScreenshot } from "./functions";
 import { page, browser, models, currentTest, getApiContext } from "./setup";
 
 After(async (scenario) => {
-    scenario.result?.status === TestStepResultStatus.PASSED? await takeScreenshot("SUCCESS"): await takeScreenshot("FAIL");
+    scenario.result?.status === TestStepResultStatus.PASSED
+        ? await takeScreenshot("SUCCESS")
+        : await takeScreenshot("FAIL");
 
     const steps = scenario.pickle.steps.map((step) => step.text);
     await cleanup(steps);

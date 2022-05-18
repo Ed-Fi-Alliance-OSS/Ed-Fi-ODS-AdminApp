@@ -97,7 +97,13 @@ export class ApplicationsPage extends AdminAppPage {
     }
 
     async waitForListLoad(): Promise<void> {
-        await network.waitForResponse({ url: this.applicationListURL });
+        if (await this.hasLoadingSpinner()) {
+            await network.waitForResponse({ url: this.applicationListURL });
+        }
+    }
+
+    async hasLoadingSpinner(): Promise<boolean> {
+        return await this.hasText({ text: "Warming up Production API....", selector: "div h6" });
     }
 
     async addApplication(): Promise<void> {
