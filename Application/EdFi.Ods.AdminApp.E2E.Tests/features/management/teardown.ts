@@ -6,7 +6,7 @@
 import { After, AfterAll } from "@cucumber/cucumber";
 import { TestStepResultStatus } from "@cucumber/messages";
 import { saveTrace, takeScreenshot } from "./functions";
-import { page, browser, models, currentTest, getApiContext } from "./setup";
+import { page, browser, models, currentTest } from "./setup";
 
 After(async (scenario) => {
     scenario.result?.status === TestStepResultStatus.PASSED

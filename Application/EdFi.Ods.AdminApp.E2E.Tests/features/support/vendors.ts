@@ -20,10 +20,6 @@ Given("vendor page has loaded", async () => {
     ok(await models.vendorsPage.hasPageTitle(), "Page title not found.");
 });
 
-Given("there are no vendors", async () => {
-    ok(await models.vendorsPage.noVendorsMessageVisible(), "There are vendors on the page");
-});
-
 When("clicking add vendor", async () => {
     await models.vendorsPage.addVendor();
 });
@@ -54,10 +50,10 @@ When("delete vendor modal is open", async () => {
     ok(
         (await models.vendorsPage.getDeleteVendorMessage())?.includes(
             models.vendorsPage.deleteVendorConfirmationMessage
-        ),
+            ),
         "Validation message not correct"
-    );
-});
+        );
+    });
 
 When("confirming delete vendor", async () => {
     await models.vendorsPage.deleteVendor();
@@ -68,7 +64,7 @@ When("filling vendor form", async () => {
         await models.vendorsPage.modalTitle(),
         models.vendorsPage.modalTitleMessages.addVendor,
         "Modal not found."
-    );
+        );
 
     await models.vendorsPage.fillVendorForm();
 });
@@ -107,7 +103,11 @@ When("entering vendor form {string}", async (scenario: string) => {
         case "no data":
         default:
             break;
-    }
+        }
+    });
+
+Then("no vendors message appears", async () => {
+    ok(await models.vendorsPage.noVendorsMessageVisible(), "There are vendors on the page");
 });
 
 Then("vendor is added", async () => {
@@ -115,7 +115,7 @@ Then("vendor is added", async () => {
         await models.vendorsPage.getToastMessage(),
         models.vendorsPage.confirmationMessages.added,
         "Confirmation message not found"
-    );
+        );
 });
 
 Then("vendor is edited", async () => {

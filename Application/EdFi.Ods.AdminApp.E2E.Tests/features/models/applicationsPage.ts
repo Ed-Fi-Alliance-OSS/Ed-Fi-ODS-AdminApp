@@ -30,11 +30,6 @@ export class ApplicationsPage extends AdminAppPage {
     expandBtn = 'a[data-toggle="collapse"]:has(.fa-chevron-down)';
     vendorHeadingSelector = ".vendor-heading";
 
-    applicationListURL = "/Application/ApplicationList";
-
-    credentials!: Credentials;
-    oldCredentials!: Credentials;
-
     get keySelector(): string {
         return this.credentialsSelector("Key");
     }
@@ -46,6 +41,11 @@ export class ApplicationsPage extends AdminAppPage {
     get odsURLSelector(): string {
         return this.credentialsSelector("API URL");
     }
+
+    applicationListURL = "/Application/ApplicationList";
+
+    credentials!: Credentials;
+    oldCredentials!: Credentials;
 
     get editedFormValueName(): string {
         return `${this.formValues.name} - Edited`;
