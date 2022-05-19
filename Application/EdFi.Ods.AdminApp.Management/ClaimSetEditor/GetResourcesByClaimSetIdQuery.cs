@@ -9,6 +9,7 @@ using System.Linq;
 using AutoMapper;
 using EdFi.Security.DataAccess.Contexts;
 using EdFi.Security.DataAccess.Models;
+using EdFi.Ods.AdminApp.Management.ClaimSetEditor.Extensions;
 
 namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
 {
@@ -221,32 +222,15 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
 
                 if (resultDictionary.ContainsKey(resourceClaim.ResourceClaim.ResourceClaimId))
                 {
-                    resultDictionary[resourceClaim.ResourceClaim.ResourceClaimId] = AddToOverrideDictionary(
-                        resultDictionary[resourceClaim.ResourceClaim.ResourceClaimId], resourceClaim.Action,
+                    resultDictionary[resourceClaim.ResourceClaim.ResourceClaimId].AddAuthorizationStrategyOverrides(resourceClaim.Action,
                         authStrategy);
                 }
                 else
                 {
                     var actions = new AuthorizationStrategy[]{null, null, null, null};
-                    actions = AddToOverrideDictionary(actions, resourceClaim.Action, authStrategy);                                
-                    resultDictionary[resourceClaim.ResourceClaim.ResourceClaimId] = actions;
-                }
-
-                AuthorizationStrategy[] AddToOverrideDictionary(AuthorizationStrategy[] actions, Security.DataAccess.Models.Action action, AuthorizationStrategy strategy)
-                {
-                    if (action.ActionName == Action.Create.Value)
-                        actions[0] = strategy;
-                    else if (action.ActionName == Action.Read.Value)
-                        actions[1] = strategy;
-                    else if (action.ActionName == Action.Update.Value)
-                        actions[2] = strategy;
-                    else if (action.ActionName == Action.Delete.Value)
-                        actions[3] = strategy;
-
-                    return actions;
+                    resultDictionary[resourceClaim.ResourceClaim.ResourceClaimId] = actions.AddAuthorizationStrategyOverrides(resourceClaim.Action, authStrategy);
                 }
             }
-            
             return resultDictionary;
         }
 
