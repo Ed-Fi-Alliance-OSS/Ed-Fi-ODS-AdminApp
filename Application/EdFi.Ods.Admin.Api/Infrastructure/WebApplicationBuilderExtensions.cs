@@ -1,7 +1,12 @@
 using System.Reflection;
 using EdFi.Admin.DataAccess.Contexts;
 using EdFi.Ods.Admin.Api.Infrastructure.Security;
+using EdFi.Ods.AdminApp.Management;
+using EdFi.Ods.AdminApp.Management.Api;
+using EdFi.Ods.AdminApp.Management.Api.Automapper;
 using EdFi.Ods.AdminApp.Management.Database;
+using EdFi.Ods.AdminApp.Management.Database.Commands;
+using EdFi.Ods.AdminApp.Management.Database.Queries;
 using EdFi.Security.DataAccess.Contexts;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +19,13 @@ public static class WebApplicationBuilderExtensions
 {
     public static void AddServices(this WebApplicationBuilder webApplicationBuilder)
     {
+        var executingAssembly = Assembly.GetExecutingAssembly();
+        webApplicationBuilder.Services.AddAutoMapper(executingAssembly);
+        webApplicationBuilder.Services.AddTransient<IGetVendorsQuery, GetVendorsQuery>();
+        webApplicationBuilder.Services.AddTransient<IGetVendorByIdQuery, GetVendorByIdQuery>();
+        webApplicationBuilder.Services.AddTransient(typeof(EditVendorCommand));
+        webApplicationBuilder.Services.AddTransient(typeof(AddVendorCommand));
+
         // Add services to the container.
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         webApplicationBuilder.Services.AddEndpointsApiExplorer();
@@ -58,7 +70,6 @@ public static class WebApplicationBuilderExtensions
         webApplicationBuilder.Logging.AddLog4Net(loggingOptions);
 
         // Fluent validation
-        var executingAssembly = Assembly.GetExecutingAssembly();
         webApplicationBuilder.Services.AddFluentValidation(
             opt =>
             {
