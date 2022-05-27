@@ -1,12 +1,8 @@
 using System.Reflection;
 using EdFi.Admin.DataAccess.Contexts;
+using EdFi.Ods.Admin.Api.Features;
 using EdFi.Ods.Admin.Api.Infrastructure.Security;
-using EdFi.Ods.AdminApp.Management;
-using EdFi.Ods.AdminApp.Management.Api;
-using EdFi.Ods.AdminApp.Management.Api.Automapper;
 using EdFi.Ods.AdminApp.Management.Database;
-using EdFi.Ods.AdminApp.Management.Database.Commands;
-using EdFi.Ods.AdminApp.Management.Database.Queries;
 using EdFi.Security.DataAccess.Contexts;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
@@ -21,10 +17,8 @@ public static class WebApplicationBuilderExtensions
     {
         var executingAssembly = Assembly.GetExecutingAssembly();
         webApplicationBuilder.Services.AddAutoMapper(executingAssembly);
-        webApplicationBuilder.Services.AddTransient<IGetVendorsQuery, GetVendorsQuery>();
-        webApplicationBuilder.Services.AddTransient<IGetVendorByIdQuery, GetVendorByIdQuery>();
-        webApplicationBuilder.Services.AddTransient(typeof(EditVendorCommand));
-        webApplicationBuilder.Services.AddTransient(typeof(AddVendorCommand));
+
+        webApplicationBuilder.Services.AddFeatureSpecificServices();
 
         // Add services to the container.
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -127,6 +121,25 @@ public static class WebApplicationBuilderExtensions
 
             webApplicationBuilder.Services.AddScoped<IUsersContext>(
                 sp => new SqlServerUsersContext(adminConnectionString));
+        }
+    }
+
+    public static void AddFeatureSpecificServices(this IServiceCollection services)
+    {
+        var featureInterface = typeof(IFeature);
+        var featureImpls = Assembly.GetExecutingAssembly().GetTypes()
+            .Where(p => featureInterface.IsAssignableFrom(p) && p.IsClass);
+
+        var features = new List<IFeature>();
+
+        foreach (var featureImpl in featureImpls)
+        {
+            if (Activator.CreateInstance(featureImpl) is IFeature feature)
+                features.Add(feature);
+        }
+        foreach (var routeBuilder in features)
+        {
+            routeBuilder.DefineFeatureSpecificServices(services);
         }
     }
 }
