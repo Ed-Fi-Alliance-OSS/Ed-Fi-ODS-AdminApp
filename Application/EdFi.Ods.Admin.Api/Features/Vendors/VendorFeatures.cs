@@ -4,7 +4,6 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using AutoMapper;
-using EdFi.Ods.AdminApp.Management.Database;
 using EdFi.Ods.AdminApp.Management.Database.Commands;
 using EdFi.Ods.AdminApp.Management.Database.Queries;
 
@@ -19,6 +18,16 @@ public class VendorFeatures : IFeature
         endpoints.MapPost("/vendors", AddVendor).RequireAuthorization();
         endpoints.MapPut("/vendors", UpdateVendor).RequireAuthorization();
         endpoints.MapDelete("/vendors/{id}", DeleteVendor).RequireAuthorization();
+    }
+
+    public void DefineFeatureSpecificServices(IServiceCollection services)
+    {
+        services.AddTransient<IGetVendorsQuery, GetVendorsQuery>();
+        services.AddTransient<IGetVendorByIdQuery, GetVendorByIdQuery>();
+        services.AddTransient(typeof(EditVendorCommand));
+        services.AddTransient(typeof(AddVendorCommand));
+        services.AddTransient<IDeleteApplicationCommand, DeleteApplicationCommand>();
+        services.AddTransient(typeof(DeleteVendorCommand));
     }
 
     internal Task<IResult> GetVendors(IGetVendorsQuery getVendorsQuery, IMapper mapper)
@@ -60,15 +69,15 @@ public class VendorFeatures : IFeature
         return AdminApiResponse<VendorModel>.Updated(model, "Vendor");
     }
 
-    internal Task<IResult> DeleteVendor(AdminAppDbContext dbContext, int id)
+    internal Task<IResult> DeleteVendor(DeleteVendorCommand deleteVendorCommand,
+        IGetVendorByIdQuery getVendorByIdQuery, int id)
     {
-        CheckIfExists(id);
+        var vendor = getVendorByIdQuery.Execute(id);
+        if (vendor.IsSystemReservedVendor())
+        {
+            throw new Exception("This Vendor is required for proper system function and may not be deleted");
+        }
+        deleteVendorCommand.Execute(id);
         return  Task.FromResult(AdminApiResponse.Deleted("Vendor"));
-    }
-
-    private void CheckIfExists(int id)
-    {
-        if (id < 0)
-            throw new NotFoundException<int>("Vendor", id);
     }
 }
