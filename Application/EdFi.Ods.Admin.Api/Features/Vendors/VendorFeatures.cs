@@ -6,6 +6,7 @@
 using AutoMapper;
 using EdFi.Ods.AdminApp.Management.Database.Commands;
 using EdFi.Ods.AdminApp.Management.Database.Queries;
+using EdFi.Ods.AdminApp.Management.ErrorHandling;
 
 namespace EdFi.Ods.Admin.Api.Features.Vendors;
 
@@ -51,32 +52,23 @@ public class VendorFeatures : IFeature
         AddVendorModelValidator validator, AddVendorModel vendor)
     {
         await validator.GuardAsync(vendor);
-        var addedVendorId = addVendorCommand.Execute(vendor);
-        return AdminApiResponse<AddVendorModel>.Created(vendor, "Vendor", $"/Vendors/{addedVendorId}");
+        var addedVendor = addVendorCommand.Execute(vendor);
+        var model = mapper.Map<VendorModel>(addedVendor);
+        return AdminApiResponse<VendorModel>.Created(model, "Vendor", $"/Vendors/{model.VendorId}");
     }
 
     internal async Task<IResult> UpdateVendor(EditVendorCommand editVendorCommand, IGetVendorByIdQuery getVendorByIdQuery, IMapper mapper,
         EditVendorModelValidator validator, EditVendorModel vendorModel)
     {
-        var vendor = getVendorByIdQuery.Execute(vendorModel.VendorId);
-        if (vendor == null)
-        {
-            throw new NotFoundException<int>("This vendor no longer exists.It may have been recently deleted.", vendorModel.VendorId);
-        }
         await validator.GuardAsync(vendorModel);
-        editVendorCommand.Execute(vendorModel);
-        var model = mapper.Map<VendorModel>(vendor);
+        var updatedVendor = editVendorCommand.Execute(vendorModel);
+        var model = mapper.Map<VendorModel>(updatedVendor);
         return AdminApiResponse<VendorModel>.Updated(model, "Vendor");
     }
 
     internal Task<IResult> DeleteVendor(DeleteVendorCommand deleteVendorCommand,
         IGetVendorByIdQuery getVendorByIdQuery, int id)
     {
-        var vendor = getVendorByIdQuery.Execute(id);
-        if (vendor.IsSystemReservedVendor())
-        {
-            throw new Exception("This Vendor is required for proper system function and may not be deleted");
-        }
         deleteVendorCommand.Execute(id);
         return  Task.FromResult(AdminApiResponse.Deleted("Vendor"));
     }
