@@ -28,7 +28,7 @@ namespace EdFi.Ods.AdminApp.Management.Database.Commands
 
             if (vendor == null)
             {
-                throw new NotFoundException<int>("This vendor no longer exists.It may have been recently deleted.", id);
+                throw new NotFoundException<int>("vendor", id);
             }
             if (vendor.IsSystemReservedVendor())
             {

@@ -25,10 +25,10 @@ namespace EdFi.Ods.AdminApp.Management.Database.Commands
 
         public Vendor Execute(IEditVendor changedVendorData)
         {
-            var vendor = _context.Vendors.Single(v => v.VendorId == changedVendorData.VendorId);
+            var vendor = _context.Vendors.SingleOrDefault(v => v.VendorId == changedVendorData.VendorId);
             if(vendor == null)
             {
-                throw new NotFoundException<int>("This vendor no longer exists.It may have been recently deleted.", changedVendorData.VendorId);
+                throw new NotFoundException<int>("vendor", changedVendorData.VendorId);
             }
             if (vendor.IsSystemReservedVendor())
             {
