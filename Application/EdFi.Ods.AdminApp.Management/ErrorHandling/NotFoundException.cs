@@ -13,7 +13,7 @@ namespace EdFi.Ods.AdminApp.Management.ErrorHandling
         public T Id { get; }
 
         public NotFoundException(string resourceName, T id)
-            : base($"Not found: {resourceName} with ID {id}")
+            : base($"Not found: {resourceName} with ID {id}. It may have been recently deleted.")
         {
             ResourceName = resourceName;
             Id = id;
