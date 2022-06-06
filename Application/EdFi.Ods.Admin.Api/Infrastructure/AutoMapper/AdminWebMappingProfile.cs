@@ -14,7 +14,7 @@ namespace EdFi.Ods.Admin.Api.Infrastructure
         public AdminApiMappingProfile()
         {
 
-            CreateMap<Vendor, EditVendorModel>()
+            CreateMap<Vendor, EditVendor.Request>()
                 .ForMember(dst => dst.Company, opt => opt.MapFrom(src => src.VendorName))
                 .ForMember(dst => dst.ContactName, opt => opt.MapFrom(src => src.ContactName()))
                 .ForMember(dst => dst.ContactEmailAddress, opt => opt.MapFrom(src => src.ContactEmail()))

@@ -11,14 +11,12 @@ namespace EdFi.Ods.Admin.Api.Features;
 
 public class ErrorHandler : IFeature
 {
-    public void DefineFeatureSpecificServices(IServiceCollection services) { }
-
     public void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
-        endpoints.Map("/error", HandleError);
+        endpoints.Map("/error", Handle);
     }
 
-    internal Task<IResult> HandleError(HttpContext context, ILogger<ErrorHandler> logger)
+    public Task<IResult> Handle(HttpContext context, ILogger<ErrorHandler> logger)
     {
         var exceptionHandlerFeature = context.Features.Get<IExceptionHandlerPathFeature>();
         var exception = exceptionHandlerFeature?.Error ?? new Exception();
