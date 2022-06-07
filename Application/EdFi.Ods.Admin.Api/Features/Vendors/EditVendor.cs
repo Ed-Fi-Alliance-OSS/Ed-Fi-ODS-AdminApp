@@ -15,14 +15,15 @@ namespace EdFi.Ods.Admin.Api.Features.Vendors
     {
         public void MapEndpoints(IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapPut($"/{FeatureConstants.Vendors}", Handle).RequireAuthorization()
+            endpoints.MapPut($"/{FeatureConstants.Vendors}" + "/{id}", Handle).RequireAuthorization()
                 .WithTags(FeatureConstants.Vendors)
                 .WithMetadata(new OperationOrderAttribute(4));
         }
 
         public async Task<IResult> Handle(EditVendorCommand editVendorCommand, IMapper mapper,
-                           Validator validator, Request request)
+                           Validator validator, Request request, int id)
         {
+            request.VendorId = id;
             await validator.GuardAsync(request);
             var updatedVendor = editVendorCommand.Execute(request);
             var model = mapper.Map<VendorModel>(updatedVendor);
@@ -42,6 +43,7 @@ namespace EdFi.Ods.Admin.Api.Features.Vendors
         {
             public Validator()
             {
+                RuleFor(m => m.VendorId).Must(id => id > 0).WithMessage("Please provide valid Vendor Id.");
                 RuleFor(m => m.Company).NotEmpty();
                 RuleFor(m => m.Company)
                     .Must(name => !VendorExtensions.IsSystemReservedVendorName(name))
