@@ -19,9 +19,9 @@ namespace EdFi.Ods.Admin.Api.ActionFilters
                 var operations = new Dictionary<KeyValuePair<OperationType, OpenApiOperation>, int>();
                 foreach (var operation in path.Value.Operations)
                 {
-                    var orderAttributeValue = context.ApiDescriptions.FirstOrDefault(x => x.RelativePath.Replace("/", string.Empty)
+                    var orderAttributeValue = context.ApiDescriptions.FirstOrDefault(x => x.RelativePath!.Replace("/", string.Empty)
                     .Equals(path.Key.Replace("/", string.Empty), StringComparison.InvariantCultureIgnoreCase)
-                    && operation.Key.ToString().ToLower().Equals(x.HttpMethod.ToLower()))?.ActionDescriptor?.EndpointMetadata?.FirstOrDefault(x => x is OperationOrderAttribute)
+                    && operation.Key.ToString().ToLower().Equals(x.HttpMethod!.ToLower()))?.ActionDescriptor.EndpointMetadata.FirstOrDefault(x => x is OperationOrderAttribute)
                     as OperationOrderAttribute;
 
                     if (orderAttributeValue != null)
