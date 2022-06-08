@@ -20,11 +20,9 @@ namespace EdFi.Ods.Admin.Api.ActionFilters
                 var operations = new Dictionary<KeyValuePair<OperationType, OpenApiOperation>, int>();
                 foreach (var operation in path.Value.Operations)
                 {
-                    var orderAttributeValue = context.ApiDescriptions.FirstOrDefault(MatchesUrlAndVerb(path, operation))
-                            ?.ActionDescriptor.EndpointMetadata.FirstOrDefault(x => x is OperationOrderAttribute)
-                    as OperationOrderAttribute;
-
-                    if (orderAttributeValue != null)
+                    if (context.ApiDescriptions.FirstOrDefault(MatchesUrlAndVerb(path, operation))
+                        ?.ActionDescriptor.EndpointMetadata.FirstOrDefault(x => x is OperationOrderAttribute)
+                        is OperationOrderAttribute orderAttributeValue)
                     {
                         operations.Add(operation, orderAttributeValue.Order);
                     }
