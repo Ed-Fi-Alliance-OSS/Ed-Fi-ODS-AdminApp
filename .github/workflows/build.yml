@@ -3,7 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-name: Build and Test
+name: Build, Test and Pack
 
 on:
   push:
@@ -16,7 +16,7 @@ env:
   GA_MEASUREMENT_ID: ${{ secrets.GOOGLE_ANALYTICS_MEASUREMENT_ID}}
 
 jobs:
-  build:
+  build-test-pack:
 
     runs-on: ubuntu-latest
 
@@ -36,5 +36,16 @@ jobs:
       run: .\build.ps1 -Command PopulateGoogleAnalyticsAppSettings -GoogleAnalyticsMeasurementId ${{env.GA_MEASUREMENT_ID}}
       shell: pwsh
     - name: Unit Tests
+      if: success()
       run: ./build.ps1 -Command UnitTest -Configuration Release
       shell: pwsh
+    - name: Pack
+      if: success()
+      run: ./build.ps1 -Command PackageApi -Configuration Release -Version ${{ env.BUILD_VERSION }} -BuildCounter ${{ github.run_number }}
+      shell: pwsh
+    - name: Upload Package
+      if: success()
+      uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # v3.0.0
+      with:
+        path: ./EdFi.Suite3.ODS.Admin.Api.*.nupkg
+

@@ -189,6 +189,10 @@ function Compile {
         $project = "$solutionRoot/EdFi.Ods.Admin.Api/"
         $outputPath = "$project/publish"
         dotnet publish $project -c $Configuration /p:EnvironmentName=Production -o $outputPath --no-build --nologo
+
+        $outputPath = "$solutionRoot/EdFi.Ods.Admin.Api/publish"
+        $project = "$solutionRoot/EdFi.Ods.Admin.Api/"
+        dotnet publish $project -c $Configuration /p:EnvironmentName=Production -o $outputPath --no-build --nologo
     }
 }
 
@@ -286,6 +290,15 @@ function BuildDatabaseScriptPackage{
 
 function BuildPackage {
     $project = "EdFi.Ods.AdminApp.Web"
+    $mainPath = "$solutionRoot/$project"
+    $projectPath = "$mainPath/$project.csproj"
+    $nugetSpecPath = "$mainPath/publish/$project.nuspec"
+
+    RunNuGetPack -ProjectPath $projectPath -PackageVersion $(GetPackageVersion) $nugetSpecPath
+}
+
+function BuildApiPackage {
+    $project = "EdFi.Ods.Admin.Api"
     $mainPath = "$solutionRoot/$project"
     $projectPath = "$mainPath/$project.csproj"
     $nugetSpecPath = "$mainPath/publish/$project.nuspec"
