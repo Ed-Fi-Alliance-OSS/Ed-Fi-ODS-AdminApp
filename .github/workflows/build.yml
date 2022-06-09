@@ -14,6 +14,8 @@ on:
 env:
   BUILD_VERSION: ${{ secrets.SEMANTIC_VERSION }}
   GA_MEASUREMENT_ID: ${{ secrets.GOOGLE_ANALYTICS_MEASUREMENT_ID}}
+  ARTIFACTS_API_KEY: ${{ secrets.AZURE_ARTIFACTS_PAT }}
+  ARTIFACTS_FEED_URL: ${{ secrets.AZURE_ARTIFACTS_FEED_URL }}
 
 jobs:
   build-test-pack:
@@ -47,5 +49,27 @@ jobs:
       if: success()
       uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # v3.0.0
       with:
-        path: ./EdFi.Suite3.ODS.Admin.Api.*.nupkg
+        name: NuGetPackages
+        path: ./*.nupkg
 
+  publish-artifacts:
+    needs: build-test-pack
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
+      - name: Get Artifact
+        uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741 #v3.0.0
+        with:
+          name: NuGetPackages
+      - name: Upload Admin API
+        run: |
+          $artifact = (Get-ChildItem -Path $_ -Name -Include *.Admin.Api.*.nupkg)
+          $arguments = @{
+            EdFiNuGetFeed = "${{ env.ARTIFACTS_FEED_URL }}"
+            NuGetApiKey = "${{ env.ARTIFACTS_API_KEY }}"
+          }
+          $arguments.PackageFile = $artifact
+          ./build.ps1 Push @arguments
+        shell: pwsh
