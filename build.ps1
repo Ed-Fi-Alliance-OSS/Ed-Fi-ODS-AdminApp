@@ -72,7 +72,7 @@
 param(
     # Command to execute, defaults to "Build".
     [string]
-    [ValidateSet("Clean", "Build", "UnitTest", "IntegrationTest", "Package", "Push", "BuildAndTest", "PackageDatabaseScripts", "BuildAndDeployToDockerContainer", "PopulateGoogleAnalyticsAppSettings", "Run")]
+    [ValidateSet("Clean", "Build", "UnitTest", "IntegrationTest", "Package", "PackageApi", "PackageDatabaseScripts", "Push", "BuildAndTest", "BuildAndDeployToDockerContainer", "PopulateGoogleAnalyticsAppSettings", "Run")]
     $Command = "Build",
 
     # Assembly and package version number. The current package number is
@@ -180,11 +180,14 @@ function AssemblyInfo {
 
 function Compile {
     Invoke-Execute {
-        dotnet --info
         dotnet build $solutionRoot -c $Configuration --nologo --no-restore
 
-        $outputPath = "$solutionRoot/EdFi.Ods.AdminApp.Web/publish"
         $project = "$solutionRoot/EdFi.Ods.AdminApp.Web/"
+        $outputPath = "$project/publish"
+        dotnet publish $project -c $Configuration /p:EnvironmentName=Production -o $outputPath --no-build --nologo
+
+        $project = "$solutionRoot/EdFi.Ods.Admin.Api/"
+        $outputPath = "$project/publish"
         dotnet publish $project -c $Configuration /p:EnvironmentName=Production -o $outputPath --no-build --nologo
     }
 }
@@ -245,21 +248,16 @@ function IntegrationTests {
 function RunNuGetPack {
     param (
         [string]
+        $ProjectPath,
+
+        [string]
         $PackageVersion,
 
         [string]
         $nuspecPath
     )
 
-    $arguments = @(
-        "pack",  $nugetSpecPath,
-        "-OutputDirectory", "$PSScriptRoot",
-        "-Version", "$PackageVersion",
-        "-Properties", "Configuration=$Configuration",
-        "-NoPackageAnalysis"
-    )
-    Write-Host "$nugetExe $arguments" -ForegroundColor Magenta
-    &$script:nugetExe @arguments
+    dotnet pack $ProjectPath --output $PSScriptRoot -p:NuspecFile=$nuspecPath -p:NuspecProperties="version=$PackageVersion"
 }
 
 function NewDevCertificate {
@@ -278,13 +276,30 @@ function GetPackageVersion {
 }
 
 function BuildDatabaseScriptPackage{
-    $nugetSpecPath = "$solutionRoot/EdFi.Ods.AdminApp.Web/publish/EdFi.Ods.AdminApp.Database.nuspec"
-    RunNuGetPack -PackageVersion $(GetPackageVersion) $nugetSpecPath
+    $project = "EdFi.Ods.Admin.Web"
+    $mainPath = "$solutionRoot/$project"
+    $projectPath = "$mainPath/$project.csproj"
+    $nugetSpecPath = "$mainPath/publish/EdFi.Ods.AdminApp.Database.nuspec"
+
+    RunNuGetPack -ProjectPath $projectPath -PackageVersion $(GetPackageVersion) $nugetSpecPath
 }
 
 function BuildPackage {
-    $nugetSpecPath = "$solutionRoot/EdFi.Ods.AdminApp.Web/publish/EdFi.Ods.AdminApp.Web.nuspec"
-    RunNuGetPack -PackageVersion $(GetPackageVersion) $nugetSpecPath
+    $project = "EdFi.Ods.AdminApp.Web"
+    $mainPath = "$solutionRoot/$project"
+    $projectPath = "$mainPath/$project.csproj"
+    $nugetSpecPath = "$mainPath/publish/$project.nuspec"
+
+    RunNuGetPack -ProjectPath $projectPath -PackageVersion $(GetPackageVersion) $nugetSpecPath
+}
+
+function BuildApiPackage {
+    $project = "EdFi.Ods.Admin.Api"
+    $mainPath = "$solutionRoot/$project"
+    $projectPath = "$mainPath/$project.csproj"
+    $nugetSpecPath = "$mainPath/publish/$project.nuspec"
+
+    RunNuGetPack -ProjectPath $projectPath -PackageVersion $(GetPackageVersion) $nugetSpecPath
 }
 
 function PushPackage {
@@ -362,9 +377,14 @@ function Invoke-BuildPackage {
     Invoke-Step { BuildPackage }
 }
 
+function Invoke-BuildApiPackage {
+    Invoke-Step { InitializeNuGet }
+    Invoke-Step { BuildApiPackage }
+}
+
 function Invoke-BuildDatabasePackage{
     Invoke-Step { InitializeNuGet }
-    Invoke-Step { BuildDatabaseScriptPackage}
+    Invoke-Step { BuildDatabaseScriptPackage }
 }
 
 function Invoke-PushPackage {
@@ -434,7 +454,8 @@ Invoke-Main {
             Invoke-IntegrationTests
         }
         Package { Invoke-BuildPackage }
-        PackageDatabaseScripts { Invoke-BuildDatabasePackage}
+        PackageApi { Invoke-BuildApiPackage }
+        PackageDatabaseScripts { Invoke-BuildDatabasePackage }
         Push { Invoke-PushPackage }
         BuildAndDeployToDockerContainer {
             Invoke-Build
