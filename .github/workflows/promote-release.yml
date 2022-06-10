@@ -1,0 +1,44 @@
+# SPDX-License-Identifier: Apache-2.0
+# Licensed to the Ed-Fi Alliance under one or more agreements.
+# The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+# See the LICENSE and NOTICES files in the project root for more information.
+
+name: Promote to Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      view-type:
+        type: choice
+        description: package-label
+        options:
+        - Prerelease
+        - Release
+        required: true
+
+env:
+  ARTIFACTS_API_KEY: ${{ secrets.AZURE_ARTIFACTS_PAT }}
+  ARTIFACTS_FEED_URL: ${{ secrets.AZURE_ARTIFACTS_FEED_URL }}
+  ARTIFACTS_PACKAGES_URL: ${{ secrets.ARTIFACTS_PACKAGES_URL }}
+  BUILD_AGENT_USERNAME: ${{ secrets.BUILD_AGENT_USERNAME }}
+
+jobs:
+  promote-packages:
+
+    runs-on: ubuntu-latest
+    steps:
+    - name: Promote
+      run: |
+        $Packages =
+
+        $arguments = @{
+          FeedsURL    = "${{ env.ARTIFACTS_FEED_URL }}"
+          PackagesURL = "${{ env.ARTIFACTS_PACKAGES_URL }}"
+          Username    = "${{ env.BUILD_AGENT_USERNAME }}"
+          View        = "${{ github.event.inputs.view-type }}"
+        }
+        $arguments.Password = (ConvertTo-SecureString -String "${{ secrets.ARTIFACTS_API_KEY }}" -AsPlainText -Force)
+        $arguments.Packages = @('EdFi.Suite3.ODS.AdminApp.Database', 'EdFi.Suite3.ODS.AdminApp.Web', 'EdFi.Suite3.ODS.Admin.Api')
+        eng\promote-packages.ps1 @arguments
+      shell: pwsh
+
