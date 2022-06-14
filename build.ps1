@@ -313,8 +313,8 @@ function PushPackage {
 
     $arguments = @{
         PackageFile = $PackageFile
-        NuGetApiKey = $NuGetApiKey
         NuGetFeed = $EdFiNuGetFeed
+        NuGetApiKey = $NuGetApiKey
     }
 
     Invoke-Execute { Push-Package @arguments }
