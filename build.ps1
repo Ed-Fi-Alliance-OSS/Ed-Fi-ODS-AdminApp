@@ -153,7 +153,7 @@ function InitializeNuGet {
 }
 
 function Restore {
-    Invoke-Execute { dotnet restore }
+    Invoke-Execute { dotnet restore $solutionRoot }
 }
 
 function AssemblyInfo {
