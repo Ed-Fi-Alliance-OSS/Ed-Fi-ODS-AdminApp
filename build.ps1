@@ -247,21 +247,16 @@ function IntegrationTests {
 function RunNuGetPack {
     param (
         [string]
+        $ProjectPath,
+
+        [string]
         $PackageVersion,
 
         [string]
         $nuspecPath
     )
 
-    $arguments = @(
-        "pack",  $nugetSpecPath,
-        "-OutputDirectory", "$PSScriptRoot",
-        "-Version", "$PackageVersion",
-        "-Properties", "Configuration=$Configuration",
-        "-NoPackageAnalysis"
-    )
-    Write-Host "$nugetExe $arguments" -ForegroundColor Magenta
-    &$script:nugetExe @arguments
+    dotnet pack $ProjectPath --output $PSScriptRoot -p:NuspecFile=$nuspecPath -p:NuspecProperties="version=$PackageVersion"
 }
 
 function NewDevCertificate {
@@ -279,14 +274,22 @@ function GetPackageVersion {
     return "$Version.$BuildCounter"
 }
 
-function BuildDatabaseScriptPackage{
-    $nugetSpecPath = "$solutionRoot/EdFi.Ods.AdminApp.Web/publish/EdFi.Ods.AdminApp.Database.nuspec"
-    RunNuGetPack -PackageVersion $(GetPackageVersion) $nugetSpecPath
+function BuildDatabasePackage {
+    $project = "EdFi.Ods.Admin.Web"
+    $mainPath = "$solutionRoot/$project"
+    $projectPath = "$mainPath/$project.csproj"
+    $nugetSpecPath = "$mainPath/publish/EdFi.Ods.AdminApp.Database.nuspec"
+
+    RunNuGetPack -ProjectPath $projectPath -PackageVersion $(GetPackageVersion) $nugetSpecPath
 }
 
-function BuildPackage {
-    $nugetSpecPath = "$solutionRoot/EdFi.Ods.AdminApp.Web/publish/EdFi.Ods.AdminApp.Web.nuspec"
-    RunNuGetPack -PackageVersion $(GetPackageVersion) $nugetSpecPath
+function BuildAdminAppPackage {
+    $project = "EdFi.Ods.AdminApp.Web"
+    $mainPath = "$solutionRoot/$project"
+    $projectPath = "$mainPath/$project.csproj"
+    $nugetSpecPath = "$mainPath/publish/$project.nuspec"
+
+    RunNuGetPack -ProjectPath $projectPath -PackageVersion $(GetPackageVersion) $nugetSpecPath
 }
 
 function PushPackage {
@@ -360,13 +363,11 @@ function Invoke-IntegrationTests {
 }
 
 function Invoke-BuildPackage {
-    Invoke-Step { InitializeNuGet }
-    Invoke-Step { BuildPackage }
+    Invoke-Step { BuildAdminAppPackage }
 }
 
 function Invoke-BuildDatabasePackage{
-    Invoke-Step { InitializeNuGet }
-    Invoke-Step { BuildDatabaseScriptPackage}
+    Invoke-Step { BuildDatabasePackage }
 }
 
 function Invoke-PushPackage {
