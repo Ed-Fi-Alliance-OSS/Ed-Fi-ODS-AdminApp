@@ -388,7 +388,6 @@ function Invoke-BuildDatabasePackage{
 }
 
 function Invoke-PushPackage {
-    Invoke-Step { InitializeNuGet }
     Invoke-Step { PushPackage }
 }
 
