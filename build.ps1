@@ -126,7 +126,6 @@ param(
 
 $Env:MSBUILDDISABLENODEREUSE = "1"
 
-$solution = "Application\Ed-Fi-ODS-Tools.sln"
 $solutionRoot = "$PSScriptRoot/Application"
 
 $supportedApiVersions = @(
@@ -154,7 +153,7 @@ function InitializeNuGet {
 }
 
 function Restore {
-    Invoke-Execute { dotnet restore $solution }
+    Invoke-Execute { dotnet restore }
 }
 
 function AssemblyInfo {
@@ -323,7 +322,6 @@ function PushPackage {
 function Invoke-Build {
     Write-Host "Building Version $Version" -ForegroundColor Cyan
 
-    Invoke-Step { InitializeNuGet }
     Invoke-Step { Clean }
     Invoke-Step { Restore }
     Invoke-Step { AssemblyInfo }
@@ -373,12 +371,10 @@ function Invoke-IntegrationTests {
 }
 
 function Invoke-BuildPackage {
-    Invoke-Step { InitializeNuGet }
     Invoke-Step { BuildPackage }
 }
 
 function Invoke-BuildApiPackage {
-    Invoke-Step { InitializeNuGet }
     Invoke-Step { BuildApiPackage }
 }
 
