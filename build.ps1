@@ -126,7 +126,6 @@ param(
 
 $Env:MSBUILDDISABLENODEREUSE = "1"
 
-$solution = "Application\Ed-Fi-ODS-Tools.sln"
 $solutionRoot = "$PSScriptRoot/Application"
 
 $supportedApiVersions = @(
@@ -154,7 +153,7 @@ function InitializeNuGet {
 }
 
 function Restore {
-    Invoke-Execute { dotnet restore $solution }
+    Invoke-Execute { dotnet restore $solutionRoot }
 }
 
 function AssemblyInfo {
@@ -180,11 +179,14 @@ function AssemblyInfo {
 
 function Compile {
     Invoke-Execute {
-        dotnet --info
         dotnet build $solutionRoot -c $Configuration --nologo --no-restore
+    }
+}
 
-        $outputPath = "$solutionRoot/EdFi.Ods.AdminApp.Web/publish"
+function PublishAdminApp {
+    Invoke-Execute {
         $project = "$solutionRoot/EdFi.Ods.AdminApp.Web/"
+        $outputPath = "$project/publish"
         dotnet publish $project -c $Configuration /p:EnvironmentName=Production -o $outputPath --no-build --nologo
     }
 }
@@ -308,11 +310,11 @@ function PushPackage {
 function Invoke-Build {
     Write-Host "Building Version $Version" -ForegroundColor Cyan
 
-    Invoke-Step { InitializeNuGet }
     Invoke-Step { Clean }
     Invoke-Step { Restore }
     Invoke-Step { AssemblyInfo }
     Invoke-Step { Compile }
+    Invoke-Step { PublishAdminApp }
 }
 
 function Invoke-Run {
