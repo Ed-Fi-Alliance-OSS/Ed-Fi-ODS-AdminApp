@@ -71,7 +71,6 @@ jobs:
         run: |
           $artifact = (Get-ChildItem -Path $_ -Name -Include *.Admin.Api.*.nupkg)
           $arguments = @{
-            EdFiNuGetFeed = "${{ env.ARTIFACTS_FEED_URL }}"
             NuGetApiKey = "${{ env.ARTIFACTS_API_KEY }}"
           }
           $arguments.PackageFile = $artifact
