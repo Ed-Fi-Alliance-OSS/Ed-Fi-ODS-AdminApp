@@ -328,6 +328,15 @@ function BuildApiPackage {
     RunNuGetPack -ProjectPath $projectPath -PackageVersion $(GetAdminApiPackageVersion) $nugetSpecPath
 }
 
+function BuildApiPackage {
+    $project = "EdFi.Ods.Admin.Api"
+    $mainPath = "$solutionRoot/$project"
+    $projectPath = "$mainPath/$project.csproj"
+    $nugetSpecPath = "$mainPath/publish/$project.nuspec"
+
+    RunNuGetPack -ProjectPath $projectPath -PackageVersion $(GetPackageVersion) $nugetSpecPath
+}
+
 function PushPackage {
     if (-not $NuGetApiKey) {
         throw "Cannot push a NuGet package without providing an API key in the `NuGetApiKey` argument."
