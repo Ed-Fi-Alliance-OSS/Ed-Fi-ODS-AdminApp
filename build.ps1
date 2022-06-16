@@ -72,7 +72,7 @@
 param(
     # Command to execute, defaults to "Build".
     [string]
-    [ValidateSet("Clean", "Build", "UnitTest", "IntegrationTest", "Package", "Push", "BuildAndTest", "PackageDatabaseScripts", "BuildAndDeployToDockerContainer", "PopulateGoogleAnalyticsAppSettings", "Run")]
+    [ValidateSet("Clean", "Build", "UnitTest", "IntegrationTest", "Package", "PackageApi", "PackageDatabase", "Push", "BuildAndTest", "BuildAndDeployToDockerContainer", "PopulateGoogleAnalyticsAppSettings", "Run")]
     $Command = "Build",
 
     # Assembly and package version number. The current package number is
@@ -191,6 +191,14 @@ function PublishAdminApp {
     }
 }
 
+function PublishAdminApi {
+    Invoke-Execute {
+        $project = "$solutionRoot/EdFi.Ods.Admin.Api/"
+        $outputPath = "$project/publish"
+        dotnet publish $project -c $Configuration /p:EnvironmentName=Production -o $outputPath --no-build --nologo
+    }
+}
+
 function RunTests {
     param (
         # File search filter
@@ -292,6 +300,15 @@ function BuildAdminAppPackage {
     RunNuGetPack -ProjectPath $projectPath -PackageVersion $(GetPackageVersion) $nugetSpecPath
 }
 
+function BuildApiPackage {
+    $project = "EdFi.Ods.Admin.Api"
+    $mainPath = "$solutionRoot/$project"
+    $projectPath = "$mainPath/$project.csproj"
+    $nugetSpecPath = "$mainPath/publish/$project.nuspec"
+
+    RunNuGetPack -ProjectPath $projectPath -PackageVersion $(GetPackageVersion) $nugetSpecPath
+}
+
 function PushPackage {
     if (-not $NuGetApiKey) {
         throw "Cannot push a NuGet package without providing an API key in the `NuGetApiKey` argument."
@@ -318,6 +335,7 @@ function Invoke-Build {
     Invoke-Step { AssemblyInfo }
     Invoke-Step { Compile }
     Invoke-Step { PublishAdminApp }
+    Invoke-Step { PublishAdminApi }
 }
 
 function Invoke-Run {
@@ -366,12 +384,15 @@ function Invoke-BuildPackage {
     Invoke-Step { BuildAdminAppPackage }
 }
 
+function Invoke-BuildApiPackage {
+    Invoke-Step { BuildApiPackage }
+}
+
 function Invoke-BuildDatabasePackage{
-    Invoke-Step { BuildDatabasePackage }
+    Invoke-Step { BuildDatabaseScriptPackage }
 }
 
 function Invoke-PushPackage {
-    Invoke-Step { InitializeNuGet }
     Invoke-Step { PushPackage }
 }
 
@@ -437,7 +458,8 @@ Invoke-Main {
             Invoke-IntegrationTests
         }
         Package { Invoke-BuildPackage }
-        PackageDatabaseScripts { Invoke-BuildDatabasePackage}
+        PackageApi { Invoke-BuildApiPackage }
+        PackageDatabase { Invoke-BuildDatabasePackage }
         Push { Invoke-PushPackage }
         BuildAndDeployToDockerContainer {
             Invoke-Build
