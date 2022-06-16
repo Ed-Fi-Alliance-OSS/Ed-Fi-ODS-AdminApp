@@ -19,5 +19,8 @@ namespace EdFi.Ods.Admin.Api.Features
         public const string RegisterClientId = "Client id";
         public const string RegisterClientSecret = "Client secret";
         public const string RegisterDisplayName = "Client display name";
+
+        public const string Applications = "applications";
+        public const string AddApplicationDisplayName = "AddApplication";
     }
 }
