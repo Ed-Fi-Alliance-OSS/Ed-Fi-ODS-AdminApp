@@ -30,7 +30,7 @@ namespace EdFi.Ods.AdminApp.Management.Instances
             _inferInstanceService = inferInstanceService;
         }
 
-        public async Task<int> Execute(IRegisterOdsInstanceModel instance, ApiMode mode, string userId, CloudOdsClaimSet cloudOdsClaimSet = null)
+        public async Task<OdsInstanceRegistration> Execute(IRegisterOdsInstanceModel instance, ApiMode mode, string userId, CloudOdsClaimSet cloudOdsClaimSet = null)
         {
             var instanceName = instance.NumericSuffix.Value.ToString();
 
@@ -54,7 +54,7 @@ namespace EdFi.Ods.AdminApp.Management.Instances
             if (mode == ApiMode.YearSpecific)
                 _setCurrentSchoolYear.Execute(instanceName, mode, (short)instance.NumericSuffix.Value);
 
-            return newInstance.Id;
+            return newInstance;
         }
     }
 

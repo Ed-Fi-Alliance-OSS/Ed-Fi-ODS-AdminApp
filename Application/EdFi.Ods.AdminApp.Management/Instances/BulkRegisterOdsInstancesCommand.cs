@@ -55,13 +55,13 @@ namespace EdFi.Ods.AdminApp.Management.Instances
             {
                 try
                 {
-                    var odsInstanceRegisteredId = await _registerOdsInstanceCommand.Execute(instance, mode, userId, cloudOdsClaimSet);
+                    var odsInstanceRegistered = await _registerOdsInstanceCommand.Execute(instance, mode, userId, cloudOdsClaimSet);
                     results.Add(new BulkRegisterOdsInstancesResult
                     {
                         NumericSuffix = instance.NumericSuffix.ToString(),
                         Description = instance.Description,
                         IndividualInstanceResult = IndividualInstanceResult.Succeded,
-                        OdsInstanceRegisteredId = odsInstanceRegisteredId
+                        OdsInstanceRegisteredId = odsInstanceRegistered.Id
                     });
                     _logger.Info($"Ods instance({instance.NumericSuffix.ToString()}) registered successfully.");
                 }

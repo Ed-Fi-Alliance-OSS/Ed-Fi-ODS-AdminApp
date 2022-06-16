@@ -83,7 +83,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Instance
                         var inferInstanceService = new InferInstanceService(_connectionProvider.Object);
                         
                         var command = new RegisterOdsInstanceCommand(odsInstanceFirstTimeSetupService, identity, _setCurrentSchoolYear.Object, inferInstanceService);
-                        return await command.Execute(newInstance, apiMode, testUsername, new CloudOdsClaimSet());
+                        var result =  await command.Execute(newInstance, apiMode, testUsername, new CloudOdsClaimSet());
+                        return result.Id;
                     });
                 });
 
@@ -133,7 +134,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Instance
                         var inferInstanceService = new InferInstanceService(_connectionProvider.Object);
 
                         var command = new RegisterOdsInstanceCommand(odsInstanceFirstTimeSetupService, identity, _setCurrentSchoolYear.Object, inferInstanceService);
-                        return await command.Execute(newInstance, apiMode, testUsername, new CloudOdsClaimSet());
+                        var result = await command.Execute(newInstance, apiMode, testUsername, new CloudOdsClaimSet());
+                        return result.Id;
                     });
                 });
 

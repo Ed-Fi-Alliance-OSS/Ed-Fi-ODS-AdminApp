@@ -1,10 +1,18 @@
 using System.Reflection;
 using EdFi.Admin.DataAccess.Contexts;
+using EdFi.Common.Security;
 using EdFi.Ods.Admin.Api.ActionFilters;
+using EdFi.Ods.Admin.Api.Features.Instances;
 using EdFi.Ods.Admin.Api.Infrastructure.Security;
 using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Management.Api;
 using EdFi.Ods.AdminApp.Management.Database;
+using EdFi.Ods.AdminApp.Management.Database.Ods.Reports;
+using EdFi.Ods.AdminApp.Management.Helpers;
+using EdFi.Ods.AdminApp.Management.Instances;
+using EdFi.Ods.AdminApp.Management.OdsInstanceServices;
+using EdFi.Ods.AdminApp.Management.OnPrem;
+using EdFi.Ods.AdminApp.Management.Services;
 using EdFi.Security.DataAccess.Contexts;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +27,26 @@ public static class WebApplicationBuilderExtensions
         var executingAssembly = Assembly.GetExecutingAssembly();
         webApplicationBuilder.Services.AddAutoMapper(executingAssembly);
         webApplicationBuilder.Services.AddScoped<InstanceContext>();
+
+        webApplicationBuilder.Services.AddTransient<IDatabaseValidationService, DatabaseValidationService>();
+        webApplicationBuilder.Services.AddTransient<IConnectionStringService, ConnectionStringService>();
+        webApplicationBuilder.Services.AddTransient< IConnectionStringBuilderAdapterFactory, ConnectionStringBuilderAdapterFactory> ();
+        //webApplicationBuilder.Services.AddTransient<IRegisterOdsInstanceModel, AddInstance.Request>();
+        webApplicationBuilder.Services.AddTransient< IOdsSecretConfigurationProvider, OdsSecretConfigurationProvider > ();
+        webApplicationBuilder.Services.AddSingleton<IStringEncryptorService, AESEncryptorService>(
+        x => new AESEncryptorService(webApplicationBuilder.Configuration["AppSettings:EncryptionKey"]));
+        webApplicationBuilder.Services.AddTransient<IFirstTimeSetupService, OnPremFirstTimeSetupService>();
+        webApplicationBuilder.Services.AddSingleton<ISecureHasher, Pbkdf2HmacSha1SecureHasher>();
+        webApplicationBuilder.Services.AddSingleton<IPackedHashConverter, PackedHashConverter>();
+
+        webApplicationBuilder.Services.AddSingleton<ISecureHasherProvider, SecureHasherProvider>(
+            x => new SecureHasherProvider(new List<ISecureHasher> { x.GetService<ISecureHasher>() }));
+        webApplicationBuilder.Services.AddSingleton<ISecurePackedHashProvider, SecurePackedHashProvider>();
+        webApplicationBuilder.Services.AddSingleton<IPackedHashConverter, PackedHashConverter>();
+        webApplicationBuilder.Services.AddSingleton<IHashConfigurationProvider, DefaultHashConfigurationProvider>();
+        webApplicationBuilder.Services.AddTransient<IReportViewsSetUp, ReportViewsSetUp>();
+        webApplicationBuilder.Services.AddTransient<IReportsConfigProvider, ReportsConfigProvider>();
+        webApplicationBuilder.Services.AddTransient<IUpgradeEngineFactory, UpgradeEngineFactory>();
 
         foreach (var type in typeof(IMarkerForEdFiOdsAdminAppManagement).Assembly.GetTypes())
         {
@@ -39,7 +67,11 @@ public static class WebApplicationBuilderExtensions
 
                 if (concreteClass.Namespace != null)
                 {
-                    if (concreteClass.Namespace.EndsWith("Database.Commands") || concreteClass.Namespace.EndsWith("Database.Queries"))
+                    if (concreteClass.Namespace.EndsWith("Database.Commands") ||
+                        concreteClass.Namespace.EndsWith("Database.Queries") ||
+                        concreteClass.Namespace.EndsWith("OdsInstanceServices") ||
+                        concreteClass.Namespace.EndsWith("Instances") ||
+                        concreteClass.Namespace.EndsWith("Database.Ods")) 
                     {
                         if (interfaces.Length == 1)
                         {
@@ -58,6 +90,9 @@ public static class WebApplicationBuilderExtensions
                 }
             }
         }
+
+        webApplicationBuilder.Services.Configure<AppSettings>(
+        webApplicationBuilder.Configuration.GetSection("AppSettings"));
 
         // Add services to the container.
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

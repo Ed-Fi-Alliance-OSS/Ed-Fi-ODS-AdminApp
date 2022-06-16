@@ -19,5 +19,9 @@ namespace EdFi.Ods.Admin.Api.Features
         public const string RegisterClientId = "Client id";
         public const string RegisterClientSecret = "Client secret";
         public const string RegisterDisplayName = "Client display name";
+
+        public const string Instances = "instances";
+        public const string InstanceNumericSuffix = "Numeric suffix. It can be an ODS Instance District / EdOrg Id in district specific mode. It can be a valid school year in year specific mode.";
+        public const string Description = "Instance description.";
     }
 }

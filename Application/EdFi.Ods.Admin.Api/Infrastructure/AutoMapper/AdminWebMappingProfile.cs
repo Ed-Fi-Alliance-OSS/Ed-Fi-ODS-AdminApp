@@ -6,6 +6,8 @@
 using EdFi.Admin.DataAccess.Models;
 using Profile = AutoMapper.Profile;
 using EdFi.Ods.Admin.Api.Features.Vendors;
+using EdFi.Ods.Admin.Api.Features.Instances;
+using EdFi.Ods.AdminApp.Management.Database.Models;
 
 namespace EdFi.Ods.Admin.Api.Infrastructure
 {
@@ -25,6 +27,12 @@ namespace EdFi.Ods.Admin.Api.Infrastructure
                 .ForMember(dst => dst.ContactName, opt => opt.MapFrom(src => src.ContactName()))
                 .ForMember(dst => dst.ContactEmailAddress, opt => opt.MapFrom(src => src.ContactEmail()))
                 .ForMember(dst => dst.NamespacePrefixes, opt => opt.MapFrom(src => ToCommaSeparated(src.VendorNamespacePrefixes)));
+
+            CreateMap<OdsInstanceRegistration, OdsInstanceModel>()
+                .ForMember(dst => dst.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dst => dst.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dst => dst.DatabaseName, opt => opt.MapFrom(src => src.DatabaseName))
+                .ForMember(dst => dst.Description, opt => opt.MapFrom(src => src.Description));
         }
 
         private string ToCommaSeparated(ICollection<VendorNamespacePrefix> vendorNamespacePrefixes)
