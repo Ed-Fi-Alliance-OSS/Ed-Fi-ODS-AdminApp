@@ -301,13 +301,17 @@ function GetAdminAppPackageVersion {
     return "$Version.$BuildCounter"
 }
 
+function GetAdminApiPackageVersion {
+    return "$APIVersion.$BuildCounter"
+}
+
 function BuildDatabasePackage {
     $project = "EdFi.Ods.Admin.Web"
     $mainPath = "$solutionRoot/$project"
     $projectPath = "$mainPath/$project.csproj"
     $nugetSpecPath = "$mainPath/publish/EdFi.Ods.AdminApp.Database.nuspec"
 
-    RunNuGetPack -ProjectPath $projectPath -PackageVersion $(GetPackageVersion) $nugetSpecPath
+    RunNuGetPack -ProjectPath $projectPath -PackageVersion $(GetAdminAppPackageVersion) $nugetSpecPath
 }
 
 function BuildAdminAppPackage {
@@ -334,7 +338,7 @@ function BuildApiPackage {
     $projectPath = "$mainPath/$project.csproj"
     $nugetSpecPath = "$mainPath/publish/$project.nuspec"
 
-    RunNuGetPack -ProjectPath $projectPath -PackageVersion $(GetPackageVersion) $nugetSpecPath
+    RunNuGetPack -ProjectPath $projectPath -PackageVersion $(GetAdminApiPackageVersion) $nugetSpecPath
 }
 
 function PushPackage {
