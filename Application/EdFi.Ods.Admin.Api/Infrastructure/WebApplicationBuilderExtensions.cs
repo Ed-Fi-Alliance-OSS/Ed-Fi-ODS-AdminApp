@@ -104,7 +104,7 @@ public static class WebApplicationBuilderExtensions
             {
                 Title = "Admin API Documentation", Version = "v1"
             });
-            opt.DocumentFilter<OperationResponsesAndOrderDocumentFilter>();
+            opt.DocumentFilter<OperationResponsesDocumentFilter>();
             opt.DocumentFilter<RemoveSchemaDocumentFilter>();
             opt.DocumentFilter<AddRegisterSchemaDocumentFilter>();
             opt.OperationFilter<OperationDescriptionFilter>();
