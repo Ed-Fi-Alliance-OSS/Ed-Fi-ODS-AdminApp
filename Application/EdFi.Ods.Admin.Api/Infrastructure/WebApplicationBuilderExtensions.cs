@@ -1,12 +1,15 @@
 using System.Reflection;
 using EdFi.Admin.DataAccess.Contexts;
 using EdFi.Ods.Admin.Api.ActionFilters;
+using EdFi.Ods.Admin.Api.Features.Applications;
 using EdFi.Ods.Admin.Api.Infrastructure.Security;
 using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Management.Api;
 using EdFi.Ods.AdminApp.Management.Database;
+using EdFi.Ods.AdminApp.Management.Database.Commands;
 using EdFi.Security.DataAccess.Contexts;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
@@ -112,6 +115,14 @@ public static class WebApplicationBuilderExtensions
                 return customSchemaName != null ? customSchemaName.Name : x.FullName;
             });
             opt.EnableAnnotations();
+            opt.OrderActionsBy(x =>
+            {
+                return
+                    x.HttpMethod.Equals("GET", StringComparison.InvariantCultureIgnoreCase) ? "0"
+                    : x.HttpMethod.Equals("POST", StringComparison.InvariantCultureIgnoreCase) ? "1"
+                    : x.HttpMethod.Equals("PUT", StringComparison.InvariantCultureIgnoreCase) ? "2"
+                    : x.HttpMethod.Equals("DELETE", StringComparison.InvariantCultureIgnoreCase) ? "3" : "4";
+            });
         });
 
         // Logging
