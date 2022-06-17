@@ -33,6 +33,8 @@ jobs:
       uses: actions/setup-dotnet@9211491ffb35dd6a6657ca4f45d43dfe6e97c829 # v2.0.0
       with:
         dotnet-version: 6.0.x
+    - name: Publish
+      run: ./build.ps1 -Command BuildAndPublish -Configuration Release -Version ${{ env.ADMIN_APP_VERSION }} -APIVersion ${{ env.ADMIN_API_VERSION }} -BuildCounter ${{ github.run_number }}
     - name: Populate Google Analytics ID
       run: .\build.ps1 -Command PopulateGoogleAnalyticsAppSettings -GoogleAnalyticsMeasurementId ${{env.GA_MEASUREMENT_ID}}
     - name: Pack
