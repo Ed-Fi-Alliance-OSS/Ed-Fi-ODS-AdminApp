@@ -21,6 +21,13 @@ namespace EdFi.Ods.Admin.Api.Features
         public const string RegisterDisplayName = "Client display name";
 
         public const string Applications = "applications";
+        public const string ClaimSets = "claimsets";
         public const string AddApplicationDisplayName = "AddApplication";
+        public const string EditApplicationDisplayName = "EditApplication";
+        public const string ApplicationIdDescription = "Application id";
+        public const string ApplicationNameDescription = "Application name";
+        public const string ClaimSetNameDescription = "Claim set name";
+        public const string ProfileIdDescription = "Profile id";
+        public const string EducationOrganizationIdsDescription = "Education organization ids";
     }
 }

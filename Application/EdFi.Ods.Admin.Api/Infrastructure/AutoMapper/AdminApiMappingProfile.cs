@@ -33,9 +33,9 @@ namespace EdFi.Ods.Admin.Api.Infrastructure
                 .ForMember(dst => dst.ProfileName, opt => opt.MapFrom(src => src.ProfileName()));
 
             CreateMap<AddApplicationResult, ApplicationResult>()
-            .ForMember(dst => dst.ApplicationId, opt => opt.MapFrom(src => src.ApplicationId))
-            .ForMember(dst => dst.Key, opt => opt.MapFrom(src => src.Key))
-            .ForMember(dst => dst.Secret, opt => opt.MapFrom(src => src.Secret));
+                .ForMember(dst => dst.ApplicationId, opt => opt.MapFrom(src => src.ApplicationId))
+                .ForMember(dst => dst.Key, opt => opt.MapFrom(src => src.Key))
+                .ForMember(dst => dst.Secret, opt => opt.MapFrom(src => src.Secret));
         }
 
         private string ToCommaSeparated(ICollection<VendorNamespacePrefix> vendorNamespacePrefixes)
