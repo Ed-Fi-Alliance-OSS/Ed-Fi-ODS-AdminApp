@@ -34,8 +34,6 @@ jobs:
     steps:
     - name: Promote Packages
       run: |
-        $Packages =
-
         $arguments = @{
           FeedsURL    = "${{ env.ARTIFACTS_FEED_URL }}"
           PackagesURL = "${{ env.ARTIFACTS_PACKAGES_URL }}"
