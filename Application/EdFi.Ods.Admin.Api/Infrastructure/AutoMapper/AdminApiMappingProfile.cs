@@ -36,6 +36,11 @@ namespace EdFi.Ods.Admin.Api.Infrastructure
                 .ForMember(dst => dst.ApplicationId, opt => opt.MapFrom(src => src.ApplicationId))
                 .ForMember(dst => dst.Key, opt => opt.MapFrom(src => src.Key))
                 .ForMember(dst => dst.Secret, opt => opt.MapFrom(src => src.Secret));
+
+            CreateMap<RegenerateApiClientSecretResult, ApplicationResult>()
+                .ForMember(dst => dst.ApplicationId, opt => opt.MapFrom(src => src.Application.ApplicationId))
+                .ForMember(dst => dst.Key, opt => opt.MapFrom(src => src.Key))
+                .ForMember(dst => dst.Secret, opt => opt.MapFrom(src => src.Secret));
         }
 
         private string ToCommaSeparated(ICollection<VendorNamespacePrefix> vendorNamespacePrefixes)

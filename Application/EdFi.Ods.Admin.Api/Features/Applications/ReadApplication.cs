@@ -17,7 +17,7 @@ public class ReadApplication : IFeature
         endpoints.MapGetWithDefaultOptions($"/{FeatureConstants.Applications}", GetApplications, FeatureConstants.Applications);
         endpoints.MapGetByIdWithDefaultOptions("/{vendorId}" + $"/{FeatureConstants.Applications}" , GetVendorApplications, FeatureConstants.Applications);
         endpoints.MapGetByIdWithDefaultOptions($"/{FeatureConstants.Applications}" + "/{id}", GetApplication, FeatureConstants.Applications);
-        endpoints.MapGetWithDefaultOptions($"/{FeatureConstants.ClaimSets}", GetClaimSets, FeatureConstants.Applications);
+        endpoints.MapGetWithDefaultOptions($"/{FeatureConstants.ClaimSets}", GetClaimSets, FeatureConstants.Applications, "claim sets");
     }
 
     internal Task<IResult> GetApplications(IGetVendorsQuery getVendorsAndApplicationsQuery, IMapper mapper)

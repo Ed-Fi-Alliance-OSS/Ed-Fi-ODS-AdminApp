@@ -30,10 +30,11 @@ namespace EdFi.Ods.Admin.Api.Features.Applications
             return AdminApiResponse<ApplicationModel>.Updated(model, "Application");
         }
 
-        public async Task<IResult> HandleResetCredentials(RegenerateApiClientSecretCommand resetSecretCommand, int id)
+        public async Task<IResult> HandleResetCredentials(RegenerateApiClientSecretCommand resetSecretCommand, IMapper mapper, int id)
         {
             var resetApplicationSecret = await Task.Run(() => resetSecretCommand.Execute(id));
-            return AdminApiResponse<RegenerateApiClientSecretResult>.Updated(resetApplicationSecret, "Application");
+            var model = mapper.Map<ApplicationResult>(resetApplicationSecret);
+            return AdminApiResponse<ApplicationResult>.Updated(model, "Application secret");
         }
 
         [DisplaySchemaName(FeatureConstants.EditApplicationDisplayName)]
