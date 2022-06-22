@@ -114,11 +114,10 @@ public static class WebApplicationBuilderExtensions
             opt.EnableAnnotations();
             opt.OrderActionsBy(x =>
             {
-                return
-                    x.HttpMethod.Equals("GET", StringComparison.InvariantCultureIgnoreCase) ? "0"
+                return x.HttpMethod != null ? x.HttpMethod.Equals("GET", StringComparison.InvariantCultureIgnoreCase) ? "0"
                     : x.HttpMethod.Equals("POST", StringComparison.InvariantCultureIgnoreCase) ? "1"
                     : x.HttpMethod.Equals("PUT", StringComparison.InvariantCultureIgnoreCase) ? "2"
-                    : x.HttpMethod.Equals("DELETE", StringComparison.InvariantCultureIgnoreCase) ? "3" : "4";
+                    : x.HttpMethod.Equals("DELETE", StringComparison.InvariantCultureIgnoreCase) ? "3" : "4" : "5";
             });
         });
 
