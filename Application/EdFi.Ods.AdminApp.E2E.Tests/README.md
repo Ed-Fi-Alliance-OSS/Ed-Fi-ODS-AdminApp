@@ -1,6 +1,6 @@
 # Admin App End To End Tests
 
-The E2E tests are UI Automation tests written in [CucumberJS]() to be executed using [Playwright]() with Typescript
+The E2E tests are UI Automation tests written in [CucumberJS](https://cucumber.io/) to be executed using [Playwright](https://playwright.dev/) with Typescript
 
 # Execution
 
@@ -14,7 +14,11 @@ The E2E tests are UI Automation tests written in [CucumberJS]() to be executed u
 
 ### Install 
 
+Navigate to /Application/EdFi.Ods.AdminApp.E2E.Tests/
+
 Run `npm install` to get all dependencies
+
+After the installation is successful, Playwright must be ready to execute the tests.
 
 ### Environment
 
@@ -35,15 +39,22 @@ Additionally, there are flags  such as:
 > When possible, prefer traces over videos since the traces are organized by test and have more information than the video.
 
 
-
-
 ## Run
 
-Before running, you need to specify the URL, username and password in an .env file. File .env.example is a guide about how to set the variables.
+There are multiple commands to run the tests, that can be found in the script section of [package.json](package.json)
 
-To execute the tests, run `npm test`
+Some of the commands are:
 
-## Debug
+`npm test`: Run all tests, except for the ones that have specific preconditions required, such as registering and first time setup.
+
+`npm run sanity-test`: Run the sanity tests (labeled with @Sanity in the .feature files)
+
+`npm run test-{x}`: Run only the test for a specified feature. For example: `npm run test-vendors` executes the vendor tests only.
+
+`npm run html-report`: Run the tests and generates a report in HTML.
+
+
+# Debug
 
 The preferred method for debug is the integrated playwright inspector.
 
@@ -51,3 +62,15 @@ The preferred method for debug is the integrated playwright inspector.
 $env:PWDEBUG=1
 npm run test
 ```
+
+## Trace Viewer
+
+To see the generated traces, locate the zip files located in /Application/EdFi.Ods.AdminApp.E2E.Tests/traces/. These tests are sorted by Feature and specific test. After the file **trace.zip** corresponding to the desired test is found, you can open it by running:
+
+```
+  npm run trace-viewer -- {Path}
+```
+
+Additionally, you can browse to https://trace.playwright.dev/ and select the trace.zip file to view it in the browser.
+
+More info on debug: https://playwright.dev/docs/debug
