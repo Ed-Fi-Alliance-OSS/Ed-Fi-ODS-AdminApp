@@ -77,7 +77,7 @@ namespace EdFi.Ods.Admin.Api.Features.Applications
                     .NotEmpty()
                     .WithMessage("You must provide at least one Education Organization id");
 
-                RuleFor(m => m.VendorId).NotEmpty();
+                RuleFor(m => m.VendorId).Must(id => id > 0).WithMessage("Please provide valid Vendor Id.");
             }
         }
     }

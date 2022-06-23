@@ -36,7 +36,7 @@ namespace EdFi.Ods.AdminApp.Management.Database.Commands
                 .Include(a => a.ApplicationEducationOrganizations)
                 .Include(a => a.ApiClients)
                 .Include(a => a.Profiles)
-                .Single(a => a.ApplicationId == model.ApplicationId);
+                .SingleOrDefault(a => a.ApplicationId == model.ApplicationId);
 
             if (application == null)
             {
@@ -47,13 +47,15 @@ namespace EdFi.Ods.AdminApp.Management.Database.Commands
                 throw new Exception("This Application is required for proper system function and may not be modified");
             }
 
-            var newVendor = _context.Vendors.Single(v => v.VendorId == model.VendorId);
+            var newVendor = _context.Vendors.SingleOrDefault(v => v.VendorId == model.VendorId);
             var newProfile = model.ProfileId.HasValue
-                ? _context.Profiles.Single(p => p.ProfileId == model.ProfileId.Value)
+                ? _context.Profiles.SingleOrDefault(p => p.ProfileId == model.ProfileId.Value)
                 : null;
 
-            var apiClient = application.ApiClients.Single();
-            apiClient.Name = model.ApplicationName;
+            var apiClient = application.ApiClients.SingleOrDefault();
+            if(apiClient != null)
+                apiClient.Name = model.ApplicationName;
+
             application.ApplicationName = model.ApplicationName;
             application.ClaimSetName = model.ClaimSetName;
             application.Vendor = newVendor;
