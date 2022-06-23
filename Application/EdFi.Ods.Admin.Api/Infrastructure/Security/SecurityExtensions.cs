@@ -40,7 +40,7 @@ public static class SecurityExtensions
                 {
                     if (signingKey == null)
                     {
-                        throw new Exception("Invalid Configuration: AppSettings:EncryptionKey and Authentication:SigningKey are required.");
+                        throw new Exception("Invalid Configuration: Authentication:SigningKey is required.");
                     }
                     opt.AddSigningKey(signingKey);
                 }
