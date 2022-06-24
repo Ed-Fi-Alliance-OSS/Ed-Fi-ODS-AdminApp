@@ -9,7 +9,7 @@ using FluentValidation;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using EdFi.Ods.AdminApp.Management;
-using EdFi.Ods.AdminApp.Web.Helpers;
+using EdFi.Ods.AdminApp.Management.Database.Queries;
 
 namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.Application
 {

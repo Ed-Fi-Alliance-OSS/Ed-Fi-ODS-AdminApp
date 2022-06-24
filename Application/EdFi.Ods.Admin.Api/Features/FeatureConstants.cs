@@ -29,5 +29,10 @@ namespace EdFi.Ods.Admin.Api.Features
         public const string ClaimSetNameDescription = "Claim set name";
         public const string ProfileIdDescription = "Profile id";
         public const string EducationOrganizationIdsDescription = "Education organization ids";
+        public const string ApplicationNameLengthValidationMessage = "The Application Name {ApplicationName} would be too long for Admin App to set up necessary Application records." +
+                            " Consider shortening the name by {ExtraCharactersInName} character(s).";
+        public const string ClaimSetNameValidationMessage = "Please provide a valid claim set name.";
+        public const string EdOrgIdsValidationMessage = "Please provide at least one education organization id.";
+        public const string VendorIdValidationMessage = "Please provide valid vendor id.";
     }
 }

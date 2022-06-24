@@ -7,6 +7,7 @@ using AutoMapper;
 using EdFi.Ods.Admin.Api.ActionFilters;
 using EdFi.Ods.Admin.Api.Infrastructure;
 using EdFi.Ods.AdminApp.Management.Database.Commands;
+using EdFi.Ods.AdminApp.Management.Database.Queries;
 using FluentValidation;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -69,15 +70,31 @@ namespace EdFi.Ods.Admin.Api.Features.Applications
             {
                 RuleFor(m => m.ApplicationId).NotEmpty();
                 RuleFor(m => m.ApplicationName).NotEmpty();
+                RuleFor(m => m.ApplicationName)
+               .Must(BeWithinApplicationNameMaxLength)
+               .WithMessage(FeatureConstants.ApplicationNameLengthValidationMessage)
+               .When(x => x.ApplicationName != null);
                 RuleFor(m => m.ClaimSetName)
                     .NotEmpty()
-                    .WithMessage("You must provide a Claim Set name");
+                    .WithMessage(FeatureConstants.ClaimSetNameValidationMessage);
 
                 RuleFor(m => m.EducationOrganizationIds)
                     .NotEmpty()
-                    .WithMessage("You must provide at least one Education Organization id");
+                    .WithMessage(FeatureConstants.EdOrgIdsValidationMessage);
 
-                RuleFor(m => m.VendorId).Must(id => id > 0).WithMessage("Please provide valid Vendor Id.");
+                RuleFor(m => m.VendorId).Must(id => id > 0).WithMessage(FeatureConstants.VendorIdValidationMessage);
+            }
+
+            private bool BeWithinApplicationNameMaxLength<T>(Request model, string applicationName, ValidationContext<T> context)
+            {
+                var extraCharactersInName = applicationName.Length - ApplicationExtensions.MaximumApplicationNameLength;
+                if (extraCharactersInName <= 0)
+                {
+                    return true;
+                }
+                context.MessageFormatter.AppendArgument("ApplicationName", applicationName);
+                context.MessageFormatter.AppendArgument("ExtraCharactersInName", extraCharactersInName);
+                return false;
             }
         }
     }
