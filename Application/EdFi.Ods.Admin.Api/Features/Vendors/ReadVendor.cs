@@ -14,8 +14,8 @@ public class ReadVendor : IFeature
 {
     public void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapGetWithDefaultOptions($"/{FeatureConstants.Vendors}", GetVendors, FeatureConstants.Vendors);
-        endpoints.MapGetByIdWithDefaultOptions($"/{FeatureConstants.Vendors}" + "/{id}", GetVendor, FeatureConstants.Vendors);
+        endpoints.MapGetWithDefaultOptions($"/{FeatureConstants.Vendors}", GetVendors, FeatureConstants.Vendors, FeatureConstants.Version1);
+        endpoints.MapGetByIdWithDefaultOptions($"/{FeatureConstants.Vendors}" + "/{id}", GetVendor, FeatureConstants.Vendors, FeatureConstants.Version1);
     }
 
     internal Task<IResult> GetVendors(IGetVendorsQuery getVendorsQuery, IMapper mapper)

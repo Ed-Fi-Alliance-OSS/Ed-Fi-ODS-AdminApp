@@ -7,6 +7,7 @@ using EdFi.Ods.AdminApp.Management.Api;
 using EdFi.Ods.AdminApp.Management.Database;
 using EdFi.Security.DataAccess.Contexts;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
@@ -63,9 +64,11 @@ public static class WebApplicationBuilderExtensions
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         webApplicationBuilder.Services.AddEndpointsApiExplorer();
         var issuer = webApplicationBuilder.Configuration.GetValue<string>("Authentication:IssuerUrl");
+      
+        webApplicationBuilder.Services.AddTransient<IApiVersionDescriptionProvider, ApiVersionDescriptionProvider>();
+        webApplicationBuilder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
         webApplicationBuilder.Services.AddSwaggerGen(opt =>
         {
-            opt.CustomSchemaIds(x => x.FullName);
             opt.OperationFilter<TokenEndpointBodyDescriptionFilter>();
             opt.AddSecurityDefinition(
                 "oauth",
@@ -96,11 +99,6 @@ public static class WebApplicationBuilderExtensions
                     }
                 }
             );
-
-            opt.SwaggerDoc("v1", new OpenApiInfo
-            {
-                Title = "Admin API Documentation", Version = "v1"
-            });
             opt.DocumentFilter<OperationResponsesAndOrderDocumentFilter>();
             opt.DocumentFilter<RemoveSchemaDocumentFilter>();
             opt.DocumentFilter<AddRegisterSchemaDocumentFilter>();

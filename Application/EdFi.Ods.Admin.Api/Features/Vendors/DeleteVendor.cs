@@ -12,7 +12,7 @@ namespace EdFi.Ods.Admin.Api.Features.Vendors
     {
         public void MapEndpoints(IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapDeleteWithDefaultOptions($"/{FeatureConstants.Vendors}" + "/{id}", Handle, FeatureConstants.Vendors);
+            endpoints.MapDeleteWithDefaultOptions($"/{FeatureConstants.Vendors}" + "/{id}", Handle, FeatureConstants.Vendors, FeatureConstants.Version1);
         }
 
         public Task<IResult> Handle(DeleteVendorCommand deleteVendorCommand, int id)

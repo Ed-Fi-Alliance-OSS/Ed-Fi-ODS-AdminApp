@@ -6,5 +6,10 @@ namespace EdFi.Ods.Admin.Api.Infrastructure.Extensions
         {
             return input.Remove(input.Length - 1, 1);
         }
+
+        public static string IncludeVersion(this string route, string version)
+        {
+            return $"/{version}{route}";
+        }
     }
 }
