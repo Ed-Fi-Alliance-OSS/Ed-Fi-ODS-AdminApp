@@ -65,12 +65,16 @@ npm run test
 
 ## Trace Viewer
 
-To see the generated traces, locate the zip files located in /Application/EdFi.Ods.AdminApp.E2E.Tests/traces/. These tests are sorted by Feature and specific test. After the file **trace.zip** corresponding to the desired test is found, you can open it by running:
+To see the generated traces, locate the zip files located in /Application/EdFi.Ods.AdminApp.E2E.Tests/traces/. These tests are sorted by Feature and specific test. After finding the **trace.zip** file corresponding to the desired test, you can open it by running:
 
 ```
-  npm run trace-viewer -- {Path}
+  npm run trace-viewer -- {trace.zip path}
 ```
 
 Additionally, you can browse to https://trace.playwright.dev/ and select the trace.zip file to view it in the browser.
 
 More info on debug: https://playwright.dev/docs/debug
+
+# More Information
+
+[Architecture](./ARCHITECTURE.md)
