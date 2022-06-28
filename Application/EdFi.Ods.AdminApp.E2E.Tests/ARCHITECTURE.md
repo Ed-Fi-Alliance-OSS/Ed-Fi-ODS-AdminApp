@@ -45,20 +45,25 @@ This is an example of the architecture for two of the features
 
 ```mermaid 
 classDiagram
-  direction RL
+  
   adminAppPage <|-- vendorsPage
   adminAppPage <|-- applicationsPage
-  
-  applicationsPage <-- applications
-  vendorsPage <-- vendors
-  
-  sharedSteps <-- applicationsFeature
-  vendors <-- vendorsFeature
-  sharedSteps <-- vendorsFeature
-  applications <-- applicationsFeature
 
-  vendorsPage <-- sharedSteps
-  applicationsPage <-- sharedSteps
+  vendorsPage --* modelResolver
+  applicationsPage --* modelResolver
+  
+  modelResolver <-- applications: calls
+  modelResolver <-- vendors: calls
+  modelResolver <-- sharedSteps: calls
+  
+  sharedSteps -- applicationsFeature
+  vendors -- vendorsFeature
+  sharedSteps -- vendorsFeature
+  applications -- applicationsFeature
+
+
+  modelResolver: -adminAppPage[] aaPages
+  modelResolver: getPage()
   
   adminAppPage: selectors
   applicationsPage: selectors
