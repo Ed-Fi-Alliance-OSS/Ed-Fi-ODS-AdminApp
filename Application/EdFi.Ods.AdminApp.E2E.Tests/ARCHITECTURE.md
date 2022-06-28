@@ -38,3 +38,34 @@ All assertions should be executed in the implementation of the Gherkin functions
 ## Locators
 
 To interact with the browser, we recommend to use Playwright's [Locator](https://playwright.dev/docs/locators) functionality 
+
+# Class Description
+
+This is an example of the architecture for two of the features
+
+```mermaid 
+classDiagram
+  direction RL
+  adminAppPage <|-- vendorsPage
+  adminAppPage <|-- applicationsPage
+  
+  applicationsPage <-- applications
+  vendorsPage <-- vendors
+  
+  sharedSteps <-- applicationsFeature
+  vendors <-- vendorsFeature
+  sharedSteps <-- vendorsFeature
+  applications <-- applicationsFeature
+  
+  adminAppPage: selectors
+  applicationsPage: selectors
+  vendorsPage: selectors
+  
+  adminAppPage: actions()
+  applicationsPage: actions()
+  vendorsPage: actions()
+  
+  vendors: stepDefinitions()
+  sharedSteps: stepDefinitions()
+  applications: stepDefinitions()
+```
