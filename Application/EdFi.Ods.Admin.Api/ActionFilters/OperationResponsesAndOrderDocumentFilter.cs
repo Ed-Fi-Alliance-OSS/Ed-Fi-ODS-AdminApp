@@ -3,6 +3,7 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
+using EdFi.Ods.Admin.Api.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -69,7 +70,20 @@ namespace EdFi.Ods.Admin.Api.ActionFilters
                 var orderedOpertions = operations.OrderBy(x => x.Value).ToList();
                 path.Value.Operations.Clear();
                 orderedOpertions.ForEach(x => path.Value.Operations.Add(x.Key.Key, x.Key.Value));
-                paths.Add(path);
+
+                // Add versioned endpoint route
+                if (context.ApiDescriptions.FirstOrDefault(x => MatchesUrl(x.RelativePath, path))
+                    ?.ActionDescriptor.EndpointMetadata.FirstOrDefault(x => x is VersionedPathAttribute)
+                    is VersionedPathAttribute versionedPathAttributeValue)
+                {
+                    var versionedPath = new KeyValuePair<string, OpenApiPathItem>(path.Key.IncludeVersion(versionedPathAttributeValue.Version), path.Value);
+                    paths.Add(versionedPath);
+                }
+                else
+                {
+                    paths.Add(path);
+                }
+                
             }
             swaggerDoc.Paths.Clear();
             paths.ForEach(x => swaggerDoc.Paths.Add(x.Key, x.Value));
@@ -79,11 +93,15 @@ namespace EdFi.Ods.Admin.Api.ActionFilters
         {
             return apiDescription =>
             {
-                var pathMatches = apiDescription.RelativePath!.Replace("/", string.Empty)
-                    .Equals(path.Key.Replace("/", string.Empty), StringComparison.InvariantCultureIgnoreCase);
                 var verbMatches = operation.Key.ToString().ToLower().Equals(apiDescription.HttpMethod!.ToLower());
-                return pathMatches && verbMatches;
+                return MatchesUrl(apiDescription.RelativePath, path) && verbMatches;
             };
+        }
+
+        private static bool MatchesUrl(string? relativePath, KeyValuePair<string, OpenApiPathItem> path)
+        {
+                return relativePath!.Replace("/", string.Empty)
+                    .Equals(path.Key.Replace("/", string.Empty), StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }

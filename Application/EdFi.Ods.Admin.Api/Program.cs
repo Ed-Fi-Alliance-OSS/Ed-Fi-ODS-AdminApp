@@ -38,11 +38,7 @@ app.MapControllers();
 if (app.Configuration.GetValue<bool>("EnableSwagger"))
 {
     app.UseSwagger();
-    app.UseSwaggerUI( options =>
-    {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", $"v1");
-        options.SwaggerEndpoint("/swagger/v2/swagger.json", $"v2");
-    });
+    app.DefineSwaggerUIWithApiVersions($"{AdminApiVersions.v1}", "v2");
 }
 
 app.Run();

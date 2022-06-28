@@ -17,7 +17,8 @@ namespace EdFi.Ods.Admin.Api.Features.Vendors
     {
         public void MapEndpoints(IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapPutWithDefaultOptions($"/{FeatureConstants.Vendors}" + "/{id}", Handle, FeatureConstants.Vendors, FeatureConstants.Version1);
+            endpoints.MapPutWithDefaultOptions($"/{FeatureConstants.Vendors}" + "/{id}", Handle, FeatureConstants.Vendors)
+                .MapApiVersion(AdminApiVersions.v1);
         }
 
         public async Task<IResult> Handle(EditVendorCommand editVendorCommand, IMapper mapper,
