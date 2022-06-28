@@ -13,7 +13,7 @@ The modelResolver class has an array of [adminAppPages](#admin-app-page) and a g
 https://github.com/Ed-Fi-Alliance-OSS/Ed-Fi-ODS-AdminApp/blob/b51b07e8c48686820f3022bcdc7ae741af69406e/Application/EdFi.Ods.AdminApp.E2E.Tests/features/models/modelResolver.ts#L29-L36
 
 > **Warning**
-> This does not prevent from instantiating a class and using it in a test. This can lead to unexpected behavior.
+> This does not prevent from instantiating a class and using it in a test. Not using the modelResolver can lead to unexpected behavior.
 
 
 ## Admin App Page
@@ -56,6 +56,9 @@ classDiagram
   vendors <-- vendorsFeature
   sharedSteps <-- vendorsFeature
   applications <-- applicationsFeature
+
+  vendorsPage <-- sharedSteps
+  applicationsPage <-- sharedSteps
   
   adminAppPage: selectors
   applicationsPage: selectors

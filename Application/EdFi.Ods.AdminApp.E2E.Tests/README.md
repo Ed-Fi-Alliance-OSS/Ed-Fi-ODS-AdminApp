@@ -75,6 +75,20 @@ Additionally, you can browse to https://trace.playwright.dev/ and select the tra
 
 More info on debug: https://playwright.dev/docs/debug
 
+# How to Add a new Test Case
+
+1. Add the test definition to the .feature file.
+2. Create the step definition in the /support folder.
+3. Create a new Page Object in the /models folder, that inherits from adminAppPage.
+4. Register the Page Object into the modelResolver.
+5. Add calls to the Page Object methods from the step definition class.
+6. To execute the added test only, add tag @WIP before the scenario definition, and run by executing `npm run test-wip`.
+
+```
+@WIP
+Scenario: WIP Demo Scenario
+```
+
 # More Information
 
 [Architecture](./ARCHITECTURE.md)
