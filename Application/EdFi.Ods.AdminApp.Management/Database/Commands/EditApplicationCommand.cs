@@ -42,7 +42,8 @@ namespace EdFi.Ods.AdminApp.Management.Database.Commands
             {
                 throw new NotFoundException<int>("application", model.ApplicationId);
             }
-            if(application != null && application.Vendor.IsSystemReservedVendor())
+
+            if(application.Vendor.IsSystemReservedVendor())
             {
                 throw new Exception("This Application is required for proper system function and may not be modified");
             }
