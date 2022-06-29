@@ -13,12 +13,13 @@ public class ReadApplicationsByVendor : IFeature
 {
     public void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapGetByIdWithDefaultOptions("/{vendorId}" + $"/{FeatureConstants.Applications}" , GetVendorApplications, FeatureConstants.Applications);
+        var url = $"{FeatureConstants.Vendors}/"+"{id}"+$"/{FeatureConstants.Applications}";
+        endpoints.MapGetByIdWithDefaultOptions(url , GetVendorApplications, FeatureConstants.Vendors);
     }
 
-    internal Task<IResult> GetVendorApplications(GetApplicationsByVendorIdQuery getApplicationByVendorIdQuery, IMapper mapper, int vendorId)
+    internal Task<IResult> GetVendorApplications(GetApplicationsByVendorIdQuery getApplicationByVendorIdQuery, IMapper mapper, int id)
     {
-        var vendorApplications = mapper.Map<List<ApplicationModel>>(getApplicationByVendorIdQuery.Execute(vendorId));
+        var vendorApplications = mapper.Map<List<ApplicationModel>>(getApplicationByVendorIdQuery.Execute(id));
         return Task.FromResult(AdminApiResponse<List<ApplicationModel>>.Ok(vendorApplications));
     }
 }
