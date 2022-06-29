@@ -6,14 +6,10 @@ namespace EdFi.Ods.Admin.Api.Infrastructure
     public static class EndpointRouteBuilderExtensions
     {
         internal static RouteHandlerBuilder MapGetWithDefaultOptions(this IEndpointRouteBuilder builder,
-           string route, Delegate handler, string tag, string resourceName = "")
+           string route, Delegate handler, string tag)
         {
             var routeHandler = builder.MapGet(route, handler);
-            if(string.IsNullOrEmpty(resourceName))
-            {
-                resourceName = tag;
-            }
-            SetDefaultOptions(routeHandler, $"Retrieves all {resourceName}.", tag);
+            SetDefaultOptions(routeHandler, $"Retrieves all {tag}.", tag);
             return routeHandler;
         }
 

@@ -12,7 +12,7 @@ public class ReadClaimSets : IFeature
 {
     public void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapGetWithDefaultOptions($"/{FeatureConstants.ClaimSets}", GetClaimSets, FeatureConstants.Applications, "claim sets");
+        endpoints.MapGetWithDefaultOptions($"/{FeatureConstants.ClaimSets}", GetClaimSets, FeatureConstants.ClaimSets);
     }
 
     internal Task<IResult> GetClaimSets(GetClaimSetNamesQuery getClaimSetsQuery)
