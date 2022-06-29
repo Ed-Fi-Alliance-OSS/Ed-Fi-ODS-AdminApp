@@ -17,7 +17,6 @@ public class ReadApplication : IFeature
         endpoints.MapGetWithDefaultOptions($"/{FeatureConstants.Applications}", GetApplications, FeatureConstants.Applications);
         endpoints.MapGetByIdWithDefaultOptions("/{vendorId}" + $"/{FeatureConstants.Applications}" , GetVendorApplications, FeatureConstants.Applications);
         endpoints.MapGetByIdWithDefaultOptions($"/{FeatureConstants.Applications}" + "/{id}", GetApplication, FeatureConstants.Applications);
-        endpoints.MapGetWithDefaultOptions($"/{FeatureConstants.ClaimSets}", GetClaimSets, FeatureConstants.Applications, "claim sets");
     }
 
     internal Task<IResult> GetApplications(IGetVendorsQuery getVendorsAndApplicationsQuery, IMapper mapper)
@@ -29,12 +28,6 @@ public class ReadApplication : IFeature
             applications.AddRange(mapper.Map<List<ApplicationModel>>(vendor.Applications));
         }
         return Task.FromResult(AdminApiResponse<List<ApplicationModel>>.Ok(applications));
-    }
-
-    internal Task<IResult> GetClaimSets(GetClaimSetNamesQuery getClaimSetsQuery)
-    {
-        var calimSets = getClaimSetsQuery.Execute().ToList();
-        return Task.FromResult(AdminApiResponse<List<string>>.Ok(calimSets));
     }
 
     internal Task<IResult> GetVendorApplications(GetApplicationsByVendorIdQuery getApplicationByVendorIdQuery, IMapper mapper, int vendorId)
