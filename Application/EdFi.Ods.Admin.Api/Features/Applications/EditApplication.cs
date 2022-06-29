@@ -20,7 +20,6 @@ namespace EdFi.Ods.Admin.Api.Features.Applications
         public void MapEndpoints(IEndpointRouteBuilder endpoints)
         {
             endpoints.MapPutWithDefaultOptions($"/{FeatureConstants.Applications}" + "/{id}", Handle, FeatureConstants.Applications);
-            endpoints.MapPutWithDefaultOptions($"/{FeatureConstants.Applications}" + "/{id}/reset-credential", HandleResetCredentials, FeatureConstants.Applications);
         }
 
         public async Task<IResult> Handle(IEditApplicationCommand editApplicationCommand, IMapper mapper,
@@ -42,13 +41,6 @@ namespace EdFi.Ods.Admin.Api.Features.Applications
 
             if (request.ProfileId.HasValue && db.Profiles.Find(request.ProfileId) == null)
                 throw new ValidationException(new []{ new ValidationFailure(nameof(request.ProfileId), $"Profile with ID {request.ProfileId} not found.") });
-        }
-
-        public async Task<IResult> HandleResetCredentials(RegenerateApiClientSecretCommand resetSecretCommand, IMapper mapper, int id)
-        {
-            var resetApplicationSecret = await Task.Run(() => resetSecretCommand.Execute(id));
-            var model = mapper.Map<ApplicationResult>(resetApplicationSecret);
-            return AdminApiResponse<ApplicationResult>.Updated(model, "Application secret");
         }
 
         [DisplaySchemaName(FeatureConstants.EditApplicationDisplayName)]
