@@ -62,8 +62,8 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.Application
         }
 
         private bool BeWithinApplicationNameMaxLength<T>(EditApplicationModel model, string applicationName, ValidationContext<T> context)
-        {            
-            var extraCharactersInName = applicationName.Length - ApplicationExtensions.MaximumApplicationNameLength;
+        {
+            var extraCharactersInName = applicationName.Length - ValidationConstants.MaximumApplicationNameLength;
             if (extraCharactersInName <= 0)
             {
                 return true;

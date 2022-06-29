@@ -87,7 +87,7 @@ namespace EdFi.Ods.Admin.Api.Features.Applications
 
             private bool BeWithinApplicationNameMaxLength<T>(Request model, string applicationName, ValidationContext<T> context)
             {
-                var extraCharactersInName = applicationName.Length - ApplicationExtensions.MaximumApplicationNameLength;
+                var extraCharactersInName = applicationName.Length - ValidationConstants.MaximumApplicationNameLength;
                 if (extraCharactersInName <= 0)
                 {
                     return true;
