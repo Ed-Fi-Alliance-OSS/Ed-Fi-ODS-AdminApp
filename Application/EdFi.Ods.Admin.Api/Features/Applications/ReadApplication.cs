@@ -15,7 +15,6 @@ public class ReadApplication : IFeature
     public void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
         endpoints.MapGetWithDefaultOptions($"/{FeatureConstants.Applications}", GetApplications, FeatureConstants.Applications);
-        endpoints.MapGetByIdWithDefaultOptions("/{vendorId}" + $"/{FeatureConstants.Applications}" , GetVendorApplications, FeatureConstants.Applications);
         endpoints.MapGetByIdWithDefaultOptions($"/{FeatureConstants.Applications}" + "/{id}", GetApplication, FeatureConstants.Applications);
     }
 
@@ -28,12 +27,6 @@ public class ReadApplication : IFeature
             applications.AddRange(mapper.Map<List<ApplicationModel>>(vendor.Applications));
         }
         return Task.FromResult(AdminApiResponse<List<ApplicationModel>>.Ok(applications));
-    }
-
-    internal Task<IResult> GetVendorApplications(GetApplicationsByVendorIdQuery getApplicationByVendorIdQuery, IMapper mapper, int vendorId)
-    {
-        var vendorApplications = mapper.Map<List<ApplicationModel>>(getApplicationByVendorIdQuery.Execute(vendorId));
-        return Task.FromResult(AdminApiResponse<List<ApplicationModel>>.Ok(vendorApplications));
     }
 
     internal Task<IResult> GetApplication(GetApplicationByIdQuery getApplicationByIdQuery, IMapper mapper, int id)
