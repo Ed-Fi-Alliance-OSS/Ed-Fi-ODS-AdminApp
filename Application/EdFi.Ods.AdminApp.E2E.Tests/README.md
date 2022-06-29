@@ -91,4 +91,5 @@ Scenario: WIP Demo Scenario
 
 # More Information
 
-[Architecture](./ARCHITECTURE.md)
+- [Architecture](./ARCHITECTURE.md)
+- [Send results to Zephyr](./reports/reports.md)
