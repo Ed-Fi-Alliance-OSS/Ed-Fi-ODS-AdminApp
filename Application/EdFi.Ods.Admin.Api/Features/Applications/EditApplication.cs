@@ -4,11 +4,13 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using AutoMapper;
+using EdFi.Admin.DataAccess.Contexts;
 using EdFi.Ods.Admin.Api.ActionFilters;
 using EdFi.Ods.Admin.Api.Infrastructure;
 using EdFi.Ods.AdminApp.Management.Database.Commands;
 using EdFi.Ods.AdminApp.Management.Database.Queries;
 using FluentValidation;
+using FluentValidation.Results;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace EdFi.Ods.Admin.Api.Features.Applications
@@ -22,13 +24,24 @@ namespace EdFi.Ods.Admin.Api.Features.Applications
         }
 
         public async Task<IResult> Handle(IEditApplicationCommand editApplicationCommand, IMapper mapper,
-                           Validator validator, Request request, int id)
+            Validator validator, IUsersContext db, Request request, int id)
         {
             request.ApplicationId = id;
             await validator.GuardAsync(request);
+            GuardAgainstInvalidEntityReferences(request, db);
+
             var updatedApplication = editApplicationCommand.Execute(request);
             var model = mapper.Map<ApplicationModel>(updatedApplication);
             return AdminApiResponse<ApplicationModel>.Updated(model, "Application");
+        }
+
+        private void GuardAgainstInvalidEntityReferences(Request request, IUsersContext db)
+        {
+            if(null == db.Vendors.Find(request.VendorId))
+                throw new ValidationException(new []{ new ValidationFailure(nameof(request.VendorId), $"Vendor with ID {request.VendorId} not found.") });
+
+            if (request.ProfileId.HasValue && db.Profiles.Find(request.ProfileId) == null)
+                throw new ValidationException(new []{ new ValidationFailure(nameof(request.ProfileId), $"Profile with ID {request.ProfileId} not found.") });
         }
 
         public async Task<IResult> HandleResetCredentials(RegenerateApiClientSecretCommand resetSecretCommand, IMapper mapper, int id)

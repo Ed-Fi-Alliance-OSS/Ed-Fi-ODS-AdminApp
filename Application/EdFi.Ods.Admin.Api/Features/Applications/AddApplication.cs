@@ -4,12 +4,13 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using AutoMapper;
+using EdFi.Admin.DataAccess.Contexts;
 using EdFi.Ods.Admin.Api.Infrastructure;
 using EdFi.Ods.AdminApp.Management.Database.Commands;
 using FluentValidation;
 using EdFi.Ods.Admin.Api.ActionFilters;
 using Swashbuckle.AspNetCore.Annotations;
-using EdFi.Ods.AdminApp.Management.Database.Queries;
+using FluentValidation.Results;
 
 namespace EdFi.Ods.Admin.Api.Features.Applications
 {
@@ -20,12 +21,22 @@ namespace EdFi.Ods.Admin.Api.Features.Applications
             endpoints.MapPostWithDefaultOptions($"/{FeatureConstants.Applications}", Handle, FeatureConstants.Applications);
         }
 
-        public async Task<IResult> Handle(Validator validator, IAddApplicationCommand addApplicationCommand, IMapper mapper, Request request)
+        public async Task<IResult> Handle(Validator validator, IAddApplicationCommand addApplicationCommand, IMapper mapper, IUsersContext db, Request request)
         {
             await validator.GuardAsync(request);
+            GuardAgainstInvalidEntityReferences(request, db);
             var addedApplicationResult = addApplicationCommand.Execute(request);
             var model = mapper.Map<ApplicationResult>(addedApplicationResult);
             return AdminApiResponse<ApplicationResult>.Created(model, "Application", $"/{FeatureConstants.Applications}/{model.ApplicationId}");
+        }
+
+        private void GuardAgainstInvalidEntityReferences(Request request, IUsersContext db)
+        {
+            if(null == db.Vendors.Find(request.VendorId))
+                throw new ValidationException(new []{ new ValidationFailure(nameof(request.VendorId), $"Vendor with ID {request.VendorId} not found.") });
+
+            if (request.ProfileId.HasValue && db.Profiles.Find(request.ProfileId) == null)
+                throw new ValidationException(new []{ new ValidationFailure(nameof(request.ProfileId), $"Profile with ID {request.ProfileId} not found.") });
         }
 
         [DisplaySchemaName(FeatureConstants.AddApplicationDisplayName)]
