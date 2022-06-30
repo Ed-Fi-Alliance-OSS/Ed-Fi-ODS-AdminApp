@@ -33,13 +33,13 @@ jobs:
     - name: Install-credential-handler
       run: iex "& { $(irm https://aka.ms/install-artifacts-credprovider.ps1) } -AddNetfx"
     - name: Build and Publish
-      if: success()
       run: |
         $parameters = @{
           SemanticVersion = "${{ env.ADMIN_APP_VERSION }}"
           BuildCounter = "${{ github.run_number }}"
-          Publish = $True
+          Publish = $true
           NuGetFeed = "${{ env.ARTIFACTS_FEED_URL }}"
           NuGetApiKey = "${{ env.ARTIFACTS_API_KEY }}"
+          ToolsPath = "/tmp/tools"
         }
         .\build-package.ps1 @parameters
