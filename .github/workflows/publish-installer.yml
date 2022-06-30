@@ -37,7 +37,6 @@ jobs:
         $parameters = @{
           SemanticVersion = "${{ env.ADMIN_APP_VERSION }}"
           BuildCounter = "${{ github.run_number }}"
-          Publish = $true
           NuGetFeed = "${{ env.ARTIFACTS_FEED_URL }}"
           NuGetApiKey = "${{ env.ARTIFACTS_API_KEY }}"
           ToolsPath = "/tmp/tools"

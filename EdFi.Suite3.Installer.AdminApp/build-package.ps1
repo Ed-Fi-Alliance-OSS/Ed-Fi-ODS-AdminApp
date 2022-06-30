@@ -12,15 +12,18 @@ param (
     [string]
     [Parameter(Mandatory=$true)]
     $BuildCounter,
-    
+
     [switch]
-    $Publish,
+    $Publish = $True,
 
     [string]
     $NuGetFeed,
 
     [string]
-    $NuGetApiKey
+    $NuGetApiKey,
+
+    [string]
+    $ToolsPath = "/temp/tools"
 )
 
 $ErrorActionPreference = "Stop"
@@ -40,6 +43,13 @@ $parameters = @{
     Publish = $Publish
     Source = $NuGetFeed
     ApiKey = $NuGetApiKey
-    ToolsPath = "C:/temp/tools"
+    ToolsPath = $ToolsPath
 }
+
+Write-Host @parameters
+
+Write-Host "About to build package $PSScriptRoot"
+Write-Host "Tools path $ToolsPath"
+
+
 Invoke-CreatePackage @parameters -Verbose:$verbose
