@@ -1,0 +1,45 @@
+# SPDX-License-Identifier: Apache-2.0
+# Licensed to the Ed-Fi Alliance under one or more agreements.
+# The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+# See the LICENSE and NOTICES files in the project root for more information.
+
+name: Pack and Publish Installer
+
+on:
+  workflow_dispatch:
+
+env:
+  ADMIN_APP_VERSION: '2.4'
+  ARTIFACTS_API_KEY: ${{ secrets.AZURE_ARTIFACTS_PERSONAL_ACCESS_TOKEN }}
+  ARTIFACTS_FEED_URL: ${{ secrets.AZURE_ARTIFACTS_FEED_URL }}
+  VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: '{"endpointCredentials": [{"endpoint": "${{ secrets.AZURE_ARTIFACTS_FEED_URL }}","password": "${{ secrets.AZURE_ARTIFACTS_PERSONAL_ACCESS_TOKEN }}"}]}'
+
+jobs:
+  pack:
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: pwsh
+        working-directory: /EdFi.Suite3.Installer.AdminApp
+
+    steps:
+    - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@9211491ffb35dd6a6657ca4f45d43dfe6e97c829 # v2.0.0
+      with:
+        dotnet-version: 6.0.x
+    - name: Install-credential-handler
+      run: iex "& { $(irm https://aka.ms/install-artifacts-credprovider.ps1) } -AddNetfx"
+    - name: Build and Publish
+      if: success()
+      run: |
+        $parameters = @{
+          SemanticVersion = "${{ env.ADMIN_APP_VERSION }}"
+          BuildCounter = "${{ github.run_number }}"
+          Publish = true
+          NuGetFeed = "${{ env.ARTIFACTS_FEED_URL }}"
+          NuGetApiKey = "${{ env.ARTIFACTS_API_KEY }}"
+        }
+        .\build-package.ps1 @parameters

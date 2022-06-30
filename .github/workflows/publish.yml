@@ -39,7 +39,10 @@ jobs:
       run: .\build.ps1 -Command PopulateGoogleAnalyticsAppSettings -GoogleAnalyticsMeasurementId ${{env.GA_MEASUREMENT_ID}}
     - name: Pack
       if: success()
-      run: ./build.ps1 -Command PackageApi -Configuration Release -Version ${{ env.ADMIN_API_VERSION }} -BuildCounter ${{ github.run_number }}
+      run: |
+        ./build.ps1 -Command Package -Configuration Release -Version ${{ env.ADMIN_APP_VERSION }} -BuildCounter ${{ github.run_number }}
+        ./build.ps1 -Command PackageDatabase -Configuration Release -Version ${{ env.ADMIN_APP_VERSION }} -BuildCounter ${{ github.run_number }}
+        ./build.ps1 -Command PackageApi -Configuration Release -Version ${{ env.ADMIN_API_VERSION }} -BuildCounter ${{ github.run_number }}
     - name: Upload Package
       if: success()
       uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # v3.0.0
@@ -68,7 +71,23 @@ jobs:
         run: iex "& { $(irm https://aka.ms/install-artifacts-credprovider.ps1) } -AddNetfx"
       - name: Upload Admin API
         run: |
-          $artifact = (Get-ChildItem -Path $_ -Name -Include *.Admin.Api.*.nupkg)
+          $artifact = (Get-ChildItem -Path $_ -Name -Include EdFi.Suite3.ODS.Admin.Api.*.nupkg)
+          $arguments = @{
+            NuGetApiKey = "${{ env.ARTIFACTS_API_KEY }}"
+          }
+          $arguments.PackageFile = $artifact
+          ./build.ps1 Push @arguments
+      - name: Upload Admin App
+        run: |
+          $artifact = (Get-ChildItem -Path $_ -Name -Include EdFi.Suite3.ODS.AdminApp.Web.*.nupkg)
+          $arguments = @{
+            NuGetApiKey = "${{ env.ARTIFACTS_API_KEY }}"
+          }
+          $arguments.PackageFile = $artifact
+          ./build.ps1 Push @arguments
+      - name: Upload Admin Database
+        run: |
+          $artifact = (Get-ChildItem -Path $_ -Name -Include EdFi.Suite3.ODS.AdminApp.Database.*.nupkg)
           $arguments = @{
             NuGetApiKey = "${{ env.ARTIFACTS_API_KEY }}"
           }
