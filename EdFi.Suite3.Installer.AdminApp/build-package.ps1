@@ -27,6 +27,7 @@ $ErrorActionPreference = "Stop"
 $OutputDirectory = Resolve-Path $PSScriptRoot
 $PackageDefinitionFile = Resolve-Path "$PSScriptRoot/EdFi.Suite3.Installer.AdminApp.nuspec"
 $Downloads = "$PSScriptRoot/downloads"
+$Version = "$SemanticVersion.$BuildCounter"
 
 function Add-AppCommon{
 
@@ -75,7 +76,7 @@ function New-Package {
 
     $parameters = @(
         "pack", $PackageDefinitionFile,
-        "-Version", $SemanticVersion,
+        "-Version", $Version,
         "-OutputDirectory", $OutputDirectory,
         "-Verbosity", "detailed"
     )
@@ -97,11 +98,11 @@ function Get-PackageId
 function Publish-Package{
     param (
         [string]
-        $Version = $SemanticVersion
+        $PkgVersion = "$Version"
     )
 
     $packageId = Get-PackageId
-    $packageName = "$packageId.$Version.nupkg"
+    $packageName = "$packageId.$PkgVersion.nupkg"
 
     $parameters = @(
         "push", (Get-ChildItem "$OutputDirectory/$packageName").FullName,
