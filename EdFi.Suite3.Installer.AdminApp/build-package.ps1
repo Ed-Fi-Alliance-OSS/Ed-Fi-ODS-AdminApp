@@ -23,7 +23,7 @@ param (
     $NuGetApiKey,
 
     [string]
-    $ToolsPath = "C:/temp/tools"
+    $ToolsPath = "$PSScriptRoot/temp/tools"
 )
 
 $ErrorActionPreference = "Stop"

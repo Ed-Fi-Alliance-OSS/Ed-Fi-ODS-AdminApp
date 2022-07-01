@@ -16,7 +16,7 @@ param (
     $PackageSource = "https://pkgs.dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_packaging/EdFi/nuget/v3/index.json",
 
     [string]
-    $ToolsPath = "C:/temp/tools"
+    $ToolsPath = "$PSScriptRoot/temp/tools"
 )
 $ErrorActionPreference = "Stop"
 

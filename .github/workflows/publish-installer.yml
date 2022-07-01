@@ -41,6 +41,5 @@ jobs:
           BuildCounter = "${{ github.run_number }}"
           NuGetFeed = "${{ env.ARTIFACTS_FEED_URL }}"
           NuGetApiKey = "${{ env.ARTIFACTS_API_KEY }}"
-          ToolsPath = "/tmp/tools"
         }
         .\build-package.ps1 @parameters
