@@ -31,8 +31,6 @@ jobs:
       uses: actions/setup-dotnet@9211491ffb35dd6a6657ca4f45d43dfe6e97c829 # v2.0.0
       with:
         dotnet-version: 6.0.x
-    - name: Install-credential-handler
-      run: iex "& { $(irm https://aka.ms/install-artifacts-credprovider.ps1) } -AddNetfx"
     - name: Pack Installer
       run: |
         $parameters = @{
@@ -47,6 +45,32 @@ jobs:
       uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # v3.0.0
       with:
         name: NuGetPackages
-        path: ./*.nupkg
+        path: .//EdFi.Suite3.Installer.AdminApp/EdFi.Suite3.Installer.AdminApp.*.nupkg
         if-no-files-found: error
         retention-days: 30
+
+  publish-artifacts:
+    needs: pack
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
+      - name: Get Artifact
+        uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741 #v3.0.0
+        with:
+          name: NuGetPackages
+      - name: Install-credential-handler
+        run: iex "& { $(irm https://aka.ms/install-artifacts-credprovider.ps1) } -AddNetfx"
+      - name: Upload Admin App Installer
+        run: |
+          $artifact = (Get-ChildItem -Path $_ -Name -Include EdFi.Suite3.Installer.AdminApp.*.nupkg)
+          $arguments = @{
+            NuGetApiKey = "${{ env.ARTIFACTS_API_KEY }}"
+          }
+          $arguments.PackageFile = $artifact
+          ./build.ps1 Push @arguments
