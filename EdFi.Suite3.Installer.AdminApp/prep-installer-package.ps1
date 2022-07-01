@@ -13,7 +13,10 @@ param (
     $AppCommonVersion = "2.0.0",
 
     [string]
-    $PackageSource = "https://pkgs.dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_packaging/EdFi/nuget/v3/index.json"
+    $PackageSource = "https://pkgs.dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_packaging/EdFi/nuget/v3/index.json",
+
+    [string]
+    $ToolsPath = "C:/temp/tools"
 )
 $ErrorActionPreference = "Stop"
 
@@ -25,7 +28,7 @@ Import-Module -Force "$PSScriptRoot/nuget-helper.psm1"
 $parameters = @{
     PackageName = "EdFi.Installer.AppCommon"
     PackageVersion = $AppCommonVersion
-    ToolsPath = "C:/temp/tools"
+    ToolsPath = $ToolsPath
     PackageSource = $PackageSource
 }
 $appCommonDirectory = Get-NugetPackage @parameters

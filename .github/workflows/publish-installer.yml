@@ -6,6 +6,8 @@
 name: Pack and Publish Installer
 
 on:
+  push:
+    branches: [ main ]
   workflow_dispatch:
 
 env:

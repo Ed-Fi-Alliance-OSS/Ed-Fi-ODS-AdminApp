@@ -23,12 +23,17 @@ param (
     $NuGetApiKey,
 
     [string]
-    $ToolsPath = "/temp/tools"
+    $ToolsPath = "C:/temp/tools"
 )
 
 $ErrorActionPreference = "Stop"
 
-Invoke-Expression "$PSScriptRoot/prep-installer-package.ps1 $PSScriptRoot"
+$prepParams = @{
+    PackageDirectory = $PSScriptRoot
+    ToolsPath = $ToolsPath
+}
+
+Invoke-Expression "$PSScriptRoot/prep-installer-package.ps1 @prepParams"
 
 $verbose = $PSCmdlet.MyInvocation.BoundParameters["Verbose"]
 
