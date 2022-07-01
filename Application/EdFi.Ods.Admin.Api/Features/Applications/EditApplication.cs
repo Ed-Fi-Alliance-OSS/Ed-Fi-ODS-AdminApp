@@ -90,9 +90,9 @@ namespace EdFi.Ods.Admin.Api.Features.Applications
                 RuleFor(m => m.VendorId).Must(id => id > 0).WithMessage(FeatureConstants.VendorIdValidationMessage);
             }
 
-            private bool BeWithinApplicationNameMaxLength<T>(Request model, string applicationName, ValidationContext<T> context)
+            private bool BeWithinApplicationNameMaxLength<T>(Request model, string? applicationName, ValidationContext<T> context)
             {
-                var extraCharactersInName = applicationName.Length - ValidationConstants.MaximumApplicationNameLength;
+                var extraCharactersInName = applicationName!.Length - ValidationConstants.MaximumApplicationNameLength;
                 if (extraCharactersInName <= 0)
                 {
                     return true;
