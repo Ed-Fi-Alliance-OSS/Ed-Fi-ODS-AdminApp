@@ -14,47 +14,117 @@ param (
     $BuildCounter,
 
     [switch]
-    $Publish = $True,
+    $PublishPackage = $true,
 
     [string]
     $NuGetFeed,
 
     [string]
-    $NuGetApiKey,
-
-    [string]
-    $ToolsPath = "$PSScriptRoot/temp/tools"
+    $NuGetApiKey
 )
 
 $ErrorActionPreference = "Stop"
+$OutputDirectory = Resolve-Path $PSScriptRoot
+$PackageDefinitionFile = Resolve-Path "$PSScriptRoot/EdFi.Suite3.Installer.AdminApp.nuspec"
+$Downloads = "$PSScriptRoot/downloads"
 
-$prepParams = @{
-    PackageDirectory = $PSScriptRoot
-    ToolsPath = $ToolsPath
+function Add-AppCommon{
+
+    if(-not(Test-Path -Path $Downloads )){
+        $createDir = mkdir $Downloads
+    }
+
+    $PackageName = "EdFi.Installer.AppCommon"
+    $PackageVersion = "2.0.0"
+
+    $parameters = @(
+        "install", $PackageName,
+        "-source", $NuGetFeed,
+        "-outputDirectory", $Downloads
+        "-version", $PackageVersion
+    )
+
+    Write-Host "Downloading AppCommon"
+    Write-Host -ForegroundColor Magenta "Executing nuget: $parameters"
+    nuget $parameters
+
+    $appCommonDirectory = Resolve-Path $Downloads/$PackageName.$PackageVersion* | Select-Object -Last 1
+
+    # Move AppCommon's modules to a local AppCommon directory
+    @(
+        "Application"
+        "Environment"
+        "IIS"
+        "Utility"
+    ) | ForEach-Object {
+        $parameters = @{
+            Recurse = $true
+            Force = $true
+            Path = "$appCommonDirectory/$_"
+            Destination = "$PSScriptRoot/AppCommon/$_"
+        }
+        Copy-Item @parameters
+    }
 }
 
-Invoke-Expression "$PSScriptRoot/prep-installer-package.ps1 @prepParams"
+function New-Package {
+    param (
+        [string]
+        $Suffix
+     )
 
-$verbose = $PSCmdlet.MyInvocation.BoundParameters["Verbose"]
+    $parameters = @(
+        "pack", $PackageDefinitionFile,
+        "-Version", $SemanticVersion,
+        "-OutputDirectory", $OutputDirectory,
+        "-Verbosity", "detailed"
+    )
+    if ($Suffix) {
+        $parameters += "-Suffix"
+        $parameters += $Suffix
+    }
 
-$appCommonUtilityDirectory = "$PSScriptRoot/AppCommon/Utility"
-
-Import-Module "$appCommonUtilityDirectory/create-package.psm1" -Force
-
-$parameters = @{
-    PackageDefinitionFile = Resolve-Path "$PSScriptRoot/EdFi.Suite3.Installer.AdminApp.nuspec"
-    Version = "$SemanticVersion.$BuildCounter"
-    OutputDirectory = Resolve-Path $PSScriptRoot
-    Publish = $Publish
-    Source = $NuGetFeed
-    ApiKey = $NuGetApiKey
-    ToolsPath = $ToolsPath
+    Write-Host @parameters -ForegroundColor Magenta
+    nuget @parameters
 }
 
-Write-Host @parameters
+function Get-PackageId
+{
+    [ xml ] $fileContents = Get-Content -Path  $PackageDefinitionFile
+    return $fileContents.package.metadata.id
+}
 
-Write-Host "About to build package $PSScriptRoot"
-Write-Host "Tools path $ToolsPath"
+function Publish-Package{
+    param (
+        [string]
+        $Version = $SemanticVersion
+    )
+
+    $packageId = Get-PackageId
+    $packageName = "$packageId.$Version.nupkg"
+
+    $parameters = @(
+        "push", (Get-ChildItem "$OutputDirectory/$packageName").FullName,
+        "-Source", $NuGetFeed,
+        "-ApiKey", $NuGetApiKey,
+        "-Verbosity", "detailed"
+    )
+
+    Write-Host "Pushing $packageName to azure artifacts"
+    nuget @parameters
+}
+
+#Add AppCommon
+Add-AppCommon
+
+# Build release
+Write-Host "Building Release package"
+New-Package
 
 
-Invoke-CreatePackage @parameters -Verbose:$verbose
+if($PublishPackage)
+{
+    Write-Host "Publishing release package"
+    Publish-Package
+}
+

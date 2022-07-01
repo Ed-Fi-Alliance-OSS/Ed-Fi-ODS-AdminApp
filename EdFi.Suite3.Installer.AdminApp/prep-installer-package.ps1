@@ -13,45 +13,48 @@ param (
     $AppCommonVersion = "2.0.0",
 
     [string]
-    $PackageSource = "https://pkgs.dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_packaging/EdFi/nuget/v3/index.json",
-
-    [string]
-    $ToolsPath = "$PSScriptRoot/temp/tools"
+    $PackageSource = "https://pkgs.dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_packaging/EdFi/nuget/v3/index.json"
 )
 $ErrorActionPreference = "Stop"
+$PackageDefinitionFile = Resolve-Path "$PSScriptRoot/Installer.DataImport.nuspec"
+$Downloads = "$PSScriptRoot/downloads"
 
-Push-Location $PackageDirectory
+function Add-AppCommon {
 
-Import-Module -Force "$PSScriptRoot/nuget-helper.psm1"
-
-if(-not(Test-Path -Path $ToolsPath )){
-        $createDir = mkdir $ToolsPath
-}
-
-# Download App Common
-$parameters = @{
-    PackageName = "EdFi.Installer.AppCommon"
-    PackageVersion = $AppCommonVersion
-    ToolsPath = $ToolsPath
-    PackageSource = $PackageSource
-}
-$appCommonDirectory = Get-NugetPackage @parameters
-
-
-# Move AppCommon's modules to a local AppCommon directory
-@(
-    "Application"
-    "Environment"
-    "IIS"
-    "Utility"
-) | ForEach-Object {
-    $parameters = @{
-        Recurse = $true
-        Force = $true
-        Path = "$appCommonDirectory/$_"
-        Destination = "$PackageDirectory/AppCommon/$_"
+    if(-not(Test-Path -Path $Downloads )){
+        $createDir = mkdir $Downloads
     }
-    Copy-Item @parameters
+
+    $PackageName = "EdFi.Installer.AppCommon"
+
+    $parameters = @(
+        "install", $PackageName,
+        "-source", $PackageSource,
+        "-outputDirectory", $Downloads
+        "-version", $AppCommonVersion
+    )
+
+    Write-Host "Downloading AppCommon"
+    Write-Host -ForegroundColor Magenta "Executing nuget: $parameters"
+    nuget $parameters
+
+    $appCommonDirectory = Resolve-Path $Downloads/$PackageName.$PackageVersion* | Select-Object -Last 1
+
+    # Move AppCommon's modules to a local AppCommon directory
+    @(
+        "Application"
+        "Environment"
+        "IIS"
+        "Utility"
+    ) | ForEach-Object {
+        $parameters = @{
+            Recurse = $true
+            Force = $true
+            Path = "$appCommonDirectory/$_"
+            Destination = "$PSScriptRoot/AppCommon/$_"
+        }
+        Copy-Item @parameters
+    }
 }
 
-Pop-Location
+Add-AppCommon
