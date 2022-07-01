@@ -24,7 +24,6 @@ jobs:
     defaults:
       run:
         shell: pwsh
-        working-directory: ./EdFi.Suite3.Installer.AdminApp
 
     steps:
     - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
@@ -34,7 +33,7 @@ jobs:
         dotnet-version: 6.0.x
     - name: Install-credential-handler
       run: iex "& { $(irm https://aka.ms/install-artifacts-credprovider.ps1) } -AddNetfx"
-    - name: Build and Publish
+    - name: Pack Installer
       run: |
         $parameters = @{
           SemanticVersion = "${{ env.ADMIN_APP_VERSION }}"
@@ -42,4 +41,12 @@ jobs:
           NuGetFeed = "${{ env.ARTIFACTS_FEED_URL }}"
           NuGetApiKey = "${{ env.ARTIFACTS_API_KEY }}"
         }
-        .\build-package.ps1 @parameters
+        .\EdFi.Suite3.Installer.AdminApp\build-package.ps1 @parameters
+    - name: Upload Package
+      if: success()
+      uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # v3.0.0
+      with:
+        name: NuGetPackages
+        path: ./*.nupkg
+        if-no-files-found: error
+        retention-days: 30

@@ -29,7 +29,7 @@ $PackageDefinitionFile = Resolve-Path "$PSScriptRoot/EdFi.Suite3.Installer.Admin
 $Downloads = "$PSScriptRoot/downloads"
 $Version = "$SemanticVersion.$BuildCounter"
 
-function Add-AppCommon{
+function Add-AppCommon {
 
     if(-not(Test-Path -Path $Downloads )){
         $createDir = mkdir $Downloads
@@ -89,43 +89,9 @@ function New-Package {
     nuget @parameters
 }
 
-function Get-PackageId
-{
-    [ xml ] $fileContents = Get-Content -Path  $PackageDefinitionFile
-    return $fileContents.package.metadata.id
-}
-
-function Publish-Package{
-    param (
-        [string]
-        $PkgVersion = "$Version"
-    )
-
-    $packageId = Get-PackageId
-    $packageName = "$packageId.$PkgVersion.nupkg"
-
-    $parameters = @(
-        "push", (Get-ChildItem "$OutputDirectory/$packageName").FullName,
-        "-Source", $NuGetFeed,
-        "-ApiKey", $NuGetApiKey,
-        "-Verbosity", "detailed"
-    )
-
-    Write-Host "Pushing $packageName to azure artifacts"
-    nuget @parameters
-}
-
 #Add AppCommon
 Add-AppCommon
 
 # Build release
 Write-Host "Building Release package"
 New-Package
-
-
-if($PublishPackage)
-{
-    Write-Host "Publishing release package"
-    Publish-Package
-}
-
