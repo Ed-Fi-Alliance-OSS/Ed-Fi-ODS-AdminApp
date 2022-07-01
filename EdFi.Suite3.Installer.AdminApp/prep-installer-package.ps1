@@ -24,6 +24,10 @@ Push-Location $PackageDirectory
 
 Import-Module -Force "$PSScriptRoot/nuget-helper.psm1"
 
+if(-not(Test-Path -Path $ToolsPath )){
+        $createDir = mkdir $ToolsPath
+}
+
 # Download App Common
 $parameters = @{
     PackageName = "EdFi.Installer.AppCommon"
