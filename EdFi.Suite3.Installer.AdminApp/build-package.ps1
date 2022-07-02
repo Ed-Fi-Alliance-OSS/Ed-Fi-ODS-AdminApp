@@ -13,9 +13,6 @@ param (
     [Parameter(Mandatory=$true)]
     $BuildCounter,
 
-    [switch]
-    $PublishPackage = $true,
-
     [string]
     $NuGetFeed,
 
@@ -68,11 +65,7 @@ function Add-AppCommon {
     }
 }
 
-function New-Package {
-    param (
-        [string]
-        $Suffix
-     )
+function Build-Package {
 
     $parameters = @(
         "pack", $PackageDefinitionFile,
@@ -80,18 +73,12 @@ function New-Package {
         "-OutputDirectory", $OutputDirectory,
         "-Verbosity", "detailed"
     )
-    if ($Suffix) {
-        $parameters += "-Suffix"
-        $parameters += $Suffix
-    }
 
     Write-Host @parameters -ForegroundColor Magenta
     nuget @parameters
 }
 
-#Add AppCommon
 Add-AppCommon
 
-# Build release
-Write-Host "Building Release package"
-New-Package
+Write-Host "Building package"
+Build-Package
