@@ -26,44 +26,7 @@ $PackageDefinitionFile = Resolve-Path "$PSScriptRoot/EdFi.Suite3.Installer.Admin
 $Downloads = "$PSScriptRoot/downloads"
 $Version = "$SemanticVersion.$BuildCounter"
 
-function Add-AppCommon {
-
-    if(-not(Test-Path -Path $Downloads )){
-        $createDir = mkdir $Downloads
-    }
-
-    $PackageName = "EdFi.Installer.AppCommon"
-    $PackageVersion = "2.0.0"
-
-    $parameters = @(
-        "install", $PackageName,
-        "-source", $NuGetFeed,
-        "-outputDirectory", $Downloads
-        "-version", $PackageVersion
-    )
-
-    Write-Host "Downloading AppCommon"
-    Write-Host -ForegroundColor Magenta "Executing nuget: $parameters"
-    nuget $parameters
-
-    $appCommonDirectory = Resolve-Path $Downloads/$PackageName.$PackageVersion* | Select-Object -Last 1
-
-    # Move AppCommon's modules to a local AppCommon directory
-    @(
-        "Application"
-        "Environment"
-        "IIS"
-        "Utility"
-    ) | ForEach-Object {
-        $parameters = @{
-            Recurse = $true
-            Force = $true
-            Path = "$appCommonDirectory/$_"
-            Destination = "$PSScriptRoot/AppCommon/$_"
-        }
-        Copy-Item @parameters
-    }
-}
+Invoke-Expression "$PSScriptRoot/prep-installer-package.ps1 $PSScriptRoot"
 
 function Build-Package {
 
@@ -77,8 +40,6 @@ function Build-Package {
     Write-Host @parameters -ForegroundColor Magenta
     nuget @parameters
 }
-
-Add-AppCommon
 
 Write-Host "Building package"
 Build-Package
