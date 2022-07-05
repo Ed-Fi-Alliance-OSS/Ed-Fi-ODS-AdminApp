@@ -42,7 +42,7 @@ jobs:
     - name: Send report to Zephyr
       if: github.ref == 'refs/heads/main'
       run: |
-        Write-Host "Event ${{ github.event }}"
+        Write-Host "Event ${{ github.event.workflow_run }}"
         Write-Host "--- Sending test results for branch: ${{github.ref}} for event: ${{github.event_name}} ---"
         $parameters = @{
             cycleName = '${{ env.CYCLE_NAME }}'
