@@ -18,64 +18,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
-      with:
-        path: main
-    - name: Get ODS Docker
-      uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
-      with:
-        repository: Ed-Fi-Alliance-OSS/Ed-Fi-ODS-Docker
-        path: ods-docker
-    - name: Copy files to Docker repo
-      run: |
-        cp -r ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/ssl ./ods-docker
-        cp -r ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/compose-aa-build.yml ./ods-docker/Compose/pgsql
-    - uses: nuget/setup-nuget@04b0c2b8d1b97922f67eca497d7cf0bf17b8ffe1 #v1.0.5
-    - name: Update Admin App Docker package versions
-      run: |
-        chmod +x ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/set-versions.sh
-        ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/set-versions.sh
-    - name: Run ODS
-      run: docker-compose -f ./ods-docker/Compose/pgsql/compose-aa-build.yml --env-file ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/.automation.env up -d
-    - name: Verify ODS Health
-      run: |
-        chmod +x ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/inspect.sh
-        ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/inspect.sh
-    - name: Setup node
-      uses: actions/setup-node@56337c425554a6be30cdef71bf441f15be286854 # v3.1.1
-      with:
-        node-version: '14'
-    - name: Install dependencies
-      run: npm ci
-      working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
-    - name: Install OS dependencies
-      run: npx playwright install-deps
-      working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
-    - name: Set environment
-      run: mv .env.example .env
-      working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
-    - name: Run tests
-      run: npm run report
-      working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
-    - name: Transform results
-      if: success() || failure()
-      run: python ./resultparser.py
-      working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
-    - name: Upload results
-      uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # v3.0.0
-      with:
-        name: playwright-results
-        path: main/Application/EdFi.Ods.AdminApp.E2E.Tests/reports/playwright-results.xml
-        retention-days: 10
-    - name: Upload execution traces
-      if: failure()
-      uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # v3.0.0
-      with:
-        name: playwright-execution-traces
-        path: main/Application/EdFi.Ods.AdminApp.E2E.Tests/traces
-        retention-days: 10
     - name: Clean ODS
       if: always()
-      run: ./shared-instance-env-clean.ps1
+      run: Write-Host "here"
       shell: pwsh
-      working-directory: ods-docker
