@@ -1,5 +1,7 @@
 # Admin App End To End Tests
 
+![e2e tests results](https://github.com/Ed-Fi-Alliance-OSS/Ed-Fi-ODS-AdminApp/actions/workflows/e2e.yml/badge.svg)
+
 The E2E tests are UI Automation tests written in [CucumberJS](https://cucumber.io/) to be executed using [Playwright](https://playwright.dev/) with Typescript
 
 # Execution
