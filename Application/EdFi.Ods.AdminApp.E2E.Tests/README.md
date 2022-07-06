@@ -8,13 +8,13 @@ The E2E tests are UI Automation tests written in [CucumberJS](https://cucumber.i
 
 ## Getting Started
 
-- Install [Node](https://nodejs.org/en/download/).
-- Have a running instance of ODS/API in Shared Instance Mode and Admin App. 
-    - This can be accomplished using [ODS Docker](https://github.com/Ed-Fi-Alliance-OSS/Ed-Fi-ODS-Docker) 
+- Install [Node](https://nodejs.org/en/download/) version 18.
+- Have a running instance of ODS/API in Shared Instance Mode and Admin App.
+    - This can be accomplished using [ODS Docker](https://github.com/Ed-Fi-Alliance-OSS/Ed-Fi-ODS-Docker)
 
 ## Setup
 
-### Install 
+### Install
 
 Navigate to /Application/EdFi.Ods.AdminApp.E2E.Tests/
 
@@ -25,8 +25,8 @@ After the installation is successful, Playwright must be ready to execute the te
 ### Environment
 
 Setup a .env file. This should be based on the .env.example file, with details such as:
-    
-- Admin App URL 
+
+- Admin App URL
 - Username
 - Password
 
@@ -54,7 +54,6 @@ Some of the commands are:
 `npm run test-{x}`: Run only the test for a specified feature. For example: `npm run test-vendors` executes the vendor tests only.
 
 `npm run html-report`: Run the tests and generates a report in HTML.
-
 
 # Debug
 
