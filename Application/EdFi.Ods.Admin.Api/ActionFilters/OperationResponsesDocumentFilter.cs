@@ -4,13 +4,12 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using EdFi.Ods.Admin.Api.Infrastructure.Extensions;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace EdFi.Ods.Admin.Api.ActionFilters
 {
-    public class OperationResponsesAndOrderDocumentFilter : IDocumentFilter
+    public class OperationResponsesDocumentFilter : IDocumentFilter
     {
         public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
@@ -28,7 +27,7 @@ namespace EdFi.Ods.Admin.Api.ActionFilters
 
             foreach (var path in swaggerDoc.Paths)
             {
-                var operations = new Dictionary<KeyValuePair<OperationType, OpenApiOperation>, int>();
+                var operations = new List<KeyValuePair<OperationType, OpenApiOperation>>();
                 foreach (var operation in path.Value.Operations)
                 {
                     // Add appropriate responses
@@ -54,26 +53,14 @@ namespace EdFi.Ods.Admin.Api.ActionFilters
                             operation.Value.Responses.Add(StatusCodes.Status400BadRequest.ToString(), badRequestResponse);
                             break;
                     }
-
-                    // Add operation order
-                    if (context.ApiDescriptions.FirstOrDefault(MatchesUrlAndVerb(path, operation))
-                        ?.ActionDescriptor.EndpointMetadata.FirstOrDefault(x => x is OperationOrderAttribute)
-                        is OperationOrderAttribute orderAttributeValue)
-                    {
-                        operations.Add(operation, orderAttributeValue.Order);
-                    }
-                    else
-                    {
-                        operations.Add(operation, 0);
-                    }
+                    operations.Add(operation);
                 }
-                var orderedOpertions = operations.OrderBy(x => x.Value).ToList();
                 path.Value.Operations.Clear();
-                orderedOpertions.ForEach(x => path.Value.Operations.Add(x.Key.Key, x.Key.Value));
+                operations.ForEach(x => path.Value.Operations.Add(x.Key, x.Value));
 
                 // Add versioned endpoint route
                 if (context.ApiDescriptions.FirstOrDefault(x => MatchesUrl(x.RelativePath, path))
-                    ?.ActionDescriptor.EndpointMetadata.FirstOrDefault(x => x is VersionedPathAttribute)
+                        ?.ActionDescriptor.EndpointMetadata.FirstOrDefault(x => x is VersionedPathAttribute)
                     is VersionedPathAttribute versionedPathAttributeValue)
                 {
                     var versionedPath = new KeyValuePair<string, OpenApiPathItem>(path.Key.IncludeVersion(versionedPathAttributeValue.Version), path.Value);
@@ -83,25 +70,15 @@ namespace EdFi.Ods.Admin.Api.ActionFilters
                 {
                     paths.Add(path);
                 }
-                
             }
             swaggerDoc.Paths.Clear();
             paths.ForEach(x => swaggerDoc.Paths.Add(x.Key, x.Value));
         }
 
-        private static Func<ApiDescription, bool> MatchesUrlAndVerb(KeyValuePair<string, OpenApiPathItem> path, KeyValuePair<OperationType, OpenApiOperation> operation)
-        {
-            return apiDescription =>
-            {
-                var verbMatches = operation.Key.ToString().ToLower().Equals(apiDescription.HttpMethod!.ToLower());
-                return MatchesUrl(apiDescription.RelativePath, path) && verbMatches;
-            };
-        }
-
         private static bool MatchesUrl(string? relativePath, KeyValuePair<string, OpenApiPathItem> path)
         {
-                return relativePath!.Replace("/", string.Empty)
-                    .Equals(path.Key.Replace("/", string.Empty), StringComparison.InvariantCultureIgnoreCase);
+            return relativePath!.Replace("/", string.Empty)
+                .Equals(path.Key.Replace("/", string.Empty), StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }
