@@ -19,6 +19,7 @@ public static class WebApplicationBuilderExtensions
         var executingAssembly = Assembly.GetExecutingAssembly();
         webApplicationBuilder.Services.AddAutoMapper(executingAssembly);
         webApplicationBuilder.Services.AddScoped<InstanceContext>();
+        webApplicationBuilder.Services.AddHealthChecks();
 
         foreach (var type in typeof(IMarkerForEdFiOdsAdminAppManagement).Assembly.GetTypes())
         {
