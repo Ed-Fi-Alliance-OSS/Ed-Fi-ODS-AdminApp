@@ -63,7 +63,6 @@ public static class WebApplicationBuilderExtensions
                 }
             }
         }
-
         // Add services to the container.
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         webApplicationBuilder.Services.Replace(WithLinkGeneratorDecorator(webApplicationBuilder.Services));
@@ -109,10 +108,14 @@ public static class WebApplicationBuilderExtensions
                 }
             );
 
-            // opt.SwaggerDoc("v1", new OpenApiInfo
-            // {
-            //     Title = "Admin API Documentation", Version = "v1"
-            // });
+            foreach (var version in AdminApiVersions.GetAllVersions())
+            {
+                opt.SwaggerDoc(version, new OpenApiInfo
+                {
+                    Title = "Admin API Documentation", Version = version
+                });
+            }
+
             opt.DocumentFilter<OperationResponsesDocumentFilter>();
             opt.DocumentFilter<RemoveSchemaDocumentFilter>();
             opt.DocumentFilter<AddRegisterSchemaDocumentFilter>();
