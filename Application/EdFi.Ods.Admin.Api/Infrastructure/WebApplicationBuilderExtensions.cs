@@ -7,11 +7,15 @@ using EdFi.Ods.AdminApp.Management.Api;
 using EdFi.Ods.AdminApp.Management.Database;
 using EdFi.Security.DataAccess.Contexts;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 namespace EdFi.Ods.Admin.Api.Infrastructure;
+using static ServiceDescriptor;
 
 public static class WebApplicationBuilderExtensions
 {
@@ -62,6 +66,7 @@ public static class WebApplicationBuilderExtensions
 
         // Add services to the container.
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        webApplicationBuilder.Services.Replace(WithLinkGeneratorDecorator(webApplicationBuilder.Services));
         webApplicationBuilder.Services.AddEndpointsApiExplorer();
         var issuer = webApplicationBuilder.Configuration.GetValue<string>("Authentication:IssuerUrl");
       
@@ -191,5 +196,62 @@ public static class WebApplicationBuilderExtensions
             webApplicationBuilder.Services.AddScoped<IUsersContext>(
                 sp => new SqlServerUsersContext(adminConnectionString));
         }
+    }
+
+    private static ServiceDescriptor WithLinkGeneratorDecorator(IServiceCollection services)
+    {
+        var descriptor = services.FirstOrDefault(sd => sd.ServiceType == typeof(LinkGenerator));
+
+        if (descriptor == null)
+        {
+            services.AddRouting();
+            descriptor = services.First(sd => sd.ServiceType == typeof(LinkGenerator));
+        }
+
+        var lifetime = descriptor.Lifetime;
+        var factory = descriptor.ImplementationFactory;
+
+        if (factory == null)
+        {
+            var decoratedType = descriptor.GetImplementationType();
+            var decoratorType = typeof(ApiRouteLinkGenerator<>).MakeGenericType(decoratedType);
+
+            services.Replace(Describe(decoratedType, decoratedType, lifetime));
+
+            return Describe(typeof(LinkGenerator), decoratorType, lifetime);
+        }
+        else
+        {
+            LinkGenerator NewFactory(IServiceProvider serviceProvider)
+            {
+                var instance = (LinkGenerator)factory(serviceProvider);
+                var source = serviceProvider.GetRequiredService<IApiVersionParameterSource>();
+
+                instance = new ApiRouteLinkGenerator(instance);
+
+                return instance;
+            }
+
+            return Describe(typeof(LinkGenerator), NewFactory, lifetime);
+        }
+    }
+
+    private static Type GetImplementationType(this ServiceDescriptor descriptor)
+    {
+        if (descriptor.ImplementationType != null)
+        {
+            return descriptor.ImplementationType;
+        }
+        else if (descriptor.ImplementationInstance != null)
+        {
+            return descriptor.ImplementationInstance.GetType();
+        }
+        else if (descriptor.ImplementationFactory != null)
+        {
+            var typeArguments = descriptor.ImplementationFactory.GetType().GenericTypeArguments;
+            return typeArguments[1];
+        }
+
+        throw new InvalidOperationException();
     }
 }
