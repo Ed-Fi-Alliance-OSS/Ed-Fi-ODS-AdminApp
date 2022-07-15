@@ -82,7 +82,6 @@ public static class WebApplicationBuilderExtensions
         var issuer = webApplicationBuilder.Configuration.GetValue<string>("Authentication:IssuerUrl");
       
         webApplicationBuilder.Services.AddTransient<IApiVersionDescriptionProvider, ApiVersionDescriptionProvider>();
-        webApplicationBuilder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
         webApplicationBuilder.Services.AddSwaggerGen(opt =>
         {
             opt.OperationFilter<TokenEndpointBodyDescriptionFilter>();
