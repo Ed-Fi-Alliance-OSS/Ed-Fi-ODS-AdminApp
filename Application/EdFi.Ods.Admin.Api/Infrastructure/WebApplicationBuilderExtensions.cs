@@ -67,6 +67,18 @@ public static class WebApplicationBuilderExtensions
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         webApplicationBuilder.Services.Replace(WithLinkGeneratorDecorator(webApplicationBuilder.Services));
         webApplicationBuilder.Services.AddEndpointsApiExplorer();
+        webApplicationBuilder.Services
+            .AddApiVersioning(opt => {
+                opt.ReportApiVersions = true;
+                opt.AssumeDefaultVersionWhenUnspecified = true;
+                opt.DefaultApiVersion = new ApiVersion(1, 0);
+            })
+            .AddVersionedApiExplorer(opt =>
+            {
+                opt.GroupNameFormat = "'v'VVV";
+                opt.SubstituteApiVersionInUrl = true;
+            });
+        
         var issuer = webApplicationBuilder.Configuration.GetValue<string>("Authentication:IssuerUrl");
       
         webApplicationBuilder.Services.AddTransient<IApiVersionDescriptionProvider, ApiVersionDescriptionProvider>();
@@ -134,6 +146,8 @@ public static class WebApplicationBuilderExtensions
                     : x.HttpMethod.Equals("PUT", StringComparison.InvariantCultureIgnoreCase) ? "2"
                     : x.HttpMethod.Equals("DELETE", StringComparison.InvariantCultureIgnoreCase) ? "3" : "4" : "5";
             });
+            opt.ResolveConflictingActions(apiDesc => apiDesc.First());
+            opt.DocInclusionPredicate((docName, apiDesc) => apiDesc.GroupName == docName);
         });
 
         // Logging
