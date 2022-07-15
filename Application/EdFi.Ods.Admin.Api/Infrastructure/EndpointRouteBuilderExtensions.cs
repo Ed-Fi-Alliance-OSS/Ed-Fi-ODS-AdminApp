@@ -1,5 +1,6 @@
 using EdFi.Ods.Admin.Api.ActionFilters;
 using EdFi.Ods.Admin.Api.Infrastructure.Extensions;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EdFi.Ods.Admin.Api.Infrastructure
 {
@@ -54,8 +55,9 @@ namespace EdFi.Ods.Admin.Api.Infrastructure
 
         internal static RouteHandlerBuilder MapApiVersion(this RouteHandlerBuilder builder, string version)
         {
-            builder.WithMetadata(new VersionedPathAttribute(version));
-            return builder.WithGroupName(version);
+            builder.WithMetadata(new ApiVersionAttribute("1.0"));
+            builder.WithMetadata(new EndpointGroupNameAttribute(version));
+            return builder;
         }
     }
 }
