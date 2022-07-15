@@ -45,7 +45,7 @@ public static class SecurityExtensions
                     opt.AddSigningKey(signingKey);
                 }
 
-                opt.RegisterScopes(SecurityConstants.ApiFullAccessScope);
+                opt.RegisterScopes(SecurityConstants.Scopes.AdminApiFullAccess);
                 opt.UseAspNetCore().EnableTokenEndpointPassthrough();
             })
             .AddValidation(options =>
@@ -57,12 +57,13 @@ public static class SecurityExtensions
 
         //Application Security
         var issuer = configuration.GetValue<string>("Authentication:IssuerUrl");
+        var authority = configuration.GetValue<string>("Authentication:Authority");
         services.AddAuthentication(opt =>
         {
             opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         }).AddJwtBearer(opt => {
-            opt.Authority = issuer;
+            opt.Authority = authority;
             opt.SaveToken = true;
             opt.TokenValidationParameters = new TokenValidationParameters
             {
@@ -74,7 +75,7 @@ public static class SecurityExtensions
         services.AddAuthorization(opt =>
         {
             opt.DefaultPolicy = new AuthorizationPolicyBuilder()
-                .RequireClaim(OpenIddictConstants.Claims.Scope, SecurityConstants.ApiFullAccessScope)
+                .RequireClaim(OpenIddictConstants.Claims.Scope, SecurityConstants.Scopes.AdminApiFullAccess)
                 .Build();
         });
 
