@@ -7,6 +7,7 @@ using EdFi.Ods.AdminApp.Management.Api;
 using EdFi.Ods.AdminApp.Management.Database;
 using EdFi.Security.DataAccess.Contexts;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
@@ -19,7 +20,6 @@ public static class WebApplicationBuilderExtensions
         var executingAssembly = Assembly.GetExecutingAssembly();
         webApplicationBuilder.Services.AddAutoMapper(executingAssembly);
         webApplicationBuilder.Services.AddScoped<InstanceContext>();
-        webApplicationBuilder.Services.AddHealthChecks();
 
         foreach (var type in typeof(IMarkerForEdFiOdsAdminAppManagement).Assembly.GetTypes())
         {
@@ -144,6 +144,15 @@ public static class WebApplicationBuilderExtensions
         //Databases
         var databaseEngine = webApplicationBuilder.Configuration["AppSettings:DatabaseEngine"];
         webApplicationBuilder.AddDatabases(databaseEngine);
+
+        //Health
+        webApplicationBuilder.Services.AddHealthChecks();
+
+        //JSON
+        webApplicationBuilder.Services.Configure<JsonOptions>(o =>
+        {
+            o.SerializerOptions.WriteIndented = true;
+        });
 
         webApplicationBuilder.Services.AddSecurityUsingOpenIddict(webApplicationBuilder.Configuration, webApplicationBuilder.Environment);
     }
