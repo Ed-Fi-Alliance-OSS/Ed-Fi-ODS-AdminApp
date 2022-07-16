@@ -19,6 +19,6 @@ namespace EdFi.Ods.Admin.Api.Infrastructure.Helpers
         /// </summary>
         public static readonly string Build = Assembly.GetExecutingAssembly()
             .GetName()
-            .Version.ToString();
+            .Version?.ToString() ?? Version;
     }
 }
