@@ -5,14 +5,6 @@ namespace EdFi.Ods.Admin.Api.Infrastructure
 {
     public static class EndpointRouteBuilderExtensions
     {
-        internal static RouteHandlerBuilder MapGetWithDefaultOptionsAllowAnonymous(this IEndpointRouteBuilder builder,
-           string route, Delegate handler, string tag)
-        {
-            var routeHandler = MapGetWithDefaultOptions(builder, route, handler, tag);
-            routeHandler.AllowAnonymous();
-            return routeHandler;
-        }
-
         internal static RouteHandlerBuilder MapGetWithDefaultOptions(this IEndpointRouteBuilder builder,
            string route, Delegate handler, string tag)
         {
