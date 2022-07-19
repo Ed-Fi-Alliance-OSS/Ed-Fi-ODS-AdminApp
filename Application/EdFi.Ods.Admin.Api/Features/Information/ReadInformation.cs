@@ -10,7 +10,6 @@ namespace EdFi.Ods.Admin.Api.Features.Information;
 
 public class ReadInformation : IFeature
 {
-
     public void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
         endpoints.MapGet("", GetInformation)
