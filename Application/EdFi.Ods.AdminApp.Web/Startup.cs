@@ -8,7 +8,7 @@ using System.Data.Entity;
 using System.IO;
 using System.Net;
 using System.Reflection;
-using AutoMapper;
+using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Management.Api.Automapper;
 using EdFi.Ods.AdminApp.Management.Database;
 using EdFi.Ods.AdminApp.Management.Database.Models;
