@@ -143,10 +143,10 @@ public static class WebApplicationBuilderExtensions
 
         //Databases
         var databaseEngine = webApplicationBuilder.Configuration["AppSettings:DatabaseEngine"];
-        webApplicationBuilder.AddDatabases(databaseEngine);
+        var (connectionString, isSqlServer) = webApplicationBuilder.AddDatabases(databaseEngine);
 
         //Health
-        webApplicationBuilder.Services.AddHealthChecks();
+        webApplicationBuilder.Services.AddHealthCheck(connectionString, isSqlServer);
 
         //JSON
         webApplicationBuilder.Services.Configure<JsonOptions>(o =>
@@ -157,7 +157,7 @@ public static class WebApplicationBuilderExtensions
         webApplicationBuilder.Services.AddSecurityUsingOpenIddict(webApplicationBuilder.Configuration, webApplicationBuilder.Environment);
     }
 
-    private static void AddDatabases(this WebApplicationBuilder webApplicationBuilder, string databaseEngine)
+    private static (string adminConnectionString, bool) AddDatabases(this WebApplicationBuilder webApplicationBuilder, string databaseEngine)
     {
         var adminConnectionString = webApplicationBuilder.Configuration.GetConnectionString("Admin");
         var securityConnectionString = webApplicationBuilder.Configuration.GetConnectionString("Security");
@@ -179,8 +179,11 @@ public static class WebApplicationBuilderExtensions
 
             webApplicationBuilder.Services.AddScoped<IUsersContext>(
                 sp => new PostgresUsersContext(adminConnectionString));
+
+            return (adminConnectionString, false);
         }
-        else if (DatabaseEngineEnum.Parse(databaseEngine).Equals(DatabaseEngineEnum.SqlServer))
+
+        if (DatabaseEngineEnum.Parse(databaseEngine).Equals(DatabaseEngineEnum.SqlServer))
         {
             webApplicationBuilder.Services.AddDbContext<AdminAppDbContext>(
                 options => options.UseSqlServer(adminConnectionString));
@@ -197,6 +200,10 @@ public static class WebApplicationBuilderExtensions
 
             webApplicationBuilder.Services.AddScoped<IUsersContext>(
                 sp => new SqlServerUsersContext(adminConnectionString));
+
+            return (adminConnectionString, true);
         }
+
+        throw new Exception($"Unexpected DB setup error. Engine '{databaseEngine}' was parsed as valid but is not configured for startup.");
     }
 }
