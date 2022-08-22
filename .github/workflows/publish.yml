@@ -52,6 +52,10 @@ jobs:
         ./build.ps1 -Command PackageDatabase -Configuration Release -Version ${{ env.ADMIN_APP_VERSION }} -BuildCounter ${{ github.run_number }}
         ./build.ps1 -Command PackageApi -Configuration Release -Version ${{ env.ADMIN_API_VERSION }} -BuildCounter ${{ github.run_number }}
 
+    - name: Generate hashes for NuGet packages
+      id: hashes
+      run: echo "::set-output name=hashes::$(sha256sum *.nupkg | base64 -w0)"
+
     - name: Upload Package
       if: success()
       uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # v3.0.0
@@ -61,41 +65,59 @@ jobs:
         if-no-files-found: error
         retention-days: 30
 
-    - name: Generate provenance for Api package
-      uses: slsa-framework/github-actions-demo@v0.1
-      with:
-        artifact_path: EdFi.Suite3.ODS.AdminApp.Api.${{ env.ADMIN_API_VERSION }}.${{ github.run_number }}.nupkg
-        output_path: EdFi.Suite3.ODS.AdminApp.Api.${{ env.ADMIN_API_VERSION }}.${{ github.run_number }}.provenance
+    # # Admin API Provenance
+    # - name: Generate provenance for Admin Api package
+    #   uses: slsa-framework/github-actions-demo@v0.1
+    #   with:
+    #     artifact_path: EdFi.Suite3.ODS.Admin.Api.${{ env.ADMIN_API_VERSION }}.${{ github.run_number }}.nupkg
+    #     output_path: EdFi.Suite3.ODS.Admin.Api.${{ env.ADMIN_API_VERSION }}.${{ github.run_number }}.provenance
 
-    - name: Upload provenance for Api package
-      uses: actions/upload-artifact@v2
-      with:
-        name: database-provenance
-        path: EdFi.Suite3.ODS.AdminApp.Api.${{ env.ADMIN_API_VERSION }}.${{ github.run_number }}.provenance
+    # - name: Upload provenance for Admin Api package
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: database-provenance
+    #     path: EdFi.Suite3.ODS.Admin.Api.${{ env.ADMIN_API_VERSION }}.${{ github.run_number }}.provenance
 
-    - name: Generate provenance for Database package
-      uses: slsa-framework/github-actions-demo@v0.1
-      with:
-        artifact_path: EdFi.Suite3.ODS.AdminApp.Database.${{ env.ADMIN_API_VERSION }}.${{ github.run_number }}.nupkg
-        output_path: EdFi.Suite3.ODS.AdminApp.Database.${{ env.ADMIN_API_VERSION }}.${{ github.run_number }}.provenance
+    # # Admin App Database Provenance
+    # - name: Generate provenance for Database package
+    #   uses: slsa-framework/github-actions-demo@v0.1
+    #   with:
+    #     artifact_path: EdFi.Suite3.ODS.AdminApp.Database.${{ env.ADMIN_APP_VERSION }}.${{ github.run_number }}.nupkg
+    #     output_path: EdFi.Suite3.ODS.AdminApp.Database.${{ env.ADMIN_APP_VERSION }}.${{ github.run_number }}.provenance
 
-    - name: Upload provenance for Database package
-      uses: actions/upload-artifact@v2
-      with:
-        name: database-provenance
-        path: EdFi.Suite3.ODS.AdminApp.Database.${{ env.ADMIN_API_VERSION }}.${{ github.run_number }}.provenance
+    # - name: Upload provenance for Database package
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: database-provenance
+    #     path: EdFi.Suite3.ODS.AdminApp.Database.${{ env.ADMIN_APP_VERSION }}.${{ github.run_number }}.provenance
 
-    - name: Generate provenance for Web package
-      uses: slsa-framework/github-actions-demo@v0.1
-      with:
-        artifact_path: EdFi.Suite3.ODS.AdminApp.Web.${{ env.ADMIN_API_VERSION }}.${{ github.run_number }}.nupkg
-        output_path: EdFi.Suite3.ODS.AdminApp.Web.${{ env.ADMIN_API_VERSION }}.${{ github.run_number }}.provenance
+    # # Admin App Web Provenance
+    # - name: Generate provenance for Web package
+    #   uses: slsa-framework/github-actions-demo@v0.1
+    #   with:
+    #     artifact_path: EdFi.Suite3.ODS.AdminApp.Web.${{ env.ADMIN_APP_VERSION }}.${{ github.run_number }}.nupkg
+    #     output_path: EdFi.Suite3.ODS.AdminApp.Web.${{ env.ADMIN_APP_VERSION }}.${{ github.run_number }}.provenance
 
-    - name: Upload provenance for Web package
-      uses: actions/upload-artifact@v2
-      with:
-        name: database-provenance
-        path: EdFi.Suite3.ODS.Web.Database.${{ env.ADMIN_API_VERSION }}.${{ github.run_number }}.provenance
+    # - name: Upload provenance for Web package
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: database-provenance
+    #     path: EdFi.Suite3.ODS.Web.Database.${{ env.ADMIN_APP_VERSION }}.${{ github.run_number }}.provenance
+
+provenance:
+  needs: pack
+  permissions:
+    actions: read
+    id-token: write
+    contents: read
+  uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.2.0
+    with:
+      base64-subjects: "${{ needs.pack.outputs.hashes }}"
+      # Set a custom name for the provenance attestation.
+      attestation-name: "artifacts.intoto.jsonl"
+      # Upload provenance to a new release
+      upload-assets: true
+
 
 ##
 ## Temporarily comment out so as to avoid accidental publishing in this spike
