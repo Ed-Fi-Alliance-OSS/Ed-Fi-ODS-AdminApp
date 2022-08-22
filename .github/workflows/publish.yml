@@ -29,20 +29,25 @@ jobs:
 
     steps:
     - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
+
     - name: Setup .NET
       uses: actions/setup-dotnet@9211491ffb35dd6a6657ca4f45d43dfe6e97c829 # v2.0.0
       with:
         dotnet-version: 6.0.x
+
     - name: Publish
       run: ./build.ps1 -Command BuildAndPublish -Configuration Release -Version ${{ env.ADMIN_APP_VERSION }} -APIVersion ${{ env.ADMIN_API_VERSION }} -BuildCounter ${{ github.run_number }}
+
     - name: Populate Google Analytics ID
       run: .\build.ps1 -Command PopulateGoogleAnalyticsAppSettings -GoogleAnalyticsMeasurementId ${{env.GA_MEASUREMENT_ID}}
+
     - name: Pack
       if: success()
       run: |
         ./build.ps1 -Command Package -Configuration Release -Version ${{ env.ADMIN_APP_VERSION }} -BuildCounter ${{ github.run_number }}
         ./build.ps1 -Command PackageDatabase -Configuration Release -Version ${{ env.ADMIN_APP_VERSION }} -BuildCounter ${{ github.run_number }}
         ./build.ps1 -Command PackageApi -Configuration Release -Version ${{ env.ADMIN_API_VERSION }} -BuildCounter ${{ github.run_number }}
+
     - name: Upload Package
       if: success()
       uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # v3.0.0
@@ -52,44 +57,60 @@ jobs:
         if-no-files-found: error
         retention-days: 30
 
-  publish-artifacts:
-    needs: pack
+    - name: Generate provenance
+      uses: slsa-framework/github-actions-demo@v0.1
+      with:
+        artifact_path: ./*.nupkg
+        output_path: build.provenance
 
-    runs-on: ubuntu-latest
+    - name: Upload provenance
+      uses: actions/upload-artifact@v2
+      with:
+        name: my-artifact
+        path: build.provenance
 
-    defaults:
-      run:
-        shell: pwsh
+##
+## Temporarily comment out so as to avoid accidental publishing in this spike
+##
 
-    steps:
-      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
-      - name: Get Artifact
-        uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741 #v3.0.0
-        with:
-          name: NuGetPackages
-      - name: Install-credential-handler
-        run: iex "& { $(irm https://aka.ms/install-artifacts-credprovider.ps1) } -AddNetfx"
-      - name: Upload Admin API
-        run: |
-          $artifact = (Get-ChildItem -Path $_ -Name -Include EdFi.Suite3.ODS.Admin.Api.*.nupkg)
-          $arguments = @{
-            NuGetApiKey = "${{ env.ARTIFACTS_API_KEY }}"
-          }
-          $arguments.PackageFile = $artifact
-          ./build.ps1 Push @arguments
-      - name: Upload Admin App
-        run: |
-          $artifact = (Get-ChildItem -Path $_ -Name -Include EdFi.Suite3.ODS.AdminApp.Web.*.nupkg)
-          $arguments = @{
-            NuGetApiKey = "${{ env.ARTIFACTS_API_KEY }}"
-          }
-          $arguments.PackageFile = $artifact
-          ./build.ps1 Push @arguments
-      - name: Upload Admin Database
-        run: |
-          $artifact = (Get-ChildItem -Path $_ -Name -Include EdFi.Suite3.ODS.AdminApp.Database.*.nupkg)
-          $arguments = @{
-            NuGetApiKey = "${{ env.ARTIFACTS_API_KEY }}"
-          }
-          $arguments.PackageFile = $artifact
-          ./build.ps1 Push @arguments
+#   publish-artifacts:
+#     needs: pack
+
+#     runs-on: ubuntu-latest
+
+#     defaults:
+#       run:
+#         shell: pwsh
+
+#     steps:
+#       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
+#       - name: Get Artifact
+#         uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741 #v3.0.0
+#         with:
+#           name: NuGetPackages
+#       - name: Install-credential-handler
+#         run: iex "& { $(irm https://aka.ms/install-artifacts-credprovider.ps1) } -AddNetfx"
+#       - name: Upload Admin API
+#         run: |
+#           $artifact = (Get-ChildItem -Path $_ -Name -Include EdFi.Suite3.ODS.Admin.Api.*.nupkg)
+#           $arguments = @{
+#             NuGetApiKey = "${{ env.ARTIFACTS_API_KEY }}"
+#           }
+#           $arguments.PackageFile = $artifact
+#           ./build.ps1 Push @arguments
+#       - name: Upload Admin App
+#         run: |
+#           $artifact = (Get-ChildItem -Path $_ -Name -Include EdFi.Suite3.ODS.AdminApp.Web.*.nupkg)
+#           $arguments = @{
+#             NuGetApiKey = "${{ env.ARTIFACTS_API_KEY }}"
+#           }
+#           $arguments.PackageFile = $artifact
+#           ./build.ps1 Push @arguments
+#       - name: Upload Admin Database
+#         run: |
+#           $artifact = (Get-ChildItem -Path $_ -Name -Include EdFi.Suite3.ODS.AdminApp.Database.*.nupkg)
+#           $arguments = @{
+#             NuGetApiKey = "${{ env.ARTIFACTS_API_KEY }}"
+#           }
+#           $arguments.PackageFile = $artifact
+#           ./build.ps1 Push @arguments
