@@ -285,7 +285,10 @@ function RunNuGetPack {
         $nuspecPath
     )
 
-    dotnet pack $ProjectPath --output $PSScriptRoot -p:NuspecFile=$nuspecPath -p:NuspecProperties="version=$PackageVersion"
+    # NU5100 is the warning about DLLs outside of a "lib" folder. We're
+    # deliberately using that pattern, therefore we don't care about the
+    # warning.
+    dotnet pack $ProjectPath --output $PSScriptRoot -p:NuspecFile=$nuspecPath -p:NuspecProperties="version=$PackageVersion" /p:NoWarn=NU5100
 }
 
 function NewDevCertificate {
@@ -467,7 +470,7 @@ function UpdateAppSettingsForAdminApiDocker {
     $json.AppSettings.ApiStartupType = $DockerEnvValues["ApiStartupType"]
     $json.AppSettings.DatabaseEngine = $DockerEnvValues["DatabaseEngine"]
     $json.AppSettings.PathBase = $DockerEnvValues["PathBase"]
-    
+
     $json.Authentication.IssuerUrl = $DockerEnvValues["IssuerUrl"]
     $json.Authentication.SigningKey = $DockerEnvValues["SigningKey"]
 
