@@ -38,8 +38,12 @@ jobs:
     - name: Publish
       run: ./build.ps1 -Command BuildAndPublish -Configuration Release -Version ${{ env.ADMIN_APP_VERSION }} -APIVersion ${{ env.ADMIN_API_VERSION }} -BuildCounter ${{ github.run_number }}
 
-    - name: Populate Google Analytics ID
-      run: .\build.ps1 -Command PopulateGoogleAnalyticsAppSettings -GoogleAnalyticsMeasurementId ${{env.GA_MEASUREMENT_ID}}
+##
+## Temporarily comment out because running this job in a fork that doesn't have the right secrets setup.
+##
+
+    # - name: Populate Google Analytics ID
+    #   run: .\build.ps1 -Command PopulateGoogleAnalyticsAppSettings -GoogleAnalyticsMeasurementId ${{env.GA_MEASUREMENT_ID}}
 
     - name: Pack
       if: success()
@@ -57,17 +61,29 @@ jobs:
         if-no-files-found: error
         retention-days: 30
 
-    - name: Generate provenance
+    - name: Generate provenance for Database package
       uses: slsa-framework/github-actions-demo@v0.1
       with:
-        artifact_path: ./*.nupkg
-        output_path: build.provenance
+        artifact_path: ./EdFi.Suite3.ODS.AdminApp.Database.${{ env.ADMIN_API_VERSION }}.${{ github.run_number }}.nupkg
+        output_path: EdFi.Suite3.ODS.AdminApp.Database.${{ env.ADMIN_API_VERSION }}.${{ github.run_number }}.provenance
 
-    - name: Upload provenance
+    - name: Upload provenance for Database package
       uses: actions/upload-artifact@v2
       with:
-        name: my-artifact
-        path: build.provenance
+        name: database-provenance
+        path: EdFi.Suite3.ODS.AdminApp.Database.${{ env.ADMIN_API_VERSION }}.${{ github.run_number }}.provenance
+
+    - name: Generate provenance for Web package
+      uses: slsa-framework/github-actions-demo@v0.1
+      with:
+        artifact_path: ./EdFi.Suite3.ODS.AdminApp.Web.${{ env.ADMIN_API_VERSION }}.${{ github.run_number }}.nupkg
+        output_path: EdFi.Suite3.ODS.AdminApp.Web.${{ env.ADMIN_API_VERSION }}.${{ github.run_number }}.provenance
+
+    - name: Upload provenance for Web package
+      uses: actions/upload-artifact@v2
+      with:
+        name: database-provenance
+        path: EdFi.Suite3.ODS.Web.Database.${{ env.ADMIN_API_VERSION }}.${{ github.run_number }}.provenance
 
 ##
 ## Temporarily comment out so as to avoid accidental publishing in this spike
