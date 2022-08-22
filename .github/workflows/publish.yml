@@ -27,6 +27,9 @@ jobs:
       run:
         shell: pwsh
 
+    outputs:
+      hashes: ${{ steps.hashes.outputs.hashes}}
+
     steps:
     - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
 
@@ -55,11 +58,8 @@ jobs:
     - name: Generate hashes for NuGet packages
       id: hashes
       shell: bash
-      run: |
-        ls *.nupkg
-        echo "------"
+      run:
         echo "::set-output name=hashes::$(sha256sum *.nupkg | base64 -w0)"
-        echo "------"
 
     - name: Upload Package
       if: success()
