@@ -58,9 +58,8 @@ jobs:
       run: |
         ls *.nupkg
         echo "------"
-        sha256sum *.nupkg | base64 -w0
-        echo "------"
         echo "::set-output name=hashes::$(sha256sum *.nupkg | base64 -w0)"
+        echo "------"
 
     - name: Upload Package
       if: success()
