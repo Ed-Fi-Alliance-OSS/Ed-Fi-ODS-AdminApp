@@ -61,6 +61,18 @@ jobs:
         if-no-files-found: error
         retention-days: 30
 
+    - name: Generate provenance for Api package
+      uses: slsa-framework/github-actions-demo@v0.1
+      with:
+        artifact_path: ./EdFi.Suite3.ODS.AdminApp.Api.${{ env.ADMIN_API_VERSION }}.${{ github.run_number }}.nupkg
+        output_path: EdFi.Suite3.ODS.AdminApp.Api.${{ env.ADMIN_API_VERSION }}.${{ github.run_number }}.provenance
+
+    - name: Upload provenance for Api package
+      uses: actions/upload-artifact@v2
+      with:
+        name: database-provenance
+        path: EdFi.Suite3.ODS.AdminApp.Api.${{ env.ADMIN_API_VERSION }}.${{ github.run_number }}.provenance
+
     - name: Generate provenance for Database package
       uses: slsa-framework/github-actions-demo@v0.1
       with:
