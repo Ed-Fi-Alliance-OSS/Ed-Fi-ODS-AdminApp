@@ -51,9 +51,12 @@ jobs:
     - name: Pack
       if: success()
       run: |
-        ./build.ps1 -Command Package -Configuration Release -Version ${{ env.ADMIN_APP_VERSION }} -BuildCounter ${{ github.run_number }}
-        ./build.ps1 -Command PackageDatabase -Configuration Release -Version ${{ env.ADMIN_APP_VERSION }} -BuildCounter ${{ github.run_number }}
-        ./build.ps1 -Command PackageApi -Configuration Release -Version ${{ env.ADMIN_API_VERSION }} -BuildCounter ${{ github.run_number }}
+        ./build.ps1 -Command Package -Version ${{ env.ADMIN_APP_VERSION }} `
+            -Configuration Release  -BuildCounter ${{ github.run_number }}
+        ./build.ps1 -Command PackageDatabase -Version ${{ env.ADMIN_APP_VERSION }} `
+            -Configuration Release -BuildCounter ${{ github.run_number }}
+        ./build.ps1 -Command PackageApi -Version ${{ env.ADMIN_API_VERSION }} `
+            -Configuration Release  -BuildCounter ${{ github.run_number }}
 
     - name: Generate hashes for NuGet packages
       id: hashes
@@ -70,6 +73,24 @@ jobs:
         if-no-files-found: error
         retention-days: 30
 
+    - name: Generate Software Bill of Materials (SBOM)
+      run: |
+        curl -Lo $RUNNER_TEMP/sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64
+        chmod +x $RUNNER_TEMP/sbom-tool
+        find ./*.nupkg  -printf "%f\n" > buildfilelist.txt
+        mkdir manifest
+        $RUNNER_TEMP/sbom-tool generate -b ./ -bl ./buildfilelist.txt -bc ./Application/ \
+            -pn AdminApp -pv 0.0.1 -nsb https://ed-fi.org -m manifest
+
+    - name: Upload SBOM
+      if: success()
+      uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # v3.0.0
+      with:
+        name: "Software Bill of Materials (SBOM)"
+        path: ./manifest
+        if-no-files-found: error
+        retention-days: 30
+
   provenance:
     needs: pack
     permissions:
@@ -83,6 +104,14 @@ jobs:
       attestation-name: "artifacts.intoto.jsonl"
       # Upload provenance to a new release
       upload-assets: true
+
+## Questions about jsonl file
+# 0. Correct to put all files into one sha256 hash?
+# 1. Why an "l" when there's only one entry? Am I missing something?
+# 2. How to decode?
+# 3. Need to verify the output is what we expect
+
+
 
 ##
 ## Temporarily comment out so as to avoid accidental publishing in this spike
