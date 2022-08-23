@@ -74,6 +74,7 @@ jobs:
         retention-days: 30
 
     - name: Generate Software Bill of Materials (SBOM)
+      shell: bash
       run: |
         curl -Lo $RUNNER_TEMP/sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64
         chmod +x $RUNNER_TEMP/sbom-tool
