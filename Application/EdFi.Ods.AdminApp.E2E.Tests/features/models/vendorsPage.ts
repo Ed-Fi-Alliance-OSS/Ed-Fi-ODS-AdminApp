@@ -3,6 +3,7 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
+
 import { context, network } from "../management/setup";
 import { AdminAppPage } from "./adminAppPage";
 
@@ -187,7 +188,7 @@ export class VendorsPage extends AdminAppPage {
     }
 
     async clickDelete(): Promise<void> {
-        await this.page.locator(this.deleteVendorBtn).click();
+        await this.page.locator(this.deleteVendorBtn).first().click();
     }
 
     async deleteVendor(): Promise<void> {
@@ -202,7 +203,7 @@ export class VendorsPage extends AdminAppPage {
     }
 
     async clickEdit(): Promise<void> {
-        await this.page.locator(this.editVendorBtn).click();
+        await this.page.locator(this.editVendorBtn).first().click();
     }
 
     async editVendorForm(): Promise<void> {
