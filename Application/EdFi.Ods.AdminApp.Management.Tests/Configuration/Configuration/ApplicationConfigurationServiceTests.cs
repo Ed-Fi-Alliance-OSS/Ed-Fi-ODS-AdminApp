@@ -110,15 +110,19 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
         public void ShouldDisableProductImprovementAlwaysWhenDisabledInSettings()
         {
             EnableProductImprovement(enableProductImprovement: true, productRegistrationId: "", enableProductImprovementSettings: true);
-            IsProductImprovementEnabled().ShouldBe((true, ""));
+            IsProductImprovementEnabled(true).ShouldBe((true, ""));
+            Count<ApplicationConfiguration>().ShouldBe(1);
+
+            EnableProductImprovement(enableProductImprovement: true, productRegistrationId: "", enableProductImprovementSettings: true);
+            IsProductImprovementEnabled(false).ShouldBe((false, ""));
             Count<ApplicationConfiguration>().ShouldBe(1);
 
             EnableProductImprovement(enableProductImprovement: true, productRegistrationId: "", enableProductImprovementSettings: false);
-            IsProductImprovementEnabled().ShouldBe((false, ""));
+            IsProductImprovementEnabled(true).ShouldBe((false, ""));
             Count<ApplicationConfiguration>().ShouldBe(1);
 
             EnableProductImprovement(enableProductImprovement: false, productRegistrationId: "", enableProductImprovementSettings: false);
-            IsProductImprovementEnabled().ShouldBe((false, ""));
+            IsProductImprovementEnabled(true).ShouldBe((false, ""));
             Count<ApplicationConfiguration>().ShouldBe(1);
         }
 
@@ -138,7 +142,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
             });
         }
 
-        private (bool, string) IsProductImprovementEnabled()
+        private (bool, string) IsProductImprovementEnabled(bool areProductImprovementSettingsEnabled = true)
         {
             return Transaction(database =>
             {
@@ -147,7 +151,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
 
                 Scoped<AdminAppIdentityDbContext>(identity =>
                 {
-                    var appSettings = new AppSettings { EnableProductImprovementSettings = true };
+                    var appSettings = new AppSettings { EnableProductImprovementSettings = areProductImprovementSettingsEnabled };
                     enableProductImprovement = new ApplicationConfigurationService(database, identity, Options.Create(appSettings))
                         .IsProductImprovementEnabled(out productRegistrationId);
                 });

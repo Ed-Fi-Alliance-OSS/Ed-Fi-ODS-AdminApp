@@ -55,7 +55,7 @@ namespace EdFi.Ods.AdminApp.Management.Configuration.Application
 
             productRegistrationId = config.ProductRegistrationId;
 
-            return enableProductImprovement;
+            return _appSettings.EnableProductImprovementSettings && enableProductImprovement;
         }
 
         public void EnableProductImprovement(bool enableProductImprovement, string productRegistrationId)
