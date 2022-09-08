@@ -7,6 +7,10 @@ See the LICENSE and NOTICES files in the project root for more information.
 
 @using EdFi.Ods.AdminApp.Web.Helpers
 @using EdFi.Ods.AdminApp.Web.Infrastructure
+@using Microsoft.Extensions.Options
+@using EdFi.Ods.AdminApp.Management.Helpers
+
+@inject IOptions<AppSettings> AppSettings
 
 <!DOCTYPE html>
 <html lang="en">
@@ -77,11 +81,14 @@ See the LICENSE and NOTICES files in the project root for more information.
                         <span class="fa fa-home"></span><strong>Home</strong>
                     </a>
                 </div>
-                 <div class="col-md-1 nav-links">
-                     <a href="@Url.Action("EditConfiguration", "ProductImprovement")" class="text-nowrap">
-                         <span class="fa fa-cog"></span><strong>Configuration</strong>
-                     </a>
-                 </div>
+                @if (AppSettings.Value.EnableProductImprovementSettings)
+                {
+                    <div class="col-md-1 nav-links">
+                        <a href="@Url.Action("EditConfiguration", "ProductImprovement")" class="text-nowrap">
+                            <span class="fa fa-cog"></span><strong>Configuration</strong>
+                        </a>
+                    </div>
+                }
             }
         </div>
         <section>
