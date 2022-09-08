@@ -105,6 +105,23 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
             IsProductImprovementEnabled().ShouldBe((false, null));
             Count<ApplicationConfiguration>().ShouldBe(1);
         }
+
+        [Test]
+        public void ShouldDisableProductImprovementAlwaysWhenDisabledInSettings()
+        {
+            EnableProductImprovement(enableProductImprovement: true, productRegistrationId: "", enableProductImprovementSettings: true);
+            IsProductImprovementEnabled().ShouldBe((true, ""));
+            Count<ApplicationConfiguration>().ShouldBe(1);
+
+            EnableProductImprovement(enableProductImprovement: true, productRegistrationId: "", enableProductImprovementSettings: false);
+            IsProductImprovementEnabled().ShouldBe((false, ""));
+            Count<ApplicationConfiguration>().ShouldBe(1);
+
+            EnableProductImprovement(enableProductImprovement: false, productRegistrationId: "", enableProductImprovementSettings: false);
+            IsProductImprovementEnabled().ShouldBe((false, ""));
+            Count<ApplicationConfiguration>().ShouldBe(1);
+        }
+
         private bool AllowUserRegistrations()
         {
             return Transaction(database =>
