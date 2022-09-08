@@ -14,6 +14,7 @@ using EdFi.Ods.AdminApp.Management.Helpers;
 using EdFi.Ods.AdminApp.Web.ActionFilters;
 using EdFi.Ods.AdminApp.Web.Infrastructure;
 using EdFi.Ods.AdminApp.Web.Infrastructure.HangFire;
+using EdFi.Ods.AdminApp.Web.Models.ViewModels;
 using log4net;
 using Microsoft.Extensions.Options;
 
@@ -42,7 +43,11 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
 
         public ActionResult FirstTimeSetup()
         {
-            return View();
+            var model = new FirstTimeSetupModel
+            {
+                AreProductImprovementSettingsEnabled = _appSettings.EnableProductImprovementSettings,
+            };
+            return View(model);
         }
 
         [HttpPost]
