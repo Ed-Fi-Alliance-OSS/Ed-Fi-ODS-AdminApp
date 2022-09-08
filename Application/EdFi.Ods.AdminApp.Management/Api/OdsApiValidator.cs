@@ -5,9 +5,9 @@
 
 using System;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using EdFi.Ods.AdminApp.Management.ErrorHandling;
+using EdFi.Ods.AdminApp.Management.Services;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -27,44 +27,33 @@ namespace EdFi.Ods.AdminApp.Management.Api
 
     public class OdsApiValidator : IOdsApiValidator
     {
-        private readonly IHttpClientFactory _clientFactory;
+        private readonly ISimpleGetRequest _getRequest;
 
-        public OdsApiValidator(IHttpClientFactory clientFactory)
-        {
-            _clientFactory = clientFactory;
-        }
+        public OdsApiValidator(ISimpleGetRequest getRequest) => _getRequest = getRequest;
 
         public async Task<OdsApiValidatorResult> Validate(string apiServerUrl)
         {
-            var httpClient = _clientFactory.CreateClient();
-
             try
             {
-                using (var response = await httpClient.GetAsync(apiServerUrl))
+                var contentAsString = await _getRequest.DownloadString(apiServerUrl);
+
+                var schemaJson = GetSchemaJson();
+
+                var schema = await NJsonSchema.JsonSchema.FromJsonAsync(schemaJson);
+
+                var parsedContent = TryParseJson(contentAsString);
+
+                if (parsedContent == null)
                 {
-                    using (var content = response.Content)
-                    {
-                        var contentAsString = await content.ReadAsStringAsync();
-
-                        var schemaJson = GetSchemaJson();
-
-                        var schema = await NJsonSchema.JsonSchema.FromJsonAsync(schemaJson);
-
-                        var parsedContent = TryParseJson(contentAsString);
-
-                        if (parsedContent == null)
-                        {
-                            return InvalidOdsApiValidatorResult();
-                        }
-
-                        var errors = schema.Validate(parsedContent);
-                        if (errors.Count == 0)
-                            return new OdsApiValidatorResult
-                            {
-                                IsValidOdsApi = true
-                            };
-                    }
+                    return InvalidOdsApiValidatorResult();
                 }
+
+                var errors = schema.Validate(parsedContent);
+                if (errors.Count == 0)
+                    return new OdsApiValidatorResult
+                    {
+                        IsValidOdsApi = true
+                    };
 
                 return InvalidOdsApiValidatorResult();
             }
@@ -98,25 +87,8 @@ namespace EdFi.Ods.AdminApp.Management.Api
                                       ""type"": ""object"",
                                       ""properties"": {
                                         ""name"": {
-                                          ""type"": ""string""
-                                        },
-                                        ""version"": {
-                                          ""type"": ""string""
-                                        },
-                                        ""informationalVersion"": {
-                                          ""type"": ""string""
-                                        }
-                                      },
-                                      ""required"": [
-                                        ""name"",
-                                        ""version""
-                                      ]
-                                    },
-                                    {
-                                      ""type"": ""object"",
-                                      ""properties"": {
-                                        ""name"": {
-                                          ""type"": ""string""
+                                          ""type"": ""string"",
+                                          ""pattern"": ""Ed-Fi""  
                                         },
                                         ""version"": {
                                           ""type"": ""string""
