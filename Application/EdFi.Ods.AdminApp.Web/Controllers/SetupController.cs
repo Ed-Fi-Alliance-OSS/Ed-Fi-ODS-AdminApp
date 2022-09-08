@@ -24,7 +24,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
     public class SetupController : ControllerBase
     {
         private readonly ILog _logger = LogManager.GetLogger(typeof(SetupController));
-      
+
         private readonly ICompleteOdsFirstTimeSetupCommand _completeOdsFirstTimeSetupCommand;
         private readonly ICompleteOdsPostUpdateSetupCommand _completeOdsPostUpdateSetupCommand;
         private readonly ApplicationConfigurationService _applicationConfigurationService;
@@ -66,7 +66,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                 Response.Cookies.Append("RestartRequired", restartRequired.ToString());
             });
         }
-        
+
         public ActionResult PostUpdateSetup()
         {
             return View();
