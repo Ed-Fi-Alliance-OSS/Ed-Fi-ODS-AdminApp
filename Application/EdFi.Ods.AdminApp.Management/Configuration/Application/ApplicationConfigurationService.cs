@@ -39,7 +39,7 @@ namespace EdFi.Ods.AdminApp.Management.Configuration.Application
         {
             var config = _database.EnsureSingle<ApplicationConfiguration>();
             config.FirstTimeSetUpCompleted = setUpCompleted;
-            config.EnableProductImprovement = true;
+            config.EnableProductImprovement = _appSettings.EnableProductImprovementSettings;
            _database.SaveChanges();
         }
 

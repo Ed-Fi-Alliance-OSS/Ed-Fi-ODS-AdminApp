@@ -94,6 +94,17 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
             Count<ApplicationConfiguration>().ShouldBe(1);
         }
 
+        [Test]
+        public void ShouldSetInitialProductImprovementBasedOnSettings()
+        {
+            CompleteFirstTimeSetUpStatus(true);
+            IsProductImprovementEnabled().ShouldBe((true, null));
+            Count<ApplicationConfiguration>().ShouldBe(1);
+
+            CompleteFirstTimeSetUpStatus(false);
+            IsProductImprovementEnabled().ShouldBe((false, null));
+            Count<ApplicationConfiguration>().ShouldBe(1);
+        }
         private bool AllowUserRegistrations()
         {
             return Transaction(database =>
@@ -139,6 +150,19 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
                 {
                     new ApplicationConfigurationService(database, identity, Options.Create(appSettings)).EnableProductImprovement(
                         enableProductImprovement, productRegistrationId);
+                });
+            });
+        }
+
+        private void CompleteFirstTimeSetUpStatus(bool enableProductImprovementSettings)
+        {
+            EnsureZeroApplicationConfiguration();
+            var appSettings = new AppSettings { EnableProductImprovementSettings = enableProductImprovementSettings };
+            Transaction(database =>
+            {
+                Scoped<AdminAppIdentityDbContext>(identity =>
+                {
+                    new ApplicationConfigurationService(database, identity, Options.Create(appSettings)).UpdateFirstTimeSetUpStatus(true);
                 });
             });
         }
