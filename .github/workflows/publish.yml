@@ -9,6 +9,8 @@ on:
   push:
     branches: [ main ]
   workflow_dispatch:
+  release:
+    types: [ published ]
 
 env:
   ADMIN_APP_VERSION: '2.4'
@@ -73,30 +75,42 @@ jobs:
         if-no-files-found: error
         retention-days: 30
 
-    - name: Generate Software Bill of Materials (SBOM)
-      shell: bash
-      run: |
-        curl -Lo $RUNNER_TEMP/sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64 --silent
-        chmod +x $RUNNER_TEMP/sbom-tool
-        find ./*.nupkg  -printf "%f\n" > buildfilelist.txt
-        mkdir manifest
-        $RUNNER_TEMP/sbom-tool generate \
-            -b ./ \
-            -bl ./buildfilelist.txt \
-            -bc ./Application/ \
-            -pn AdminApp \
-            -pv ${{ env.ADMIN_APP_VERSION }} \
-            -nsb https://ed-fi.org \
-            -m manifest -ps "Ed-Fi Alliance"
+  sbom:
+    needs: pack
+    permissions:
+      actions: read
+      id-token: write
+      contents: write
+    steps:
+      - name: Get Artifacts
+        uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741 #v3.0.0
+        with:
+          name: NuGetPackages
 
-    - name: Upload SBOM
-      if: success()
-      uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # v3.0.0
-      with:
-        name: "Software Bill of Materials (SBOM)"
-        path: ./manifest
-        if-no-files-found: error
-        retention-days: 30
+      - name: Generate Software Bill of Materials (SBOM)
+        shell: bash
+        run: |
+          curl -Lo $RUNNER_TEMP/sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64 --silent
+          chmod +x $RUNNER_TEMP/sbom-tool
+          find ./*.nupkg  -printf "%f\n" > buildfilelist.txt
+          mkdir manifest
+          $RUNNER_TEMP/sbom-tool generate \
+              -b ./ \
+              -bl ./buildfilelist.txt \
+              -bc ./Application/ \
+              -pn AdminApp \
+              -pv ${{ env.ADMIN_APP_VERSION }} \
+              -nsb https://ed-fi.org \
+              -m manifest -ps "Ed-Fi Alliance"
+
+      - name: Upload SBOM
+        if: success()
+        uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # v3.0.0
+        with:
+          name: "Software Bill of Materials (SBOM)"
+          path: ./manifest
+          if-no-files-found: error
+          retention-days: 30
 
   provenance:
     needs: pack
@@ -104,12 +118,12 @@ jobs:
       actions: read
       id-token: write
       contents: write
-    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.2.0
+    uses: ed-fi-alliance-sso/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.2.0
     with:
       base64-subjects: "${{ needs.pack.outputs.hashes }}"
       # Set a custom name for the provenance attestation.
-      attestation-name: "artifacts.intoto.jsonl"
-      # Upload provenance to a new release
+      provenance-name: "multiple.intoto.json"
+      # Upload provenance to a new release, if there is a new tag
       upload-assets: true
 
 ## Questions about jsonl file
