@@ -96,7 +96,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
                                       ""properties"": {
                                         ""name"": {
                                           ""type"": ""string"",
-                                          ""pattern"": ""Ed-Fi""  
+                                          ""pattern"": ""Ed-Fi""
                                         },
                                         ""version"": {
                                           ""type"": ""string""
@@ -156,7 +156,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
                 {
                     message += $" Error Details: {exceptionMessage}";
                 }
-                
+
                 return new OdsApiValidatorResult
                 {
                     IsValidOdsApi = false,
