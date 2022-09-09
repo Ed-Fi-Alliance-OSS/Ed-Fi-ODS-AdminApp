@@ -151,10 +151,10 @@ namespace EdFi.Ods.AdminApp.Management.Api
             OdsApiValidatorResult InvalidOdsApiValidatorResult(string exceptionMessage, HttpStatusCode statusCode = HttpStatusCode.ServiceUnavailable)
             {
                 var message =
-                    $"Invalid ODS API configured. Please verify that the Production ODS API Url ({apiServerUrl})) is configured correctly.";
+                    $"Invalid ODS API configured. Please verify that the Production ODS API Url ({apiServerUrl}) is configured correctly.";
                 if (!string.IsNullOrEmpty(exceptionMessage))
                 {
-                    message += $"Error Details: {exceptionMessage}";
+                    message += $" Error Details: {exceptionMessage}";
                 }
                 
                 return new OdsApiValidatorResult
