@@ -76,12 +76,18 @@ jobs:
     - name: Generate Software Bill of Materials (SBOM)
       shell: bash
       run: |
-        curl -Lo $RUNNER_TEMP/sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64
+        curl -Lo $RUNNER_TEMP/sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64 --silent
         chmod +x $RUNNER_TEMP/sbom-tool
         find ./*.nupkg  -printf "%f\n" > buildfilelist.txt
         mkdir manifest
-        $RUNNER_TEMP/sbom-tool generate -b ./ -bl ./buildfilelist.txt -bc ./Application/ \
-            -pn AdminApp -pv 0.0.1 -nsb https://ed-fi.org -m manifest
+        $RUNNER_TEMP/sbom-tool generate \
+            -b ./ \
+            -bl ./buildfilelist.txt \
+            -bc ./Application/ \
+            -pn AdminApp \
+            -pv ${{ env.ADMIN_APP_VERSION }} \
+            -nsb https://ed-fi.org \
+            -m manifest -ps "Ed-Fi Alliance"
 
     - name: Upload SBOM
       if: success()
