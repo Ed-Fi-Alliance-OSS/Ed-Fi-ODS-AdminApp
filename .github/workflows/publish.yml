@@ -22,13 +22,10 @@ env:
 
 jobs:
   pack:
-
     runs-on: ubuntu-latest
-
     defaults:
       run:
         shell: pwsh
-
     outputs:
       hashes: ${{ steps.hashes.outputs.hashes}}
 
@@ -76,6 +73,7 @@ jobs:
         retention-days: 30
 
   sbom:
+    runs-on: ubuntu-latest
     needs: pack
     permissions:
       actions: read
