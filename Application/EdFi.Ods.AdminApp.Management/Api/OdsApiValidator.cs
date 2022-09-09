@@ -41,12 +41,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
 
                 var schema = await NJsonSchema.JsonSchema.FromJsonAsync(schemaJson);
 
-                var parsedContent = TryParseJson(contentAsString);
-
-                if (parsedContent == null)
-                {
-                    return InvalidOdsApiValidatorResult();
-                }
+                var parsedContent = ParseJson(contentAsString);
 
                 var errors = schema.Validate(parsedContent);
                 if (errors.Count == 0)
@@ -150,19 +145,11 @@ namespace EdFi.Ods.AdminApp.Management.Api
             };
         }
 
-        private static JObject TryParseJson(string contentAsString)
+        private static JObject ParseJson(string contentAsString)
         {
-            if (string.IsNullOrEmpty(contentAsString))
-                return null;
-
-            try
-            {
-                return JObject.Parse(contentAsString);
-            }
-            catch (JsonException)
-            {
-                return null;
-            }
+            return string.IsNullOrEmpty(contentAsString)
+                ? null
+                : JObject.Parse(contentAsString);
         }
     }
 }
