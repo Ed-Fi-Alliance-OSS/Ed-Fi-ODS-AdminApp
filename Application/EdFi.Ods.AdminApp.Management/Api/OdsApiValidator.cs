@@ -5,6 +5,7 @@
 
 using System;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using EdFi.Ods.AdminApp.Management.ErrorHandling;
 using EdFi.Ods.AdminApp.Management.Services;
@@ -50,11 +51,23 @@ namespace EdFi.Ods.AdminApp.Management.Api
                         IsValidOdsApi = true
                     };
 
-                return InvalidOdsApiValidatorResult();
+                return InvalidOdsApiValidatorResult("The API provided does not have a valid root JSON document.");
             }
-            catch (Exception)
+            catch (InvalidOperationException exception)
             {
-                return InvalidOdsApiValidatorResult();
+                return InvalidOdsApiValidatorResult(exception.Message);
+            }
+            catch (JsonException exception)
+            {
+                return InvalidOdsApiValidatorResult($"The API provided does not have a valid root JSON document. JSON Parser Exception encountered: {exception.Message}");
+            }
+            catch (HttpRequestException exception)
+            {
+                return InvalidOdsApiValidatorResult(exception.Message, exception.StatusCode??HttpStatusCode.ServiceUnavailable);
+            }
+            catch (Exception exception)
+            {
+                return InvalidOdsApiValidatorResult(exception.Message);
             }
 
             string GetSchemaJson() => @"{
@@ -135,14 +148,23 @@ namespace EdFi.Ods.AdminApp.Management.Api
                               ]
                          }";
 
-            OdsApiValidatorResult InvalidOdsApiValidatorResult() => new()
+            OdsApiValidatorResult InvalidOdsApiValidatorResult(string exceptionMessage, HttpStatusCode statusCode = HttpStatusCode.ServiceUnavailable)
             {
-                IsValidOdsApi = false,
-                Exception = new OdsApiConnectionException(
-                        HttpStatusCode.BadRequest, "Invalid ODS API configured.",
-                        $"Invalid ODS API configured. Please verify that the Production ODS API Url ({apiServerUrl})) is configured correctly.")
-                { AllowFeedback = false }
-            };
+                var message =
+                    $"Invalid ODS API configured. Please verify that the Production ODS API Url ({apiServerUrl})) is configured correctly.";
+                if (!string.IsNullOrEmpty(exceptionMessage))
+                {
+                    message += $"Error Details: {exceptionMessage}";
+                }
+                
+                return new OdsApiValidatorResult
+                {
+                    IsValidOdsApi = false,
+                    Exception = new OdsApiConnectionException(
+                            statusCode, "Invalid ODS API configured.", message)
+                        { AllowFeedback = false }
+                };
+            }
         }
 
         private static JObject ParseJson(string contentAsString)
