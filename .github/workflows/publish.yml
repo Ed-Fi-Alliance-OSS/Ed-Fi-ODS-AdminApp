@@ -105,7 +105,7 @@ jobs:
               -pn AdminApp \
               -pv ${{ env.ADMIN_APP_VERSION }} \
               -nsb https://ed-fi.org \
-              -m manifest \\
+              -m manifest \
               -ps "Ed-Fi Alliance"
 
       - name: Upload SBOM
