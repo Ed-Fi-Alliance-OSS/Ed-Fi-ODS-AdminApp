@@ -126,8 +126,12 @@ jobs:
       - name: Generate hashes for SBOM
         id: sbom-hash
         shell: bash
-        run:
-          echo "::set-output name=sbom-hash::$(sha256sum manifest/${{ env.MANIFEST_FILE }} | base64 -w0)"
+        run: |
+          if ! [[ -f ./manifest/${{ env.MANIFEST_FILE }} ]]; then
+            echo "manifest not found"
+            ls -r ./manifest
+          fi
+          echo "::set-output name=sbom-hash::$(sha256sum ./manifest/${{ env.MANIFEST_FILE }} | base64 -w0)"
 
   sbom-release:
     runs-on: ubuntu-latest
