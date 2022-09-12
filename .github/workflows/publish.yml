@@ -28,9 +28,7 @@ jobs:
       run:
         shell: pwsh
     outputs:
-      hashes:
-        description: "Combined hash value for the NuGet packages"
-        value: ${{ steps.hashes.outputs.hashes }}
+      hashes: ${{ steps.hashes.outputs.hashes }}
 
     steps:
     - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
@@ -83,9 +81,7 @@ jobs:
       id-token: write
       contents: write
     outputs:
-      sbom_hash:
-        description: "Hash value of the SBOM"
-        value: $${{ steps.sbom_hash.output.sbom_hash }}
+      sbom_hash: ${{ steps.sbom_hash.output.sbom_hash }}
     steps:
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
 
