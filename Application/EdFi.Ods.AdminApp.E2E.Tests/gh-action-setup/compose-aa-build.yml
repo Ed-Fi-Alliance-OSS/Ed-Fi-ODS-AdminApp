@@ -84,6 +84,7 @@ services:
       ADMINAPP_VIRTUAL_NAME: "${ADMINAPP_VIRTUAL_NAME:-adminapp}"
       API_INTERNAL_URL: ${API_INTERNAL_URL?Please consult env.example to set the Api internal url}
       ADMINAPP_HEALTHCHECK_TEST: ${ADMINAPP_HEALTHCHECK_TEST?Please consult env.example to set the Admin App healthcheck test}
+      APPSETTINGS__ENABLEPRODUCTIMPROVEMENTSETTINGS: 'true'
     volumes:
       - ${LOGS_FOLDER}:/app/logs
       - adminapp-bulk-hashcache:/app/BulkUploadHashCache
