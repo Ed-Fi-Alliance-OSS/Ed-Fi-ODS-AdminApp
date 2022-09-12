@@ -80,6 +80,8 @@ jobs:
       id-token: write
       contents: write
     steps:
+      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
+
       - name: Get Artifacts
         uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741 #v3.0.0
         with:
@@ -122,7 +124,7 @@ jobs:
     with:
       base64-subjects: "${{ needs.pack.outputs.hashes }}"
       # Set a custom name for the provenance attestation.
-      attestation-name: "multiple.intoto.json"
+      attestation-name: "multiple.intoto.jsonl"
       # Upload provenance to a new release, if there is a new tag
       upload-assets: true
 
