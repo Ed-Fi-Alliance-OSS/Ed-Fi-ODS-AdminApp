@@ -112,7 +112,7 @@ jobs:
         if: success()
         uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # v3.0.0
         with:
-          name: ${{ SBOM_NAME }}
+          name: ${{ env.SBOM_NAME }}
           path: ./manifest
           if-no-files-found: error
           retention-days: 30
@@ -121,7 +121,7 @@ jobs:
         id: sbom_hash
         shell: bash
         run:
-          echo "::set-output name=sbom_hash::$(sha256sum manifest/${{ SBOM_NAME }} | base64 -w0)"
+          echo "::set-output name=sbom_hash::$(sha256sum manifest/${{ env.SBOM_NAME }} | base64 -w0)"
 
   sbom-release:
     runs-on: ubuntu-latest
@@ -133,15 +133,15 @@ jobs:
       - name: Download the SBOM
         uses: slsa-framework/slsa-github-generator/.github/actions/secure-download-artifact@1d646d70aeba1516af69fb0ef48206580122449b
         with:
-          name: ${{ SBOM_NAME }}
-          path: ${{ SBOM_NAME }}
+          name: ${{ env.SBOM_NAME }}
+          path: ${{ env.SBOM_NAME }}
           sha256: "${{ needs.sbom.outputs.sbom_has }}"
 
       - name: Upload to release
         uses: softprops/action-gh-release@1e07f4398721186383de40550babbdf2b84acfc5 # tag=v0.1.14
         id: release
         with:
-          files: ${{ SBOM_NAME }}
+          files: ${{ env.SBOM_NAME }}
 
   provenance:
     needs: pack
