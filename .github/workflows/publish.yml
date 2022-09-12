@@ -137,7 +137,7 @@ jobs:
     #if: startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Debugging
-        runs: |
+        run: |
           echo "hello..."
           echo "${{ needs.sbom-create.outputs.sbom-hash }}"
 
