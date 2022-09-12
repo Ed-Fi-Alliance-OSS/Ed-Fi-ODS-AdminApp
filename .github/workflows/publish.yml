@@ -19,7 +19,7 @@ env:
   ARTIFACTS_API_KEY: ${{ secrets.AZURE_ARTIFACTS_PERSONAL_ACCESS_TOKEN }}
   ARTIFACTS_FEED_URL: ${{ secrets.AZURE_ARTIFACTS_FEED_URL }}
   VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: '{"endpointCredentials": [{"endpoint": "${{ secrets.AZURE_ARTIFACTS_FEED_URL }}","password": "${{ secrets.AZURE_ARTIFACTS_PERSONAL_ACCESS_TOKEN }}"}]}'
-  SBOM_NAME: "Admin-App-SBOM.spdx.json"
+  SBOM_NAME: "Admin-App-SBOM"
 
 jobs:
   pack:
@@ -39,7 +39,12 @@ jobs:
         dotnet-version: 6.0.x
 
     - name: Publish
-      run: ./build.ps1 -Command BuildAndPublish -Configuration Release -Version ${{ env.ADMIN_APP_VERSION }} -APIVersion ${{ env.ADMIN_API_VERSION }} -BuildCounter ${{ github.run_number }}
+      run: |
+        ./build.ps1 -Command BuildAndPublish `
+            -Configuration Release `
+            -Version ${{ env.ADMIN_APP_VERSION }} `
+            -APIVersion ${{ env.ADMIN_API_VERSION }} `
+            -BuildCounter ${{ github.run_number }}
 
 ##
 ## Temporarily comment out because running this job in a fork that doesn't have the right secrets setup.
@@ -146,7 +151,7 @@ jobs:
         uses: slsa-framework/slsa-github-generator/.github/actions/secure-download-artifact@1d646d70aeba1516af69fb0ef48206580122449b
         with:
           name: ${{ env.SBOM_NAME }}
-          path: ${{ env.SBOM_NAME }}
+          path: _manifest/spdx_2.2/manifest.spdx.json
           sha256: "${{ needs.sbom.outputs.sbom_hash }}"
 
       - name: Upload to release
