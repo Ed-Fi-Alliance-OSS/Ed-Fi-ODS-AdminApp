@@ -135,7 +135,7 @@ jobs:
         with:
           name: ${{ env.SBOM_NAME }}
           path: ${{ env.SBOM_NAME }}
-          sha256: "${{ needs.sbom.outputs.sbom_has }}"
+          sha256: "${{ needs.sbom.outputs.sbom_hash }}"
 
       - name: Upload to release
         uses: softprops/action-gh-release@1e07f4398721186383de40550babbdf2b84acfc5 # tag=v0.1.14
