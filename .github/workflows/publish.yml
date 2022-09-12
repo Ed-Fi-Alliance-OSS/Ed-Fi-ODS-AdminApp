@@ -127,10 +127,9 @@ jobs:
         id: sbom-hash
         shell: bash
         run: |
-          if ! [[ -f ./manifest/${{ env.MANIFEST_FILE }} ]]; then
-            echo "manifest not found"
-            ls -r ./manifest
-          fi
+          echo "hello world"
+          ls -ltR **/*.json
+          echo $(sha256sum ./manifest/${{ env.MANIFEST_FILE }} | base64 -w0)
           echo "::set-output name=sbom-hash::$(sha256sum ./manifest/${{ env.MANIFEST_FILE }} | base64 -w0)"
 
   sbom-release:
