@@ -150,7 +150,7 @@ jobs:
         uses: softprops/action-gh-release@1e07f4398721186383de40550babbdf2b84acfc5 # tag=v0.1.14
         id: release
         with:
-          files: ${{ env.SBOM_NAME }}
+          files: ${{ env.MANIFEST_FILE }}
 
 #   provenance:
 #     needs: pack
