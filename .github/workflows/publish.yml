@@ -127,7 +127,9 @@ jobs:
         id: sbom-hash
         shell: bash
         run: |
-          echo "::set-output name=sbom-hash::$(sha256sum ./manifest/${{ env.MANIFEST_FILE }} | base64 -w0)"
+          # sha256sum returns "<hashcode>  <name of file". Split that and return only the <hashcode>.
+          sbom_hash=$(sha256sum ./manifest/${{ env.MANIFEST_FILE }} | awk '{split($0,a); print a[1]}')
+          echo "::set-output name=sbom-hash::$sbom_hash"
 
   sbom-release:
     runs-on: ubuntu-latest
@@ -137,11 +139,6 @@ jobs:
       contents: write
     #if: startsWith(github.ref, 'refs/tags/')
     steps:
-      - name: Debugging
-        run: |
-          echo "hello..."
-          echo "${{ needs.sbom-create.outputs.sbom-hash }}"
-
       - name: Download the SBOM
         uses: slsa-framework/slsa-github-generator/.github/actions/secure-download-artifact@1d646d70aeba1516af69fb0ef48206580122449b
         with:
