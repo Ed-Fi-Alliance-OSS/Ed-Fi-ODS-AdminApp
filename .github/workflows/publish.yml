@@ -137,7 +137,7 @@ jobs:
     permissions:
       actions: read
       contents: write
-    #if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Download the SBOM
         uses: slsa-framework/slsa-github-generator/.github/actions/secure-download-artifact@1d646d70aeba1516af69fb0ef48206580122449b
@@ -152,29 +152,21 @@ jobs:
         with:
           files: ${{ env.MANIFEST_FILE }}
 
-#   provenance:
-#     needs: pack
-#     permissions:
-#       actions: read
-#       id-token: write
-#       contents: write
-#     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.2.0
-#     # This is failing :-(
-#     # uses: ed-fi-alliance-sso/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.2.0
-#     with:
-#       base64-subjects: "${{ needs.pack.outputs.hashes }}"
-#       # Set a custom name for the provenance attestation.
-#       attestation-name: "multiple.intoto.jsonl"
-#       # Upload provenance to a new release, if there is a new tag
-#       upload-assets: true
-
-## Questions about jsonl file
-# 0. Correct to put all files into one sha256 hash?
-# 1. Why an "l" when there's only one entry? Am I missing something?
-# 2. How to decode?
-# 3. Need to verify the output is what we expect
-
-
+  provenance:
+    needs: pack
+    permissions:
+      actions: read
+      id-token: write
+      contents: write
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.2.0
+    # This is failing :-(
+    # uses: ed-fi-alliance-sso/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.2.0
+    with:
+      base64-subjects: "${{ needs.pack.outputs.hashes }}"
+      # Set a custom name for the provenance attestation.
+      attestation-name: "multiple.intoto.jsonl"
+      # Upload provenance to a new release, if there is a new tag
+      upload-assets: true
 
 ##
 ## Temporarily comment out so as to avoid accidental publishing in this spike
