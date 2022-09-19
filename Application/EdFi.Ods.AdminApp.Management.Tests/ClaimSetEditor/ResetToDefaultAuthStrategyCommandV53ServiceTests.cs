@@ -46,8 +46,9 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             Save(testClaimSet);
 
             var appAuthorizationStrategies = SetupApplicationAuthorizationStrategies(testApplication).ToList();
-            var testResourceClaims = SetupParentResourceClaimsWithChildren(testClaimSet, testApplication);
-            var testResourceToEdit = testResourceClaims.Select(x => x.ResourceClaim).Single(x => x.ResourceName == "TestParentResourceClaim1");
+            var parentRcs = UniqueNameList("Parent", 1);
+            var testResourceClaims = SetupParentResourceClaimsWithChildren(testClaimSet, testApplication, parentRcs, UniqueNameList("Child", 1));
+            var testResourceToEdit = testResourceClaims.Select(x => x.ResourceClaim).Single(x => x.ResourceName == parentRcs.First());
 
             var resultResourceClaimBeforeOverride = SingleResourceClaimForClaimSet(testClaimSet.ClaimSetId, testResourceToEdit.ResourceClaimId);
             resultResourceClaimBeforeOverride.AuthStrategyOverridesForCRUD[0].ShouldBeNull();
@@ -104,11 +105,15 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             Save(testClaimSet);
 
             var appAuthorizationStrategies = SetupApplicationAuthorizationStrategies(testApplication).ToList();
-            var testResourceClaims = SetupParentResourceClaimsWithChildren(testClaimSet, testApplication);
+            var parentRcs = UniqueNameList("Parent", 1);
+            var childRcs = UniqueNameList("Child", 1);
+            var testResourceClaims = SetupParentResourceClaimsWithChildren(testClaimSet, testApplication, parentRcs, childRcs);
 
-            var testParentResource = testResourceClaims.Select(x => x.ResourceClaim).Single(x => x.ResourceName == "TestParentResourceClaim1");
+            var testParentResource = testResourceClaims.Select(x => x.ResourceClaim).Single(x => x.ResourceName == parentRcs.First());
+
+            var testChildResourceClaim = $"{childRcs.First()}-{parentRcs.First()}";
             var testChildResourceToEdit = testResourceClaims.Select(x => x.ResourceClaim).Single(x =>
-                x.ResourceName == "TestChildResourceClaim1" &&
+                x.ResourceName == testChildResourceClaim &&
                 x.ParentResourceClaimId == testParentResource.ResourceClaimId);
 
             using var securityContext = TestContext;
@@ -169,9 +174,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             };
             Save(testClaimSet);
 
-            var testResourceClaims = SetupResourceClaims(testApplication);
+            var parentRcs = UniqueNameList("Parent", 1);
+            var testResourceClaims = SetupResourceClaims(testApplication, parentRcs, UniqueNameList("Child", 1));
 
-            var testResourceToEdit = testResourceClaims.Single(x => x.ResourceName == "TestParentResourceClaim1");
+            var testResourceToEdit = testResourceClaims.Single(x => x.ResourceName == parentRcs.First());
 
             using var securityContext = TestContext;
             securityContext.ClaimSetResourceClaims

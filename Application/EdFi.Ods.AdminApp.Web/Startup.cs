@@ -38,6 +38,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NUglify.Css;
 using NUglify.JavaScript;
+using EdFi.Admin.DataAccess.DbConfigurations;
 
 namespace EdFi.Ods.AdminApp.Web
 {
@@ -56,6 +57,7 @@ namespace EdFi.Ods.AdminApp.Web
             var executingAssembly = Assembly.GetExecutingAssembly();
 
             var databaseEngine = Configuration["AppSettings:DatabaseEngine"];
+            DbConfiguration.SetConfiguration(new DatabaseEngineDbConfiguration(Common.Configuration.DatabaseEngine.TryParseEngine(databaseEngine)));
 
             if(databaseEngine.EqualsIgnoreCase("PostgreSql"))
             {
