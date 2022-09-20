@@ -16,16 +16,19 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
         private readonly EditResourceOnClaimSetCommand _editResourceOnClaimSetCommand;
         private readonly GetResourceClaimsQuery _getResourceClaimsQuery;
         private readonly OverrideDefaultAuthorizationStrategyCommand _overrideDefaultAuthorizationStrategyCommand;
+        private readonly IGetClaimSetByNameQuery _claimSetByNameQuery;
 
         public ClaimSetFileImportCommand(AddClaimSetCommand addClaimSetCommand,
             EditResourceOnClaimSetCommand editResourceOnClaimSetCommand,
             GetResourceClaimsQuery getResourceClaimsQuery,
-            OverrideDefaultAuthorizationStrategyCommand overrideDefaultAuthorizationStrategyCommand)
+            OverrideDefaultAuthorizationStrategyCommand overrideDefaultAuthorizationStrategyCommand,
+            IGetClaimSetByNameQuery claimSetByNameQuery)
         {
             _addClaimSetCommand = addClaimSetCommand;
             _editResourceOnClaimSetCommand = editResourceOnClaimSetCommand;
             _getResourceClaimsQuery = getResourceClaimsQuery;
             _overrideDefaultAuthorizationStrategyCommand = overrideDefaultAuthorizationStrategyCommand;
+            _claimSetByNameQuery = claimSetByNameQuery;
         }
 
         public void Execute(SharingModel model)
@@ -34,10 +37,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
             var allResources = GetDbResources();
             foreach (var claimSet in sharingClaimSets)
             {
-                var claimSetId = _addClaimSetCommand.Execute(new AddClaimSetModel
-                {
-                    ClaimSetName = claimSet.Name
-                });
+                var claimSetId = AddOrGetClaimSet(claimSet.Name);
 
                 var resources = claimSet.ResourceClaims.Select(x => x.ToObject<ResourceClaim>()).ToList();
                 var childResources = new List<ResourceClaim>();
@@ -102,6 +102,21 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
 
             return allResources;
         }
+
+        private int AddOrGetClaimSet(string claimSetName)
+        {
+            //var existingClaimSet = _claimSetByNameQuery.Execute(claimSetName);
+
+            //if (existingClaimSet != null)
+            //    return existingClaimSet.Id;
+
+            var claimSetId = _addClaimSetCommand.Execute(new AddClaimSetModel
+            {
+                ClaimSetName = claimSetName
+            });
+            return claimSetId;
+        }
+
     }
 
     public class AddClaimSetModel: IAddClaimSetModel
