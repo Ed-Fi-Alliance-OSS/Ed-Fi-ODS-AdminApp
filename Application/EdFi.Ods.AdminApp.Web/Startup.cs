@@ -8,6 +8,7 @@ using System.Data.Entity;
 using System.IO;
 using System.Net;
 using System.Reflection;
+using System.Threading.Tasks;
 using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Management.Api.Automapper;
 using EdFi.Ods.AdminApp.Management.Database;
@@ -27,6 +28,7 @@ using Microsoft.Extensions.Hosting;
 using FluentValidation.AspNetCore;
 using Hangfire;
 using log4net;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
@@ -34,6 +36,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using NUglify.Css;
 using NUglify.JavaScript;
@@ -57,13 +60,20 @@ namespace EdFi.Ods.AdminApp.Web
             var databaseEngine = Configuration["AppSettings:DatabaseEngine"];
             DbConfiguration.SetConfiguration(new DatabaseEngineDbConfiguration(databaseEngine));
 
+            var identitySettings = new IdentitySettings();
+            Configuration.GetSection("IdentitySettings").Bind(identitySettings);
+
             services.AddDbContext<AdminAppDbContext>(ConfigureForAdminDatabase);
             services.AddDbContext<AdminAppIdentityDbContext>(ConfigureForAdminDatabase);
             services.AddDbContext<AdminAppDataProtectionKeysDbContext>(ConfigureForAdminDatabase);
 
-            services.AddIdentity<AdminAppUser, IdentityRole>()
-                .AddEntityFrameworkStores<AdminAppIdentityDbContext>()
-                .AddDefaultTokenProviders();
+            if(identitySettings.Type == IdentitySettingsConstants.EntityFrameworkIdentityType)
+                ConfigureForEntityFrameworkIdentity(services);
+            else if (identitySettings.Type == IdentitySettingsConstants.OpenIdIdentityType)
+                ConfigureForOpenIdConnectIdentity(services, identitySettings);
+            else
+                throw new NotSupportedException(
+                    $"Unknown Identity Type {identitySettings.Type} configured. Please configure a supported Identity Type. Currently supported types are: EntityFramework and OpenIdConnect");
 
             services.AddControllersWithViews(options =>
                     {
@@ -117,25 +127,12 @@ namespace EdFi.Ods.AdminApp.Web
                     });
             });
 
-            services.AddScoped<IAuthorizationHandler, UserMustExistHandler>();
-
-            services.Configure<IdentityOptions>(options =>
-            {
-                options.User.RequireUniqueEmail = true;
-            });
-
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.LoginPath = "/Identity/Login";
-                options.LogoutPath = "/Identity/LogOut";
-                options.AccessDeniedPath = "/Identity/Login";
-            });
-
             services.AddDataProtection().PersistKeysToDbContext<AdminAppDataProtectionKeysDbContext>();
 
             services.AddAutoMapper(executingAssembly, typeof(AdminManagementMappingProfile).Assembly);
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            services.Configure<IdentitySettings>(Configuration.GetSection("IdentitySettings"));
             services.Configure<ConnectionStrings>(Configuration.GetSection("ConnectionStrings"));
 
             services.AddSignalR();
@@ -166,6 +163,88 @@ namespace EdFi.Ods.AdminApp.Web
 
             // This statement should be kept last to ensure that the IHttpClientFactory and IInferOdsApiVersion services are registered.
             CommonConfigurationInstaller.ConfigureLearningStandards(services).Wait();
+        }
+
+        private void ConfigureForEntityFrameworkIdentity(IServiceCollection services)
+        {
+            services.AddIdentity<AdminAppUser, IdentityRole>()
+                .AddEntityFrameworkStores<AdminAppIdentityDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.AddControllersWithViews(
+                options =>
+                {
+                    options.Filters.Add<PasswordChangeRequiredFilter>();
+                });
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+            });
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Identity/Login";
+                options.LogoutPath = "/Identity/LogOut";
+                options.AccessDeniedPath = "/Identity/Login";
+            });
+
+            services.AddScoped<IAuthorizationHandler, UserMustExistHandler>();
+        }
+
+        private void ConfigureForOpenIdConnectIdentity(IServiceCollection services, IdentitySettings identitySettings)
+        {
+            var openIdSettings = identitySettings.OpenIdSettings;
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = openIdSettings.AuthenticationScheme;
+            })
+            .AddCookie(
+                options =>
+                {
+
+                    options.LoginPath = "/OpenIdConnect/Login";
+                    options.LogoutPath = "/OpenIdConnect/Logout";
+                    options.AccessDeniedPath = "/OpenIdConnect/Login";
+
+                    options.Events.OnRedirectToAccessDenied = context =>
+                    { ;
+                        context.HttpContext.Response.StatusCode = 401;
+                        return Task.FromResult(Task.CompletedTask);
+                    };
+                })
+            .AddOpenIdConnect(openIdSettings.AuthenticationScheme, options =>
+            {
+                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+
+                options.Authority = openIdSettings.Authority;
+
+                options.ClientId = openIdSettings.ClientId;
+                options.ClientSecret = openIdSettings.ClientSecret;
+                options.ResponseType = openIdSettings.ResponseType;
+
+                options.Scope.Clear();
+                foreach (var scope in openIdSettings.Scopes)
+                    options.Scope.Add(scope);
+
+                options.SaveTokens = openIdSettings.SaveTokens;
+                options.RequireHttpsMetadata = openIdSettings.RequireHttpsMetadata;
+                options.GetClaimsFromUserInfoEndpoint = openIdSettings.GetClaimsFromUserInfoEndpoint;
+
+                options.Events.OnAccessDenied = context =>
+                {
+                    return Task.CompletedTask;
+                };
+
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = openIdSettings.ClaimTypeMappings.NameClaimType,
+                    RoleClaimType = openIdSettings.ClaimTypeMappings.RoleClaimType
+                };
+            });
+
+            services.AddScoped<IAuthorizationHandler, UserMustExistOpenIdConnectHandler>();
         }
 
         private void ConfigureForAdminDatabase(DbContextOptionsBuilder options)
