@@ -82,7 +82,6 @@ namespace EdFi.Ods.AdminApp.Web
                         options.Filters.Add<JsonValidationFilter>();
                         options.Filters.Add<SetupRequiredFilter>();
                         options.Filters.Add<UserContextFilter>();
-                        options.Filters.Add<PasswordChangeRequiredFilter>();
                         options.Filters.Add<InstanceContextFilter>();
                     })
                     .AddFluentValidation(
