@@ -1,9 +1,8 @@
 using AutoMapper;
 using EdFi.Ods.Admin.Api.Infrastructure;
 using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
+using EdFi.Security.DataAccess.Contexts;
 using FluentValidation;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace EdFi.Ods.Admin.Api.Features.ClaimSets
@@ -18,38 +17,29 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
             .BuildForVersions(AdminApiVersions.V1);
         }
 
-        public async Task<IResult> Handle(Validator validator,IGetClaimSetByNameQuery getClaimSetByNameQuery, ClaimSetFileImportCommand claimSetFileImportCommand,
+        public async Task<IResult> Handle(Validator validator, AddClaimSetCommand addClaimSetCommand,
+            AddOrUpdateResourcesOnClaimSetCommand addOrUpdateResourcesOnClaimSetCommand,
+            IGetClaimSetByIdQuery getClaimSetByIdQuery,
+            IGetResourcesByClaimSetIdQuery getResourcesByClaimSetIdQuery,
             IMapper mapper, Request request)
         {
             await validator.GuardAsync(request);
+            var addedClaimSetId = addClaimSetCommand.Execute(new AddClaimSetModel
+            {
+                ClaimSetName = request.Name
+            });
 
-            var sharingModel = new SharingModel
-            {
-                Title = "Add Claim Set",
-                Template = new SharingTemplate
-                {
-                    ClaimSets = new SharingClaimSet[]
-                    {
-                        new SharingClaimSet{
-                        Name = request.Name,
-                        ResourceClaims = request.ResourceClaims?.Select(x =>JObject.Parse(JsonConvert.SerializeObject(x))).ToList()
-                        }
-                    }
-                }
-            };
-            claimSetFileImportCommand.Execute(sharingModel);
-            var createdClaimSet = getClaimSetByNameQuery.Execute(request.Name);
-            var model = mapper.Map<ClaimSetModel>(createdClaimSet);
-            model.ClaimSetContent = new ClaimSetContent
-            {
-                Name = request.Name,
-                ResourceClaims = mapper.Map<List<ResourceClaimModel>>(request.ResourceClaims?.ToList())
-            };
-            return AdminApiResponse<ClaimSetModel>.Created(model, "ClaimSet", $"/claimsets/{model.Id}");
+            addOrUpdateResourcesOnClaimSetCommand.Execute(addedClaimSetId, mapper.Map<List<ResourceClaim>>(request.ResourceClaims));
+
+            var calimSet = getClaimSetByIdQuery.Execute(addedClaimSetId);
+            var allResources = getResourcesByClaimSetIdQuery.AllResources(addedClaimSetId);
+            var model = mapper.Map<ClaimSetModel>(calimSet);
+            model.ResourceClaims = mapper.Map<List<ResourceClaimModel>>(allResources.ToList());
+            return AdminApiResponse<ClaimSetModel>.Created(model, "ClaimSet", $"/claimsets/{addedClaimSetId}");
         }
 
         [SwaggerSchema(Title = "AddClaimSetRequest")]
-        public class Request : IClaimSetContent
+        public class Request : IAddClaimSetModel
         {
             [SwaggerSchema(Description = FeatureConstants.ClaimSetNameDescription, Nullable = false)]
             public string? Name { get; set; }
@@ -60,10 +50,10 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
 
         public class Validator : AbstractValidator<Request>
         {
-            private readonly IGetClaimSetByNameQuery _byNameQuery;
-            public Validator(IGetClaimSetByNameQuery byNameQuery)
+            private readonly ISecurityContext _securityContext;
+            public Validator(ISecurityContext securityContext)
             {
-                _byNameQuery = byNameQuery;
+                _securityContext = securityContext;
                 RuleFor(m => m.Name).NotEmpty()
                     .Must(BeAUniqueName)
                     .WithMessage("A claim set with this name already exists in the database. Please enter a unique name.");
@@ -75,8 +65,7 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
 
             private bool BeAUniqueName(string? name)
             {
-                return true;
-               // return _byNameQuery.Execute(name) == null;
+                return !_securityContext.ClaimSets.Any(x => x.ClaimSetName == name);
             }
         }
     }
