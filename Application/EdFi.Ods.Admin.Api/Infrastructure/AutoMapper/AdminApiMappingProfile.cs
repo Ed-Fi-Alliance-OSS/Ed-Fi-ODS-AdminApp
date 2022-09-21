@@ -10,6 +10,7 @@ using EdFi.Ods.Admin.Api.Features.Applications;
 using EdFi.Ods.AdminApp.Management.Database.Commands;
 using EdFi.Security.DataAccess.Models;
 using EdFi.Ods.Admin.Api.Features.ClaimSets;
+using static EdFi.Ods.AdminApp.Management.ClaimSetEditor.GetClaimSetsByApplicationNameQuery;
 
 namespace EdFi.Ods.Admin.Api.Infrastructure
 {
@@ -53,8 +54,12 @@ namespace EdFi.Ods.Admin.Api.Infrastructure
             CreateMap<AdminApp.Management.ClaimSetEditor.ClaimSet, ClaimSetModel>()
                 .ForMember(dst => dst.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dst => dst.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dst => dst.ApplicationsCount, opt => opt.MapFrom(src => src.ApplicationsCount))
-                .ForMember(dst => dst.IsEditable, opt => opt.MapFrom(src => src.IsEditable));
+                .ForMember(dst => dst.IsSystemReserved, opt => opt.MapFrom(src => DefaultClaimSets.Contains(src.Name)));
+
+            CreateMap<ClaimSet, ClaimSetModel>()
+                .ForMember(dst => dst.Id, opt => opt.MapFrom(src => src.ClaimSetId))
+                .ForMember(dst => dst.Name, opt => opt.MapFrom(src => src.ClaimSetName))
+                .ForMember(dst => dst.IsSystemReserved, opt => opt.MapFrom(src => DefaultClaimSets.Contains(src.ClaimSetName)));
 
             CreateMap<AdminApp.Management.ClaimSetEditor.ResourceClaim, ResourceClaimModel>()
                 .ForMember(dst => dst.Name, opt => opt.MapFrom(src => src.Name))
@@ -65,6 +70,22 @@ namespace EdFi.Ods.Admin.Api.Infrastructure
                 .ForMember(dst => dst.AuthStrategyOverridesForCRUD, opt => opt.MapFrom(src => src.AuthStrategyOverridesForCRUD))
                 .ForMember(dst => dst.DefaultAuthStrategiesForCRUD, opt => opt.MapFrom(src => src.DefaultAuthStrategiesForCRUD))
                 .ForMember(dst => dst.Children, opt => opt.MapFrom(src => src.Children));
+
+            CreateMap<ResourceClaimModel, AdminApp.Management.ClaimSetEditor.ResourceClaim>()
+                .ForMember(dst => dst.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dst => dst.Read, opt => opt.MapFrom(src => src.Read))
+                .ForMember(dst => dst.Update, opt => opt.MapFrom(src => src.Update))
+                .ForMember(dst => dst.Create, opt => opt.MapFrom(src => src.Create))
+                .ForMember(dst => dst.Delete, opt => opt.MapFrom(src => src.Delete))
+                .ForMember(dst => dst.AuthStrategyOverridesForCRUD, opt => opt.MapFrom(src => src.AuthStrategyOverridesForCRUD))
+                .ForMember(dst => dst.DefaultAuthStrategiesForCRUD, opt => opt.MapFrom(src => src.DefaultAuthStrategiesForCRUD))
+                .ForMember(dst => dst.Children, opt => opt.MapFrom(src => src.Children));
+
+            CreateMap<AdminApp.Management.ClaimSetEditor.AuthorizationStrategy, AuthorizationStrategyModel>()
+                .ForMember(dst => dst.AuthStrategyId, opt => opt.MapFrom(src => src.AuthStrategyId))
+                .ForMember(dst => dst.AuthStrategyName, opt => opt.MapFrom(src => src.AuthStrategyName))
+                .ForMember(dst => dst.DisplayName, opt => opt.MapFrom(src => src.DisplayName))
+                .ForMember(dst => dst.IsInheritedFromParent, opt => opt.MapFrom(src => src.IsInheritedFromParent));
         }
 
         private string ToCommaSeparated(ICollection<VendorNamespacePrefix> vendorNamespacePrefixes)

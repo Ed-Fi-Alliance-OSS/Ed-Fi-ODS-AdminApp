@@ -22,14 +22,15 @@ public class ReadClaimSets : IFeature
 
         AdminApiEndpointBuilder.MapGet(endpoints, "/claimsets/{id}", GetClaimset)
             .WithDefaultDescription()
-            .WithRouteOptions(b => b.WithResponse<ClaimSet>(200))
+            .WithRouteOptions(b => b.WithResponse<ClaimSetModel>(200))
             .BuildForVersions(AdminApiVersions.V1);
     }
 
-    internal Task<IResult> GetClaimSets(GetClaimSetNamesQuery getClaimSetsQuery)
+    internal Task<IResult> GetClaimSets(GetClaimSetNamesQuery getClaimSetsQuery, IMapper mapper)
     {
         var calimSets = getClaimSetsQuery.Execute().ToList();
-        return Task.FromResult(AdminApiResponse<List<string>>.Ok(calimSets));
+        var model = mapper.Map<List<ClaimSetModel>>(calimSets);
+        return Task.FromResult(AdminApiResponse<List<ClaimSetModel>>.Ok(model));
     }
 
     internal Task<IResult> GetClaimset(IGetClaimSetByIdQuery getClaimSetByIdQuery,
@@ -42,11 +43,8 @@ public class ReadClaimSets : IFeature
         }
         var allResources = getResourcesByClaimSetIdQuery.AllResources(id);
         var claimSetData = mapper.Map<ClaimSetModel>(calimSet);
-        claimSetData.ClaimSetContent = new ClaimSetContent
-        {
-            Name = calimSet.Name,
-            ResourceClaims = mapper.Map<List<ResourceClaimModel>>(allResources.ToList()) 
-        };
+        claimSetData.ResourceClaims = mapper.Map<List<ResourceClaimModel>>(allResources.ToList());
+
         return Task.FromResult(AdminApiResponse<ClaimSetModel>.Ok(claimSetData));
     }
 }
