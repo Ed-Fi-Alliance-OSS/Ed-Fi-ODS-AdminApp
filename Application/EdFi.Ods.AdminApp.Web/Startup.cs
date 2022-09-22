@@ -257,7 +257,8 @@ namespace EdFi.Ods.AdminApp.Web
                 };
             });
 
-            services.AddScoped<IAuthorizationHandler, UserMustExistOpenIdConnectHandler>();
+            services.AddScoped<IAuthorizationHandler, OpenIdConnectUserMustExistHandler>();
+
             async Task SetupUserAfterOpenIdConnectSignIn(CookieSignedInContext context)
             {
                 var openIdConnectLoginService =
