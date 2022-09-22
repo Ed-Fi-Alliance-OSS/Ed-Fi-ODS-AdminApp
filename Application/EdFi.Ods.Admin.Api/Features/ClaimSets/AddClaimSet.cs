@@ -1,3 +1,8 @@
+// SPDX-License-Identifier: Apache-2.0
+// Licensed to the Ed-Fi Alliance under one or more agreements.
+// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+// See the LICENSE and NOTICES files in the project root for more information.
+
 using AutoMapper;
 using EdFi.Ods.Admin.Api.Infrastructure;
 using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
@@ -34,7 +39,10 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
             var calimSet = getClaimSetByIdQuery.Execute(addedClaimSetId);
             var allResources = getResourcesByClaimSetIdQuery.AllResources(addedClaimSetId);
             var model = mapper.Map<ClaimSetModel>(calimSet);
-            model.ResourceClaims = mapper.Map<List<ResourceClaimModel>>(allResources.ToList());
+            if (allResources.Any())
+            {
+                model.ResourceClaims = mapper.Map<List<ResourceClaimModel>>(allResources.ToList());
+            }
             return AdminApiResponse<ClaimSetModel>.Created(model, "ClaimSet", $"/claimsets/{addedClaimSetId}");
         }
 
@@ -61,6 +69,19 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
                 RuleFor(m => m.Name)
                     .MaximumLength(255)
                     .WithMessage("The claim set name must be less than 255 characters.");
+
+                RuleFor(m => m).Custom((claimSet, context) =>
+                {
+                    var dbResourceClaims = securityContext.ResourceClaims.Select(x => x.ResourceName);
+                    var dbAuthStrategies = securityContext.AuthorizationStrategies.Select(x => x.AuthorizationStrategyId);
+                    if (claimSet.ResourceClaims != null && claimSet.ResourceClaims.Any())
+                    {
+                        foreach (var resourceClaim in claimSet.ResourceClaims)
+                        {
+                            ResourceClaimValidator.Validate(dbResourceClaims, dbAuthStrategies, resourceClaim, context, claimSet.Name);
+                        }
+                    }
+                });
             }
 
             private bool BeAUniqueName(string? name)

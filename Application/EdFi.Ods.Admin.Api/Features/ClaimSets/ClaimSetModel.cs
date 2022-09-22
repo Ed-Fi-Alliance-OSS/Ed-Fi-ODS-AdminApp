@@ -16,12 +16,6 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
         public List<ResourceClaimModel>? ResourceClaims { get; set; }
     }
 
-    public interface IAddClaimSetModel
-    {
-        string? Name { get; set; }
-        List<ResourceClaimModel>? ResourceClaims { set; get; }
-    }
-
     [SwaggerSchema(Title = "ResourceClaim")]
     public class ResourceClaimModel
     {
@@ -47,5 +41,18 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
         public string? AuthStrategyName { get; set; }
         public string? DisplayName { get; set; }
         public bool IsInheritedFromParent { get; set; }
+    }
+
+    public interface IAddClaimSetModel
+    {
+        string? Name { get; set; }
+        List<ResourceClaimModel>? ResourceClaims { set; get; }
+    }
+
+    public interface IEditClaimSetModel
+    {
+        int Id { get; set; }
+        string? Name { get; set; }
+        List<ResourceClaimModel>? ResourceClaims { set; get; }
     }
 }
