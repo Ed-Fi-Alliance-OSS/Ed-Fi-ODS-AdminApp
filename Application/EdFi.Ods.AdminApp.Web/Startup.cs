@@ -16,6 +16,7 @@ using EdFi.Ods.AdminApp.Management.Database.Models;
 using EdFi.Ods.AdminApp.Management.Helpers;
 using EdFi.Ods.AdminApp.Web._Installers;
 using EdFi.Ods.AdminApp.Web.ActionFilters;
+using EdFi.Ods.AdminApp.Web.Helpers;
 using EdFi.Ods.AdminApp.Web.Hubs;
 using EdFi.Ods.AdminApp.Web.Infrastructure;
 using EdFi.Ods.AdminApp.Web.Infrastructure.HangFire;
@@ -40,6 +41,8 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using NUglify.Css;
 using NUglify.JavaScript;
+using System.Security.Claims;
+using System.Linq;
 
 namespace EdFi.Ods.AdminApp.Web
 {
@@ -199,6 +202,7 @@ namespace EdFi.Ods.AdminApp.Web
                 {
                     options.Filters.Add<OpenIdConnectUserContextFilter>();
                 });
+            services.AddScoped<IOpenIdConnectLoginService, OpenIdConnectLoginService>();
             services.AddAuthentication(options =>
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -216,6 +220,11 @@ namespace EdFi.Ods.AdminApp.Web
                     { ;
                         context.HttpContext.Response.StatusCode = 401;
                         return Task.FromResult(Task.CompletedTask);
+                    };
+
+                    options.Events.OnSignedIn = async context =>
+                    {
+                        await SetupUserAfterOpenIdConnectSignIn(context);
                     };
                 })
             .AddOpenIdConnect(openIdSettings.AuthenticationScheme, options =>
@@ -249,6 +258,23 @@ namespace EdFi.Ods.AdminApp.Web
             });
 
             services.AddScoped<IAuthorizationHandler, UserMustExistOpenIdConnectHandler>();
+            async Task SetupUserAfterOpenIdConnectSignIn(CookieSignedInContext context)
+            {
+                var openIdConnectLoginService =
+                    context.HttpContext.RequestServices.GetRequiredService<IOpenIdConnectLoginService>();
+
+                var claimsIdentity = context.Principal?.Identity as ClaimsIdentity;
+                var oidcUserId = claimsIdentity?.Claims.FirstOrDefault(m => m.Type == ClaimTypes.NameIdentifier)?.Value;
+                var oidcUserEmail = claimsIdentity?.Claims.FirstOrDefault(m => m.Type == ClaimTypes.Email)?.Value;
+
+                if (openIdConnectLoginService != null && oidcUserId != null && oidcUserEmail != null)
+                {
+                    var oidcAuthScheme = identitySettings.OpenIdSettings.AuthenticationScheme;
+                    var identityUserId = await openIdConnectLoginService.AddUserLoginForOpenIdConnect(oidcUserId, oidcUserEmail, oidcAuthScheme, oidcAuthScheme);
+                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, Role.SuperAdmin.DisplayName));
+                    openIdConnectLoginService.AddSuperAdminRoleToUser(identityUserId);
+                }
+            }
         }
 
         private void ConfigureForAdminDatabase(DbContextOptionsBuilder options)
