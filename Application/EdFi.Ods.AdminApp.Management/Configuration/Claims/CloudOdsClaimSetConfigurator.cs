@@ -1,9 +1,10 @@
-﻿// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: Apache-2.0
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using System.Linq;
+using System.Collections.Generic;
 using EdFi.Security.DataAccess.Contexts;
 using EdFi.Security.DataAccess.Models;
 
@@ -54,15 +55,16 @@ namespace EdFi.Ods.AdminApp.Management.Configuration.Claims
                     : null;
 
                 foreach (var claimSetResourceClaim in requiredClaim.Actions.Select(action => 
-                    new ClaimSetResourceClaim
+                    new ClaimSetResourceClaimAction
                     {
                         Action = actions.Single(a => a.ActionName == action.ActionName),
-                        AuthorizationStrategyOverride = authOverride,
+                        AuthorizationStrategyOverrides = authOverride != null ? new List<ClaimSetResourceClaimActionAuthorizationStrategyOverrides> { new
+                    ClaimSetResourceClaimActionAuthorizationStrategyOverrides{ AuthorizationStrategy = authOverride } } : null,
                         ClaimSet = claimSet,
                         ResourceClaim = resourceClaim
                     }))
                 {
-                    _securityContext.ClaimSetResourceClaims.Add(claimSetResourceClaim);
+                    _securityContext.ClaimSetResourceClaimActions.Add(claimSetResourceClaim);
                 }
             }
 

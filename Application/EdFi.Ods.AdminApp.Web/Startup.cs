@@ -43,6 +43,7 @@ using NUglify.Css;
 using NUglify.JavaScript;
 using System.Security.Claims;
 using System.Linq;
+using EdFi.Admin.DataAccess.DbConfigurations;
 
 namespace EdFi.Ods.AdminApp.Web
 {
@@ -61,7 +62,7 @@ namespace EdFi.Ods.AdminApp.Web
             var executingAssembly = Assembly.GetExecutingAssembly();
 
             var databaseEngine = Configuration["AppSettings:DatabaseEngine"];
-            DbConfiguration.SetConfiguration(new DatabaseEngineDbConfiguration(databaseEngine));
+            DbConfiguration.SetConfiguration(new DatabaseEngineDbConfiguration(Common.Configuration.DatabaseEngine.TryParseEngine(databaseEngine)));
 
             var identitySettings = new IdentitySettings();
             Configuration.GetSection("IdentitySettings").Bind(identitySettings);

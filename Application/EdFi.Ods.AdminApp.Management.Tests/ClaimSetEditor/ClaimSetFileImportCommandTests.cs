@@ -35,7 +35,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             };
             Save(testApplication);
 
-            SetupResourceClaims(testApplication);
+            SetupResourceClaims(testApplication, new List<string> { "TestParent1234", "TestParent9878787", "TestParent878978330" }, UniqueNameList("Child", 1));
 
             var testJSON = @"{
                 ""title"": ""testfile"",
@@ -45,7 +45,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                         ""name"": ""Test Claimset"",
                         ""resourceClaims"": [
                           {
-                            ""Name"": ""TestParentResourceClaim1"",
+                            ""Name"": ""TestParent1234"",
                             ""Read"": true,
                             ""Create"": false,
                             ""Update"": false,
@@ -53,7 +53,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                             ""Children"": []
                           },
                           {
-                            ""Name"": ""TestParentResourceClaim2"",
+                            ""Name"": ""TestParent9878787"",
                             ""Read"": true,
                             ""Create"": false,
                             ""Update"": false,
@@ -61,7 +61,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                             ""Children"": []
                           },
                           {
-                            ""Name"": ""TestParentResourceClaim3"",
+                            ""Name"": ""TestParent878978330"",
                             ""Read"": true,
                             ""Create"": true,
                             ""Update"": true,
@@ -91,13 +91,13 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             testResources.Count().ShouldBe(3);
 
             var testResource1 = testResources[0];
-            MatchActions(testResource1, "TestParentResourceClaim1", new bool[] { false, true, false, false});
+            MatchActions(testResource1, "TestParent1234", new bool[] { false, true, false, false});
 
             var testResource2 = testResources[1];
-            MatchActions(testResource2, "TestParentResourceClaim2", new bool[] { false, true, false, false });
+            MatchActions(testResource2, "TestParent9878787", new bool[] { false, true, false, false });
 
             var testResource3 = testResources[2];
-            MatchActions(testResource3, "TestParentResourceClaim3", new bool[] { true, true, true, true });
+            MatchActions(testResource3, "TestParent878978330", new bool[] { true, true, true, true });
 
         }
 
@@ -112,7 +112,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
             var appAuthorizationStrategies = SetupApplicationAuthorizationStrategies(testApplication, 2).ToList();
 
-            SetupResourceClaims(testApplication);
+            SetupResourceClaims(testApplication, new List<string> { "TestParentResourceClaim8789783213", "TestParentResourceClaim0989", "TestParentResourceClaim3009" }, UniqueNameList("Child", 1));
 
             var testJSON = @"{
                 ""title"": ""testfile"",
@@ -122,7 +122,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                         ""name"": ""Test Claimset"",
                         ""resourceClaims"": [
                           {
-                            ""Name"": ""TestParentResourceClaim1"",
+                            ""Name"": ""TestParentResourceClaim8789783213"",
                             ""Read"": true,
                             ""Create"": true,
                             ""Update"": false,
@@ -146,7 +146,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                              ""Children"": []
                           },
                           {
-                            ""Name"": ""TestParentResourceClaim2"",
+                            ""Name"": ""TestParentResourceClaim0989"",
                             ""Read"": true,
                             ""Create"": false,
                             ""Update"": false,
@@ -154,7 +154,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                             ""Children"": []
                           },
                           {
-                            ""Name"": ""TestParentResourceClaim3"",
+                            ""Name"": ""TestParentResourceClaim3009"",
                             ""Read"": true,
                             ""Create"": true,
                             ""Update"": true,
@@ -194,7 +194,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             testResources.Count().ShouldBe(3);
 
             var testResource1 = testResources[0];
-            MatchActions(testResource1, "TestParentResourceClaim1", new bool[] { true, true, false, false });
+            MatchActions(testResource1, "TestParentResourceClaim8789783213", new bool[] { true, true, false, false });
 
             testResource1.AuthStrategyOverridesForCRUD.ShouldNotBeNull();
             testResource1.AuthStrategyOverridesForCRUD.Length.ShouldBe(4);
@@ -210,10 +210,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             authStrategyOverrideForRead.AuthStrategyName.ShouldBe(authStrategy2Name);
 
             var testResource2 = testResources[1];
-            MatchActions(testResource2, "TestParentResourceClaim2", new bool[] { false, true, false, false });
+            MatchActions(testResource2, "TestParentResourceClaim0989", new bool[] { false, true, false, false });
 
             var testResource3 = testResources[2];
-            MatchActions(testResource3, "TestParentResourceClaim3", new bool[] { true, true, true, true });
+            MatchActions(testResource3, "TestParentResourceClaim3009", new bool[] { true, true, true, true });
         }
 
         [Test]
@@ -227,7 +227,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
             var appAuthorizationStrategies = SetupApplicationAuthorizationStrategies(testApplication, 3).ToList();
 
-            SetupResourceClaims(testApplication, 1, 1);
+            SetupResourceClaims(testApplication, new List<string> { "TestParentResourceClaim0981" }, new List<string> { "Child" });
 
             var testJSON = @"{
                 ""title"": ""testfile"",
@@ -237,7 +237,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                         ""name"": ""Test Claimset"",
                         ""resourceClaims"": [
                           {
-                            ""Name"": ""TestParentResourceClaim1"",
+                            ""Name"": ""TestParentResourceClaim0981"",
                             ""Read"": true,
                             ""Create"": true,
                             ""Update"": false,
@@ -260,7 +260,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                                 ],
                              ""Children"": [
                                     {
-                                        ""Name"": ""TestChildResourceClaim1"",
+                                        ""Name"": ""Child-TestParentResourceClaim0981"",
                                         ""Read"": true,
                                         ""Create"": true,
                                         ""Update"": true,
@@ -327,7 +327,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             testResources.Count().ShouldBe(1);
 
             var testResource1 = testResources[0];
-            MatchActions(testResource1, "TestParentResourceClaim1", new bool[] { true, true, false, false });
+            MatchActions(testResource1, "TestParentResourceClaim0981", new bool[] { true, true, false, false });
 
             testResource1.Children.Count.ShouldBe(1);
             var childResource = testResource1.Children[0];
@@ -386,7 +386,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             var alreadyExistingClaimSet = new ClaimSet { ClaimSetName = "Test ClaimSet", Application = testApplication };
             Save(alreadyExistingClaimSet);
 
-            SetupResourceClaims(testApplication);
+            SetupResourceClaims(testApplication, new List<string> { "TestParent1234" }, new List<string>());
 
             var testJSON = @"{
                 ""title"": ""testfile"",
@@ -396,7 +396,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                         ""name"": ""Test Claimset"",
                         ""resourceClaims"": [
                           {
-                            ""Name"": ""TestParentResourceClaim1"",
+                            ""Name"": ""TestParent1234"",
                             ""Read"": true,
                             ""Create"": false,
                             ""Update"": false,
@@ -430,7 +430,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             };
             Save(testApplication);
 
-            SetupResourceClaims(testApplication);         
+            SetupResourceClaims(testApplication, new List<string> { "TestParentResourceClaim0981" }, new List<string>());
 
             var testJSON = @"{
                 ""title"": ""testfile"",
@@ -440,7 +440,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                         ""name"": ""Test Claimset"",
                         ""resourceClaims"": [
                           {
-                            ""Name"": ""TestParentResourceClaim88"",
+                            ""Name"": ""TestParentResourceClaim-notthere"",
                             ""Read"": true,
                             ""Create"": false,
                             ""Update"": false,
@@ -460,7 +460,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                 var validator = new ClaimSetFileImportModelValidator(securityContext);
                 var validationResults = validator.Validate(importModel);
                 validationResults.IsValid.ShouldBe(false);
-                validationResults.Errors.Select(x => x.ErrorMessage).ShouldContain("This template contains a resource which is not in the system. Claimset Name: Test Claimset Resource name: 'TestParentResourceClaim88'.\n");
+                validationResults.Errors.Select(x => x.ErrorMessage).ShouldContain("This template contains a resource which is not in the system. Claimset Name: Test Claimset Resource name: 'TestParentResourceClaim-notthere'.\n");
             });
         }
 
