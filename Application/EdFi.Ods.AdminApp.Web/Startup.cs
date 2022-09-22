@@ -81,7 +81,6 @@ namespace EdFi.Ods.AdminApp.Web
                         options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
                         options.Filters.Add<JsonValidationFilter>();
                         options.Filters.Add<SetupRequiredFilter>();
-                        options.Filters.Add<UserContextFilter>();
                         options.Filters.Add<InstanceContextFilter>();
                     })
                     .AddFluentValidation(
@@ -174,6 +173,7 @@ namespace EdFi.Ods.AdminApp.Web
                 options =>
                 {
                     options.Filters.Add<PasswordChangeRequiredFilter>();
+                    options.Filters.Add<UserContextFilter>();
                 });
 
             services.Configure<IdentityOptions>(options =>
@@ -194,6 +194,11 @@ namespace EdFi.Ods.AdminApp.Web
         private void ConfigureForOpenIdConnectIdentity(IServiceCollection services, IdentitySettings identitySettings)
         {
             var openIdSettings = identitySettings.OpenIdSettings;
+            services.AddControllersWithViews(
+                options =>
+                {
+                    options.Filters.Add<OpenIdConnectUserContextFilter>();
+                });
             services.AddAuthentication(options =>
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
