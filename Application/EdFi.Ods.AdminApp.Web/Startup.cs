@@ -245,10 +245,6 @@ namespace EdFi.Ods.AdminApp.Web
                 options.RequireHttpsMetadata = openIdSettings.RequireHttpsMetadata;
                 options.GetClaimsFromUserInfoEndpoint = openIdSettings.GetClaimsFromUserInfoEndpoint;
 
-                options.Events.OnAccessDenied = context =>
-                {
-                    return Task.CompletedTask;
-                };
 
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
