@@ -43,19 +43,4 @@ namespace EdFi.Ods.AdminApp.Web
             }
         }
     }
-
-    public class UserMustExistOpenIdConnectHandler : AuthorizationHandler<UserMustExistRequirement>
-    {
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, UserMustExistRequirement requirement)
-        {
-            var userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (userId != null)
-            {
-                context.Succeed(requirement);
-            }
-
-            return Task.CompletedTask;
-        }
-    }
 }
