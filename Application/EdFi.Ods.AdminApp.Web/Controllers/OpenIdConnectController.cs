@@ -17,18 +17,22 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
     {
         private readonly IdentitySettings _identitySettings;
 
-        public OpenIdConnectController(IOptions<IdentitySettings>
-            identitySettings)
+        public OpenIdConnectController(IOptions<IdentitySettings> identitySettings)
         {
             _identitySettings = identitySettings.Value;
         }
 
         [HttpGet]
-        public IActionResult Login(string returnUrl = "/Home/Index")
+        public IActionResult Login(string returnUrl)
         {
-            if (!HttpContext.User.Identity.IsAuthenticated)
+            returnUrl ??= Url.Content("~/");
+
+            if (HttpContext.User.Identity != null && !HttpContext.User.Identity.IsAuthenticated)
             {
-                return Challenge(_identitySettings.OpenIdSettings.AuthenticationScheme);
+                return new ChallengeResult(_identitySettings.OpenIdSettings.AuthenticationScheme, new AuthenticationProperties
+                {
+                    RedirectUri = returnUrl
+                });
             }
             
             return RedirectToAction("Index", "Home");
