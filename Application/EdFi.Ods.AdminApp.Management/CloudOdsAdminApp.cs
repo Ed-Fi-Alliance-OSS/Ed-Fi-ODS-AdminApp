@@ -12,11 +12,5 @@ namespace EdFi.Ods.AdminApp.Management
         public const string VendorName = "EdFi";
         public const string VendorNamespacePrefix = "http://ed-fi.org";
         public const string InternalAdminAppClaimSet = "Ed-Fi ODS Admin App";
-
-        public static readonly string[] SystemReservedClaimSets =
-        {
-            InternalAdminAppClaimSet,
-            "Bootstrap Descriptors and EdOrgs"
-        };
     }
 }
