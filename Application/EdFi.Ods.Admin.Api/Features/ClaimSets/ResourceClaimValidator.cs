@@ -14,7 +14,9 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
         {
             if (!dbResourceClaims.Contains(resourceClaim.Name))
             {
-                context.AddFailure("ResourceClaims", $"This Claim Set contains a resource which is not in the system. Claimset Name: {claimSetName} Resource name: '{resourceClaim.Name}'.\n");
+                context.MessageFormatter.AppendArgument("ClaimSetName", claimSetName);
+                context.MessageFormatter.AppendArgument("ResourceClaimName", resourceClaim.Name);
+                context.AddFailure("ResourceClaims", FeatureConstants.ClaimsetResourceNotFoundMessage);
             }
             if (resourceClaim.DefaultAuthStrategiesForCRUD != null && resourceClaim.DefaultAuthStrategiesForCRUD.Any())
             {
@@ -22,7 +24,10 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
                 {
                     if (!dbAuthStrategies.Contains(defaultAS.AuthStrategyId))
                     {
-                        context.AddFailure("ResourceClaims", $"This resource claim contains a authorization strategy id which is not in the system. Claimset Name: {claimSetName} Resource name: '{resourceClaim.Name} Authorization strategy id: {defaultAS.AuthStrategyId}'.\n");
+                        context.MessageFormatter.AppendArgument("ClaimSetName", claimSetName);
+                        context.MessageFormatter.AppendArgument("ResourceClaimName", resourceClaim.Name);
+                        context.MessageFormatter.AppendArgument("AuthStrategyId", defaultAS.AuthStrategyId);
+                        context.AddFailure("ResourceClaims", FeatureConstants.ClaimsetAuthStrategyNotFoundMessage);
                     }
                 }
             }
@@ -32,7 +37,10 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
                 {
                     if (!dbAuthStrategies.Contains(authStrategyOverride.AuthStrategyId))
                     {
-                        context.AddFailure("ResourceClaims", $"This resource claim contains a authorization strategy id which is not in the system. Claimset Name: {claimSetName} Resource name: '{resourceClaim.Name} Authorization strategy id: {authStrategyOverride.AuthStrategyId}'.\n");
+                        context.MessageFormatter.AppendArgument("ClaimSetName", claimSetName);
+                        context.MessageFormatter.AppendArgument("ResourceClaimName", resourceClaim.Name);
+                        context.MessageFormatter.AppendArgument("AuthStrategyId", authStrategyOverride.AuthStrategyId);
+                        context.AddFailure("ResourceClaims", FeatureConstants.ClaimsetAuthStrategyNotFoundMessage);
                     }
                 }
             }

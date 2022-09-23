@@ -71,6 +71,18 @@ namespace EdFi.Ods.Admin.Api.Infrastructure
                 .ForMember(dst => dst.DefaultAuthStrategiesForCRUD, opt => opt.MapFrom(src => src.DefaultAuthStrategiesForCRUD))
                 .ForMember(dst => dst.Children, opt => opt.MapFrom(src => src.Children));
 
+            CreateMap<AdminApp.Management.ClaimSetEditor.AuthorizationStrategy, AuthorizationStrategyModel>()
+                .ForMember(dst => dst.AuthStrategyId, opt => opt.MapFrom(src => src.AuthStrategyId))
+                .ForMember(dst => dst.AuthStrategyName, opt => opt.MapFrom(src => src.AuthStrategyName))
+                .ForMember(dst => dst.DisplayName, opt => opt.MapFrom(src => src.DisplayName))
+                .ForMember(dst => dst.IsInheritedFromParent, opt => opt.MapFrom(src => src.IsInheritedFromParent));
+
+            CreateMap<AuthorizationStrategyModel, AdminApp.Management.ClaimSetEditor.AuthorizationStrategy>()
+                .ForMember(dst => dst.AuthStrategyId, opt => opt.MapFrom(src => src.AuthStrategyId))
+                .ForMember(dst => dst.AuthStrategyName, opt => opt.MapFrom(src => src.AuthStrategyName))
+                .ForMember(dst => dst.DisplayName, opt => opt.MapFrom(src => src.DisplayName))
+                .ForMember(dst => dst.IsInheritedFromParent, opt => opt.MapFrom(src => src.IsInheritedFromParent));
+
             CreateMap<ResourceClaimModel, AdminApp.Management.ClaimSetEditor.ResourceClaim>()
                 .ForMember(dst => dst.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dst => dst.Read, opt => opt.MapFrom(src => src.Read))
@@ -81,11 +93,7 @@ namespace EdFi.Ods.Admin.Api.Infrastructure
                 .ForMember(dst => dst.DefaultAuthStrategiesForCRUD, opt => opt.MapFrom(src => src.DefaultAuthStrategiesForCRUD))
                 .ForMember(dst => dst.Children, opt => opt.MapFrom(src => src.Children));
 
-            CreateMap<AdminApp.Management.ClaimSetEditor.AuthorizationStrategy, AuthorizationStrategyModel>()
-                .ForMember(dst => dst.AuthStrategyId, opt => opt.MapFrom(src => src.AuthStrategyId))
-                .ForMember(dst => dst.AuthStrategyName, opt => opt.MapFrom(src => src.AuthStrategyName))
-                .ForMember(dst => dst.DisplayName, opt => opt.MapFrom(src => src.DisplayName))
-                .ForMember(dst => dst.IsInheritedFromParent, opt => opt.MapFrom(src => src.IsInheritedFromParent));
+
         }
 
         private string ToCommaSeparated(ICollection<VendorNamespacePrefix> vendorNamespacePrefixes)

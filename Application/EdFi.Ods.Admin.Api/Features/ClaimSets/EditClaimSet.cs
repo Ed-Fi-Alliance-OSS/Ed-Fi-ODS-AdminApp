@@ -12,11 +12,11 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace EdFi.Ods.Admin.Api.Features.ClaimSets
 {
-    public class EditClaimSet
+    public class EditClaimSet : IFeature
     {
         public void MapEndpoints(IEndpointRouteBuilder endpoints)
         {
-            AdminApiEndpointBuilder.MapPost(endpoints, "/applications/{id}", Handle)
+            AdminApiEndpointBuilder.MapPut(endpoints, "/claimsets/{id}", Handle)
             .WithDefaultDescription()
             .WithRouteOptions(b => b.WithResponse<ClaimSetModel>(200))
             .BuildForVersions(AdminApiVersions.V1);
@@ -30,22 +30,23 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
         {
             request.Id = id;
             await validator.GuardAsync(request);
-            //var addedClaimSetId = editClaimSetCommand.Execute(new ClaimSetModel
-            //{
-            //    ClaimSetName = request.Name
-            //});
+            var updatedClaimSetId = editClaimSetCommand.Execute(new EditClaimSetModel
+            {
+                ClaimSetName = request.Name,
+                ClaimSetId = id
+            });
 
-            addOrUpdateResourcesOnClaimSetCommand.Execute(id, mapper.Map<List<ResourceClaim>>(request.ResourceClaims));
+            addOrUpdateResourcesOnClaimSetCommand.Execute(updatedClaimSetId, mapper.Map<List<ResourceClaim>>(request.ResourceClaims));
 
-            var calimSet = getClaimSetByIdQuery.Execute(id);
-            var allResources = getResourcesByClaimSetIdQuery.AllResources(id);
+            var calimSet = getClaimSetByIdQuery.Execute(updatedClaimSetId);
+            var allResources = getResourcesByClaimSetIdQuery.AllResources(updatedClaimSetId);
             var model = mapper.Map<ClaimSetModel>(calimSet);
             model.ResourceClaims = mapper.Map<List<ResourceClaimModel>>(allResources.ToList());
-            return AdminApiResponse<ClaimSetModel>.Created(model, "ClaimSet", $"/claimsets/{id}");
+            return AdminApiResponse<ClaimSetModel>.Updated(model, "ClaimSet");
         }
 
         [SwaggerSchema(Title = "EditClaimSetRequest")]
-        public class Request : IEditClaimSetModel
+        public class Request : IEditClaimSetAndResourcesModel
         {
             [SwaggerSchema(Description = "ClaimSet id", Nullable = false)]
             public int Id { get; set; }
@@ -66,11 +67,11 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
                 _securityContext = securityContext;
                 RuleFor(m => m.Name).NotEmpty()
                     .Must(BeAUniqueName)
-                    .WithMessage("A claim set with this name already exists in the database. Please enter a unique name.");
+                    .WithMessage(FeatureConstants.ClaimSetAlreadyExistsMessage);
 
                 RuleFor(m => m.Name)
                     .MaximumLength(255)
-                    .WithMessage("The claim set name must be less than 255 characters.");
+                    .WithMessage(FeatureConstants.ClaimSetNameMaxLengthMessage);
 
                 RuleFor(m => m).Custom((claimSet, context) =>
                 {

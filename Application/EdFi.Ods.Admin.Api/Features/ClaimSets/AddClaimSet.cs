@@ -64,11 +64,11 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
                 _securityContext = securityContext;
                 RuleFor(m => m.Name).NotEmpty()
                     .Must(BeAUniqueName)
-                    .WithMessage("A claim set with this name already exists in the database. Please enter a unique name.");
+                    .WithMessage(FeatureConstants.ClaimSetAlreadyExistsMessage);
 
                 RuleFor(m => m.Name)
                     .MaximumLength(255)
-                    .WithMessage("The claim set name must be less than 255 characters.");
+                    .WithMessage(FeatureConstants.ClaimSetNameMaxLengthMessage);
 
                 RuleFor(m => m).Custom((claimSet, context) =>
                 {
