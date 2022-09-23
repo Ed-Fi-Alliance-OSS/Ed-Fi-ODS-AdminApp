@@ -39,7 +39,9 @@ namespace EdFi.Ods.AdminApp.Management.Configuration.Claims
             var claimSet = new ClaimSet
             {
                 Application = apiApplication,
-                ClaimSetName = configuration.ClaimSetName
+                ClaimSetName = configuration.ClaimSetName,
+                IsEdfiPreset = false,
+                ForApplicationUseOnly = false
             };
 
             _securityContext.ClaimSets.Add(claimSet);
