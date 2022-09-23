@@ -25,7 +25,9 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
             var newClaimSet = new Security.DataAccess.Models.ClaimSet
             {
                 ClaimSetName = claimSet.Name,
-                Application = _context.Applications.Single()
+                Application = _context.Applications.Single(),
+                IsEdfiPreset = false,
+                ForApplicationUseOnly = false
             };
 
             var originalResourceClaims =
