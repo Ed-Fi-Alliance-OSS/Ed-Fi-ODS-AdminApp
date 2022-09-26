@@ -5,6 +5,7 @@
 
 using AutoMapper;
 using EdFi.Ods.Admin.Api.Infrastructure;
+using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
 using EdFi.Ods.AdminApp.Management.Database.Queries;
 using EdFi.Ods.AdminApp.Management.ErrorHandling;
@@ -28,7 +29,7 @@ public class ReadClaimSets : IFeature
 
     internal Task<IResult> GetClaimSets(GetAllClaimSetsQuery getClaimSetsQuery, IMapper mapper)
     {
-        var calimSets = getClaimSetsQuery.Execute().ToList();
+        var calimSets = getClaimSetsQuery.Execute().Where(x => !CloudOdsAdminApp.SystemReservedClaimSets.Contains(x.ClaimSetName)).ToList();
         var model = mapper.Map<List<ClaimSetModel>>(calimSets);
         return Task.FromResult(AdminApiResponse<List<ClaimSetModel>>.Ok(model));
     }

@@ -13,11 +13,11 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
     {
         private readonly AddClaimSetCommand _addClaimSetCommand;
         private readonly GetResourceClaimsQuery _getResourceClaimsQuery;
-        private readonly AddOrUpdateResourcesOnClaimSetCommand _addOrUpdateResourcesOnClaimSetCommand;
+        private readonly AddOrEditResourcesOnClaimSetCommand _addOrUpdateResourcesOnClaimSetCommand;
 
         public ClaimSetFileImportCommand(AddClaimSetCommand addClaimSetCommand,
             GetResourceClaimsQuery getResourceClaimsQuery,
-            AddOrUpdateResourcesOnClaimSetCommand addOrUpdateResourcesOnClaimSetCommand)
+            AddOrEditResourcesOnClaimSetCommand addOrUpdateResourcesOnClaimSetCommand)
         {
             _addClaimSetCommand = addClaimSetCommand;
             _getResourceClaimsQuery = getResourceClaimsQuery;

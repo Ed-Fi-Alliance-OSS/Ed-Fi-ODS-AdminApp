@@ -23,7 +23,7 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
         }
 
         public async Task<IResult> Handle(Validator validator, AddClaimSetCommand addClaimSetCommand,
-            AddOrUpdateResourcesOnClaimSetCommand addOrUpdateResourcesOnClaimSetCommand,
+            AddOrEditResourcesOnClaimSetCommand addOrEditResourcesOnClaimSetCommand,
             IGetClaimSetByIdQuery getClaimSetByIdQuery,
             IGetResourcesByClaimSetIdQuery getResourcesByClaimSetIdQuery,
             IMapper mapper, Request request)
@@ -34,15 +34,13 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
                 ClaimSetName = request.Name
             });
 
-            addOrUpdateResourcesOnClaimSetCommand.Execute(addedClaimSetId, mapper.Map<List<ResourceClaim>>(request.ResourceClaims));
+            addOrEditResourcesOnClaimSetCommand.Execute(addedClaimSetId, mapper.Map<List<ResourceClaim>>(request.ResourceClaims));
 
             var calimSet = getClaimSetByIdQuery.Execute(addedClaimSetId);
             var allResources = getResourcesByClaimSetIdQuery.AllResources(addedClaimSetId);
             var model = mapper.Map<ClaimSetModel>(calimSet);
-            if (allResources.Any())
-            {
-                model.ResourceClaims = mapper.Map<List<ResourceClaimModel>>(allResources.ToList());
-            }
+            model.ResourceClaims = mapper.Map<List<ResourceClaimModel>>(allResources.ToList());
+
             return AdminApiResponse<ClaimSetModel>.Created(model, "ClaimSet", $"/claimsets/{addedClaimSetId}");
         }
 

@@ -5,10 +5,12 @@
 
 using AutoMapper;
 using EdFi.Ods.Admin.Api.Infrastructure;
+using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
 using EdFi.Security.DataAccess.Contexts;
 using FluentValidation;
 using Swashbuckle.AspNetCore.Annotations;
+using static EdFi.Ods.AdminApp.Management.ClaimSetEditor.GetClaimSetsByApplicationNameQuery;
 
 namespace EdFi.Ods.Admin.Api.Features.ClaimSets
 {
@@ -23,7 +25,7 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
         }
 
         public async Task<IResult> Handle(Validator validator, EditClaimSetCommand editClaimSetCommand,
-            AddOrUpdateResourcesOnClaimSetCommand addOrUpdateResourcesOnClaimSetCommand,
+            UpdateResourcesOnClaimSetCommand updateResourcesOnClaimSetCommand,
             IGetClaimSetByIdQuery getClaimSetByIdQuery,
             IGetResourcesByClaimSetIdQuery getResourcesByClaimSetIdQuery,
             IMapper mapper, Request request, int id)
@@ -36,12 +38,14 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
                 ClaimSetId = id
             });
 
-            addOrUpdateResourcesOnClaimSetCommand.Execute(updatedClaimSetId, mapper.Map<List<ResourceClaim>>(request.ResourceClaims));
+            updateResourcesOnClaimSetCommand.Execute(new UpdateResourcesOnClaimSetModel
+            { ClaimSetId = updatedClaimSetId, ResourceClaims = mapper.Map<List<ResourceClaim>>(request.ResourceClaims) } );
 
             var calimSet = getClaimSetByIdQuery.Execute(updatedClaimSetId);
             var allResources = getResourcesByClaimSetIdQuery.AllResources(updatedClaimSetId);
             var model = mapper.Map<ClaimSetModel>(calimSet);
             model.ResourceClaims = mapper.Map<List<ResourceClaimModel>>(allResources.ToList());
+
             return AdminApiResponse<ClaimSetModel>.Updated(model, "ClaimSet");
         }
 
@@ -73,6 +77,10 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
                     .MaximumLength(255)
                     .WithMessage(FeatureConstants.ClaimSetNameMaxLengthMessage);
 
+                RuleFor(m => m.Name)
+                    .Must(BeAUnReservedClaimSet)
+                    .WithMessage(FeatureConstants.EditingReservedClaimSetMessage);
+
                 RuleFor(m => m).Custom((claimSet, context) =>
                 {
                     var dbResourceClaims = securityContext.ResourceClaims.Select(x => x.ResourceName);
@@ -90,6 +98,12 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
             private bool BeAUniqueName(string? name)
             {
                 return !_securityContext.ClaimSets.Any(x => x.ClaimSetName == name);
+            }
+
+            private bool BeAUnReservedClaimSet<T>(Request model, string? name, ValidationContext<T> context)
+            {
+                context.MessageFormatter.AppendArgument("ClaimSetName", name);
+                return !DefaultClaimSets.Contains(name) && !CloudOdsAdminApp.SystemReservedClaimSets.Contains(name);
             }
         }
     }

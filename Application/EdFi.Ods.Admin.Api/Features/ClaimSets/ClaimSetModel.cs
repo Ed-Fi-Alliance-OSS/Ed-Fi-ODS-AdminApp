@@ -63,4 +63,18 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
 
         public int ClaimSetId { get; set; }
     }
+
+    public class UpdateResourcesOnClaimSetModel : IUpdateResourcesOnClaimSetModel
+    {
+        public int ClaimSetId { get; set; }
+
+        public List<ResourceClaim>? ResourceClaims { get; set; }
+    }
+
+    public class DeleteClaimSetModel : IDeleteClaimSetModel
+    {
+        public string? Name { get; set; }
+
+        public int Id { get; set; }
+    }
 }

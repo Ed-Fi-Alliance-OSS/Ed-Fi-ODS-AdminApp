@@ -10,13 +10,13 @@ using EdFi.Ods.AdminApp.Management.Database.Queries;
 
 namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
 {
-    public class AddOrUpdateResourcesOnClaimSetCommand
+    public class AddOrEditResourcesOnClaimSetCommand
     {
         private readonly EditResourceOnClaimSetCommand _editResourceOnClaimSetCommand;
         private readonly GetResourceClaimsQuery _getResourceClaimsQuery;
         private readonly OverrideDefaultAuthorizationStrategyCommand _overrideDefaultAuthorizationStrategyCommand;
 
-        public AddOrUpdateResourcesOnClaimSetCommand(EditResourceOnClaimSetCommand editResourceOnClaimSetCommand,
+        public AddOrEditResourcesOnClaimSetCommand(EditResourceOnClaimSetCommand editResourceOnClaimSetCommand,
             GetResourceClaimsQuery getResourceClaimsQuery,
             OverrideDefaultAuthorizationStrategyCommand overrideDefaultAuthorizationStrategyCommand)
         {

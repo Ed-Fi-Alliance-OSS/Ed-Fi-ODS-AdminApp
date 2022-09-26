@@ -29,5 +29,6 @@ namespace EdFi.Ods.Admin.Api.Features
         public const string ClaimSetNameMaxLengthMessage = "The claim set name must be less than 255 characters.";
         public const string ClaimsetResourceNotFoundMessage = "This Claim Set contains a resource which is not in the system. Claimset Name: {ClaimSetName} Resource name: '{ResourceClaimName}'.\n";
         public const string ClaimsetAuthStrategyNotFoundMessage = "This resource claim contains a authorization strategy id which is not in the system. Claimset Name: {ClaimSetName} Resource name: '{ResourceClaimName} Authorization strategy id: {AuthStrategyId}'.\n";
+        public const string EditingReservedClaimSetMessage = "System reserved claim set({ClaimSetName}) can not be edited.";
     }
 }
