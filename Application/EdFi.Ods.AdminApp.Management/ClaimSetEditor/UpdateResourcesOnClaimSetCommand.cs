@@ -23,11 +23,11 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
 
         public void Execute(IUpdateResourcesOnClaimSetModel model)
         {
-            var claimSetToDelete = _context.ClaimSets.Single(x => x.ClaimSetId == model.ClaimSetId);
-            var resourceClaimsForClaimSetId =
+            var resourceClaimsForClaimSet =
                 _context.ClaimSetResourceClaims.Where(x => x.ClaimSet.ClaimSetId == model.ClaimSetId).ToList();
-            _context.ClaimSetResourceClaims.RemoveRange(resourceClaimsForClaimSetId);
+            _context.ClaimSetResourceClaims.RemoveRange(resourceClaimsForClaimSet);
             _context.SaveChanges();
+
             _addOrEditResourcesOnClaimSetCommand.Execute(model.ClaimSetId, model.ResourceClaims);
         }
     }

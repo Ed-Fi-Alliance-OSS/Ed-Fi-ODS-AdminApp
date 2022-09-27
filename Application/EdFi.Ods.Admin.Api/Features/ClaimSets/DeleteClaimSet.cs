@@ -5,6 +5,9 @@
 
 using EdFi.Ods.Admin.Api.Infrastructure;
 using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
+using EdFi.Security.DataAccess.Contexts;
+using FluentValidation;
+using FluentValidation.Results;
 
 namespace EdFi.Ods.Admin.Api.Features.ClaimSets
 {
@@ -18,10 +21,31 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
                 .BuildForVersions(AdminApiVersions.V1);
         }
 
-        public Task<IResult> Handle(DeleteClaimSetCommand deleteClaimSetCommand, int id)
+        public Task<IResult> Handle(DeleteClaimSetCommand deleteClaimSetCommand, ISecurityContext context, IGetApplicationsByClaimSetIdQuery getApplications, int id)
         {
-            deleteClaimSetCommand.Execute(new DeleteClaimSetModel { Id = id});
+            CheckResourceExists(id, context);
+            GuardAgainstDeletingResourceWithDependencies(id, getApplications);
+            deleteClaimSetCommand.Execute(new DeleteClaimSetModel { Id = id });
             return Task.FromResult(AdminApiResponse.Deleted("ClaimSet"));
+        }
+
+        private void CheckResourceExists(int id, ISecurityContext context)
+        {
+            var claimSetToDelete = context.ClaimSets.SingleOrDefault(x => x.ClaimSetId == id);
+
+            if (claimSetToDelete == null)
+            {
+                throw new ValidationException(new[] { new ValidationFailure(nameof(id),
+                    FeatureConstants.ClaimSetNotFound) });
+            }
+        }
+
+        private void GuardAgainstDeletingResourceWithDependencies(int id, IGetApplicationsByClaimSetIdQuery getApplications)
+        {
+            var associatedApplicationsCount = getApplications.Execute(id).Count();
+            if (associatedApplicationsCount > 0)
+                throw new ValidationException(new[] { new ValidationFailure(nameof(id),
+                    $"Cannot delete this claim set. This claim set has {associatedApplicationsCount} associated application(s).") });
         }
     }
 }

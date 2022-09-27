@@ -5,12 +5,10 @@
 
 using AutoMapper;
 using EdFi.Ods.Admin.Api.Infrastructure;
-using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
 using EdFi.Security.DataAccess.Contexts;
 using FluentValidation;
 using Swashbuckle.AspNetCore.Annotations;
-using static EdFi.Ods.AdminApp.Management.ClaimSetEditor.GetClaimSetsByApplicationNameQuery;
 
 namespace EdFi.Ods.Admin.Api.Features.ClaimSets
 {
@@ -20,7 +18,7 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
         {
             AdminApiEndpointBuilder.MapPut(endpoints, "/claimsets/{id}", Handle)
             .WithDefaultDescription()
-            .WithRouteOptions(b => b.WithResponse<ClaimSetModel>(200))
+            .WithRouteOptions(b => b.WithResponse<ClaimSetDetailsModel>(200))
             .BuildForVersions(AdminApiVersions.V1);
         }
 
@@ -28,6 +26,7 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
             UpdateResourcesOnClaimSetCommand updateResourcesOnClaimSetCommand,
             IGetClaimSetByIdQuery getClaimSetByIdQuery,
             IGetResourcesByClaimSetIdQuery getResourcesByClaimSetIdQuery,
+            IGetApplicationsByClaimSetIdQuery getApplications,
             IMapper mapper, Request request, int id)
         {
             request.Id = id;
@@ -43,10 +42,11 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
 
             var calimSet = getClaimSetByIdQuery.Execute(updatedClaimSetId);
             var allResources = getResourcesByClaimSetIdQuery.AllResources(updatedClaimSetId);
-            var model = mapper.Map<ClaimSetModel>(calimSet);
+            var model = mapper.Map<ClaimSetDetailsModel>(calimSet);
+            model.ApplicationsCount = getApplications.Execute(updatedClaimSetId).Count();
             model.ResourceClaims = mapper.Map<List<ResourceClaimModel>>(allResources.ToList());
 
-            return AdminApiResponse<ClaimSetModel>.Updated(model, "ClaimSet");
+            return AdminApiResponse<ClaimSetDetailsModel>.Updated(model, "ClaimSet");
         }
 
         [SwaggerSchema(Title = "EditClaimSetRequest")]
@@ -67,19 +67,23 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
             private readonly ISecurityContext _securityContext;
             public Validator(ISecurityContext securityContext)
             {
-                RuleFor(m => m.Id).NotEmpty();
                 _securityContext = securityContext;
-                RuleFor(m => m.Name).NotEmpty()
-                    .Must(BeAUniqueName)
-                    .WithMessage(FeatureConstants.ClaimSetAlreadyExistsMessage);
+
+                RuleFor(m => m.Id).NotEmpty();
+
+                RuleFor(m => m.Id)
+                    .Must(BeAnExistingClaimSet)
+                    .WithMessage(FeatureConstants.ClaimSetNotFound);
+
+                RuleFor(m => m.Name)
+                .NotEmpty()
+                .Must(BeAUniqueName)
+                .WithMessage(FeatureConstants.ClaimSetAlreadyExistsMessage)
+                .When(NameIsChanged);
 
                 RuleFor(m => m.Name)
                     .MaximumLength(255)
                     .WithMessage(FeatureConstants.ClaimSetNameMaxLengthMessage);
-
-                RuleFor(m => m.Name)
-                    .Must(BeAUnReservedClaimSet)
-                    .WithMessage(FeatureConstants.EditingReservedClaimSetMessage);
 
                 RuleFor(m => m).Custom((claimSet, context) =>
                 {
@@ -87,6 +91,17 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
                     var dbAuthStrategies = securityContext.AuthorizationStrategies.Select(x => x.AuthorizationStrategyId);
                     if (claimSet.ResourceClaims != null && claimSet.ResourceClaims.Any())
                     {
+                        var duplicateResourceClaims = claimSet.ResourceClaims.GroupBy(x => x.Name)
+                        .Where(group => group.Count() > 1)
+                        .Select(group => group.Key);
+                        if(duplicateResourceClaims.Any())
+                        {
+                            foreach (var resourceClaim in duplicateResourceClaims)
+                            {
+                                context.MessageFormatter.AppendArgument("ResourceClaimName", resourceClaim);
+                                context.AddFailure("ResourceClaims", FeatureConstants.ClaimSetDuplicateResourceMessage);
+                            }
+                        }
                         foreach (var resourceClaim in claimSet.ResourceClaims)
                         {
                             ResourceClaimValidator.Validate(dbResourceClaims, dbAuthStrategies, resourceClaim, context, claimSet.Name);
@@ -95,15 +110,19 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
                 });
             }
 
+            private bool BeAnExistingClaimSet(int id)
+            {
+                return _securityContext.ClaimSets.SingleOrDefault(x => x.ClaimSetId == id) != null;
+            }
+
+            private bool NameIsChanged(Request model)
+            {
+                return _securityContext.ClaimSets.Single(x => x.ClaimSetId == model.Id).ClaimSetName != model.Name;
+            }
+
             private bool BeAUniqueName(string? name)
             {
                 return !_securityContext.ClaimSets.Any(x => x.ClaimSetName == name);
-            }
-
-            private bool BeAUnReservedClaimSet<T>(Request model, string? name, ValidationContext<T> context)
-            {
-                context.MessageFormatter.AppendArgument("ClaimSetName", name);
-                return !DefaultClaimSets.Contains(name) && !CloudOdsAdminApp.SystemReservedClaimSets.Contains(name);
             }
         }
     }

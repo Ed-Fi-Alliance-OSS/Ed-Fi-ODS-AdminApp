@@ -10,7 +10,6 @@ using EdFi.Ods.Admin.Api.Features.Applications;
 using EdFi.Ods.AdminApp.Management.Database.Commands;
 using EdFi.Security.DataAccess.Models;
 using EdFi.Ods.Admin.Api.Features.ClaimSets;
-using static EdFi.Ods.AdminApp.Management.ClaimSetEditor.GetClaimSetsByApplicationNameQuery;
 
 namespace EdFi.Ods.Admin.Api.Infrastructure
 {
@@ -51,15 +50,14 @@ namespace EdFi.Ods.Admin.Api.Infrastructure
                 .ForMember(dst => dst.AuthStrategyId, opt => opt.MapFrom(src => src.AuthorizationStrategyId))
                 .ForMember(dst => dst.IsInheritedFromParent, opt => opt.Ignore());
 
-            CreateMap<AdminApp.Management.ClaimSetEditor.ClaimSet, ClaimSetModel>()
+            CreateMap<AdminApp.Management.ClaimSetEditor.ClaimSet, ClaimSetDetailsModel>()
                 .ForMember(dst => dst.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dst => dst.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dst => dst.IsSystemReserved, opt => opt.MapFrom(src => DefaultClaimSets.Contains(src.Name)));
+                .ForMember(dst => dst.IsSystemReserved, opt => opt.MapFrom(src => !src.IsEditable));
 
             CreateMap<ClaimSet, ClaimSetModel>()
                 .ForMember(dst => dst.Id, opt => opt.MapFrom(src => src.ClaimSetId))
-                .ForMember(dst => dst.Name, opt => opt.MapFrom(src => src.ClaimSetName))
-                .ForMember(dst => dst.IsSystemReserved, opt => opt.MapFrom(src => DefaultClaimSets.Contains(src.ClaimSetName)));
+                .ForMember(dst => dst.Name, opt => opt.MapFrom(src => src.ClaimSetName));
 
             CreateMap<AdminApp.Management.ClaimSetEditor.ResourceClaim, ResourceClaimModel>()
                 .ForMember(dst => dst.Name, opt => opt.MapFrom(src => src.Name))

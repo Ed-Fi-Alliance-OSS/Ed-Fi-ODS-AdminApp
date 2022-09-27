@@ -18,7 +18,7 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
         {
             AdminApiEndpointBuilder.MapPost(endpoints, "/claimsets", Handle)
             .WithDefaultDescription()
-            .WithRouteOptions(b => b.WithResponse<ClaimSetModel>(201))
+            .WithRouteOptions(b => b.WithResponse<ClaimSetDetailsModel>(201))
             .BuildForVersions(AdminApiVersions.V1);
         }
 
@@ -26,6 +26,7 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
             AddOrEditResourcesOnClaimSetCommand addOrEditResourcesOnClaimSetCommand,
             IGetClaimSetByIdQuery getClaimSetByIdQuery,
             IGetResourcesByClaimSetIdQuery getResourcesByClaimSetIdQuery,
+            IGetApplicationsByClaimSetIdQuery getApplications,
             IMapper mapper, Request request)
         {
             await validator.GuardAsync(request);
@@ -38,10 +39,11 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
 
             var calimSet = getClaimSetByIdQuery.Execute(addedClaimSetId);
             var allResources = getResourcesByClaimSetIdQuery.AllResources(addedClaimSetId);
-            var model = mapper.Map<ClaimSetModel>(calimSet);
+            var model = mapper.Map<ClaimSetDetailsModel>(calimSet);
+            model.ApplicationsCount = getApplications.Execute(addedClaimSetId).Count();
             model.ResourceClaims = mapper.Map<List<ResourceClaimModel>>(allResources.ToList());
 
-            return AdminApiResponse<ClaimSetModel>.Created(model, "ClaimSet", $"/claimsets/{addedClaimSetId}");
+            return AdminApiResponse<ClaimSetDetailsModel>.Created(model, "ClaimSet", $"/claimsets/{addedClaimSetId}");
         }
 
         [SwaggerSchema(Title = "AddClaimSetRequest")]

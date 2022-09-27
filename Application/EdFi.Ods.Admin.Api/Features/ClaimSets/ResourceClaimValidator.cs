@@ -12,10 +12,16 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
         public static void Validate<T>(IQueryable<string> dbResourceClaims,
                 IQueryable<int> dbAuthStrategies, ResourceClaimModel resourceClaim, ValidationContext<T> context, string? claimSetName)
         {
+            context.MessageFormatter.AppendArgument("ClaimSetName", claimSetName);
+            context.MessageFormatter.AppendArgument("ResourceClaimName", resourceClaim.Name);
+
+            if(!(resourceClaim.Create || resourceClaim.Delete || resourceClaim.Read || resourceClaim.Update))
+            {
+                context.AddFailure("ResourceClaims", FeatureConstants.ClaimSetResourceClaimWithNoActionMessage);
+            }
+
             if (!dbResourceClaims.Contains(resourceClaim.Name))
             {
-                context.MessageFormatter.AppendArgument("ClaimSetName", claimSetName);
-                context.MessageFormatter.AppendArgument("ResourceClaimName", resourceClaim.Name);
                 context.AddFailure("ResourceClaims", FeatureConstants.ClaimsetResourceNotFoundMessage);
             }
             if (resourceClaim.DefaultAuthStrategiesForCRUD != null && resourceClaim.DefaultAuthStrategiesForCRUD.Any())
@@ -24,8 +30,6 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
                 {
                     if (!dbAuthStrategies.Contains(defaultAS.AuthStrategyId))
                     {
-                        context.MessageFormatter.AppendArgument("ClaimSetName", claimSetName);
-                        context.MessageFormatter.AppendArgument("ResourceClaimName", resourceClaim.Name);
                         context.MessageFormatter.AppendArgument("AuthStrategyId", defaultAS.AuthStrategyId);
                         context.AddFailure("ResourceClaims", FeatureConstants.ClaimsetAuthStrategyNotFoundMessage);
                     }
@@ -37,8 +41,6 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
                 {
                     if (!dbAuthStrategies.Contains(authStrategyOverride.AuthStrategyId))
                     {
-                        context.MessageFormatter.AppendArgument("ClaimSetName", claimSetName);
-                        context.MessageFormatter.AppendArgument("ResourceClaimName", resourceClaim.Name);
                         context.MessageFormatter.AppendArgument("AuthStrategyId", authStrategyOverride.AuthStrategyId);
                         context.AddFailure("ResourceClaims", FeatureConstants.ClaimsetAuthStrategyNotFoundMessage);
                     }

@@ -14,6 +14,12 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
         public int Id { get; set; }
         public string? Name { get; set; }
         public bool IsSystemReserved { get; set; }
+        public int ApplicationsCount { get; set; }
+    }
+
+    [SwaggerSchema(Title = "ClaimSetWithResources")]
+    public class ClaimSetDetailsModel : ClaimSetModel
+    {
         public List<ResourceClaimModel>? ResourceClaims { get; set; }
     }
 
@@ -27,6 +33,8 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
         public bool Delete { get; set; }
         public AuthorizationStrategyModel[]? DefaultAuthStrategiesForCRUD { get; set; }
         public AuthorizationStrategyModel[]? AuthStrategyOverridesForCRUD { get; set; }
+
+        [SwaggerSchema(Description = "List of resource claims")]
         public List<ResourceClaimModel>? Children { get; set; }
 
         public ResourceClaimModel()
