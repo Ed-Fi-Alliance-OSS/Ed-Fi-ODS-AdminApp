@@ -22,7 +22,9 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
             var newClaimSet = new Security.DataAccess.Models.ClaimSet
             {
                 ClaimSetName = claimSet.ClaimSetName,
-                Application = _context.Applications.Single()
+                Application = _context.Applications.Single(),
+                IsEdfiPreset = false,
+                ForApplicationUseOnly = false
             };
             _context.ClaimSets.Add(newClaimSet);
             _context.SaveChanges();

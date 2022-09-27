@@ -18,9 +18,21 @@ namespace EdFi.Ods.AdminApp.Management.Database.Queries
             _securityContext = securityContext;
         }
 
-        public IEnumerable<string> Execute()
+        public IEnumerable<string> Execute(bool excludeSystemReservedClaimSets = false, bool excludeEdFiPresetClaimSets = false)
         {
-            return _securityContext.ClaimSets
+            var claimSets = _securityContext.ClaimSets.AsEnumerable();
+
+            if (excludeSystemReservedClaimSets)
+            {
+                claimSets = claimSets.Where(x => !x.ForApplicationUseOnly);
+            }
+
+            if (excludeEdFiPresetClaimSets)
+            {
+                claimSets = claimSets.Where(x => !x.IsEdfiPreset);
+            }
+
+            return claimSets
                 .Select(x => x.ClaimSetName)
                 .Distinct()
                 .OrderBy(x => x)

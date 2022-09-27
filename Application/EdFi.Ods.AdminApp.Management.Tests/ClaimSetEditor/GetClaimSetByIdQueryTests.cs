@@ -25,7 +25,13 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             };
             Save(testApplication);
 
-            var testClaimSet = new ClaimSet {ClaimSetName = "TestClaimSet", Application = testApplication};
+            var testClaimSet = new ClaimSet
+            {
+                ClaimSetName = "TestClaimSet",
+                Application = testApplication,
+                ForApplicationUseOnly = false,
+                IsEdfiPreset = false
+            };
             Save(testClaimSet);
 
             Scoped<IGetClaimSetByIdQuery>(query =>
@@ -34,6 +40,49 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
                 result.Name.ShouldBe(testClaimSet.ClaimSetName);
                 result.Id.ShouldBe(testClaimSet.ClaimSetId);
+                result.IsEditable.ShouldBe(true);
+            });
+        }
+
+        [Test]
+        public void ShouldGetNonEditableClaimSetById()
+        {
+            var testApplication = new Application
+            {
+                ApplicationName = $"Test Application {DateTime.Now:O}"
+            };
+            Save(testApplication);
+
+            var systemReservedClaimSet = new ClaimSet
+            {
+                ClaimSetName = "SystemReservedClaimSet",
+                Application = testApplication,
+                ForApplicationUseOnly = true
+            };
+            Save(systemReservedClaimSet);
+
+            var edfiPresetClaimSet = new ClaimSet
+            {
+                ClaimSetName = "EdfiPresetClaimSet",
+                Application = testApplication,
+                ForApplicationUseOnly = false,
+                IsEdfiPreset = true
+            };
+            Save(edfiPresetClaimSet);
+
+            Scoped<IGetClaimSetByIdQuery>(query =>
+            {
+                var result = query.Execute(systemReservedClaimSet.ClaimSetId);
+
+                result.Name.ShouldBe(systemReservedClaimSet.ClaimSetName);
+                result.Id.ShouldBe(systemReservedClaimSet.ClaimSetId);
+                result.IsEditable.ShouldBe(false);
+
+                result = query.Execute(edfiPresetClaimSet.ClaimSetId);
+
+                result.Name.ShouldBe(edfiPresetClaimSet.ClaimSetName);
+                result.Id.ShouldBe(edfiPresetClaimSet.ClaimSetId);
+                result.IsEditable.ShouldBe(false);
             });
         }
     }

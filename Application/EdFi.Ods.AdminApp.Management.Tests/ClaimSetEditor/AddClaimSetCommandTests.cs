@@ -41,6 +41,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
             var addedClaimSet = Transaction(securityContext => securityContext.ClaimSets.Single(x => x.ClaimSetId == addedClaimSetId));
             addedClaimSet.ClaimSetName.ShouldBe(newClaimSet.ClaimSetName);
+            addedClaimSet.ForApplicationUseOnly.ShouldBe(false);
+            addedClaimSet.IsEdfiPreset.ShouldBe(false);
         }
 
         [Test]

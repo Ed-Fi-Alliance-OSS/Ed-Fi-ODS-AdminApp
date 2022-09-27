@@ -31,7 +31,9 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             Save(new ClaimSet
             {
                 ClaimSetName = CloudOdsAdminApp.InternalAdminAppClaimSet,
-                Application = testApplication
+                Application = testApplication,
+                ForApplicationUseOnly = true,
+                IsEdfiPreset = true
             });
 
             Scoped<IGetClaimSetsByApplicationNameQuery>(query =>
@@ -52,13 +54,17 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             Save(new ClaimSet
             {
                 ClaimSetName = "Bootstrap Descriptors and EdOrgs",
-                Application = testApplication
+                Application = testApplication,
+                ForApplicationUseOnly = true,
+                IsEdfiPreset = true
             });
 
             Save(new ClaimSet
             {
                 ClaimSetName = CloudOdsAdminApp.InternalAdminAppClaimSet,
-                Application = testApplication
+                Application = testApplication,
+                ForApplicationUseOnly = true,
+                IsEdfiPreset = true
             });
 
             Scoped<IGetClaimSetsByApplicationNameQuery>(query =>
@@ -110,7 +116,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             Save(new ClaimSet
             {
                 ClaimSetName = "SIS Vendor",
-                Application = testApplication
+                Application = testApplication,
+                IsEdfiPreset = true
             });
 
             Scoped<IGetClaimSetsByApplicationNameQuery>(query =>

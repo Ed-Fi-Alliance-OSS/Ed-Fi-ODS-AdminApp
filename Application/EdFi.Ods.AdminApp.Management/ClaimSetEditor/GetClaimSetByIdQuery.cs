@@ -5,7 +5,6 @@
 
 using System.Linq;
 using EdFi.Security.DataAccess.Contexts;
-using static EdFi.Ods.AdminApp.Management.ClaimSetEditor.GetClaimSetsByApplicationNameQuery;
 
 namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
 {
@@ -27,7 +26,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
             {
                 Id = securityContextClaimSet.ClaimSetId,
                 Name = securityContextClaimSet.ClaimSetName,
-                IsEditable = !DefaultClaimSets.Contains(securityContextClaimSet.ClaimSetName)
+                IsEditable = !securityContextClaimSet.ForApplicationUseOnly && !securityContextClaimSet.IsEdfiPreset
             };
         }
     }
