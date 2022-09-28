@@ -14,7 +14,7 @@ function Invoke-RegenerateFile {
 
     $oldContent = Get-Content -Path $Path
 
-    if ($new_content -ne $oldContent) {
+    if ($NewContent -ne $oldContent) {
         $relative_path = Resolve-Path -Relative $Path
         Write-Host "Generating $relative_path"
         [System.IO.File]::WriteAllText($Path, $NewContent, [System.Text.Encoding]::UTF8)
