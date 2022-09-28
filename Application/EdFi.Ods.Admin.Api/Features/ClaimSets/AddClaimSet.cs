@@ -78,7 +78,7 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
                     {
                         foreach (var resourceClaim in claimSet.ResourceClaims)
                         {
-                            ResourceClaimValidator.Validate(dbResourceClaims, dbAuthStrategies, resourceClaim, context, claimSet.Name);
+                            ResourceClaimValidator.Validate(dbResourceClaims, dbAuthStrategies, resourceClaim, claimSet.ResourceClaims, context, claimSet.Name);
                         }
                     }
                 });
