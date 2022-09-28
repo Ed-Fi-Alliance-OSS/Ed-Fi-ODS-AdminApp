@@ -13,6 +13,7 @@ using Application = EdFi.Security.DataAccess.Models.Application;
 using EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets;
 using EdFi.Security.DataAccess.Contexts;
 using static EdFi.Ods.AdminApp.Management.Tests.Testing;
+using EdFi.Admin.DataAccess.Contexts;
 
 namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 {
@@ -33,9 +34,9 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
             var editModel = new EditClaimSetModel {ClaimSetName = "TestClaimSetEdited", ClaimSetId = alreadyExistingClaimSet.ClaimSetId};
 
-            Scoped<ISecurityContext>(securityContext =>
+            Scoped<ISecurityContext, IUsersContext>((securityContext, usersContext) =>
             {
-                var command = new EditClaimSetCommand(securityContext);
+                var command = new EditClaimSetCommand(securityContext, usersContext);
                 command.Execute(editModel);
             });
 
@@ -57,17 +58,53 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
             var editModel = new EditClaimSetModel { ClaimSetName = "TestClaimSetEdited", ClaimSetId = systemReservedClaimSet.ClaimSetId };
 
-            Scoped<ISecurityContext>(securityContext =>
+            Scoped<ISecurityContext, IUsersContext > ((securityContext, usersContext) =>
             {
                 try
                 {
-                    var command = new EditClaimSetCommand(securityContext);
+                    var command = new EditClaimSetCommand(securityContext, usersContext);
                     command.Execute(editModel);
                 }
                 catch (Exception ex)
                 {
                     ex.Message.ShouldBe($"Claim set ({systemReservedClaimSet.ClaimSetName}) is system reserved.May not be modified.");
                 }
+            });
+        }
+
+        [Test]
+        public void ShouldUpdateClaimSetNameOnAssociatedApplicationsWhenClaimSetRenamed()
+        {
+            var testApplication = new Application
+            {
+                ApplicationName = $"Test Application {DateTime.Now:O}"
+            };
+            Save(testApplication);
+
+            var claimSetName = "TestClaimSetWithApplication";
+            var systemReservedClaimSet = new ClaimSet { ClaimSetName = claimSetName, Application = testApplication };
+            Save(systemReservedClaimSet);
+
+            var claimSetNameEdited = "TestClaimSetEdited";
+            var editModel = new EditClaimSetModel { ClaimSetName = claimSetNameEdited, ClaimSetId = systemReservedClaimSet.ClaimSetId };
+
+            Scoped<ISecurityContext, IUsersContext>((securityContext, usersContext) =>
+            {
+                usersContext.Applications.Add(new Admin.DataAccess.Models.Application {
+                    ApplicationName = "TestApplication",
+                    ClaimSetName = claimSetName,
+                    OperationalContextUri = "uri://ed-fi-api-host.org"
+                });
+                usersContext.SaveChanges();
+                var addedApplication = usersContext.Applications.Where(x => x.ClaimSetName == claimSetName).FirstOrDefault();
+                addedApplication.ShouldNotBeNull();
+                addedApplication.ClaimSetName.ShouldBe(claimSetName);
+
+                var command = new EditClaimSetCommand(securityContext, usersContext);
+                command.Execute(editModel);
+                var updatedApplication = usersContext.Applications.Where(x => x.ApplicationId == addedApplication.ApplicationId).FirstOrDefault();
+                updatedApplication.ShouldNotBeNull();
+                updatedApplication.ClaimSetName.ShouldBe(claimSetNameEdited);
             });
         }
 

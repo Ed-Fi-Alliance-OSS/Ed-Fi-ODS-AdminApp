@@ -5,8 +5,8 @@
 
 using System;
 using System.Linq;
-using EdFi.Ods.AdminApp.Management.ErrorHandling;
 using EdFi.Security.DataAccess.Contexts;
+using EdFi.Admin.DataAccess.Contexts;
 using static EdFi.Ods.AdminApp.Management.ClaimSetEditor.GetClaimSetsByApplicationNameQuery;
 
 namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
@@ -14,10 +14,12 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
     public class EditClaimSetCommand
     {
         private readonly ISecurityContext _context;
+        private readonly IUsersContext _usersContext;
 
-        public EditClaimSetCommand(ISecurityContext context)
+        public EditClaimSetCommand(ISecurityContext context, IUsersContext usersContext)
         {
             _context = context;
+            _usersContext = usersContext;
         }
 
         public int Execute(IEditClaimSetModel claimSet)
@@ -29,10 +31,19 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
             {
                 throw new Exception($"Claim set ({existingClaimSet.ClaimSetName}) is system reserved.May not be modified.");
             }
+            if(!claimSet.ClaimSetName.Equals(existingClaimSet.ClaimSetName, StringComparison.InvariantCultureIgnoreCase))
+            {
+                var applications = _usersContext.Applications.Where(x => x.ClaimSetName.Equals(existingClaimSet.ClaimSetName, StringComparison.InvariantCultureIgnoreCase));
+                foreach (var application in applications)
+                {
+                    application.ClaimSetName = claimSet.ClaimSetName;
+                }
+            }
 
             existingClaimSet.ClaimSetName = claimSet.ClaimSetName;
 
             _context.SaveChanges();
+            _usersContext.SaveChanges();
 
             return existingClaimSet.ClaimSetId;
         }
