@@ -75,7 +75,7 @@ param(
     # Assembly and package version number for AdminApp Web. The current package number is
     # configured in the build automation tool and passed to this script.
     [string]
-    $Version = "0.1",
+    $Version = "0.1.0",
 
     # Assembly and package version number for Admin API. The current package number is
     # configured in the build automation tool and passed to this script.
@@ -83,7 +83,7 @@ param(
     $APIVersion = $Version,
 
     # Build counter from the automation tool. The .NET assembly version will be
-    # composed from <$Version>.<$BuildCounter> (i.e. "0.1.1" with the default
+    # composed from <$Version>.<$BuildCounter> (i.e. "0.1.0.1" with the default
     # values).
     [string]
     $BuildCounter = "1",
