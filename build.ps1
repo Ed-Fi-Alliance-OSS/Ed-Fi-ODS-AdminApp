@@ -358,11 +358,16 @@ function Invoke-Build {
     Invoke-Step { Compile }
 }
 
-function Invoke-Publish {
-    Write-Host "Building Version $Version" -ForegroundColor Cyan
+function Invoke-SetAssemblyInfo {
+    Write-Host "Setting Assembly Information" -ForegroundColor Cyan
 
     Invoke-Step { SetAdminAppAssemblyInfo }
     Invoke-Step { SetAdminApiAssemblyInfo }
+}
+
+function Invoke-Publish {
+    Write-Host "Building Version AdminApp ($Version) and AdminApi ($APIVersion)" -ForegroundColor Cyan
+
     Invoke-Step { PublishAdminApp }
     Invoke-Step { PublishAdminApi }
 }
@@ -513,6 +518,7 @@ Invoke-Main {
         Clean { Invoke-Clean }
         Build { Invoke-Build }
         BuildAndPublish {
+            Invoke-SetAssemblyInfo
             Invoke-Build
             Invoke-Publish
         }
