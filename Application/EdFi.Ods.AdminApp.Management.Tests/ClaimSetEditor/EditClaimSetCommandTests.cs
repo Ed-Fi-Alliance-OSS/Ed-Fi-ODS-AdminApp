@@ -44,6 +44,34 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
         }
 
         [Test]
+        public void ShouldThrowExceptionOnEditSystemReservedClaimSet()
+        {
+            var testApplication = new Application
+            {
+                ApplicationName = $"Test Application {DateTime.Now:O}"
+            };
+            Save(testApplication);
+
+            var systemReservedClaimSet = new ClaimSet { ClaimSetName = "Ed-Fi Sandbox", Application = testApplication };
+            Save(systemReservedClaimSet);
+
+            var editModel = new EditClaimSetModel { ClaimSetName = "TestClaimSetEdited", ClaimSetId = systemReservedClaimSet.ClaimSetId };
+
+            Scoped<ISecurityContext>(securityContext =>
+            {
+                try
+                {
+                    var command = new EditClaimSetCommand(securityContext);
+                    command.Execute(editModel);
+                }
+                catch (Exception ex)
+                {
+                    ex.Message.ShouldBe($"Claim set ({systemReservedClaimSet.ClaimSetName}) is system reserved.May not be modified.");
+                }
+            });
+        }
+
+        [Test]
         public void ShouldNotEditClaimSetIfNameNotUnique()
         {
             var testApplication = new Application

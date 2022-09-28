@@ -84,6 +84,37 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
         }
 
         [Test]
+        public void ShouldThrowExceptionOnEditSystemReservedClaimSet()
+        {
+            var testApplication = new Application
+            {
+                ApplicationName = $"Test Application {DateTime.Now:O}"
+            };
+            Save(testApplication);
+
+            var systemReservedClaimSet = new ClaimSet { ClaimSetName = "SIS Vendor", Application = testApplication };
+            Save(systemReservedClaimSet);
+
+            var deleteModel = new Mock<IDeleteClaimSetModel>();
+            deleteModel.Setup(x => x.Name).Returns(systemReservedClaimSet.ClaimSetName);
+            deleteModel.Setup(x => x.Id).Returns(systemReservedClaimSet.ClaimSetId);
+
+            Scoped<ISecurityContext>(securityContext =>
+            {
+                try
+                {
+                    var command = new DeleteClaimSetCommand(securityContext);
+                    command.Execute(deleteModel.Object);
+                }
+                catch (Exception ex)
+                {
+                    ex.Message.ShouldBe($"Claim set({systemReservedClaimSet.ClaimSetName}) is system reserved.Can not be deleted.");
+                }
+            });
+        }
+
+
+        [Test]
         public void ShouldNotDeleteClaimSetIfNotEditable()
         {
             var testApplication = new Application
