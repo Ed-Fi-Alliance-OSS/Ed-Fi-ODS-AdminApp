@@ -35,6 +35,19 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
             else
                 throw new EdFiOdsSecurityModelCompatibilityException(securityModel);
         }
+
+        private void ReAssociateApplicationsToRenamedClaimSet(string existingClaimSetName, string newClaimSetName)
+        {
+            var associatedApplications = _usersContext.Applications
+                .Where(x => x.ClaimSetName == existingClaimSetName);
+
+            foreach (var application in associatedApplications)
+            {
+                application.ClaimSetName = newClaimSetName;
+            }
+
+            _usersContext.SaveChanges();
+        }
     }
 
     public interface IEditClaimSetModel
