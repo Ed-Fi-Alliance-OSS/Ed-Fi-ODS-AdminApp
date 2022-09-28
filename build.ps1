@@ -81,7 +81,7 @@ param(
     # Assembly and package version number for AdminApp Web. The current package number is
     # configured in the build automation tool and passed to this script.
     [string]
-    $Version = "0.1",
+    $Version = "0.1.0",
 
     # Assembly and package version number for Admin API. The current package number is
     # configured in the build automation tool and passed to this script.
