@@ -36,13 +36,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests
                 action(scope.ServiceProvider.GetRequiredService<TService>());
         }
 
-        public static void Scoped<TService1, TService2>(Action<TService1, TService2> action)
-        {
-            using (var scope = ScopeFactory.CreateScope())
-                action(scope.ServiceProvider.GetRequiredService<TService1>(),
-                    scope.ServiceProvider.GetRequiredService<TService2>());
-        }
-
         public static TResult Scoped<TService, TResult>(Func<TService, TResult> func)
         {
             var result = default(TResult);

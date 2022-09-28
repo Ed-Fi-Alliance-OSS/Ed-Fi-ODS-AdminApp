@@ -14,6 +14,7 @@ using EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets;
 using EdFi.Security.DataAccess.Contexts;
 using static EdFi.Ods.AdminApp.Management.Tests.Testing;
 using EdFi.Admin.DataAccess.Contexts;
+using VendorApplication = EdFi.Admin.DataAccess.Models.Application;
 
 namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 {
@@ -34,9 +35,9 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
             var editModel = new EditClaimSetModel {ClaimSetName = "TestClaimSetEdited", ClaimSetId = alreadyExistingClaimSet.ClaimSetId};
 
-            Scoped<ISecurityContext, IUsersContext>((securityContext, usersContext) =>
+            Scoped<IUsersContext>((usersContext) =>
             {
-                var command = new EditClaimSetCommand(securityContext, usersContext);
+                var command = new EditClaimSetCommand(TestContext, usersContext);
                 command.Execute(editModel);
             });
 
@@ -58,11 +59,11 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
             var editModel = new EditClaimSetModel { ClaimSetName = "TestClaimSetEdited", ClaimSetId = systemReservedClaimSet.ClaimSetId };
 
-            Scoped<ISecurityContext, IUsersContext > ((securityContext, usersContext) =>
+            Scoped<IUsersContext > ((usersContext) =>
             {
                 try
                 {
-                    var command = new EditClaimSetCommand(securityContext, usersContext);
+                    var command = new EditClaimSetCommand(TestContext, usersContext);
                     command.Execute(editModel);
                 }
                 catch (Exception ex)
@@ -73,7 +74,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
         }
 
         [Test]
-        public void ShouldUpdateClaimSetNameOnAssociatedApplicationsWhenClaimSetRenamed()
+        public void ShouldEditClaimSetWithVendorApplications()
         {
             var testApplication = new Application
             {
@@ -81,31 +82,61 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             };
             Save(testApplication);
 
-            var claimSetName = "TestClaimSetWithApplication";
-            var systemReservedClaimSet = new ClaimSet { ClaimSetName = claimSetName, Application = testApplication };
-            Save(systemReservedClaimSet);
+            var claimSetToBeEdited = new ClaimSet { ClaimSetName = $"TestClaimSet{Guid.NewGuid():N}", Application = testApplication };
+            Save(claimSetToBeEdited);
+            SetupVendorApplicationsForClaimSet(claimSetToBeEdited);
 
-            var claimSetNameEdited = "TestClaimSetEdited";
-            var editModel = new EditClaimSetModel { ClaimSetName = claimSetNameEdited, ClaimSetId = systemReservedClaimSet.ClaimSetId };
+            var claimSetNotToBeEdited = new ClaimSet { ClaimSetName = $"TestClaimSet{Guid.NewGuid():N}", Application = testApplication };
+            Save(claimSetNotToBeEdited);
+            SetupVendorApplicationsForClaimSet(claimSetNotToBeEdited);
 
-            Scoped<ISecurityContext, IUsersContext>((securityContext, usersContext) =>
+            var editModel = new EditClaimSetModel { ClaimSetName = "TestClaimSetEdited", ClaimSetId = claimSetToBeEdited.ClaimSetId };
+
+            Scoped<IUsersContext>(usersContext =>
             {
-                usersContext.Applications.Add(new Admin.DataAccess.Models.Application {
-                    ApplicationName = "TestApplication",
-                    ClaimSetName = claimSetName,
-                    OperationalContextUri = "uri://ed-fi-api-host.org"
-                });
-                usersContext.SaveChanges();
-                var addedApplication = usersContext.Applications.Where(x => x.ClaimSetName == claimSetName).FirstOrDefault();
-                addedApplication.ShouldNotBeNull();
-                addedApplication.ClaimSetName.ShouldBe(claimSetName);
-
-                var command = new EditClaimSetCommand(securityContext, usersContext);
+                var command = new EditClaimSetCommand(TestContext, usersContext);
                 command.Execute(editModel);
-                var updatedApplication = usersContext.Applications.Where(x => x.ApplicationId == addedApplication.ApplicationId).FirstOrDefault();
-                updatedApplication.ShouldNotBeNull();
-                updatedApplication.ClaimSetName.ShouldBe(claimSetNameEdited);
             });
+
+            var editedClaimSet = Transaction(securityContext => securityContext.ClaimSets.Single(x => x.ClaimSetId == claimSetToBeEdited.ClaimSetId));
+            editedClaimSet.ClaimSetName.ShouldBe(editModel.ClaimSetName);
+            AssertApplicationsForClaimSet(claimSetToBeEdited.ClaimSetId, editModel.ClaimSetName);
+
+
+            var unEditedClaimSet = Transaction(securityContext => securityContext.ClaimSets.Single(x => x.ClaimSetId == claimSetNotToBeEdited.ClaimSetId));
+            unEditedClaimSet.ClaimSetName.ShouldBe(claimSetNotToBeEdited.ClaimSetName);
+            AssertApplicationsForClaimSet(claimSetNotToBeEdited.ClaimSetId, claimSetNotToBeEdited.ClaimSetName);
+        }
+
+        private void SetupVendorApplicationsForClaimSet(ClaimSet testClaimSet, int applicationCount = 5)
+        {
+            Scoped<IUsersContext>(usersContext =>
+            {
+                foreach (var _ in Enumerable.Range(1, applicationCount))
+                {
+                    usersContext.Applications.Add(new VendorApplication
+                    {
+                        ApplicationName = $"TestAppVendorName{Guid.NewGuid():N}",
+                        ClaimSetName = testClaimSet.ClaimSetName,
+                        OperationalContextUri = OperationalContext.DefaultOperationalContextUri
+                    });
+                }
+                usersContext.SaveChanges();
+            });
+        }
+
+        private void AssertApplicationsForClaimSet(int claimSetId, string claimSetNameToAssert)
+        {
+            var results = Scoped<IGetApplicationsByClaimSetIdQuery, Management.ClaimSetEditor.Application[]>(
+                query => query.Execute(claimSetId).ToArray());
+
+            Scoped<IUsersContext>(
+                usersContext =>
+                {
+                    var testApplications = usersContext.Applications.Where(x => x.ClaimSetName == claimSetNameToAssert).ToList();
+                    results.Length.ShouldBe(testApplications.Count());
+                    results.Select(x => x.Name).ShouldBe(testApplications.Select(x => x.ApplicationName), true);
+                });
         }
 
         [Test]
