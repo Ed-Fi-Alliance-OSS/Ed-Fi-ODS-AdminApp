@@ -10,10 +10,16 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
     public class ResourceClaimValidator
     {
         public static void Validate<T>(IQueryable<string> dbResourceClaims,
-                IQueryable<int> dbAuthStrategies, ResourceClaimModel resourceClaim, ValidationContext<T> context, string? claimSetName)
+                IQueryable<int> dbAuthStrategies, ResourceClaimModel resourceClaim, List<ResourceClaimModel> existingResourceClaims,
+                ValidationContext<T> context, string? claimSetName)
         {
             context.MessageFormatter.AppendArgument("ClaimSetName", claimSetName);
             context.MessageFormatter.AppendArgument("ResourceClaimName", resourceClaim.Name);
+
+            if(existingResourceClaims.Where(x => x.Name == resourceClaim.Name).Count() > 1 )
+            {
+                context.AddFailure("ResourceClaims", FeatureConstants.ClaimSetDuplicateResourceMessage);
+            }
 
             if(!(resourceClaim.Create || resourceClaim.Delete || resourceClaim.Read || resourceClaim.Update))
             {
@@ -51,7 +57,7 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
             {
                 foreach (var child in resourceClaim.Children)
                 {
-                    Validate(dbResourceClaims, dbAuthStrategies, child, context, claimSetName);
+                    Validate(dbResourceClaims, dbAuthStrategies, child, resourceClaim.Children, context, claimSetName);
                 }
             }
         }

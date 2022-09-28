@@ -91,20 +91,9 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
                     var dbAuthStrategies = securityContext.AuthorizationStrategies.Select(x => x.AuthorizationStrategyId);
                     if (claimSet.ResourceClaims != null && claimSet.ResourceClaims.Any())
                     {
-                        var duplicateResourceClaims = claimSet.ResourceClaims.GroupBy(x => x.Name)
-                        .Where(group => group.Count() > 1)
-                        .Select(group => group.Key);
-                        if(duplicateResourceClaims.Any())
-                        {
-                            foreach (var resourceClaim in duplicateResourceClaims)
-                            {
-                                context.MessageFormatter.AppendArgument("ResourceClaimName", resourceClaim);
-                                context.AddFailure("ResourceClaims", FeatureConstants.ClaimSetDuplicateResourceMessage);
-                            }
-                        }
                         foreach (var resourceClaim in claimSet.ResourceClaims)
                         {
-                            ResourceClaimValidator.Validate(dbResourceClaims, dbAuthStrategies, resourceClaim, context, claimSet.Name);
+                            ResourceClaimValidator.Validate(dbResourceClaims, dbAuthStrategies, resourceClaim, claimSet.ResourceClaims, context, claimSet.Name);
                         }
                     }
                 });
