@@ -72,12 +72,12 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
             var editedClaimSet = Transaction(securityContext => securityContext.ClaimSets.Single(x => x.ClaimSetId == claimSetToBeEdited.ClaimSetId));
             editedClaimSet.ClaimSetName.ShouldBe(editModel.ClaimSetName);
-            AssertApplicationsForClaimSet(claimSetToBeEdited.ClaimSetId, editModel.ClaimSetName);
+            AssertVendorApplicationsForClaimSet(claimSetToBeEdited.ClaimSetId, editModel.ClaimSetName);
 
 
             var unEditedClaimSet = Transaction(securityContext => securityContext.ClaimSets.Single(x => x.ClaimSetId == claimSetNotToBeEdited.ClaimSetId));
             unEditedClaimSet.ClaimSetName.ShouldBe(claimSetNotToBeEdited.ClaimSetName);
-            AssertApplicationsForClaimSet(claimSetNotToBeEdited.ClaimSetId, claimSetNotToBeEdited.ClaimSetName);
+            AssertVendorApplicationsForClaimSet(claimSetNotToBeEdited.ClaimSetId, claimSetNotToBeEdited.ClaimSetName);
         }
 
         private void SetupVendorApplicationsForClaimSet(ClaimSet testClaimSet, int applicationCount = 5)
@@ -97,7 +97,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             });
         }
 
-        private void AssertApplicationsForClaimSet(int claimSetId, string claimSetNameToAssert)
+        private void AssertVendorApplicationsForClaimSet(int claimSetId, string claimSetNameToAssert)
         {
             var results = Scoped<IGetApplicationsByClaimSetIdQuery, Management.ClaimSetEditor.Application[]>(
                 query => query.Execute(claimSetId).ToArray());
@@ -106,12 +106,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                 usersContext =>
                 {
                     var testApplications =
-                        usersContext.Applications.Where(x => x.ClaimSetName == claimSetNameToAssert).Select(
-                            x => new Application
-                            {
-                                ApplicationName = x.ApplicationName,
-                                ApplicationId = x.ApplicationId
-                            }).ToArray();
+                        usersContext.Applications.Where(x => x.ClaimSetName == claimSetNameToAssert).ToArray();
 
                     results.Length.ShouldBe(testApplications.Length);
                     results.Select(x => x.Name).ShouldBe(testApplications.Select(x => x.ApplicationName), true);
