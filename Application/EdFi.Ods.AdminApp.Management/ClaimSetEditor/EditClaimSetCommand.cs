@@ -23,26 +23,25 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
         public int Execute(IEditClaimSetModel claimSet)
         {
             var existingClaimSet = _securityContext.ClaimSets.Single(x => x.ClaimSetId == claimSet.ClaimSetId);
-            existingClaimSet.ClaimSetName = claimSet.ClaimSetName;
 
             ReAssociateApplicationsToRenamedClaimSet(existingClaimSet.ClaimSetName, claimSet.ClaimSetName);
+            existingClaimSet.ClaimSetName = claimSet.ClaimSetName;
 
             _securityContext.SaveChanges();
+            _usersContext.SaveChanges();
 
             return existingClaimSet.ClaimSetId;
-        }
 
-        private void ReAssociateApplicationsToRenamedClaimSet(string existingClaimSetName, string newClaimSetName)
-        {
-            var associatedApplications = _usersContext.Applications
-                .Where(x => x.ClaimSetName == existingClaimSetName);
-
-            foreach (var application in associatedApplications)
+            void ReAssociateApplicationsToRenamedClaimSet(string existingClaimSetName, string newClaimSetName)
             {
-                application.ClaimSetName = newClaimSetName;
-            }
+                var associatedApplications = _usersContext.Applications
+                    .Where(x => x.ClaimSetName == existingClaimSetName);
 
-            _usersContext.SaveChanges();
+                foreach (var application in associatedApplications)
+                {
+                    application.ClaimSetName = newClaimSetName;
+                }
+            }
         }
     }
 
