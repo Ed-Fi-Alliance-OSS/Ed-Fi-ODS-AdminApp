@@ -37,11 +37,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                 Scoped<IUsersContext>(usersContext =>
                 {
                     var testApplications =
-                        usersContext.Applications.Where(x => x.ClaimSetName == testClaimSet.ClaimSetName).Select(x => new Application
-                        {
-                            ApplicationName = x.ApplicationName,
-                            ApplicationId = x.ApplicationId
-                        }).ToArray();
+                        usersContext.Applications.Where(x => x.ClaimSetName == testClaimSet.ClaimSetName).ToArray();
                     results.Length.ShouldBe(testApplications.Length);
                     results.Select(x => x.Name).ShouldBe(testApplications.Select(x => x.ApplicationName), true);
                 });
