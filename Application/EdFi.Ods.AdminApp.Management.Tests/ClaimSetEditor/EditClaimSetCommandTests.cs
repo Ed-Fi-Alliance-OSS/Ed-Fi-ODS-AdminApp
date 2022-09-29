@@ -59,18 +59,13 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
             var editModel = new EditClaimSetModel { ClaimSetName = "TestClaimSetEdited", ClaimSetId = systemReservedClaimSet.ClaimSetId };
 
-            Scoped<IUsersContext > ((usersContext) =>
+            var exception = Assert.Throws<Exception>(() => Scoped<IUsersContext>(usersContext =>
             {
-                try
-                {
-                    var command = new EditClaimSetCommand(TestContext, usersContext);
-                    command.Execute(editModel);
-                }
-                catch (Exception ex)
-                {
-                    ex.Message.ShouldBe($"Claim set ({systemReservedClaimSet.ClaimSetName}) is system reserved.May not be modified.");
-                }
-            });
+                var command = new EditClaimSetCommand(TestContext, usersContext);
+                command.Execute(editModel);
+            }));
+            exception.ShouldNotBeNull();
+            exception.Message.ShouldBe($"Claim set ({systemReservedClaimSet.ClaimSetName}) is system reserved.May not be modified.");
         }
 
         [Test]

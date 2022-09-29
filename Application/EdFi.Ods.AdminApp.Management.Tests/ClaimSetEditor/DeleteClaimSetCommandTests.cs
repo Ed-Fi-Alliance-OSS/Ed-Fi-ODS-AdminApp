@@ -99,18 +99,13 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             deleteModel.Setup(x => x.Name).Returns(systemReservedClaimSet.ClaimSetName);
             deleteModel.Setup(x => x.Id).Returns(systemReservedClaimSet.ClaimSetId);
 
-            Scoped<ISecurityContext>(securityContext =>
+            var exception = Assert.Throws<Exception>(() => Scoped<ISecurityContext>(securityContext =>
             {
-                try
-                {
-                    var command = new DeleteClaimSetCommand(securityContext);
-                    command.Execute(deleteModel.Object);
-                }
-                catch (Exception ex)
-                {
-                    ex.Message.ShouldBe($"Claim set({systemReservedClaimSet.ClaimSetName}) is system reserved.Can not be deleted.");
-                }
-            });
+                var command = new DeleteClaimSetCommand(securityContext);
+                command.Execute(deleteModel.Object);
+            }));
+            exception.ShouldNotBeNull();
+            exception.Message.ShouldBe($"Claim set({systemReservedClaimSet.ClaimSetName}) is system reserved.Can not be deleted.");
         }
 
 
