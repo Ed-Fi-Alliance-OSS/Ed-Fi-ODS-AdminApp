@@ -34,11 +34,20 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets
                 .NotEmpty()
                 .Must(BeAUniqueName)
                 .WithMessage("A claim set with this name already exists in the database. Please enter a unique name.")
-                .When(NameIsChanged);
+                .When(m => BeAnExistingClaimSet(m.ClaimSetId) && NameIsChanged(m));
 
             RuleFor(m => m.ClaimSetName)
                 .MaximumLength(255)
                 .WithMessage("The claim set name must be less than 255 characters.");
+
+            RuleFor(m => m.ClaimSetId).NotEmpty()
+                .Must(BeAnExistingClaimSet)
+                .WithMessage("No such claim set exists in the database");
+
+            RuleFor(m => m.ClaimSetId)
+                .Must(BeAnEditableClaimSet)
+                .WithMessage("Only user created claim sets can be edited")
+                .When(m => BeAnExistingClaimSet(m.ClaimSetId));
         }
 
         private bool NameIsChanged(EditClaimSetModel model)
@@ -49,6 +58,17 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets
         private bool BeAUniqueName(string newName)
         {
             return !_securityContext.ClaimSets.Any(x => x.ClaimSetName == newName);
+        }
+
+        private bool BeAnExistingClaimSet(int id)
+        {
+            return _securityContext.ClaimSets.SingleOrDefault(x => x.ClaimSetId == id) != null;
+        }
+
+        private bool BeAnEditableClaimSet(int id)
+        {
+            var claimSet = _securityContext.ClaimSets.Single(x => x.ClaimSetId == id);
+            return !claimSet.ForApplicationUseOnly && !claimSet.IsEdfiPreset;
         }
     }
 }
