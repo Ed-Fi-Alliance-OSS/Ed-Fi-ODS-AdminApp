@@ -225,7 +225,7 @@ namespace EdFi.Ods.AdminApp.Web
 
                     options.Events.OnSignedIn = async context =>
                     {
-                        await SetupUserAfterOpenIdConnectSignIn(context);
+                        await EnsureIdentityUserSetupForOpenIdConnectUser(context);
                     };
                 })
             .AddOpenIdConnect(openIdSettings.AuthenticationScheme, options =>
@@ -256,7 +256,7 @@ namespace EdFi.Ods.AdminApp.Web
 
             services.AddScoped<IAuthorizationHandler, OpenIdConnectUserMustExistHandler>();
 
-            async Task SetupUserAfterOpenIdConnectSignIn(CookieSignedInContext context)
+            async Task EnsureIdentityUserSetupForOpenIdConnectUser(CookieSignedInContext context)
             {
                 var openIdConnectLoginService =
                     context.HttpContext.RequestServices.GetRequiredService<IOpenIdConnectLoginService>();
@@ -265,10 +265,13 @@ namespace EdFi.Ods.AdminApp.Web
                 var oidcUserId = claimsIdentity?.Claims.FirstOrDefault(m => m.Type == ClaimTypes.NameIdentifier)?.Value;
                 var oidcUserEmail = claimsIdentity?.Claims.FirstOrDefault(m => m.Type == ClaimTypes.Email)?.Value;
 
-                if (openIdConnectLoginService != null && oidcUserId != null && oidcUserEmail != null)
+                if (openIdConnectLoginService != null && claimsIdentity != null)
                 {
                     var oidcAuthScheme = identitySettings.OpenIdSettings.AuthenticationScheme;
-                    var identityUserId = await openIdConnectLoginService.AddUserLoginForOpenIdConnect(oidcUserId, oidcUserEmail, oidcAuthScheme, oidcAuthScheme);
+
+                    var identityUserId = openIdConnectLoginService.GetIdentityUserIdForOpenIdConnectUser(oidcUserId, oidcAuthScheme) ??
+                                         await openIdConnectLoginService.AddUserLoginForOpenIdConnect(oidcUserId, oidcUserEmail, oidcAuthScheme, oidcAuthScheme);
+
                     claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, Role.SuperAdmin.DisplayName));
                     openIdConnectLoginService.AddSuperAdminRoleToUser(identityUserId);
                 }
