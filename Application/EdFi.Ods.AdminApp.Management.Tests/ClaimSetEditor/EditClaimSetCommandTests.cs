@@ -185,5 +185,120 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             });
         }
 
+        [Test]
+        public void ShouldNotEditClaimSetIfNotAnExistingId()
+        {
+            EnsureZeroClaimSets();
+
+            var editModel = new EditClaimSetModel
+            {
+                ClaimSetName = "Not Existing ClaimSet",
+                ClaimSetId = 1
+            };
+
+            Scoped<ISecurityContext>(securityContext =>
+            {
+                var validator = new EditClaimSetModelValidator(securityContext);
+                var validationResults = validator.Validate(editModel);
+                validationResults.IsValid.ShouldBe(false);
+                validationResults.Errors.Single().ErrorMessage.ShouldBe("No such claim set exists in the database");
+            });
+
+            void EnsureZeroClaimSets()
+            {
+                Scoped<ISecurityContext>(database =>
+                {
+                    foreach (var entity in database.ClaimSets)
+                        database.ClaimSets.Remove(entity);
+                    database.SaveChanges();
+                });
+            }
+        }
+
+        [Test]
+        public void ShouldNotEditClaimSetIfNotEditable()
+        {
+            var testApplication = new Application
+            {
+                ApplicationName = $"Test Application {DateTime.Now:O}"
+            };
+            Save(testApplication);
+
+            var systemReservedClaimSet = new ClaimSet
+            {
+                ClaimSetName = "SystemReservedClaimSet",
+                Application = testApplication,
+                ForApplicationUseOnly = true
+            };
+            Save(systemReservedClaimSet);
+
+            var edfiPresetClaimSet = new ClaimSet
+            {
+                ClaimSetName = "EdfiPresetClaimSet",
+                Application = testApplication,
+                ForApplicationUseOnly = false,
+                IsEdfiPreset = true
+            };
+            Save(edfiPresetClaimSet);
+
+            var systemReservedAndEdfiPresetClaimSet = new ClaimSet
+            {
+                ClaimSetName = "SystemReservedAndEdfiPresetClaimSet",
+                Application = testApplication,
+                ForApplicationUseOnly = true,
+                IsEdfiPreset = true
+            };
+            Save(systemReservedAndEdfiPresetClaimSet);
+
+            var editableClaimSet = new ClaimSet
+            {
+                ClaimSetName = "EditableClaimSet",
+                Application = testApplication,
+                ForApplicationUseOnly = false,
+                IsEdfiPreset = false
+            };
+            Save(editableClaimSet);
+
+            var systemReservedClaimSetEditModel = new EditClaimSetModel
+            {
+                ClaimSetName = systemReservedClaimSet.ClaimSetName, ClaimSetId = systemReservedClaimSet.ClaimSetId
+            };
+
+            var edfiPresetClaimSetEditModel = new EditClaimSetModel
+            {
+                ClaimSetName = systemReservedClaimSet.ClaimSetName, ClaimSetId = systemReservedClaimSet.ClaimSetId
+            };
+
+            var systemReservedAndEdfiPresetClaimSetEditModel = new EditClaimSetModel
+            {
+                ClaimSetName = systemReservedAndEdfiPresetClaimSet.ClaimSetName, ClaimSetId = systemReservedAndEdfiPresetClaimSet.ClaimSetId
+            };
+
+            var editableClaimSetEditModel = new EditClaimSetModel
+            {
+                ClaimSetName = editableClaimSet.ClaimSetName, ClaimSetId = editableClaimSet.ClaimSetId
+            };
+
+            Scoped<ISecurityContext>(securityContext =>
+            {
+                var validator = new EditClaimSetModelValidator(securityContext);
+                var validationResults = validator.Validate(systemReservedClaimSetEditModel);
+                validationResults.IsValid.ShouldBe(false);
+                validationResults.Errors.Single().ErrorMessage.ShouldBe("Only user created claim sets can be edited");
+
+                validationResults = validator.Validate(edfiPresetClaimSetEditModel);
+                validationResults.IsValid.ShouldBe(false);
+                validationResults.Errors.Single().ErrorMessage.ShouldBe("Only user created claim sets can be edited");
+
+                validationResults = validator.Validate(systemReservedAndEdfiPresetClaimSetEditModel);
+                validationResults.IsValid.ShouldBe(false);
+                validationResults.Errors.Single().ErrorMessage.ShouldBe("Only user created claim sets can be edited");
+
+                validationResults = validator.Validate(editableClaimSetEditModel);
+                validationResults.IsValid.ShouldBe(true);
+                validationResults.Errors.ShouldBeEmpty();
+            });
+        }
+
     }
 }
