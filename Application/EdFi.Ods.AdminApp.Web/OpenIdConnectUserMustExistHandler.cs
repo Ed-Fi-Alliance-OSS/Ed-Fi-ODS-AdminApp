@@ -7,7 +7,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using EdFi.Ods.AdminApp.Management.Database;
-using EdFi.Ods.AdminApp.Management.ErrorHandling;
 using EdFi.Ods.AdminApp.Management.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
@@ -41,9 +40,12 @@ namespace EdFi.Ods.AdminApp.Web
                 }
                 else
                 {
-                    throw new AdminAppException(
-                        "SSO user login did not complete successfully. Please try again.");
+                    context.Fail(new AuthorizationFailureReason(this, "Your user sign-in did not complete successfully. Contact your administrator for resolution."));
                 }
+            }
+            else
+            {
+                context.Fail(new AuthorizationFailureReason(this, "Your user does not have an email address associated with it. Contact your administrator for resolution."));
             }
 
             return Task.CompletedTask;
