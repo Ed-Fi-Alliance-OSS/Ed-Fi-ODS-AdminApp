@@ -53,6 +53,27 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
         }
 
         [Test]
+        public void ShouldGetIdentityUserIdForExistingUser()
+        {
+            EnsureOneUserAndUserLogin(LoginProvider, ProviderDisplayName, OidcUserId, OidcUserEmail);
+
+            Scoped<AdminAppIdentityDbContext>(identity =>
+            {
+                var addUserLoginCommand = new AddUserLoginCommand(identity);
+                var editUserRoleCommand = new EditUserRoleCommand(identity);
+                var getUserLoginQuery = new GetUserLoginQuery(identity);
+
+                var openIdConnectLoginService = new OpenIdConnectLoginService(addUserLoginCommand, editUserRoleCommand, getUserLoginQuery, identity);
+
+                var identityUserId = openIdConnectLoginService.GetIdentityUserIdForOpenIdConnectUser(OidcUserId, LoginProvider);
+
+                var user = identity.Users.SingleOrDefault(x => x.Id == identityUserId);
+                user.ShouldNotBeNull();
+                user.Email.ShouldBe(OidcUserEmail);
+            });
+        }
+
+        [Test]
         public async Task ShouldAssignSuperAdminRole()
         {
             var userId = await AddUserLogin(OidcUserId, OidcUserEmail, LoginProvider, ProviderDisplayName);
@@ -73,9 +94,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
                 {
                     var addUserLoginCommand = new AddUserLoginCommand(identity);
                     var editUserRoleCommand = new EditUserRoleCommand(identity);
+                    var getUserLoginQuery = new GetUserLoginQuery(identity);
 
                     var openIdConnectLoginService = new OpenIdConnectLoginService(
-                        addUserLoginCommand, editUserRoleCommand, identity);
+                        addUserLoginCommand, editUserRoleCommand, getUserLoginQuery, identity);
 
                     identityUserId = await openIdConnectLoginService.AddUserLoginForOpenIdConnect(
                         oidcUserId, oidcUserEmail, loginProvider, providerDisplayName);
