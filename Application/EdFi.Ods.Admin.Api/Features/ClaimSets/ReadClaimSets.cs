@@ -45,10 +45,7 @@ public class ReadClaimSets : IFeature
         IGetApplicationsByClaimSetIdQuery getApplications, IMapper mapper, int id)
     {
         var calimSet = getClaimSetByIdQuery.Execute(id);
-        if (calimSet == null)
-        {
-            throw new NotFoundException<int>("claimset", id);
-        }
+
         var allResources = getResourcesByClaimSetIdQuery.AllResources(id);
         var claimSetData = mapper.Map<ClaimSetDetailsModel>(calimSet);
         claimSetData.ApplicationsCount = getApplications.Execute(id).Count();
