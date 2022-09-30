@@ -84,25 +84,5 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
                 });
             return identityUserId;
         }
-
-        private static void EnsureZeroUsers()
-        {
-            Scoped<AdminAppIdentityDbContext>(database =>
-            {
-                foreach (var entity in database.Users)
-                    database.Users.Remove(entity);
-                database.SaveChanges();
-            });
-        }
-
-        private static void EnsureZeroUserLogins()
-        {
-            Scoped<AdminAppIdentityDbContext>(database =>
-            {
-                foreach (var entity in database.UserLogins)
-                    database.UserLogins.Remove(entity);
-                database.SaveChanges();
-            });
-        }
     }
 }
