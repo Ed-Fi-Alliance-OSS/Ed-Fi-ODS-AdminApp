@@ -10,7 +10,7 @@ using FluentValidation;
 
 namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.User
 {
-    public class AddUserLoginModel:IAddUserLoginModel
+    public class AddUserLoginModel: IAddUserLoginModel
     {
         public string LoginProvider { get; set; }
         public string ProviderKey { get; set; }
@@ -29,8 +29,8 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.User
             RuleFor(x => x.LoginProvider).NotEmpty();
             RuleFor(x => x.ProviderKey).NotEmpty();
             RuleFor(m => m)
-                .Must(m => NotExistInTheSystem(m.LoginProvider, m.ProviderKey, m.UserEmail))
-                .When(x => x.LoginProvider != null && x.ProviderKey != null && x.UserEmail != null);
+                .Must(m => NotExistInTheSystem(m.LoginProvider, m.ProviderKey))
+                .When(x => x.LoginProvider != null && x.ProviderKey != null);
         }
 
         private bool BeAUniqueEmail(string newEmail)
@@ -38,10 +38,10 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.User
             return _identity.Users.ToList().All(x => x.Email != newEmail);
         }
 
-        private bool NotExistInTheSystem(string loginProvider, string providerKey, string email)
+        private bool NotExistInTheSystem(string loginProvider, string providerKey)
         {
             return !_identity.UserLogins.Any(x =>
-                x.LoginProvider == loginProvider && x.ProviderKey == providerKey && x.UserId == email);
+                x.LoginProvider == loginProvider && x.ProviderKey == providerKey);
         }
     }
 }
