@@ -3,10 +3,13 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
+using System;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using EdFi.Ods.AdminApp.Management.Database;
+using EdFi.Ods.AdminApp.Management.ErrorHandling;
 using EdFi.Ods.AdminApp.Management.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
@@ -26,26 +29,33 @@ namespace EdFi.Ods.AdminApp.Web
 
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, UserMustExistRequirement requirement)
         {
-            var userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (userId != null)
+            try
             {
-                var userLogin = _identity.UserLogins.SingleOrDefault(
-                    x => x.LoginProvider == _identitySettings.OpenIdSettings.AuthenticationScheme &&
-                         x.ProviderKey == userId);
+                var userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                if (userLogin != null)
+                if (userId != null)
                 {
-                    context.Succeed(requirement);
-                }
-                else
-                {
-                    context.Fail(new AuthorizationFailureReason(this, "Your user sign-in did not complete successfully. Contact your administrator for resolution."));
+                    var userLogin = _identity.UserLogins.SingleOrDefault(
+                        x => x.LoginProvider == _identitySettings.OpenIdSettings.LoginProvider &&
+                             x.ProviderKey == userId);
+
+                    if (userLogin != null)
+                    {
+                        context.Succeed(requirement);
+                    }
+                    else
+                    {
+                        throw new Exception("No associated User Login record found in the database for the user.");
+                    }
                 }
             }
-            else
+            catch (Exception exception)
             {
-                context.Fail(new AuthorizationFailureReason(this, "Your user does not have an email address associated with it. Contact your administrator for resolution."));
+                context.Fail();
+                throw new AdminAppException($"To use Admin App, users must have an email address set in their login provider system. Contact your administrator to resolve this issue. System error: {exception.Message}", exception)
+                {
+                    StatusCode = HttpStatusCode.Unauthorized
+                };
             }
 
             return Task.CompletedTask;
