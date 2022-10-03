@@ -36,6 +36,7 @@ namespace EdFi.Ods.AdminApp.Management.Helpers
     public class ClaimTypeMappings
     {
         public string NameClaimType { get; set; }
+        public string EmailClaimType { get; set; }
         public string RoleClaimType { get; set; }
     }
 }
