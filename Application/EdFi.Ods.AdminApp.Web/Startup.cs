@@ -5,6 +5,7 @@
 
 using System;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Reflection;
@@ -207,7 +208,7 @@ namespace EdFi.Ods.AdminApp.Web
             services.AddAuthentication(options =>
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = openIdSettings.AuthenticationScheme;
+                options.DefaultChallengeScheme = IdentitySettingsConstants.OidcAuthenticationScheme;
             })
             .AddCookie(
                 options =>
@@ -228,7 +229,7 @@ namespace EdFi.Ods.AdminApp.Web
                         await EnsureIdentityUserSetupForOpenIdConnectUser(context);
                     };
                 })
-            .AddOpenIdConnect(openIdSettings.AuthenticationScheme, options =>
+            .AddOpenIdConnect(openIdSettings.LoginProvider, options =>
             {
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 
@@ -267,7 +268,7 @@ namespace EdFi.Ods.AdminApp.Web
 
                 if (openIdConnectLoginService != null && claimsIdentity != null)
                 {
-                    var oidcAuthScheme = identitySettings.OpenIdSettings.AuthenticationScheme;
+                    var oidcAuthScheme = identitySettings.OpenIdSettings.LoginProvider;
 
                     var identityUserId = openIdConnectLoginService.GetIdentityUserIdForOpenIdConnectUser(oidcUserId, oidcAuthScheme) ??
                                          await openIdConnectLoginService.AddUserLoginForOpenIdConnect(oidcUserId, oidcUserEmail, oidcAuthScheme, oidcAuthScheme);

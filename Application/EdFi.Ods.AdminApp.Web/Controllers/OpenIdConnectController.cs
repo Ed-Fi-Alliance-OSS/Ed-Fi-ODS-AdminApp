@@ -29,7 +29,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
 
             if (HttpContext.User.Identity != null && !HttpContext.User.Identity.IsAuthenticated)
             {
-                return new ChallengeResult(_identitySettings.OpenIdSettings.AuthenticationScheme, new AuthenticationProperties
+                return new ChallengeResult(IdentitySettingsConstants.OidcAuthenticationScheme, new AuthenticationProperties
                 {
                     RedirectUri = returnUrl
                 });

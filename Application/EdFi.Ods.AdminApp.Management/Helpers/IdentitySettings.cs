@@ -23,7 +23,7 @@ namespace EdFi.Ods.AdminApp.Management.Helpers
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }
         public string UserProfileUri { get; set; }
-        public string AuthenticationScheme { get; set; }
+        public string LoginProvider { get; set; }
         public string ResponseType { get; set; }
         public bool RequireHttpsMetadata { get; set; }
         public bool GetClaimsFromUserInfoEndpoint { get; set; }

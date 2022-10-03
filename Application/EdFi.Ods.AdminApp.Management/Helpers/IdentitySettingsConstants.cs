@@ -11,5 +11,6 @@ namespace EdFi.Ods.AdminApp.Management.Helpers
         public const string OpenIdIdentityType = "OpenId";
         public const string OpenIdIdentityControllerName = "OpenIdConnect";
         public const string EntityFrameworkIdentityControllerName = "Identity";
+        public const string OidcAuthenticationScheme = "oidc";
     }
 }

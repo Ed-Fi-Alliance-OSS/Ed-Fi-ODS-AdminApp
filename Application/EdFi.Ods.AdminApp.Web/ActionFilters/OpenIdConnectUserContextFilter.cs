@@ -33,7 +33,7 @@ namespace EdFi.Ods.AdminApp.Web.ActionFilters
         {
             var providerId = filterContext.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userLogin = _identity.UserLogins.SingleOrDefault(
-                x => x.LoginProvider == _identitySettings.OpenIdSettings.AuthenticationScheme &&
+                x => x.LoginProvider == _identitySettings.OpenIdSettings.LoginProvider &&
                      x.ProviderKey == providerId);
 
             if (providerId == null || userLogin == null)
