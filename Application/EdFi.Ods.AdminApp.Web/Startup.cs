@@ -266,7 +266,9 @@ namespace EdFi.Ods.AdminApp.Web
                 var oidcUserId = claimsIdentity?.Claims.FirstOrDefault(m => m.Type == ClaimTypes.NameIdentifier)?.Value;
                 var oidcUserEmail = claimsIdentity?.Claims.FirstOrDefault(m => m.Type == ClaimTypes.Email)?.Value;
 
-                if (openIdConnectLoginService != null && claimsIdentity != null)
+                Debug.Assert(openIdConnectLoginService != null, nameof(openIdConnectLoginService) + " != null");
+
+                if (claimsIdentity != null)
                 {
                     var oidcAuthScheme = identitySettings.OpenIdSettings.LoginProvider;
 
