@@ -63,5 +63,26 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
                 });
             });
         }
+
+        [Test]
+        public void ShouldNotGetUserLoginIfItDoesNotExist()
+        {
+            var queryModel = new GetUserLoginModel
+            {
+                LoginProvider = "doesNotExist",
+                ProviderKey = "doesNotExist"
+            };
+
+            Scoped<AdminAppIdentityDbContext>(identity =>
+            {
+                var validator = new GetUserLoginModelValidator(identity);
+                var validationResults = validator.Validate(queryModel);
+                validationResults.IsValid.ShouldBe(false);
+                validationResults.Errors.Select(x => x.ErrorMessage).ShouldBe(new List<string>
+                {
+                    "A user with the given LoginProvider and ProviderKey does not exist in the system."
+                });
+            });
+        }
     }
 }

@@ -6,6 +6,7 @@
 using EdFi.Ods.AdminApp.Management.Database;
 using EdFi.Ods.AdminApp.Management.User;
 using FluentValidation;
+using System.Linq;
 
 namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.User
 {
@@ -24,6 +25,16 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.User
             _identity = identity;
             RuleFor(x => x.LoginProvider).NotEmpty();
             RuleFor(x => x.ProviderKey).NotEmpty();
+            RuleFor(m => m)
+                .Must(m => ExistInTheSystem(m.LoginProvider, m.ProviderKey))
+                .When(x => x.LoginProvider != null && x.ProviderKey != null)
+                .WithMessage("A user with the given LoginProvider and ProviderKey does not exist in the system.");
+        }
+
+        private bool ExistInTheSystem(string loginProvider, string providerKey)
+        {
+            return _identity.UserLogins.Any(x =>
+                x.LoginProvider == loginProvider && x.ProviderKey == providerKey);
         }
     }
 }
