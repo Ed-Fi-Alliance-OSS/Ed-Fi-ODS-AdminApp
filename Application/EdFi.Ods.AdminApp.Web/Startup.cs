@@ -269,9 +269,9 @@ namespace EdFi.Ods.AdminApp.Web
 
                 if (claimsIdentity != null)
                 {
-                    var oidcAuthScheme = identitySettings.OpenIdSettings.LoginProvider;
-                    var identityUserId = openIdConnectLoginService!.GetIdentityUserIdForOpenIdConnectUser(oidcUserId, oidcAuthScheme)
-                                         ?? await openIdConnectLoginService!.AddUserLoginForOpenIdConnect(oidcUserId, oidcUserEmail, oidcAuthScheme, oidcAuthScheme);
+                    var loginProvider = identitySettings.OpenIdSettings.LoginProvider;
+                    var identityUserId = openIdConnectLoginService!.GetIdentityUserIdForOpenIdConnectUser(oidcUserId, loginProvider)
+                                         ?? await openIdConnectLoginService!.AddUserLoginForOpenIdConnect(oidcUserId, oidcUserEmail, loginProvider, loginProvider);
 
                     var role = openIdConnectLoginService.UpdateUserRolesFromOidcClaim(identityUserId!, oidcUserRoles.ToArray());
                     claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.DisplayName));
