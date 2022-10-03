@@ -23,6 +23,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
         [Test]
         public async Task ShouldAddUserLogin()
         {
+            ResetUsers();
+
             var newUserLogin = new AddUserLoginModel
             {
                 UserEmail = "test@test.com",
