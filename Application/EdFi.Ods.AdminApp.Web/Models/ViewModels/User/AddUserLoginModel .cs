@@ -30,7 +30,8 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.User
             RuleFor(x => x.ProviderKey).NotEmpty();
             RuleFor(m => m)
                 .Must(m => NotExistInTheSystem(m.LoginProvider, m.ProviderKey))
-                .When(x => x.LoginProvider != null && x.ProviderKey != null);
+                .When(x => x.LoginProvider != null && x.ProviderKey != null)
+                .WithMessage("A user with the given LoginProvider and ProviderKey already exists in the system.");
         }
 
         private bool BeAUniqueEmail(string newEmail)

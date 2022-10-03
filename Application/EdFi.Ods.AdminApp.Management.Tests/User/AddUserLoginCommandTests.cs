@@ -109,6 +109,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
         [Test]
         public async Task ShouldNotAddUserLoginIfItAlreadyExists()
         {
+            ResetUsers();
+
             var existingUserLogin = new AddUserLoginModel
             {
                 UserEmail = "test@test.com",
@@ -126,7 +128,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
 
             var newUserLogin = new AddUserLoginModel
             {
-                UserEmail = existingUserLogin.UserEmail,
+                UserEmail = "test123@test.com",
                 LoginProvider = "test_oidc",
                 ProviderDisplayName = "test_oidc",
                 ProviderKey = "test_provider_key"
@@ -137,7 +139,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
                 var validator = new AddUserLoginModelValidator(identity);
                 var validationResults = validator.Validate(newUserLogin);
                 validationResults.IsValid.ShouldBe(false);
-                validationResults.Errors.Select(x => x.ErrorMessage).ShouldContain("A user with this email address already exists in the database.");
+                validationResults.Errors.Select(x => x.ErrorMessage).ShouldContain("A user with the given LoginProvider and ProviderKey already exists in the system.");
             });
         }
     }
