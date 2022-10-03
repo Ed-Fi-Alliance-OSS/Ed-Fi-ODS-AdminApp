@@ -9,6 +9,9 @@ using EdFi.Ods.AdminApp.Web.ActionFilters;
 using EdFi.Ods.AdminApp.Management.Helpers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
+using EdFi.Ods.AdminApp.Management.ErrorHandling;
+using System.Net;
+using System;
 
 namespace EdFi.Ods.AdminApp.Web.Controllers
 {
@@ -27,14 +30,26 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         {
             returnUrl ??= Url.Content("~/");
 
-            if (HttpContext.User.Identity != null && !HttpContext.User.Identity.IsAuthenticated)
+            try
             {
-                return new ChallengeResult(IdentitySettingsConstants.OidcAuthenticationScheme, new AuthenticationProperties
+                if (HttpContext.User.Identity != null && !HttpContext.User.Identity.IsAuthenticated)
                 {
-                    RedirectUri = returnUrl
-                });
+                    return new ChallengeResult(
+                        IdentitySettingsConstants.OidcAuthenticationScheme, new AuthenticationProperties
+                        {
+                            RedirectUri = returnUrl
+                        });
+                }
             }
-            
+            catch (Exception exception)
+            {
+                throw new AdminAppException(
+                    $"Please verify that the login provider has been correctly configured. System Error: {exception.Message}")
+                {
+                    StatusCode = HttpStatusCode.InternalServerError
+                };
+            }
+
             return RedirectToAction("Index", "Home");
         }
 
