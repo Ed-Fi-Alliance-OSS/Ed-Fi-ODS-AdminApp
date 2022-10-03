@@ -208,7 +208,7 @@ namespace EdFi.Ods.AdminApp.Web
             services.AddAuthentication(options =>
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = IdentitySettingsConstants.OidcAuthenticationScheme;
+                options.DefaultChallengeScheme = openIdSettings.AuthenticationScheme;
             })
             .AddCookie(
                 options =>
@@ -229,7 +229,7 @@ namespace EdFi.Ods.AdminApp.Web
                         await EnsureIdentityUserSetupForOpenIdConnectUser(context);
                     };
                 })
-            .AddOpenIdConnect(openIdSettings.LoginProvider, options =>
+            .AddOpenIdConnect(openIdSettings.AuthenticationScheme, options =>
             {
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 
