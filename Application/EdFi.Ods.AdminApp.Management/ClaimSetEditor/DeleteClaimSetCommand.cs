@@ -22,7 +22,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
 
         public void Execute(IDeleteClaimSetModel claimSet)
         {
-            var claimSetToDelete = _context.ClaimSets.SingleOrDefault(x => x.ClaimSetId == claimSet.Id);
+            var claimSetToDelete = _context.ClaimSets.Single(x => x.ClaimSetId == claimSet.Id);
 
             if (DefaultClaimSets.Contains(claimSetToDelete.ClaimSetName) ||
                         CloudOdsAdminApp.SystemReservedClaimSets.Contains(claimSetToDelete.ClaimSetName))

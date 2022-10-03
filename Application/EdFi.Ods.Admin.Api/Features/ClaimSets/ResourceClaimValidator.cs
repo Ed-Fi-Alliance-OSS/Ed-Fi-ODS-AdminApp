@@ -17,7 +17,7 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
             context.MessageFormatter.AppendArgument("ResourceClaimName", resourceClaim.Name);
             var propertyName = "ResourceClaims";
 
-            if (existingResourceClaims.Where(x => x.Name == resourceClaim.Name).Count() > 1 )
+            if (existingResourceClaims.Count(x => x.Name == resourceClaim.Name) > 1 )
             {
                 context.AddFailure(propertyName, FeatureConstants.ClaimSetDuplicateResourceMessage);
             }
@@ -38,6 +38,7 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
                     if (!dbAuthStrategies.Contains(defaultAS.AuthStrategyId))
                     {
                         context.MessageFormatter.AppendArgument("AuthStrategyId", defaultAS.AuthStrategyId);
+                        context.MessageFormatter.AppendArgument("AuthStrategyName", defaultAS.AuthStrategyName);
                         context.AddFailure(propertyName, FeatureConstants.ClaimsetAuthStrategyNotFoundMessage);
                     }
                 }
@@ -49,6 +50,7 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
                     if (!dbAuthStrategies.Contains(authStrategyOverride.AuthStrategyId))
                     {
                         context.MessageFormatter.AppendArgument("AuthStrategyId", authStrategyOverride.AuthStrategyId);
+                        context.MessageFormatter.AppendArgument("AuthStrategyName", authStrategyOverride.AuthStrategyName);
                         context.AddFailure(propertyName, FeatureConstants.ClaimsetAuthStrategyNotFoundMessage);
                     }
                 }

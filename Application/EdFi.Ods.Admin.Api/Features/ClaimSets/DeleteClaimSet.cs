@@ -23,13 +23,13 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
 
         public Task<IResult> Handle(DeleteClaimSetCommand deleteClaimSetCommand, ISecurityContext context, IGetApplicationsByClaimSetIdQuery getApplications, int id)
         {
-            CheckResourceExists(id, context);
-            GuardAgainstDeletingResourceWithDependencies(id, getApplications);
+            CheckClaimSetExists(id, context);
+            CheckAgainstDeletingClaimSetsWithApplications(id, getApplications);
             deleteClaimSetCommand.Execute(new DeleteClaimSetModel { Id = id });
             return Task.FromResult(AdminApiResponse.Deleted("ClaimSet"));
         }
 
-        private void CheckResourceExists(int id, ISecurityContext context)
+        private void CheckClaimSetExists(int id, ISecurityContext context)
         {
             var claimSetToDelete = context.ClaimSets.SingleOrDefault(x => x.ClaimSetId == id);
 
@@ -40,7 +40,7 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
             }
         }
 
-        private void GuardAgainstDeletingResourceWithDependencies(int id, IGetApplicationsByClaimSetIdQuery getApplications)
+        private void CheckAgainstDeletingClaimSetsWithApplications(int id, IGetApplicationsByClaimSetIdQuery getApplications)
         {
             var associatedApplicationsCount = getApplications.Execute(id).Count();
             if (associatedApplicationsCount > 0)

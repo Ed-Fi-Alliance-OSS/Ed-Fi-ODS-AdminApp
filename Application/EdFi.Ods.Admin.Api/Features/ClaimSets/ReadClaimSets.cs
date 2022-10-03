@@ -8,7 +8,6 @@ using EdFi.Ods.Admin.Api.Infrastructure;
 using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
 using EdFi.Ods.AdminApp.Management.Database.Queries;
-using EdFi.Ods.AdminApp.Management.ErrorHandling;
 using static EdFi.Ods.AdminApp.Management.ClaimSetEditor.GetClaimSetsByApplicationNameQuery;
 
 namespace EdFi.Ods.Admin.Api.Features.ClaimSets;
@@ -34,7 +33,7 @@ public class ReadClaimSets : IFeature
         var model = mapper.Map<List<ClaimSetModel>>(calimSets);
         foreach(var claimset in model)
         {
-            claimset.ApplicationsCount = getApplications.Execute(claimset.Id).Count();
+            claimset.ApplicationsCount = getApplications.ExecuteCount(claimset.Id);
             claimset.IsSystemReserved = DefaultClaimSets.Contains(claimset.Name);
         }
         return Task.FromResult(AdminApiResponse<List<ClaimSetModel>>.Ok(model));
@@ -48,7 +47,7 @@ public class ReadClaimSets : IFeature
 
         var allResources = getResourcesByClaimSetIdQuery.AllResources(id);
         var claimSetData = mapper.Map<ClaimSetDetailsModel>(calimSet);
-        claimSetData.ApplicationsCount = getApplications.Execute(id).Count();
+        claimSetData.ApplicationsCount = getApplications.ExecuteCount(id);
         claimSetData.ResourceClaims = mapper.Map<List<ResourceClaimModel>>(allResources.ToList());
 
         return Task.FromResult(AdminApiResponse<ClaimSetDetailsModel>.Ok(claimSetData));

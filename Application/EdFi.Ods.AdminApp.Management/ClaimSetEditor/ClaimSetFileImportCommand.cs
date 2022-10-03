@@ -27,7 +27,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
         public void Execute(SharingModel model)
         {
             var sharingClaimSets = model.Template.ClaimSets;
-            var allResources = GetDbResources();
+
             foreach (var claimSet in sharingClaimSets)
             {
                 var claimSetId = _addClaimSetCommand.Execute(new AddClaimSetModel
@@ -35,21 +35,8 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
                     ClaimSetName = claimSet.Name
                 });
                 var resources = claimSet.ResourceClaims.Select(x => x.ToObject<ResourceClaim>()).ToList();
-                _addOrUpdateResourcesOnClaimSetCommand.Execute(claimSetId, resources, allResources);
+                _addOrUpdateResourcesOnClaimSetCommand.Execute(claimSetId, resources);
             }
-        }
-
-        private List<ResourceClaim> GetDbResources()
-        {
-            var allResources = new List<ResourceClaim>();
-            var parentResources = _getResourceClaimsQuery.Execute().ToList();
-            allResources.AddRange(parentResources);
-            foreach (var children in parentResources.Select(x => x.Children))
-            {
-                allResources.AddRange(children);
-            }
-
-            return allResources;
         }
     }
 }

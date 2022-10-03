@@ -25,10 +25,10 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
             _overrideDefaultAuthorizationStrategyCommand = overrideDefaultAuthorizationStrategyCommand;
         }
 
-        public void Execute(int claimSetId, List<ResourceClaim> resources, List<ResourceClaim> allResources = null)
+        public void Execute(int claimSetId, List<ResourceClaim> resources)
         {
-            if(allResources == null)
-               allResources = GetDbResources();
+
+            var allResources = GetDbResources();
 
             var childResources = new List<ResourceClaim>();
             foreach (var resourceClaims in resources.Select(x => x.Children))

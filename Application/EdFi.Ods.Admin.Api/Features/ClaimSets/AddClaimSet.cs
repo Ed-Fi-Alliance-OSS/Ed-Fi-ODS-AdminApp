@@ -40,7 +40,7 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
             var calimSet = getClaimSetByIdQuery.Execute(addedClaimSetId);
             var allResources = getResourcesByClaimSetIdQuery.AllResources(addedClaimSetId);
             var model = mapper.Map<ClaimSetDetailsModel>(calimSet);
-            model.ApplicationsCount = getApplications.Execute(addedClaimSetId).Count();
+            model.ApplicationsCount = getApplications.ExecuteCount(addedClaimSetId);
             model.ResourceClaims = mapper.Map<List<ResourceClaimModel>>(allResources.ToList());
 
             return AdminApiResponse<ClaimSetDetailsModel>.Created(model, "ClaimSet", $"/claimsets/{addedClaimSetId}");
