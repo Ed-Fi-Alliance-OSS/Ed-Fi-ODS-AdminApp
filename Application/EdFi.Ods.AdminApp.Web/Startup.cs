@@ -265,6 +265,7 @@ namespace EdFi.Ods.AdminApp.Web
                 var claimsIdentity = context.Principal?.Identity as ClaimsIdentity;
                 var oidcUserId = claimsIdentity?.Claims.FirstOrDefault(m => m.Type == ClaimTypes.NameIdentifier)?.Value;
                 var oidcUserEmail = claimsIdentity?.Claims.FirstOrDefault(m => m.Type == ClaimTypes.Email)?.Value;
+                var oidcUserRoles = claimsIdentity?.Claims.Where(m => m.Type == openIdSettings.ClaimTypeMappings.RoleClaimType).Select(c => c.Value);
 
                 if (claimsIdentity != null)
                 {
@@ -272,9 +273,8 @@ namespace EdFi.Ods.AdminApp.Web
                     var identityUserId = openIdConnectLoginService!.GetIdentityUserIdForOpenIdConnectUser(oidcUserId, oidcAuthScheme)
                                          ?? await openIdConnectLoginService!.AddUserLoginForOpenIdConnect(oidcUserId, oidcUserEmail, oidcAuthScheme, oidcAuthScheme);
 
-
-                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, Role.SuperAdmin.DisplayName));
-                    openIdConnectLoginService.AddSuperAdminRoleToUser(identityUserId);
+                    var role = openIdConnectLoginService.UpdateUserRolesFromOidcClaim(identityUserId!, oidcUserRoles.ToArray());
+                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.DisplayName));
                 }
             }
         }

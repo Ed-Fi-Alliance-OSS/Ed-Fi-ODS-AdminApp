@@ -3,9 +3,14 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using EdFi.Ods.AdminApp.Management.Database;
 using EdFi.Ods.AdminApp.Management.Database.Models;
+using EdFi.Ods.AdminApp.Management.ErrorHandling;
 using EdFi.Ods.AdminApp.Management.User;
 using EdFi.Ods.AdminApp.Web.Models.ViewModels.User;
 using log4net;
@@ -18,7 +23,7 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
 
         string GetIdentityUserIdForOpenIdConnectUser(string oidcUserId, string loginProvider);
 
-        void AddSuperAdminRoleToUser(string identityUserId);
+        Role UpdateUserRolesFromOidcClaim(string identityUserId, IEnumerable<string> roleValues);
     }
 
     public class OpenIdConnectLoginService : IOpenIdConnectLoginService
@@ -94,16 +99,34 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
             return identityUserId;
         }
 
-        public void AddSuperAdminRoleToUser(string identityUserId)
+        public Role UpdateUserRolesFromOidcClaim(string identityUserId, IEnumerable<string> roleValues)
         {
-            if (identityUserId != null)
+            if (identityUserId == null)
+                throw new ArgumentNullException(nameof(identityUserId));
+
+            var role = Role.FromOidcClaims(roleValues);
+
+            if (role != null)
             {
-                _editUserRoleCommand.Execute(new EditUserRoleModel
-                {
-                    UserId = identityUserId,
-                    RoleId = Role.SuperAdmin.Value.ToString()
-                });
+                _editUserRoleCommand.Execute(
+                    new EditUserRoleModel
+                    {
+                        UserId = identityUserId,
+                        RoleId = role.Value.ToString()
+                    });
+
+                return role;
             }
+
+            var logMessage = !roleValues.Any()
+                ? $"User {identityUserId} has no role claims set"
+                : $"User {identityUserId} is missing an Admin App role claim. Found roles: {string.Join(", ", roleValues)}";
+            _logger.Warn(logMessage);
+
+            throw new AdminAppException("To use Admin App, users must have a specific role set in their login provider system. Contact your administrator to resolve this issue.")
+            {
+                StatusCode = HttpStatusCode.Unauthorized
+            };
         }
     }
 }

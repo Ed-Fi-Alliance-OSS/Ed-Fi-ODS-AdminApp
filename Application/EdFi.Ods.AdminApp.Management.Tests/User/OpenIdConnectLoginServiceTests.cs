@@ -3,10 +3,12 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using EdFi.Ods.AdminApp.Management.Database;
 using EdFi.Ods.AdminApp.Management.Database.Models;
+using EdFi.Ods.AdminApp.Management.ErrorHandling;
 using EdFi.Ods.AdminApp.Management.User;
 using EdFi.Ods.AdminApp.Web.Helpers;
 using NUnit.Framework;
@@ -34,7 +36,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
         [Test]
         public async Task ShouldAddUserAndUserLoginOnFirstTimeLogin()
         {
-            var userId = await AddUserLogin(OidcUserId, OidcUserEmail, LoginProvider, ProviderDisplayName);
+            var userId = await AddUserLogin(OidcUserId, OidcUserEmail, LoginProvider, ProviderDisplayName, new []{Role.SuperAdmin.OidcClaimValue});
 
             var addedUser = Query(userId);
             addedUser.Email.ShouldBe(OidcUserEmail);
@@ -49,6 +51,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
                 addedUserLogin.ProviderKey.ShouldBe(OidcUserId);
                 addedUserLogin.LoginProvider.ShouldBe(LoginProvider);
                 addedUserLogin.ProviderDisplayName.ShouldBe(ProviderDisplayName);
+
+                var role = context.UserRoles.SingleOrDefault(x => x.UserId == userId);
+                role.ShouldNotBeNull();
+                role.RoleId.ShouldBe(Role.SuperAdmin.Value.ToString());
             });
         }
 
@@ -74,19 +80,45 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
         }
 
         [Test]
-        public async Task ShouldAssignSuperAdminRole()
+        public async Task ShouldAssignRoleFromPassedInClaim()
         {
-            var userId = await AddUserLogin(OidcUserId, OidcUserEmail, LoginProvider, ProviderDisplayName);
-
+            var userId = await AddUserLogin(OidcUserId, OidcUserEmail, LoginProvider, ProviderDisplayName, new []{Role.Admin.OidcClaimValue});
             Scoped<AdminAppIdentityDbContext>(context =>
             {
-                var addedUserRole = context.UserRoles.SingleOrDefault(x => x.UserId == userId);
-                addedUserRole.ShouldNotBeNull();
-                addedUserRole.RoleId.ShouldBe(Role.SuperAdmin.Value.ToString());
+                context.UserRoles.SingleOrDefault(x => x.UserId == userId)?.RoleId.ShouldBe(Role.Admin.Value.ToString());
             });
         }
 
-        private static async Task<string> AddUserLogin(string oidcUserId, string oidcUserEmail, string loginProvider, string providerDisplayName)
+        [Test]
+        public async Task ShouldPrioritizeHigherRoleWhenBothAreAssigned()
+        {
+            var userId = await AddUserLogin(OidcUserId, OidcUserEmail, LoginProvider, ProviderDisplayName,
+                new []{Role.SuperAdmin.OidcClaimValue, Role.Admin.OidcClaimValue});
+            Scoped<AdminAppIdentityDbContext>(context =>
+            {
+                context.UserRoles.SingleOrDefault(x => x.UserId == userId)?.RoleId.ShouldBe(Role.SuperAdmin.Value.ToString());
+            });
+        }
+
+        [Test]
+        public async Task ShouldNotAllowUserWithNoRoles()
+        {
+            await Should.ThrowAsync<AdminAppException>(async () =>
+            {
+                await AddUserLogin(OidcUserId, OidcUserEmail, LoginProvider, ProviderDisplayName, Array.Empty<string>());
+            });
+        }
+
+        [Test]
+        public async Task ShouldNotAllowUserWithNoValidRoles()
+        {
+            await Should.ThrowAsync<AdminAppException>(async () =>
+            {
+                await AddUserLogin(OidcUserId, OidcUserEmail, LoginProvider, ProviderDisplayName, new[] {"Not an admin app role"});
+            });
+        }
+
+        private static async Task<string> AddUserLogin(string oidcUserId, string oidcUserEmail, string loginProvider, string providerDisplayName, string[] roleValues)
         {
             string identityUserId = null;
             await ScopedAsync<AdminAppIdentityDbContext>(
@@ -102,7 +134,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
                     identityUserId = await openIdConnectLoginService.AddUserLoginForOpenIdConnect(
                         oidcUserId, oidcUserEmail, loginProvider, providerDisplayName);
 
-                    openIdConnectLoginService.AddSuperAdminRoleToUser(identityUserId);
+                    openIdConnectLoginService.UpdateUserRolesFromOidcClaim(identityUserId, roleValues);
                 });
             return identityUserId;
         }
