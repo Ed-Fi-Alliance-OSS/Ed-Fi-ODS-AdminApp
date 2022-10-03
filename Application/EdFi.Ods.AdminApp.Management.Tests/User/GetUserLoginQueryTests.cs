@@ -51,16 +51,13 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
         {
             var queryModel = new GetUserLoginModel();
 
-            Scoped<AdminAppIdentityDbContext>(identity =>
+            var validator = new GetUserLoginModelValidator();
+            var validationResults = validator.Validate(queryModel);
+            validationResults.IsValid.ShouldBe(false);
+            validationResults.Errors.Select(x => x.ErrorMessage).ShouldBe(new List<string>
             {
-                var validator = new GetUserLoginModelValidator(identity);
-                var validationResults = validator.Validate(queryModel);
-                validationResults.IsValid.ShouldBe(false);
-                validationResults.Errors.Select(x => x.ErrorMessage).ShouldBe(new List<string>
-                {
-                    "'Login Provider' must not be empty.",
-                    "'Provider Key' must not be empty."
-                });
+                "'Login Provider' must not be empty.",
+                "'Provider Key' must not be empty."
             });
         }
 
@@ -75,13 +72,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
 
             Scoped<AdminAppIdentityDbContext>(identity =>
             {
-                var validator = new GetUserLoginModelValidator(identity);
-                var validationResults = validator.Validate(queryModel);
-                validationResults.IsValid.ShouldBe(false);
-                validationResults.Errors.Select(x => x.ErrorMessage).ShouldBe(new List<string>
-                {
-                    "A user with the given LoginProvider and ProviderKey does not exist in the system."
-                });
+                var query = new GetUserLoginQuery(identity);
+                var user = query.Execute(queryModel);
+
+                user.ShouldBeNull();
             });
         }
     }

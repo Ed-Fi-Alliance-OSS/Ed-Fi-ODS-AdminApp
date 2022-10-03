@@ -79,14 +79,14 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
                 ProviderKey = oidcUserId
             };
 
-            var userLoginModelValidator = new GetUserLoginModelValidator(_identity);
+            var userLoginModelValidator = new GetUserLoginModelValidator();
             var userLoginModelValidationResults = userLoginModelValidator.Validate(getUserLoginModel);
 
             string identityUserId = null;
             if (userLoginModelValidationResults.IsValid)
             {
                 var identityUserLogin = _getUserLoginQuery.Execute(getUserLoginModel);
-                identityUserId = identityUserLogin.UserId;
+                identityUserId = identityUserLogin?.UserId;
             }
             else
             {
