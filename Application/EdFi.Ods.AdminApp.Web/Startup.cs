@@ -266,14 +266,12 @@ namespace EdFi.Ods.AdminApp.Web
                 var oidcUserId = claimsIdentity?.Claims.FirstOrDefault(m => m.Type == ClaimTypes.NameIdentifier)?.Value;
                 var oidcUserEmail = claimsIdentity?.Claims.FirstOrDefault(m => m.Type == ClaimTypes.Email)?.Value;
 
-                Debug.Assert(openIdConnectLoginService != null, nameof(openIdConnectLoginService) + " != null");
-
                 if (claimsIdentity != null)
                 {
                     var oidcAuthScheme = identitySettings.OpenIdSettings.LoginProvider;
+                    var identityUserId = openIdConnectLoginService!.GetIdentityUserIdForOpenIdConnectUser(oidcUserId, oidcAuthScheme)
+                                         ?? await openIdConnectLoginService!.AddUserLoginForOpenIdConnect(oidcUserId, oidcUserEmail, oidcAuthScheme, oidcAuthScheme);
 
-                    var identityUserId = openIdConnectLoginService.GetIdentityUserIdForOpenIdConnectUser(oidcUserId, oidcAuthScheme) ??
-                                         await openIdConnectLoginService.AddUserLoginForOpenIdConnect(oidcUserId, oidcUserEmail, oidcAuthScheme, oidcAuthScheme);
 
                     claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, Role.SuperAdmin.DisplayName));
                     openIdConnectLoginService.AddSuperAdminRoleToUser(identityUserId);
