@@ -21,7 +21,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
     public class AddUserLoginCommandTests
     {
         [Test]
-        public async Task ShouldAddUserLogin()
+        public async Task ShouldAddUserAndLogin()
         {
             ResetUsers();
 
@@ -30,6 +30,34 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
                 UserEmail = "test@test.com",
                 LoginProvider = "test_oidc",
                 ProviderDisplayName = "test_oidc",
+                ProviderKey = "test_provider_key"
+            };
+
+            await ScopedAsync<AdminAppIdentityDbContext>(async context =>
+            {
+                var command = new AddUserLoginCommand(context);
+
+                var identityUserId = await command.Execute(newUserLogin);
+
+                var addedUserLogin = context.UserLogins.SingleOrDefault(x => x.UserId == identityUserId);
+                addedUserLogin.ShouldNotBeNull();
+                addedUserLogin.ProviderKey.ShouldBe(newUserLogin.ProviderKey);
+                addedUserLogin.LoginProvider.ShouldBe(newUserLogin.LoginProvider);
+                addedUserLogin.ProviderDisplayName.ShouldBe(newUserLogin.ProviderDisplayName);
+            });
+        }
+
+        [Test]
+        public async Task ShouldAddNewLoginForExistingUser()
+        {
+            ResetUsers();
+
+            var existingUser = SetupUsers(1).Single();
+
+            var newUserLogin = new AddUserLoginModel
+            {
+                UserEmail = existingUser.Email,
+                LoginProvider = "test_oidc",
                 ProviderKey = "test_provider_key"
             };
 
@@ -82,29 +110,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
                 var validationResults = validator.Validate(newUserLogin);
                 validationResults.IsValid.ShouldBe(false);
                 validationResults.Errors.Select(x => x.ErrorMessage).ShouldContain("'User Email' is not a valid email address.");
-            });
-        }
-
-        [Test]
-        public void ShouldNotAddUserIfEmailNotUnique()
-        {
-            ResetUsers();
-
-            var existingUser = SetupUsers(1).Single();
-
-            var newUserLogin = new AddUserLoginModel
-            {
-                UserEmail = existingUser.Email,
-                LoginProvider = "test_oidc",
-                ProviderKey = "test_provider_key"
-            };
-
-            Scoped<AdminAppIdentityDbContext>(identity =>
-            {
-                var validator = new AddUserLoginModelValidator(identity);
-                var validationResults = validator.Validate(newUserLogin);
-                validationResults.IsValid.ShouldBe(false);
-                validationResults.Errors.Select(x => x.ErrorMessage).ShouldContain("A user with this email address already exists in the database.");
             });
         }
 

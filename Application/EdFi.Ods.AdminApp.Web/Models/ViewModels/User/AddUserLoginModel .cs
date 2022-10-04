@@ -25,7 +25,7 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.User
         public AddUserLoginModelValidator(AdminAppIdentityDbContext identity)
         {
             _identity = identity;
-            RuleFor(m => m.UserEmail).NotEmpty().EmailAddress().Must(BeAUniqueEmail).WithMessage("A user with this email address already exists in the database."); ;
+            RuleFor(m => m.UserEmail).NotEmpty().EmailAddress();
             RuleFor(x => x.LoginProvider).NotEmpty();
             RuleFor(x => x.ProviderKey).NotEmpty();
             RuleFor(m => m)
