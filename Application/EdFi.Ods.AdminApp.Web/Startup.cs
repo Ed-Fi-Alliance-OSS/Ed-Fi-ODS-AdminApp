@@ -263,7 +263,7 @@ namespace EdFi.Ods.AdminApp.Web
                     context.HttpContext.RequestServices.GetRequiredService<IOpenIdConnectLoginService>();
 
                 var claimsIdentity = context.Principal?.Identity as ClaimsIdentity;
-                var oidcUserId = claimsIdentity?.Claims.FirstOrDefault(m => m.Type == openIdSettings.ClaimTypeMappings.NameClaimType)?.Value;
+                var oidcUserId = claimsIdentity?.Claims.FirstOrDefault(m => m.Type == openIdSettings.ClaimTypeMappings.IdentifierClaimType)?.Value;
                 var oidcUserEmail = claimsIdentity?.Claims.FirstOrDefault(m => m.Type == openIdSettings.ClaimTypeMappings.EmailClaimType)?.Value;
                 var oidcUserRoles = claimsIdentity?.Claims.Where(m => m.Type == openIdSettings.ClaimTypeMappings.RoleClaimType).Select(c => c.Value);
 
