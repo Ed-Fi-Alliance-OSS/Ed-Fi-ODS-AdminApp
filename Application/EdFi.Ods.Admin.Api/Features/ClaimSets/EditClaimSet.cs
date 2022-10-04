@@ -27,7 +27,8 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
             IGetClaimSetByIdQuery getClaimSetByIdQuery,
             IGetResourcesByClaimSetIdQuery getResourcesByClaimSetIdQuery,
             IGetApplicationsByClaimSetIdQuery getApplications,
-            IMapper mapper, Request request, int id)
+            IMapper mapper, ISecurityContext securityContext,
+            Request request, int id)
         {
             request.Id = id;
             await validator.GuardAsync(request);
@@ -37,12 +38,13 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
                 ClaimSetId = id
             });
 
+            request.ResourceClaims?.ResolveAuthStrategies(securityContext);
             updateResourcesOnClaimSetCommand.Execute(new UpdateResourcesOnClaimSetModel
             { ClaimSetId = updatedClaimSetId, ResourceClaims = mapper.Map<List<ResourceClaim>>(request.ResourceClaims) } );
 
-            var calimSet = getClaimSetByIdQuery.Execute(updatedClaimSetId);
+            var claimSet = getClaimSetByIdQuery.Execute(updatedClaimSetId);
             var allResources = getResourcesByClaimSetIdQuery.AllResources(updatedClaimSetId);
-            var model = mapper.Map<ClaimSetDetailsModel>(calimSet);
+            var model = mapper.Map<ClaimSetDetailsModel>(claimSet);
             model.ApplicationsCount = getApplications.ExecuteCount(updatedClaimSetId);
             model.ResourceClaims = mapper.Map<List<ResourceClaimModel>>(allResources.ToList());
 
@@ -87,13 +89,12 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
 
                 RuleFor(m => m).Custom((claimSet, context) =>
                 {
-                    var dbResourceClaims = securityContext.ResourceClaims.Select(x => x.ResourceName);
-                    var dbAuthStrategies = securityContext.AuthorizationStrategies.Select(x => x.AuthorizationStrategyId);
                     if (claimSet.ResourceClaims != null && claimSet.ResourceClaims.Any())
                     {
                         foreach (var resourceClaim in claimSet.ResourceClaims)
                         {
-                            ResourceClaimValidator.Validate(dbResourceClaims, dbAuthStrategies, resourceClaim, claimSet.ResourceClaims, context, claimSet.Name);
+                            ResourceClaimValidator.Validate(securityContext.ResourceClaims,
+                                securityContext.AuthorizationStrategies, resourceClaim, claimSet.ResourceClaims, context, claimSet.Name);
                         }
                     }
                 });
