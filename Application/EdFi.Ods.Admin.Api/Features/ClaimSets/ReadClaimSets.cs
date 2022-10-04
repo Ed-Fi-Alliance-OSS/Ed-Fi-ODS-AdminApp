@@ -43,10 +43,10 @@ public class ReadClaimSets : IFeature
         IGetResourcesByClaimSetIdQuery getResourcesByClaimSetIdQuery,
         IGetApplicationsByClaimSetIdQuery getApplications, IMapper mapper, int id)
     {
-        var calimSet = getClaimSetByIdQuery.Execute(id);
+        var claimSet = getClaimSetByIdQuery.Execute(id);
 
         var allResources = getResourcesByClaimSetIdQuery.AllResources(id);
-        var claimSetData = mapper.Map<ClaimSetDetailsModel>(calimSet);
+        var claimSetData = mapper.Map<ClaimSetDetailsModel>(claimSet);
         claimSetData.ApplicationsCount = getApplications.ExecuteCount(id);
         claimSetData.ResourceClaims = mapper.Map<List<ResourceClaimModel>>(allResources.ToList());
 

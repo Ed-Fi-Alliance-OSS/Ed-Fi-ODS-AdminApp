@@ -126,6 +126,7 @@ public static class WebApplicationBuilderExtensions
 
             opt.DocumentFilter<ListExplicitSchemaDocumentFilter>();
             opt.SchemaFilter<SwaggerOptionalSchemaFilter>();
+            opt.SchemaFilter<SwaggerExcludeSchemaFilter>();
             opt.CustomSchemaIds(x => x.FullName);
             opt.EnableAnnotations();
             opt.OrderActionsBy(x =>
