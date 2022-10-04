@@ -5,7 +5,6 @@
 
 using System;
 using System.Linq;
-using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using EdFi.Ods.AdminApp.Management.Database;
@@ -29,23 +28,30 @@ namespace EdFi.Ods.AdminApp.Web
 
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, UserMustExistRequirement requirement)
         {
-            var userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (userId != null)
+            try
             {
-                var userLogin = _identity.UserLogins.SingleOrDefault(
-                    x => x.LoginProvider == _identitySettings.OpenIdSettings.LoginProvider &&
-                         x.ProviderKey == userId);
+                var userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                if (userLogin != null)
+                if (userId != null)
                 {
-                    context.Succeed(requirement);
+                    var userLogin = _identity.UserLogins.SingleOrDefault(
+                        x => x.LoginProvider == _identitySettings.OpenIdSettings.LoginProvider &&
+                             x.ProviderKey == userId);
+
+                    if (userLogin != null)
+                    {
+                        context.Succeed(requirement);
+                    }
+                    else
+                    {
+                        throw new Exception("No associated User Login record found in the database for the user.");
+                    }
                 }
-                else
-                {
-                    context.Fail();
-                    throw new Exception("No associated User Login record found in the database for the user.");
-                }
+            }
+            catch (Exception exception)
+            {
+                context.Fail();
+                throw new AdminAppException($"To use Admin App, users must have an email address set in their login provider system. Contact your administrator to resolve this issue. System error: {exception.Message}", exception);
             }
 
             return Task.CompletedTask;
