@@ -29,33 +29,23 @@ namespace EdFi.Ods.AdminApp.Web
 
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, UserMustExistRequirement requirement)
         {
-            try
+            var userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId != null)
             {
-                var userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userLogin = _identity.UserLogins.SingleOrDefault(
+                    x => x.LoginProvider == _identitySettings.OpenIdSettings.LoginProvider &&
+                         x.ProviderKey == userId);
 
-                if (userId != null)
+                if (userLogin != null)
                 {
-                    var userLogin = _identity.UserLogins.SingleOrDefault(
-                        x => x.LoginProvider == _identitySettings.OpenIdSettings.LoginProvider &&
-                             x.ProviderKey == userId);
-
-                    if (userLogin != null)
-                    {
-                        context.Succeed(requirement);
-                    }
-                    else
-                    {
-                        throw new Exception("No associated User Login record found in the database for the user.");
-                    }
+                    context.Succeed(requirement);
                 }
-            }
-            catch (Exception exception)
-            {
-                context.Fail();
-                throw new AdminAppException($"To use Admin App, users must have an email address set in their login provider system. Contact your administrator to resolve this issue. System error: {exception.Message}", exception)
+                else
                 {
-                    StatusCode = HttpStatusCode.Unauthorized
-                };
+                    context.Fail();
+                    throw new Exception("No associated User Login record found in the database for the user.");
+                }
             }
 
             return Task.CompletedTask;

@@ -118,6 +118,30 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
             });
         }
 
+        public async Task ShouldThrowIfUserHasNoProviderKey()
+        {
+            await Should.ThrowAsync<AdminAppException>(async () =>
+            {
+                await AddUserLogin(null, OidcUserEmail, LoginProvider, ProviderDisplayName, new[] {Role.Admin.OidcClaimValue});
+            });
+        }
+
+        public async Task ShouldThrowIfUserHasNoEmail()
+        {
+            await Should.ThrowAsync<AdminAppException>(async () =>
+            {
+                await AddUserLogin(OidcUserId, null, LoginProvider, ProviderDisplayName, new[] {Role.Admin.OidcClaimValue});
+            });
+        }
+
+        public async Task ShouldThrowIfProviderIsNotSet()
+        {
+            await Should.ThrowAsync<AdminAppException>(async () =>
+            {
+                await AddUserLogin(OidcUserId, OidcUserEmail, null, null, new[] {"Role.Admin.OidcClaimValue"});
+            });
+        }
+
         private static async Task<string> AddUserLogin(string oidcUserId, string oidcUserEmail, string loginProvider, string providerDisplayName, string[] roleValues)
         {
             string identityUserId = null;

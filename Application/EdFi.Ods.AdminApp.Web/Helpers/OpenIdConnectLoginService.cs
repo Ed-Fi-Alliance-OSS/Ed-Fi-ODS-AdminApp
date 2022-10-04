@@ -55,20 +55,19 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
             var userLoginModelValidator = new AddUserLoginModelValidator(_identity);
             var userLoginModelValidationResults = (await userLoginModelValidator.ValidateAsync(addUserLoginModel));
 
-            string identityUserId = null;
             if (userLoginModelValidationResults.IsValid)
             {
-                identityUserId = await _addUserLoginCommand.Execute(addUserLoginModel);
-            }
-            else
-            {
-                foreach (var error in userLoginModelValidationResults.Errors)
-                {
-                    _logger.Warn(error.ErrorMessage);
-                }
+                return await _addUserLoginCommand.Execute(addUserLoginModel);
             }
 
-            return identityUserId;
+            foreach (var error in userLoginModelValidationResults.Errors)
+            {
+                _logger.Warn(error.ErrorMessage);
+            }
+
+            throw new AdminAppException(
+                "To use Admin App, users must have an ID and Email Address set in their login provider system." +
+                " Contact your administrator to resolve this issue.");
         }
 
         public string GetIdentityUserIdForOpenIdConnectUser(string oidcUserId, string loginProvider)
