@@ -49,6 +49,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
             var copiedClaimSet = Transaction(securityContext => securityContext.ClaimSets.Single(x => x.ClaimSetId == copyClaimSetId));
             copiedClaimSet.ClaimSetName.ShouldBe(newClaimSet.Object.Name);
+            copiedClaimSet.ForApplicationUseOnly.ShouldBe(false);
+            copiedClaimSet.IsEdfiPreset.ShouldBe(false);
 
             var results = Scoped<IGetResourcesByClaimSetIdQuery, Management.ClaimSetEditor.ResourceClaim[]>(
                 query => query.AllResources(copiedClaimSet.ClaimSetId).ToArray());

@@ -88,6 +88,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Claims
             configurator.ApplyConfiguration(testClaimSet);
 
             var claimSet = Transaction(securityContext => securityContext.ClaimSets.Single(cs => cs.ClaimSetName == testClaimSet.ClaimSetName));
+            claimSet.ForApplicationUseOnly.ShouldBe(false);
+            claimSet.IsEdfiPreset.ShouldBe(false);
 
             Transaction(securityContext =>
             {

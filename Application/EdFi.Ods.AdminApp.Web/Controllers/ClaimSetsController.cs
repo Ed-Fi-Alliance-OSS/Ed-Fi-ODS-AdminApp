@@ -6,15 +6,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
 using EdFi.Ods.AdminApp.Management.Database.Models;
 using EdFi.Ods.AdminApp.Management.Database.Queries;
+using EdFi.Ods.AdminApp.Management.ErrorHandling;
 using EdFi.Ods.AdminApp.Web.ActionFilters;
 using EdFi.Ods.AdminApp.Web.Display.TabEnumeration;
-using EdFi.Ods.AdminApp.Web.Helpers;
 using EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets;
 using Newtonsoft.Json;
 using static EdFi.Ods.AdminApp.Web.Infrastructure.ResourceClaimSelectListBuilder;
@@ -187,6 +188,15 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         private EditClaimSetModel GetEditClaimSetModel(int claimSetId)
         {
             var existingClaimSet = _getClaimSetByIdQuery.Execute(claimSetId);
+
+            if (!existingClaimSet.IsEditable)
+            {
+                throw new AdminAppException("Only user created claim sets can be edited")
+                {
+                    StatusCode = HttpStatusCode.MethodNotAllowed
+                };
+            }
+
             var allResourceClaims = _getResourceClaimsQuery.Execute().ToList();
 
             return new EditClaimSetModel

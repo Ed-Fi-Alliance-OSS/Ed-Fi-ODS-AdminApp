@@ -4,12 +4,15 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using System;
+using System.Net;
 using NUnit.Framework;
 using Shouldly;
 using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
 using ClaimSet = EdFi.Security.DataAccess.Models.ClaimSet;
 using Application = EdFi.Security.DataAccess.Models.Application;
 using static EdFi.Ods.AdminApp.Management.Tests.Testing;
+using EdFi.Ods.AdminApp.Management.ErrorHandling;
+using EdFi.Security.DataAccess.Contexts;
 
 namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 {
@@ -25,7 +28,13 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             };
             Save(testApplication);
 
-            var testClaimSet = new ClaimSet {ClaimSetName = "TestClaimSet", Application = testApplication};
+            var testClaimSet = new ClaimSet
+            {
+                ClaimSetName = "TestClaimSet",
+                Application = testApplication,
+                ForApplicationUseOnly = false,
+                IsEdfiPreset = false
+            };
             Save(testClaimSet);
 
             Scoped<IGetClaimSetByIdQuery>(query =>
@@ -34,7 +43,76 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
                 result.Name.ShouldBe(testClaimSet.ClaimSetName);
                 result.Id.ShouldBe(testClaimSet.ClaimSetId);
+                result.IsEditable.ShouldBe(true);
             });
+        }
+
+        [Test]
+        public void ShouldGetNonEditableClaimSetById()
+        {
+            var testApplication = new Application
+            {
+                ApplicationName = $"Test Application {DateTime.Now:O}"
+            };
+            Save(testApplication);
+
+            var systemReservedClaimSet = new ClaimSet
+            {
+                ClaimSetName = "SystemReservedClaimSet",
+                Application = testApplication,
+                ForApplicationUseOnly = true
+            };
+            Save(systemReservedClaimSet);
+
+            var edfiPresetClaimSet = new ClaimSet
+            {
+                ClaimSetName = "EdfiPresetClaimSet",
+                Application = testApplication,
+                ForApplicationUseOnly = false,
+                IsEdfiPreset = true
+            };
+            Save(edfiPresetClaimSet);
+
+            Scoped<IGetClaimSetByIdQuery>(query =>
+            {
+                var result = query.Execute(systemReservedClaimSet.ClaimSetId);
+
+                result.Name.ShouldBe(systemReservedClaimSet.ClaimSetName);
+                result.Id.ShouldBe(systemReservedClaimSet.ClaimSetId);
+                result.IsEditable.ShouldBe(false);
+
+                result = query.Execute(edfiPresetClaimSet.ClaimSetId);
+
+                result.Name.ShouldBe(edfiPresetClaimSet.ClaimSetName);
+                result.Id.ShouldBe(edfiPresetClaimSet.ClaimSetId);
+                result.IsEditable.ShouldBe(false);
+            });
+        }
+
+        [Test]
+        public void ShouldThrowExceptionForNonExistingClaimSetId()
+        {
+            EnsureZeroClaimSets();
+
+            const int NonExistingClaimSetId = 1;
+
+            var adminAppException = Assert.Throws<AdminAppException>(() => Scoped<IGetClaimSetByIdQuery>(query =>
+            {
+                query.Execute(NonExistingClaimSetId);
+            }));
+            adminAppException.ShouldNotBeNull();
+            adminAppException.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            adminAppException.Message.ShouldBe("No such claim set exists in the database.");
+
+            void EnsureZeroClaimSets()
+            {
+                Scoped<ISecurityContext>(database =>
+                {
+                    foreach (var entity in database.ClaimSets)
+                        database.ClaimSets.Remove(entity);
+                    database.SaveChanges();
+                });
+            }
         }
     }
 }
