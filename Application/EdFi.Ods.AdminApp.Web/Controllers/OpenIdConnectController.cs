@@ -12,6 +12,7 @@ using Microsoft.Extensions.Options;
 using EdFi.Ods.AdminApp.Management.ErrorHandling;
 using System.Net;
 using System;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 
 namespace EdFi.Ods.AdminApp.Web.Controllers
@@ -65,8 +66,8 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> LogOut()
         {
-            await HttpContext.SignOutAsync();
-            return RedirectToAction("Index", "Home");
+            return new SignOutResult(new[]
+                {CookieAuthenticationDefaults.AuthenticationScheme, _identitySettings.OpenIdSettings.AuthenticationScheme});
         }
     }
 }
