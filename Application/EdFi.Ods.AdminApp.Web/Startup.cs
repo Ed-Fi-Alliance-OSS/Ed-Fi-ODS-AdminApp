@@ -254,6 +254,10 @@ namespace EdFi.Ods.AdminApp.Web
 
             services.AddAuthorization(options =>
             {
+                options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                    .RequireClaim(ClaimTypes.Role, Role.GetAll().Select(r => r.OidcClaimValue))
+                    .Build();
+
                 options.AddPolicy("UserMustExistPolicy", policyBuilder =>
                     { policyBuilder.AddRequirements(new UserMustExistRequirement()); });
             });
