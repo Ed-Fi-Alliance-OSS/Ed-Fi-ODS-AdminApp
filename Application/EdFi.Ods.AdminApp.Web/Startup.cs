@@ -82,6 +82,7 @@ namespace EdFi.Ods.AdminApp.Web
 
             services.AddControllersWithViews(options =>
                     {
+                        options.Filters.Add(new AuthorizeFilter());
                         options.Filters.Add(new AuthorizeFilter("UserMustExistPolicy"));
                         options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
                         options.Filters.Add<JsonValidationFilter>();
