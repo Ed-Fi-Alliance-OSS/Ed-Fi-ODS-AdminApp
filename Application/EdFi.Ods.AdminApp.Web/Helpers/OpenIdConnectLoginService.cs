@@ -65,9 +65,11 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
                 _logger.Warn(error.ErrorMessage);
             }
 
-            throw new AdminAppException(
+            _logger.Error(
                 "To use Admin App, users must have an ID and Email Address set in their login provider system." +
                 " Contact your administrator to resolve this issue.");
+
+            return null;
         }
 
         public string GetIdentityUserIdForOpenIdConnectUser(string oidcUserId, string loginProvider)
@@ -120,12 +122,9 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
             var logMessage = !roleValues.Any()
                 ? $"User {identityUserId} has no role claims set"
                 : $"User {identityUserId} is missing an Admin App role claim. Found roles: {string.Join(", ", roleValues)}";
-            _logger.Warn(logMessage);
+            _logger.Error(logMessage);
 
-            throw new AdminAppException("To use Admin App, users must have a specific role set in their login provider system. Contact your administrator to resolve this issue.")
-            {
-                StatusCode = HttpStatusCode.Unauthorized
-            };
+            return null;
         }
     }
 }

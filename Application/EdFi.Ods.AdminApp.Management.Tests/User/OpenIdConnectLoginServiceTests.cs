@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using EdFi.Ods.AdminApp.Management.Database;
 using EdFi.Ods.AdminApp.Management.Database.Models;
-using EdFi.Ods.AdminApp.Management.ErrorHandling;
 using EdFi.Ods.AdminApp.Management.User;
 using EdFi.Ods.AdminApp.Web.Helpers;
 using NUnit.Framework;
@@ -101,45 +100,41 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
         }
 
         [Test]
-        public async Task ShouldNotAllowUserWithNoRoles()
+        public async Task ShouldNotCreateUserRolesWithNoRoleClaims()
         {
-            await Should.ThrowAsync<AdminAppException>(async () =>
+            var userId = await AddUserLogin(OidcUserId, OidcUserEmail, LoginProvider, ProviderDisplayName, Array.Empty<string>());
+            Scoped<AdminAppIdentityDbContext>(context =>
             {
-                await AddUserLogin(OidcUserId, OidcUserEmail, LoginProvider, ProviderDisplayName, Array.Empty<string>());
+                context.UserRoles.SingleOrDefault(x => x.UserId == userId).ShouldBeNull();
             });
         }
 
         [Test]
-        public async Task ShouldNotAllowUserWithNoValidRoles()
+        public async Task ShouldNotCreateUserWithNoValidRoleClaims()
         {
-            await Should.ThrowAsync<AdminAppException>(async () =>
+            var userId = await AddUserLogin(OidcUserId, OidcUserEmail, LoginProvider, ProviderDisplayName, new[] {"Not an admin app role"});
+            Scoped<AdminAppIdentityDbContext>(context =>
             {
-                await AddUserLogin(OidcUserId, OidcUserEmail, LoginProvider, ProviderDisplayName, new[] {"Not an admin app role"});
+                context.UserRoles.SingleOrDefault(x => x.UserId == userId).ShouldBeNull();
             });
         }
 
-        public async Task ShouldThrowIfUserHasNoProviderKey()
+        public async Task ShouldNotCreateUserWithNoProviderKey()
         {
-            await Should.ThrowAsync<AdminAppException>(async () =>
-            {
-                await AddUserLogin(null, OidcUserEmail, LoginProvider, ProviderDisplayName, new[] {Role.Admin.OidcClaimValue});
-            });
+            var user = await AddUserLogin(null, OidcUserEmail, LoginProvider, ProviderDisplayName, new[] {Role.Admin.OidcClaimValue});
+            user.ShouldBeNull();
         }
 
-        public async Task ShouldThrowIfUserHasNoEmail()
+        public async Task ShouldNotCreateIfUserHasNoEmail()
         {
-            await Should.ThrowAsync<AdminAppException>(async () =>
-            {
-                await AddUserLogin(OidcUserId, null, LoginProvider, ProviderDisplayName, new[] {Role.Admin.OidcClaimValue});
-            });
+            var user = await AddUserLogin(OidcUserId, null, LoginProvider, ProviderDisplayName, new[] {Role.Admin.OidcClaimValue});
+            user.ShouldBeNull();
         }
 
-        public async Task ShouldThrowIfProviderIsNotSet()
+        public async Task ShouldNotCreateIfProviderIsNotSet()
         {
-            await Should.ThrowAsync<AdminAppException>(async () =>
-            {
-                await AddUserLogin(OidcUserId, OidcUserEmail, null, null, new[] {"Role.Admin.OidcClaimValue"});
-            });
+            var user = await AddUserLogin(OidcUserId, OidcUserEmail, null, null, new[] {"Role.Admin.OidcClaimValue"});
+            user.ShouldBeNull();
         }
 
         private static async Task<string> AddUserLogin(string oidcUserId, string oidcUserEmail, string loginProvider, string providerDisplayName, string[] roleValues)

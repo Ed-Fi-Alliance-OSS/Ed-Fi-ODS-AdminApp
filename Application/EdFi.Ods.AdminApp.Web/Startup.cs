@@ -278,7 +278,10 @@ namespace EdFi.Ods.AdminApp.Web
                         var role = openIdConnectLoginService.UpdateUserRolesFromOidcClaim(
                             identityUserId, oidcUserRoles.ToArray());
 
-                        claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.DisplayName));
+                        if (role != null)
+                        {
+                            claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.DisplayName));
+                        }
                     }
                 }
             }
