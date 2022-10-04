@@ -5,9 +5,11 @@
 
 using System;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Reflection;
+using System.Threading.Tasks;
 using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Management.Api.Automapper;
 using EdFi.Ods.AdminApp.Management.Database;
@@ -15,6 +17,7 @@ using EdFi.Ods.AdminApp.Management.Database.Models;
 using EdFi.Ods.AdminApp.Management.Helpers;
 using EdFi.Ods.AdminApp.Web._Installers;
 using EdFi.Ods.AdminApp.Web.ActionFilters;
+using EdFi.Ods.AdminApp.Web.Helpers;
 using EdFi.Ods.AdminApp.Web.Hubs;
 using EdFi.Ods.AdminApp.Web.Infrastructure;
 using EdFi.Ods.AdminApp.Web.Infrastructure.HangFire;
@@ -27,6 +30,7 @@ using Microsoft.Extensions.Hosting;
 using FluentValidation.AspNetCore;
 using Hangfire;
 using log4net;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
@@ -34,9 +38,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using NUglify.Css;
 using NUglify.JavaScript;
+using System.Security.Claims;
+using System.Linq;
 using EdFi.Admin.DataAccess.DbConfigurations;
 
 namespace EdFi.Ods.AdminApp.Web
@@ -58,22 +65,28 @@ namespace EdFi.Ods.AdminApp.Web
             var databaseEngine = Configuration["AppSettings:DatabaseEngine"];
             DbConfiguration.SetConfiguration(new DatabaseEngineDbConfiguration(Common.Configuration.DatabaseEngine.TryParseEngine(databaseEngine)));
 
+            var identitySettings = new IdentitySettings();
+            Configuration.GetSection("IdentitySettings").Bind(identitySettings);
+
             services.AddDbContext<AdminAppDbContext>(ConfigureForAdminDatabase);
             services.AddDbContext<AdminAppIdentityDbContext>(ConfigureForAdminDatabase);
             services.AddDbContext<AdminAppDataProtectionKeysDbContext>(ConfigureForAdminDatabase);
 
-            services.AddIdentity<AdminAppUser, IdentityRole>()
-                .AddEntityFrameworkStores<AdminAppIdentityDbContext>()
-                .AddDefaultTokenProviders();
+            if(identitySettings.Type == IdentitySettingsConstants.EntityFrameworkIdentityType)
+                ConfigureForEntityFrameworkIdentity(services);
+            else if (identitySettings.Type == IdentitySettingsConstants.OpenIdIdentityType)
+                ConfigureForOpenIdConnectIdentity(services, identitySettings);
+            else
+                throw new NotSupportedException(
+                    $"Unknown Identity Type {identitySettings.Type} configured. Please configure a supported Identity Type. Currently supported types are: EntityFramework and OpenIdConnect");
 
             services.AddControllersWithViews(options =>
                     {
+                        options.Filters.Add(new AuthorizeFilter());
                         options.Filters.Add(new AuthorizeFilter("UserMustExistPolicy"));
                         options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
                         options.Filters.Add<JsonValidationFilter>();
                         options.Filters.Add<SetupRequiredFilter>();
-                        options.Filters.Add<UserContextFilter>();
-                        options.Filters.Add<PasswordChangeRequiredFilter>();
                         options.Filters.Add<InstanceContextFilter>();
                     })
                     .AddFluentValidation(
@@ -109,34 +122,12 @@ namespace EdFi.Ods.AdminApp.Web
                     pipeline.AddJavaScriptBundle("/bundles/authstrategy.min.js", minifyJsSettings, "/Scripts/auth-editor.js");
                 });
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("UserMustExistPolicy",
-                    policyBuilder =>
-                    {
-                        policyBuilder.AddRequirements(new UserMustExistRequirement());
-                    });
-            });
-
-            services.AddScoped<IAuthorizationHandler, UserMustExistHandler>();
-
-            services.Configure<IdentityOptions>(options =>
-            {
-                options.User.RequireUniqueEmail = true;
-            });
-
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.LoginPath = "/Identity/Login";
-                options.LogoutPath = "/Identity/LogOut";
-                options.AccessDeniedPath = "/Identity/Login";
-            });
-
             services.AddDataProtection().PersistKeysToDbContext<AdminAppDataProtectionKeysDbContext>();
 
             services.AddAutoMapper(executingAssembly, typeof(AdminManagementMappingProfile).Assembly);
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            services.Configure<IdentitySettings>(Configuration.GetSection("IdentitySettings"));
             services.Configure<ConnectionStrings>(Configuration.GetSection("ConnectionStrings"));
 
             services.AddSignalR();
@@ -167,6 +158,141 @@ namespace EdFi.Ods.AdminApp.Web
 
             // This statement should be kept last to ensure that the IHttpClientFactory and IInferOdsApiVersion services are registered.
             CommonConfigurationInstaller.ConfigureLearningStandards(services).Wait();
+        }
+
+        private void ConfigureForEntityFrameworkIdentity(IServiceCollection services)
+        {
+            services.AddIdentity<AdminAppUser, IdentityRole>()
+                .AddEntityFrameworkStores<AdminAppIdentityDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.AddControllersWithViews(
+                options =>
+                {
+                    options.Filters.Add<PasswordChangeRequiredFilter>();
+                    options.Filters.Add<UserContextFilter>();
+                });
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+            });
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Identity/Login";
+                options.LogoutPath = "/Identity/LogOut";
+                options.AccessDeniedPath = "/Identity/Login";
+            });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("UserMustExistPolicy", policyBuilder =>
+                    { policyBuilder.AddRequirements(new UserMustExistRequirement()); });
+            });
+
+            services.AddScoped<IAuthorizationHandler, UserMustExistHandler>();
+        }
+
+        private void ConfigureForOpenIdConnectIdentity(IServiceCollection services, IdentitySettings identitySettings)
+        {
+            var openIdSettings = identitySettings.OpenIdSettings;
+            services.AddControllersWithViews(
+                options =>
+                {
+                    options.Filters.Add<OpenIdConnectUserContextFilter>();
+                });
+            services.AddScoped<IOpenIdConnectLoginService, OpenIdConnectLoginService>();
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = openIdSettings.AuthenticationScheme;
+            })
+            .AddCookie(
+                options =>
+                {
+
+                    options.LoginPath = "/OpenIdConnect/Login";
+                    options.LogoutPath = "/OpenIdConnect/Logout";
+                    options.AccessDeniedPath = "/OpenIdConnect/Login";
+
+                    options.Events.OnRedirectToAccessDenied = context =>
+                    { ;
+                        context.HttpContext.Response.StatusCode = 401;
+                        return Task.FromResult(Task.CompletedTask);
+                    };
+
+                    options.Events.OnSignedIn = async context =>
+                    {
+                        await EnsureIdentityUserSetupForOpenIdConnectUser(context);
+                    };
+                })
+            .AddOpenIdConnect(openIdSettings.AuthenticationScheme, options =>
+            {
+                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+
+                options.Authority = openIdSettings.Authority;
+
+                options.ClientId = openIdSettings.ClientId;
+                options.ClientSecret = openIdSettings.ClientSecret;
+                options.ResponseType = openIdSettings.ResponseType;
+
+                options.Scope.Clear();
+                foreach (var scope in openIdSettings.Scopes)
+                    options.Scope.Add(scope);
+
+                options.SaveTokens = openIdSettings.SaveTokens;
+                options.RequireHttpsMetadata = openIdSettings.RequireHttpsMetadata;
+                options.GetClaimsFromUserInfoEndpoint = openIdSettings.GetClaimsFromUserInfoEndpoint;
+
+
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = openIdSettings.ClaimTypeMappings.NameClaimType,
+                    RoleClaimType = openIdSettings.ClaimTypeMappings.RoleClaimType
+                };
+            });
+
+            services.AddAuthorization(options =>
+            {
+                options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                    .RequireClaim(ClaimTypes.Role, Role.GetAll().Select(r => r.OidcClaimValue))
+                    .Build();
+
+                options.AddPolicy("UserMustExistPolicy", policyBuilder =>
+                    { policyBuilder.AddRequirements(new UserMustExistRequirement()); });
+            });
+
+            services.AddScoped<IAuthorizationHandler, OpenIdConnectUserMustExistHandler>();
+
+            async Task EnsureIdentityUserSetupForOpenIdConnectUser(CookieSignedInContext context)
+            {
+                var openIdConnectLoginService =
+                    context.HttpContext.RequestServices.GetRequiredService<IOpenIdConnectLoginService>();
+
+                var claimsIdentity = context.Principal?.Identity as ClaimsIdentity;
+                var oidcUserId = claimsIdentity?.Claims.FirstOrDefault(m => m.Type == openIdSettings.ClaimTypeMappings.IdentifierClaimType)?.Value;
+                var oidcUserEmail = claimsIdentity?.Claims.FirstOrDefault(m => m.Type == openIdSettings.ClaimTypeMappings.EmailClaimType)?.Value;
+                var oidcUserRoles = claimsIdentity?.Claims.Where(m => m.Type == openIdSettings.ClaimTypeMappings.RoleClaimType).Select(c => c.Value);
+
+                if (claimsIdentity != null)
+                {
+                    var loginProvider = identitySettings.OpenIdSettings.LoginProvider;
+                    var identityUserId = openIdConnectLoginService!.GetIdentityUserIdForOpenIdConnectUser(oidcUserId, loginProvider)
+                                         ?? await openIdConnectLoginService!.AddUserLoginForOpenIdConnect(oidcUserId, oidcUserEmail, loginProvider, loginProvider);
+
+                    if (identityUserId != null)
+                    {
+                        var role = openIdConnectLoginService.UpdateUserRolesFromOidcClaim(
+                            identityUserId, oidcUserRoles.ToArray());
+
+                        if (role != null)
+                        {
+                            claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.DisplayName));
+                        }
+                    }
+                }
+            }
         }
 
         private void ConfigureForAdminDatabase(DbContextOptionsBuilder options)
@@ -204,6 +330,14 @@ namespace EdFi.Ods.AdminApp.Web
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseStatusCodePages(ctx =>
+            {
+                var response = ctx.HttpContext.Response;
+                if (response.StatusCode == (int) HttpStatusCode.Unauthorized || response.StatusCode == (int) HttpStatusCode.Forbidden)
+                    response.Redirect("/Home/Unauthorized");
+                return Task.CompletedTask;
+            });
 
             app.UseWebOptimizer();
 

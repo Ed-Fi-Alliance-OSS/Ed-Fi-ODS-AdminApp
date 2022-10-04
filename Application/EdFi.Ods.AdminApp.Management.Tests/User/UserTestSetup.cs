@@ -118,6 +118,58 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
             });
         }
 
+        public static void EnsureZeroUsers()
+        {
+            Scoped<AdminAppIdentityDbContext>(database =>
+            {
+                foreach (var entity in database.Users)
+                    database.Users.Remove(entity);
+                database.SaveChanges();
+            });
+        }
+
+        public static void EnsureZeroUserLogins()
+        {
+            Scoped<AdminAppIdentityDbContext>(database =>
+            {
+                foreach (var entity in database.UserLogins)
+                    database.UserLogins.Remove(entity);
+                database.SaveChanges();
+            });
+        }
+
+        public static string EnsureOneUserAndUserLogin(string loginProvider, string providerDisplayName, string providerKey, string userEmail)
+        {
+            EnsureZeroUsers();
+            EnsureZeroUserLogins();
+
+            string userId = null;
+            Scoped<AdminAppIdentityDbContext>(database =>
+            {
+                var testUser = new AdminAppUser
+                {
+                    UserName = userEmail,
+                    Email = userEmail
+                };
+
+                var testIdentityUserLogin = new IdentityUserLogin
+                {
+                    LoginProvider = loginProvider,
+                    ProviderDisplayName = providerDisplayName,
+                    ProviderKey = providerKey,
+                    UserId = testUser.Id
+                };
+
+                database.Users.Add(testUser);
+                database.UserLogins.Add(testIdentityUserLogin);
+
+                userId = testUser.Id;
+                database.SaveChanges();
+            });
+
+            return userId;
+        }
+
         public static TResult Query<TResult>(Func<AdminAppIdentityDbContext, TResult> query)
         {
             TResult result = default(TResult);

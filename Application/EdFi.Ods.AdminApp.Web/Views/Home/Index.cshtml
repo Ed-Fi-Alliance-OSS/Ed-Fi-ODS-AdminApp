@@ -6,10 +6,14 @@ See the LICENSE and NOTICES files in the project root for more information.
 *@
 
 @using EdFi.Ods.AdminApp.Web.Display.HomeScreen
+@using Microsoft.Extensions.Options
+@using EdFi.Ods.AdminApp.Management.Helpers
 @model EdFi.Ods.AdminApp.Web.Models.ViewModels.Home.IndexModel
+@inject IOptions<IdentitySettings> IdentitySettings
 
 @{
     ViewBag.Title = "Home Page";
+    var controllerName = IdentitySettings.Value.ControllerName;
 }
 
 @if (User.Identity.IsAuthenticated)
@@ -74,7 +78,7 @@ else
     <div class="text-center">
         <img src="~/Content/images/logo-edfi@2x.png"/>
         <p class="lead">Ed-Fi ODS Admin App for Suite 3</p>
-        <p>Please <a href="@Url.Action("Login", "Identity")" class="btn btn-primary">Sign In <span class="padding-left"><i class="fa fa-chevron-circle-right"></i></span></a> to continue</p>
+        <p>Please <a href="@Url.Action("Login", controllerName)" class="btn btn-primary">Sign In <span class="padding-left"><i class="fa fa-chevron-circle-right"></i></span></a> to continue</p>
     </div>
 }
 
