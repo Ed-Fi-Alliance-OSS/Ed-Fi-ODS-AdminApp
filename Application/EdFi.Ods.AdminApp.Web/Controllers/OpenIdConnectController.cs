@@ -64,10 +64,10 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> LogOut()
+        public Task<IActionResult> LogOut()
         {
-            return new SignOutResult(new[]
-                {CookieAuthenticationDefaults.AuthenticationScheme, _identitySettings.OpenIdSettings.AuthenticationScheme});
+            return Task.FromResult<IActionResult>(new SignOutResult(new[]
+                {CookieAuthenticationDefaults.AuthenticationScheme, _identitySettings.OpenIdSettings.AuthenticationScheme}));
         }
     }
 }
