@@ -331,6 +331,14 @@ namespace EdFi.Ods.AdminApp.Web
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseStatusCodePages(ctx =>
+            {
+                var response = ctx.HttpContext.Response;
+                if (response.StatusCode == (int) HttpStatusCode.Unauthorized || response.StatusCode == (int) HttpStatusCode.Forbidden)
+                    response.Redirect("/Home/Unauthorized");
+                return Task.CompletedTask;
+            });
+
             app.UseWebOptimizer();
 
             app.UseStaticFiles();
