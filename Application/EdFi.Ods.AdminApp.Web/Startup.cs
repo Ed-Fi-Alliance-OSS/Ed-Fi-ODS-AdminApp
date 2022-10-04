@@ -121,15 +121,6 @@ namespace EdFi.Ods.AdminApp.Web
                     pipeline.AddJavaScriptBundle("/bundles/authstrategy.min.js", minifyJsSettings, "/Scripts/auth-editor.js");
                 });
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("UserMustExistPolicy",
-                    policyBuilder =>
-                    {
-                        policyBuilder.AddRequirements(new UserMustExistRequirement());
-                    });
-            });
-
             services.AddDataProtection().PersistKeysToDbContext<AdminAppDataProtectionKeysDbContext>();
 
             services.AddAutoMapper(executingAssembly, typeof(AdminManagementMappingProfile).Assembly);
@@ -193,6 +184,12 @@ namespace EdFi.Ods.AdminApp.Web
                 options.AccessDeniedPath = "/Identity/Login";
             });
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("UserMustExistPolicy", policyBuilder =>
+                    { policyBuilder.AddRequirements(new UserMustExistRequirement()); });
+            });
+
             services.AddScoped<IAuthorizationHandler, UserMustExistHandler>();
         }
 
@@ -253,6 +250,12 @@ namespace EdFi.Ods.AdminApp.Web
                     NameClaimType = openIdSettings.ClaimTypeMappings.NameClaimType,
                     RoleClaimType = openIdSettings.ClaimTypeMappings.RoleClaimType
                 };
+            });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("UserMustExistPolicy", policyBuilder =>
+                    { policyBuilder.AddRequirements(new UserMustExistRequirement()); });
             });
 
             services.AddScoped<IAuthorizationHandler, OpenIdConnectUserMustExistHandler>();
