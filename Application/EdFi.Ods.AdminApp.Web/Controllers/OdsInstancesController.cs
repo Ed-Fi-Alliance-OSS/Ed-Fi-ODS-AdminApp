@@ -51,7 +51,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         [AddTelemetry("Ods Instances Index", TelemetryType.View)]
         public ViewResult Index()
         {
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var currentUserId = _userContext.User.Id;
             var instances = _getOdsInstanceRegistrationsByUserIdQuery.Execute(currentUserId);
 
             var model = new IndexModel
@@ -86,7 +86,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         [AddTelemetry("Register ODS Instance")]
         public async Task<ActionResult> RegisterOdsInstance(RegisterOdsInstanceModel model)
         {
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var currentUserId = _userContext.User.Id;
 
             await _registerOdsInstanceCommand.Execute(model,
                 CloudOdsAdminAppSettings.Instance.Mode, currentUserId, CloudOdsAdminAppClaimSetConfiguration.Default);
@@ -105,7 +105,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         [AddTelemetry("Bulk Register ODS Instances")]
         public async Task<ActionResult> BulkRegisterOdsInstances(BulkRegisterOdsInstancesModel model)
         {
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var currentUserId = _userContext.User.Id;
             var results = await _bulkRegisterOdsInstancesCommand.Execute(
                 model.DataRecords(), model.FilteredDataRecords,
                 CloudOdsAdminAppSettings.Instance.Mode, currentUserId,

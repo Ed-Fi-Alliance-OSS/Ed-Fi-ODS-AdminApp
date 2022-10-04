@@ -5,15 +5,26 @@ The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2
 See the LICENSE and NOTICES files in the project root for more information.
 *@
 
+@using EdFi.Ods.AdminApp.Management.Helpers
+@using Microsoft.Extensions.Options
+@inject IOptions<IdentitySettings> IdentitySettings
+
+@{
+    var controllerName = IdentitySettings.Value.ControllerName;
+}
+
 @if (User.Identity.IsAuthenticated)
 {
-    using (Html.BeginForm("LogOut", "Identity", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    using (Html.BeginForm("LogOut", controllerName, FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
     {
         @Html.AntiForgeryToken()
 
         <ul class="nav navbar-nav navbar-right">
             <li>
-                @Html.ActionLink(User.Identity.Name, "ChangePassword", "Identity", new { }, new { id = "usernameLink" })
+                @if (User.Identity.Name != null)
+                {
+                    @Html.ActionLink(User.Identity.Name, "ChangePassword", controllerName, null, new { id = "usernameLink" })
+                }
             </li>
             <li><a href="javascript:document.getElementById('logoutForm').submit()">Log Out</a></li>
         </ul>

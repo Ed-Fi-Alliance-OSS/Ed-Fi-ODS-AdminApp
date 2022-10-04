@@ -6,20 +6,40 @@
 using System.Collections.Generic;
 using System.Linq;
 using EdFi.Ods.AdminApp.Web.Display.TabEnumeration;
-using EdFi.Ods.AdminApp.Web.Infrastructure;
 using EdFi.Common.Utils.Extensions;
+using EdFi.Ods.AdminApp.Management.Helpers;
+using Microsoft.Extensions.Options;
 
 namespace EdFi.Ods.AdminApp.Web.Display.DisplayService
 {
     public class OnPremTabDisplayService : BaseTabDisplayService, ITabDisplayService
     {
+        private readonly IdentitySettings _identitySettings;
+
+        public OnPremTabDisplayService(IOptions<IdentitySettings> identitySettings)
+        {
+            _identitySettings = identitySettings.Value;
+        }
+
         public override List<TabDisplay<GlobalSettingsTabEnumeration>>
             GetGlobalSettingsTabDisplay(GlobalSettingsTabEnumeration selectedTab)
         {
             var globalSettingsTabs = base.GetGlobalSettingsTabDisplay(selectedTab);
 
+
+            var disabledTabs = new List<GlobalSettingsTabEnumeration>
+            {
+                GlobalSettingsTabEnumeration.AdvancedSettings
+            };
+
+            if (_identitySettings.Type == IdentitySettingsConstants.OpenIdIdentityType)
+            {
+                disabledTabs.Add(GlobalSettingsTabEnumeration.Users);
+            }
+
             var tabsToDisable = globalSettingsTabs.Where(x =>
-                x.Tab == GlobalSettingsTabEnumeration.AdvancedSettings);
+                disabledTabs.Contains(x.Tab));
+
 
             tabsToDisable.ForEach(tab =>
             {
