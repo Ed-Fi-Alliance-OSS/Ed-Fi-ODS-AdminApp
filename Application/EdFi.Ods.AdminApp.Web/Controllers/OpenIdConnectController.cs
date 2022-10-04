@@ -12,6 +12,7 @@ using Microsoft.Extensions.Options;
 using EdFi.Ods.AdminApp.Management.ErrorHandling;
 using System.Net;
 using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EdFi.Ods.AdminApp.Web.Controllers
 {
@@ -26,6 +27,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Login(string returnUrl)
         {
             returnUrl ??= Url.Content("~/");
@@ -60,6 +62,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> LogOut()
         {
             await HttpContext.SignOutAsync();
