@@ -66,7 +66,7 @@
             AdminDB = "host=db-admin;port=5432;username=username;password=password;database=EdFi_Admin;Application Name=EdFi.Ods.AdminApp;"
             SecurityDB = "host=db-admin;port=5432;username=username;password=password;database=EdFi_Security;Application Name=EdFi.Ods.AdminApp;"
             ProductionOdsDB = "host=db-ods;port=5432;username=username;password=password;database=EdFi_{0};Application Name=EdFi.Ods.AdminApp;"
-            }
+        }
 
         .\build.ps1 -Version "2.1" -Configuration Release -DockerEnvValues $p -Command BuildAndDeployToAdminAppDockerContainer
 #>
@@ -86,12 +86,6 @@ param(
     # configured in the build automation tool and passed to this script.
     [string]
     $APIVersion = $Version,
-
-    # Build counter from the automation tool. The .NET assembly version will be
-    # composed from <$Version>.<$BuildCounter> (i.e. "0.1.0.1" with the default
-    # values).
-    [string]
-    $BuildCounter = "1",
 
     # .NET project build configuration, defaults to "Debug". Options are: Debug, Release.
     [string]
@@ -163,7 +157,7 @@ function Restore {
 
 function SetAdminAppAssemblyInfo {
     Invoke-Execute {
-        $assembly_version = GetAdminAppPackageVersion
+        $assembly_version = $Version
 
         Invoke-RegenerateFile "$solutionRoot/Directory.Build.props" @"
 <Project>
@@ -184,7 +178,7 @@ function SetAdminAppAssemblyInfo {
 
 function SetAdminApiAssemblyInfo {
     Invoke-Execute {
-        $assembly_version = GetAdminApiPackageVersion
+        $assembly_version = $APIVersion
 
         Invoke-RegenerateFile "$solutionRoot/EdFi.Ods.Admin.Api/Directory.Build.props" @"
 <Project>
@@ -309,21 +303,13 @@ function NewDevCertificate {
     }
 }
 
-function GetAdminAppPackageVersion {
-    return "$Version.$BuildCounter"
-}
-
-function GetAdminApiPackageVersion {
-    return "$APIVersion.$BuildCounter"
-}
-
 function BuildDatabasePackage {
     $project = "EdFi.Ods.AdminApp.Web"
     $mainPath = "$solutionRoot/$project"
     $projectPath = "$mainPath/$project.csproj"
     $nugetSpecPath = "$mainPath/publish/EdFi.Ods.AdminApp.Database.nuspec"
 
-    RunNuGetPack -ProjectPath $projectPath -PackageVersion $(GetAdminAppPackageVersion) $nugetSpecPath
+    RunNuGetPack -ProjectPath $projectPath -PackageVersion $Version $nugetSpecPath
 }
 
 function BuildAdminAppPackage {
@@ -332,7 +318,7 @@ function BuildAdminAppPackage {
     $projectPath = "$mainPath/$project.csproj"
     $nugetSpecPath = "$mainPath/publish/$project.nuspec"
 
-    RunNuGetPack -ProjectPath $projectPath -PackageVersion $(GetAdminAppPackageVersion) $nugetSpecPath
+    RunNuGetPack -ProjectPath $projectPath -PackageVersion $Version $nugetSpecPath
 }
 
 function BuildApiPackage {
@@ -341,7 +327,7 @@ function BuildApiPackage {
     $projectPath = "$mainPath/$project.csproj"
     $nugetSpecPath = "$mainPath/publish/$project.nuspec"
 
-    RunNuGetPack -ProjectPath $projectPath -PackageVersion $(GetAdminApiPackageVersion) $nugetSpecPath
+    RunNuGetPack -ProjectPath $projectPath -PackageVersion $APIVersion $nugetSpecPath
 }
 
 function PushPackage {
