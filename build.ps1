@@ -236,11 +236,11 @@ function RunTests {
     $testAssemblies = Get-ChildItem -Path $testAssemblyPath -Filter "$Filter.dll" -Recurse
 
     if ($testAssemblies.Length -eq 0) {
-        Write-Host "no test assemblies found in $testAssemblyPath"
+        Write-Output "no test assemblies found in $testAssemblyPath"
     }
 
     $testAssemblies | ForEach-Object {
-        Write-Host "Executing: dotnet test $($_)"
+        Write-Output "Executing: dotnet test $($_)"
         Invoke-Execute { dotnet test $_ }
     }
 }
@@ -297,11 +297,12 @@ function RunNuGetPack {
 function NewDevCertificate {
     Invoke-Command { dotnet dev-certs https -c }
     if ($lastexitcode) {
-        Write-Host "Generating a new Dev Certificate" -ForegroundColor Magenta
+        Write-Output "Generating a new Dev Certificate" -ForegroundColor Magenta
         Invoke-Execute { dotnet dev-certs https --clean }
         Invoke-Execute { dotnet dev-certs https -t }
-    } else {
-        Write-Host "Dev Certificate already exists" -ForegroundColor Magenta
+    }
+    else {
+        Write-Output "Dev Certificate already exists" -ForegroundColor Magenta
     }
 }
 
@@ -365,29 +366,30 @@ function Invoke-Build {
 }
 
 function Invoke-SetAssemblyInfo {
-    Write-Host "Setting Assembly Information" -ForegroundColor Cyan
+    Write-Output "Setting Assembly Information" -ForegroundColor Cyan
 
     Invoke-Step { SetAdminAppAssemblyInfo }
     Invoke-Step { SetAdminApiAssemblyInfo }
 }
 
 function Invoke-Publish {
-    Write-Host "Building Version AdminApp ($Version) and AdminApi ($APIVersion)" -ForegroundColor Cyan
+    Write-Output "Building Version AdminApp ($Version) and AdminApi ($APIVersion)" -ForegroundColor Cyan
 
     Invoke-Step { PublishAdminApp }
     Invoke-Step { PublishAdminApi }
 }
 
 function Invoke-Run {
-    Write-Host "Running Admin App" -ForegroundColor Cyan
+    Write-Output "Running Admin App" -ForegroundColor Cyan
 
     Invoke-Step { NewDevCertificate }
 
     $projectFilePath = "$solutionRoot/EdFi.Ods.AdminApp.Web"
 
     if ([string]::IsNullOrEmpty($LaunchProfile)) {
-        Write-Host "LaunchProfile parameter is required for running Admin App. Please specify the LaunchProfile parameter. Valid values include 'mssql-district', 'mssql-shared', 'mssql-year', 'pg-district', 'pg-shared' and 'pg-year'" -ForegroundColor Red
-    } else {
+        Write-Output "LaunchProfile parameter is required for running Admin App. Please specify the LaunchProfile parameter. Valid values include 'mssql-district', 'mssql-shared', 'mssql-year', 'pg-district', 'pg-shared' and 'pg-year'" -ForegroundColor Red
+    }
+    else {
         Invoke-Execute { dotnet run --project $projectFilePath --launch-profile $LaunchProfile }
     }
 }
@@ -404,7 +406,7 @@ function Invoke-IntegrationTests {
     Invoke-Step { InitializeNuGet }
 
     $supportedApiVersions | ForEach-Object {
-        Write-Host "Running Integration Tests for ODS Version" $_.OdsVersion -ForegroundColor Cyan
+        Write-Output "Running Integration Tests for ODS Version" $_.OdsVersion -ForegroundColor Cyan
 
         Invoke-Step {
             $arguments = @{
@@ -478,7 +480,7 @@ function UpdateAppSettingsForAdminApiDocker {
     $json.AppSettings.ApiStartupType = $DockerEnvValues["ApiStartupType"]
     $json.AppSettings.DatabaseEngine = $DockerEnvValues["DatabaseEngine"]
     $json.AppSettings.PathBase = $DockerEnvValues["PathBase"]
-    
+
     $json.Authentication.IssuerUrl = $DockerEnvValues["IssuerUrl"]
     $json.Authentication.SigningKey = $DockerEnvValues["SigningKey"]
 
