@@ -401,11 +401,11 @@ function Invoke-Clean {
     Invoke-Step { Clean }
 }
 
-function Invoke-UnitTests {
+function Invoke-UnitTestSuite {
     Invoke-Step { UnitTests }
 }
 
-function Invoke-IntegrationTests {
+function Invoke-IntegrationTestSuite {
     Invoke-Step { InitializeNuGet }
 
     $supportedApiVersions | ForEach-Object {
@@ -534,12 +534,12 @@ Invoke-Main {
             Invoke-Publish
         }
         Run { Invoke-Run }
-        UnitTest { Invoke-UnitTests }
-        IntegrationTest { Invoke-IntegrationTests }
+        UnitTest { Invoke-UnitTestSuite }
+        IntegrationTest { Invoke-IntegrationTestSuite }
         BuildAndTest {
             Invoke-Build
-            Invoke-UnitTests
-            Invoke-IntegrationTests
+            Invoke-UnitTestSuite
+            Invoke-IntegrationTestSuite
         }
         Package { Invoke-BuildPackage }
         PackageApi { Invoke-BuildApiPackage }
