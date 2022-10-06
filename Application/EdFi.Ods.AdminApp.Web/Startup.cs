@@ -258,7 +258,7 @@ namespace EdFi.Ods.AdminApp.Web
             services.AddAuthorization(options =>
             {
                 options.DefaultPolicy = new AuthorizationPolicyBuilder()
-                    .RequireClaim(ClaimTypes.Role, Role.GetAll().Select(r => r.OidcClaimValue))
+                    .RequireClaim(ClaimTypes.Role, Role.GetAll().Select(r => r.DisplayName))
                     .Build();
 
                 options.AddPolicy("UserMustExistPolicy", policyBuilder =>
@@ -285,8 +285,7 @@ namespace EdFi.Ods.AdminApp.Web
 
                     if (identityUserId != null)
                     {
-                        var role = openIdConnectLoginService.UpdateUserRolesFromOidcClaim(
-                            identityUserId, oidcUserRoles.ToArray());
+                        openIdConnectLoginService.UpdateUserRolesFromIncomingClaim(identityUserId, oidcUserRoles.ToArray());
                     }
                 }
             }
