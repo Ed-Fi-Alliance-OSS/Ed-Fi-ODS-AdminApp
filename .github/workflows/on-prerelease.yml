@@ -79,8 +79,7 @@ jobs:
           ./build.ps1 -Command BuildAndPublish `
               -Configuration Release `
               -Version $appVersion `
-              -APIVersion $apiVersion `
-              -BuildCounter ${{ github.run_number }}
+              -APIVersion $apiVersion
 
       - name: Populate Google Analytics ID
         run: .\build.ps1 -Command PopulateGoogleAnalyticsAppSettings -GoogleAnalyticsMeasurementId ${{env.GA_MEASUREMENT_ID}}
@@ -94,18 +93,19 @@ jobs:
           "Building ${{ steps.package-name.outputs.package-name }} NuGet Package" | Write-Output
           if ("${{ steps.package-name.outputs.package-name }}" -eq "AdminApp") {
             # Web, DB, and Installer
-            ./build.ps1 -Command Package -Version $appVersion `
-                -Configuration Release  -BuildCounter ${{ github.run_number }}
+            ./build.ps1 -Command Package `
+                -Version $appVersion `
+                -Configuration Release
 
-            ./build.ps1 -Command PackageDatabase -Version $appVersion `
-                -Configuration Release -BuildCounter ${{ github.run_number }}
-
-            # TODO: add installer
+            ./build.ps1 -Command PackageDatabase `
+                -Version $appVersion `
+                -Configuration Release
           }
           else {
             # Admin API
-            ./build.ps1 -Command PackageApi -Version  $apiVersion `
-                -Configuration Release  -BuildCounter ${{ github.run_number }}
+            ./build.ps1 -Command PackageApi `
+                -Version  $apiVersion `
+                -Configuration Release
           }
 
       - name: Generate hash for NuGet package
