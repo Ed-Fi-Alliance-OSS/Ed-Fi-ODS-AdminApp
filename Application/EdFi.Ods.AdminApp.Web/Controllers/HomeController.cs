@@ -78,6 +78,8 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                 : View(errorModel);
         }
 
+        public ActionResult Unauthorized() => View();
+
         private bool ZeroOdsInstanceRegistrations()
         {
             return CloudOdsAdminAppSettings.Instance.Mode.SupportsMultipleInstances &&
