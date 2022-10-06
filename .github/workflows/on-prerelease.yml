@@ -34,7 +34,6 @@ jobs:
 
       - name: Set Version Numbers
         id: versions
-        shell: pwsh
         run: |
           $webPrefix = "AdminApp.Web-v"
           $apiPRefix = "Admin.Api-v"
