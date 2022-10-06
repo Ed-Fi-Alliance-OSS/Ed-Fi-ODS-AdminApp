@@ -6,11 +6,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using EdFi.Ods.AdminApp.Management.Database;
 using EdFi.Ods.AdminApp.Management.Database.Models;
-using EdFi.Ods.AdminApp.Management.ErrorHandling;
 using EdFi.Ods.AdminApp.Management.User;
 using EdFi.Ods.AdminApp.Web.Models.ViewModels.User;
 using log4net;
@@ -23,7 +21,7 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
 
         string GetIdentityUserIdForOpenIdConnectUser(string oidcUserId, string loginProvider);
 
-        Role UpdateUserRolesFromOidcClaim(string identityUserId, IEnumerable<string> roleValues);
+        Role UpdateUserRolesFromIncomingClaim(string identityUserId, IEnumerable<string> roleValues);
     }
 
     public class OpenIdConnectLoginService : IOpenIdConnectLoginService
@@ -100,12 +98,16 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
             return identityUserId;
         }
 
-        public Role UpdateUserRolesFromOidcClaim(string identityUserId, IEnumerable<string> roleValues)
+        public Role UpdateUserRolesFromIncomingClaim(string identityUserId, IEnumerable<string> roleValues)
         {
             if (identityUserId == null)
                 throw new ArgumentNullException(nameof(identityUserId));
 
-            var role = Role.FromOidcClaims(roleValues);
+            Role role;
+            if (roleValues.Count() == 1 && Role.TryParse(roleValues.Single(), out var parsedRole))
+                role = parsedRole;
+            else
+                role = Role.FromOidcClaims(roleValues);
 
             if (role != null)
             {

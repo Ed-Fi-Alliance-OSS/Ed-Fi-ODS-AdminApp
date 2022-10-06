@@ -100,6 +100,17 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
         }
 
         [Test]
+        public async Task ShouldSetRoleWhichHasAlreadyBeenMapped()
+        {
+            var userId = await AddUserLogin(OidcUserId, OidcUserEmail, LoginProvider, ProviderDisplayName,
+                new []{ Role.SuperAdmin.DisplayName});
+            Scoped<AdminAppIdentityDbContext>(context =>
+            {
+                context.UserRoles.SingleOrDefault(x => x.UserId == userId)?.RoleId.ShouldBe(Role.SuperAdmin.Value.ToString());
+            });
+        }
+
+        [Test]
         public async Task ShouldNotCreateUserRolesWithNoRoleClaims()
         {
             var userId = await AddUserLogin(OidcUserId, OidcUserEmail, LoginProvider, ProviderDisplayName, Array.Empty<string>());
@@ -153,7 +164,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
                     identityUserId = await openIdConnectLoginService.AddUserLoginForOpenIdConnect(
                         oidcUserId, oidcUserEmail, loginProvider, providerDisplayName);
 
-                    openIdConnectLoginService.UpdateUserRolesFromOidcClaim(identityUserId, roleValues);
+                    openIdConnectLoginService.UpdateUserRolesFromIncomingClaim(identityUserId, roleValues);
                 });
             return identityUserId;
         }
