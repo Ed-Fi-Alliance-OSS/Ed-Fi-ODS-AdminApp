@@ -30,6 +30,9 @@ namespace EdFi.Ods.AdminApp.Management.Helpers
         public bool GetClaimsFromUserInfoEndpoint { get; set; }
         public bool SaveTokens { get; set; }
         public List<string> Scopes { get; set; }
+        /// <summary>
+        /// Mappings from OIDC Claim Types to those used by Admin App. Should only be used "OnTicketReceived" - favor ClaimTypes used by Admin App, not OIDC.
+        /// </summary>
         public ClaimTypeMappings ClaimTypeMappings { get; set; }
     }
 
