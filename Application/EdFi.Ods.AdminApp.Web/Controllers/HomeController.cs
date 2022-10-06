@@ -78,7 +78,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                 : View(errorModel);
         }
 
-        public ActionResult Unauthorized() => View();
+        public ActionResult UserUnauthorized() => View();
 
         private bool ZeroOdsInstanceRegistrations()
         {
