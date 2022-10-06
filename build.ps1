@@ -3,9 +3,8 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-# We might want to look into ShouldProcess to see if it _IS_ in fact relevant
-# to Ed-Fi build and/or install scripts. For now, disabling warnings.
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSShouldProcess', '', Justification = 'Rule is irrelevant in this context')]
+# This refers to function Update-AppSettingsToAddGoogleAnalyticsMeasurementId
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Rule is irrelevant in this context', Scope = "Function")]
 
 [CmdLetBinding()]
 <#
@@ -70,7 +69,7 @@
 
         .\build.ps1 -Version "2.1" -Configuration Release -DockerEnvValues $p -Command BuildAndDeployToAdminAppDockerContainer
 #>
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', 'unused', Justification = 'False positive')]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '', Justification = 'False positive')]
 param(
     # Command to execute, defaults to "Build".
     [string]
