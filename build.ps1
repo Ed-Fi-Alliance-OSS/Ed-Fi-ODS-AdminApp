@@ -459,7 +459,7 @@ function Update-AppSettingsToAddGoogleAnalyticsMeasurementId {
     $filePath = "$solutionRoot/EdFi.Ods.AdminApp.Web/publish/appsettings.json"
     $json = (Get-Content -Path $filePath) | ConvertFrom-Json
     $json.AppSettings.GoogleAnalyticsMeasurementId = $GoogleAnalyticsMeasurementId
-    $json | ConvertTo-Json | Set-Content $filePath
+    $json | ConvertTo-Json -Depth 10 | Set-Content $filePath
 }
 
 function UpdateAppSettingsForAdminAppDocker {
@@ -486,7 +486,7 @@ function UpdateAppSettingsForAdminAppDocker {
     $json.ConnectionStrings.Security = $DockerEnvValues["SecurityDB"]
     $json.ConnectionStrings.ProductionOds = $DockerEnvValues["ProductionOdsDB"]
     $json.Log4NetCore.Log4NetConfigFileName =  "./log4net.config"
-    $json | ConvertTo-Json | Set-Content $filePath
+    $json | ConvertTo-Json -Depth 10 | Set-Content $filePath
 }
 
 function UpdateAppSettingsForAdminApiDocker {
