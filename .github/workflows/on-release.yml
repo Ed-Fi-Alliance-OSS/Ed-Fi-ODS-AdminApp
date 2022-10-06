@@ -64,8 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Promote Package
-        # prevent forks from trying to push NuGet packages
-        if: github.repository == 'Ed-Fi-Alliance-OSS/Ed-Fi-ODS-AdminApp'
+        if: "! github.event.pull_request.head.repo.fork"
         run: |
           $release = "${{ github.ref_name }}"
 
