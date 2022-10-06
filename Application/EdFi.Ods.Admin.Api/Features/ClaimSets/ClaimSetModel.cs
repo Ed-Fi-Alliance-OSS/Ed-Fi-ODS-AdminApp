@@ -47,12 +47,12 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
     [SwaggerSchema(Title = "AuthorizationStrategy")]
     public class AuthorizationStrategyModel
     {
-        [SwaggerExclude()]
+        [SwaggerExclude]
         public int AuthStrategyId { get; set; }
 
         public string? AuthStrategyName { get; set; }
 
-        [SwaggerExclude()]
+        [SwaggerExclude]
         public string? DisplayName { get;set; }
 
         public bool IsInheritedFromParent { get; set; }

@@ -21,7 +21,7 @@ public class ReadClaimSets : IFeature
             .WithRouteOptions(b => b.WithResponse<List<ClaimSetModel>>(200))
             .BuildForVersions(AdminApiVersions.V1);
 
-        AdminApiEndpointBuilder.MapGet(endpoints, "/claimsets/{id}", GetClaimset)
+        AdminApiEndpointBuilder.MapGet(endpoints, "/claimsets/{id}", GetClaimSet)
             .WithDefaultDescription()
             .WithRouteOptions(b => b.WithResponse<ClaimSetDetailsModel>(200))
             .BuildForVersions(AdminApiVersions.V1);
@@ -29,17 +29,17 @@ public class ReadClaimSets : IFeature
 
     internal Task<IResult> GetClaimSets(GetAllClaimSetsQuery getClaimSetsQuery, IGetApplicationsByClaimSetIdQuery getApplications, IMapper mapper)
     {
-        var calimSets = getClaimSetsQuery.Execute().Where(x => !CloudOdsAdminApp.SystemReservedClaimSets.Contains(x.ClaimSetName)).ToList();
-        var model = mapper.Map<List<ClaimSetModel>>(calimSets);
-        foreach(var claimset in model)
+        var claimSets = getClaimSetsQuery.Execute().Where(x => !CloudOdsAdminApp.SystemReservedClaimSets.Contains(x.ClaimSetName)).ToList();
+        var model = mapper.Map<List<ClaimSetModel>>(claimSets);
+        foreach(var claimSet in model)
         {
-            claimset.ApplicationsCount = getApplications.ExecuteCount(claimset.Id);
-            claimset.IsSystemReserved = DefaultClaimSets.Contains(claimset.Name);
+            claimSet.ApplicationsCount = getApplications.ExecuteCount(claimSet.Id);
+            claimSet.IsSystemReserved = DefaultClaimSets.Contains(claimSet.Name);
         }
         return Task.FromResult(AdminApiResponse<List<ClaimSetModel>>.Ok(model));
     }
 
-    internal Task<IResult> GetClaimset(IGetClaimSetByIdQuery getClaimSetByIdQuery,
+    internal Task<IResult> GetClaimSet(IGetClaimSetByIdQuery getClaimSetByIdQuery,
         IGetResourcesByClaimSetIdQuery getResourcesByClaimSetIdQuery,
         IGetApplicationsByClaimSetIdQuery getApplications, IMapper mapper, int id)
     {

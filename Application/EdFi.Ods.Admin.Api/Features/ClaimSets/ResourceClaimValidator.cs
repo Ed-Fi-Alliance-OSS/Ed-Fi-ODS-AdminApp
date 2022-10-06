@@ -29,7 +29,7 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
             var resource = dbResourceClaims.SingleOrDefault(x => x.ResourceName.Equals(resourceClaim.Name, StringComparison.InvariantCultureIgnoreCase));
             if (resource == null)
             {
-                context.AddFailure(propertyName, FeatureConstants.ClaimsetResourceNotFoundMessage);
+                context.AddFailure(propertyName, FeatureConstants.ClaimSetResourceNotFoundMessage);
             } 
             if (resourceClaim.DefaultAuthStrategiesForCRUD != null && resourceClaim.DefaultAuthStrategiesForCRUD.Any())
             {
@@ -38,7 +38,7 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
                     if (!dbAuthStrategies.Any(x => x.AuthorizationStrategyName.Equals(defaultAS.AuthStrategyName,StringComparison.InvariantCultureIgnoreCase)))
                     {
                         context.MessageFormatter.AppendArgument("AuthStrategyName", defaultAS.AuthStrategyName);
-                        context.AddFailure(propertyName, FeatureConstants.ClaimsetAuthStrategyNotFoundMessage);
+                        context.AddFailure(propertyName, FeatureConstants.ClaimSetAuthStrategyNotFoundMessage);
                     }
                 }
             }
@@ -49,7 +49,7 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
                     if (!dbAuthStrategies.Any(x => x.AuthorizationStrategyName.Equals(authStrategyOverride.AuthStrategyName, StringComparison.InvariantCultureIgnoreCase)))
                     {
                         context.MessageFormatter.AppendArgument("AuthStrategyName", authStrategyOverride.AuthStrategyName);
-                        context.AddFailure(propertyName, FeatureConstants.ClaimsetAuthStrategyNotFoundMessage);
+                        context.AddFailure(propertyName, FeatureConstants.ClaimSetAuthStrategyNotFoundMessage);
                     }
                 }
             }
