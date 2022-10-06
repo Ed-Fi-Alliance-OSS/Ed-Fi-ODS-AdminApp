@@ -291,7 +291,10 @@ function RunNuGetPack {
         $nuspecPath
     )
 
-    dotnet pack $ProjectPath --output $PSScriptRoot -p:NuspecFile=$nuspecPath -p:NuspecProperties="version=$PackageVersion"
+    # NU5100 is the warning about DLLs outside of a "lib" folder. We're
+    # deliberately using that pattern, therefore we don't care about the
+    # warning.
+    dotnet pack $ProjectPath --output $PSScriptRoot -p:NuspecFile=$nuspecPath -p:NuspecProperties="version=$PackageVersion" /p:NoWarn=NU5100
 }
 
 function NewDevCertificate {
