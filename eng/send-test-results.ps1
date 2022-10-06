@@ -158,7 +158,7 @@ function CreateAutomationJob {
     $ConfigParams.Add("automationType", "UPLOAD")
     $ConfigParams.Add("automationTool", "JUnit")
 
-    $body = $ConfigParams | ConvertTo-Json
+    $body = $ConfigParams | ConvertTo-Json -Depth 10
 
     $response = Invoke-RestMethod -Method 'Post' -Uri $createJobURL -Headers $headers -Body $body -ContentType "application/json"
     if($response.errorDesc) {

@@ -434,7 +434,7 @@ function Update-AppSettingsToAddGoogleAnalyticsMeasurementId {
     $filePath = "$solutionRoot/EdFi.Ods.AdminApp.Web/publish/appsettings.json"
     $json = (Get-Content -Path $filePath) | ConvertFrom-Json
     $json.AppSettings.GoogleAnalyticsMeasurementId = $GoogleAnalyticsMeasurementId
-    $json | ConvertTo-Json | Set-Content $filePath
+    $json | ConvertTo-Json -Depth 10 | Set-Content $filePath
 }
 
 function UpdateAppSettingsForAdminAppDocker {
@@ -461,7 +461,7 @@ function UpdateAppSettingsForAdminAppDocker {
     $json.ConnectionStrings.Security = $DockerEnvValues["SecurityDB"]
     $json.ConnectionStrings.ProductionOds = $DockerEnvValues["ProductionOdsDB"]
     $json.Log4NetCore.Log4NetConfigFileName =  "./log4net.config"
-    $json | ConvertTo-Json | Set-Content $filePath
+    $json | ConvertTo-Json -Depth 10 | Set-Content $filePath
 }
 
 function UpdateAppSettingsForAdminApiDocker {
@@ -472,7 +472,7 @@ function UpdateAppSettingsForAdminApiDocker {
     $json.AppSettings.ApiStartupType = $DockerEnvValues["ApiStartupType"]
     $json.AppSettings.DatabaseEngine = $DockerEnvValues["DatabaseEngine"]
     $json.AppSettings.PathBase = $DockerEnvValues["PathBase"]
-    
+
     $json.Authentication.IssuerUrl = $DockerEnvValues["IssuerUrl"]
     $json.Authentication.SigningKey = $DockerEnvValues["SigningKey"]
 
@@ -480,7 +480,7 @@ function UpdateAppSettingsForAdminApiDocker {
     $json.ConnectionStrings.Security = $DockerEnvValues["SecurityDB"]
     $json.ConnectionStrings.ProductionOds = $DockerEnvValues["ProductionOdsDB"]
     $json.Log4NetCore.Log4NetConfigFileName =  "./log4net.config"
-    $json | ConvertTo-Json | Set-Content $filePath
+    $json | ConvertTo-Json -Depth 10 | Set-Content $filePath
 }
 
 function CopyLatestFilesToAdminAppContainer {
