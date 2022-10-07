@@ -45,6 +45,7 @@ using NUglify.JavaScript;
 using System.Security.Claims;
 using System.Linq;
 using EdFi.Admin.DataAccess.DbConfigurations;
+using Microsoft.AspNetCore.Authentication;
 
 namespace EdFi.Ods.AdminApp.Web
 {
@@ -245,18 +246,19 @@ namespace EdFi.Ods.AdminApp.Web
                 options.RequireHttpsMetadata = openIdSettings.RequireHttpsMetadata;
                 options.GetClaimsFromUserInfoEndpoint = openIdSettings.GetClaimsFromUserInfoEndpoint;
 
-
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     NameClaimType = openIdSettings.ClaimTypeMappings.NameClaimType,
                     RoleClaimType = openIdSettings.ClaimTypeMappings.RoleClaimType
                 };
+
+                options.Events.OnTicketReceived = async context => await TranslateOidcClaims(context);
             });
 
             services.AddAuthorization(options =>
             {
                 options.DefaultPolicy = new AuthorizationPolicyBuilder()
-                    .RequireClaim(ClaimTypes.Role, Role.GetAll().Select(r => r.OidcClaimValue))
+                    .RequireClaim(ClaimTypes.Role, Role.GetAll().Select(r => r.DisplayName))
                     .Build();
 
                 options.AddPolicy("UserMustExistPolicy", policyBuilder =>
@@ -271,9 +273,9 @@ namespace EdFi.Ods.AdminApp.Web
                     context.HttpContext.RequestServices.GetRequiredService<IOpenIdConnectLoginService>();
 
                 var claimsIdentity = context.Principal?.Identity as ClaimsIdentity;
-                var oidcUserId = claimsIdentity?.Claims.FirstOrDefault(m => m.Type == openIdSettings.ClaimTypeMappings.IdentifierClaimType)?.Value;
-                var oidcUserEmail = claimsIdentity?.Claims.FirstOrDefault(m => m.Type == openIdSettings.ClaimTypeMappings.EmailClaimType)?.Value;
-                var oidcUserRoles = claimsIdentity?.Claims.Where(m => m.Type == openIdSettings.ClaimTypeMappings.RoleClaimType).Select(c => c.Value);
+                var oidcUserId = claimsIdentity?.Claims.FirstOrDefault(m => m.Type == ClaimTypes.NameIdentifier)?.Value;
+                var oidcUserEmail = claimsIdentity?.Claims.FirstOrDefault(m => m.Type == ClaimTypes.Email)?.Value;
+                var oidcUserRoles = claimsIdentity?.Claims.Where(m => m.Type == ClaimTypes.Role).Select(c => c.Value);
 
                 if (claimsIdentity != null)
                 {
@@ -283,15 +285,41 @@ namespace EdFi.Ods.AdminApp.Web
 
                     if (identityUserId != null)
                     {
-                        var role = openIdConnectLoginService.UpdateUserRolesFromOidcClaim(
-                            identityUserId, oidcUserRoles.ToArray());
-
-                        if (role != null)
-                        {
-                            claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.DisplayName));
-                        }
+                        openIdConnectLoginService.UpdateUserRolesFromIncomingClaim(identityUserId, oidcUserRoles.ToArray());
                     }
                 }
+            }
+
+            Task TranslateOidcClaims(TicketReceivedContext context)
+            {
+                var claimsIdentity = context.Principal?.Identity as ClaimsIdentity;
+
+                void ReplaceClaimIfNotNull(string oidcClaimType, string adminAppClaimType)
+                {
+                    var claim = claimsIdentity.Claims.FirstOrDefault(m => m.Type == oidcClaimType);
+                    if (oidcClaimType != adminAppClaimType && claim != null && !string.IsNullOrEmpty(claim.Value))
+                    {
+                        claimsIdentity.AddClaim(new Claim(adminAppClaimType, claim.Value));
+                        claimsIdentity.RemoveClaim(claim);
+                    }
+                }
+
+                if (claimsIdentity != null)
+                {
+                    ReplaceClaimIfNotNull(openIdSettings.ClaimTypeMappings.IdentifierClaimType, ClaimTypes.NameIdentifier);
+                    ReplaceClaimIfNotNull(openIdSettings.ClaimTypeMappings.NameClaimType, ClaimTypes.Name);
+                    ReplaceClaimIfNotNull(openIdSettings.ClaimTypeMappings.EmailClaimType, ClaimTypes.Email);
+
+                    var roleClaims = claimsIdentity.Claims.Where(m => m.Type == openIdSettings.ClaimTypeMappings.RoleClaimType).ToList();
+                    if(roleClaims.Any())
+                    {
+                        var role = Role.FromOidcClaims(roleClaims.Select(r => r.Value));
+                        foreach (var oldClaim in roleClaims) { claimsIdentity.RemoveClaim(oldClaim); }
+                        if(role != null) { claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.DisplayName)); }
+                    }
+                }
+
+                return Task.CompletedTask;
             }
         }
 
@@ -335,7 +363,7 @@ namespace EdFi.Ods.AdminApp.Web
             {
                 var response = ctx.HttpContext.Response;
                 if (response.StatusCode == (int) HttpStatusCode.Unauthorized || response.StatusCode == (int) HttpStatusCode.Forbidden)
-                    response.Redirect("/Home/Unauthorized");
+                    response.Redirect("./Home/UserUnauthorized");
                 return Task.CompletedTask;
             });
 
