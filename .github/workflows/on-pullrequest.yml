@@ -10,14 +10,11 @@ on:
     branches:
       - main
     paths:
-      # TODO: restore this with AA-1601, except run in a PS-specific
-      # workflow, so that the C# build and CodeQL do not run
-      # unnecessarily.
+      # TODO: restore this with AA-1601
       # - "**/*.ps1"
       # - "**/*.psm1"
       - "**/*.cs"
       - "**/*.csproj"
-      - ".github/**/*.yml"
   workflow_dispatch:
 
 jobs:
@@ -25,11 +22,6 @@ jobs:
   # run-ps-lint:
   #   name: PowerShell Linter
   #   uses: Ed-Fi-Alliance-OSS/Ed-Fi-Actions/.github/workflows/powershell-analyzer.yml@main
-  scan-actions-bidi:
-    name: Scan Actions, scan all files for BIDI Trojan Attacks
-    uses: ed-fi-alliance-oss/ed-fi-actions/.github/workflows/repository-scanner.yml@main
-    with:
-      config-file-path: ./.github/workflows/bidi-config.json
 
   run-cs-tests:
     name: Run C# Tests
@@ -47,34 +39,15 @@ jobs:
           dotnet-version: 6.0.x
 
       - name: Build
-        run: ./build.ps1 -Command Build -Configuration Debug
+        run: ./build.ps1 -Command Build -Configuration Release
 
       - name: Run Unit Tests
         if: success()
-        run: ./build.ps1 -Command UnitTest -Configuration Debug
+        run: ./build.ps1 -Command UnitTest -Configuration Release
 
       - name: Upload Test Results
-        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
+        uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # v3.0.0
         with:
           name: csharp-tests
           path: TestResults/unit-tests.trx
           retention-days: 5
-
-      - name: Dependency Review ("Dependabot on PR")
-        uses: actions/dependency-review-action@a9c83d3af6b9031e20feba03b904645bb23d1dab # v1.0.2
-
-      - name: Initialize CodeQL
-        if: success()
-        uses: github/codeql-action/init@1fae5bf71b0ecdc7d0a2ef0d0c28409d99693966 # v2.9.2
-        with:
-          languages: csharp
-
-      # Must build the software after initialization of CodeQL; something about
-      # CodeQL initialization causes the resulting build to fail unit tests.
-      # Therefore rebuilding here, even though also built above.
-      - name: Build
-        run: ./build.ps1 -Command Build -Configuration Debug
-
-      - name: Perform CodeQL Analysis
-        if: success()
-        uses: github/codeql-action/analyze@1fae5bf71b0ecdc7d0a2ef0d0c28409d99693966 # v2.9.2

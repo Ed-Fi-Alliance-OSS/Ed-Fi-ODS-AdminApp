@@ -20,8 +20,8 @@ jobs:
     name: Delete Unnecessary Pre-Releases
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the repo
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
+      - name: Checkout the Actions repo
+        uses: actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846  # v3.0.0
 
       - name: Delete other pre-releases and their tags
         shell: pwsh
@@ -29,6 +29,10 @@ jobs:
           $release = "${{ github.ref_name }}"
           $repo = "${{ github.repository }}"
           $token = "${{ secrets.GITHUB_TOKEN }}"
+
+          # example: "AdminApp.Web-v2.5.1"
+          # output: "AdminApp.Web"
+          $packageName = ($release -split "-v")[0]
 
           $page = 1
           $release_list = @()
@@ -44,9 +48,11 @@ jobs:
             $release_list = Invoke-RestMethod $url -Headers $gh_headers
 
             $release_list | ForEach-Object {
-                if ($_.tag_name -like "Pre-Release-*" -and $_.prerelease) {
+                if ($_.tag_name -like "$($packageName)-*" -and $_.prerelease) {
                     "Deleting pre-release $($_.tag_name)" | Write-Output
                     Invoke-RestMethod -Method Delete -Uri $_.url -Headers $gh_headers
+
+                    &git tag -d $_.tag_name
                 }
             }
 
@@ -57,19 +63,37 @@ jobs:
     name: Promote Azure Artifact
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the repo
-        uses: actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846 # v3.0.0
-
       - name: Promote Package
-        shell: pwsh
+        if: "! github.event.pull_request.head.repo.fork"
         run: |
+          $release = "${{ github.ref_name }}"
+
+          # example: "AdminApp.Web-v2.5.1"
+          # output: "AdminApp.Web"
+          $packageName = ($release -split "-v")[0]
+
+          switch ($packageName) {
+            "AdminApp.Web": {
+              $packages = @(
+                  "EdFi.Suite3.ODS.AdminApp.Database",
+                  "EdFi.Suite3.ODS.AdminApp.Web"
+              )
+            }
+            "Admin.Api": {
+              $packages = @( "EdFi.Suite3.ODS.Admin.Api" )
+            }
+            "AdminApp.Installer": {
+              $packages = @( "EdFi.Suite3.Installer.AdminApp" )
+            }
+          }
+
           $arguments = @{
             FeedsURL    = "${{ env.ARTIFACTS_FEED_URL }}"
             PackagesURL = "${{ env.ARTIFACTS_PACKAGES_URL }}"
             Username    = "${{ env.ARTIFACTS_USERNAME }}"
             View        = "release"
-            ReleaseRef  = "${{ github.ref_name }}"
+            Packages    = $packages
             Password    = (ConvertTo-SecureString -String "${{ env.ARTIFACTS_API_KEY }}" -AsPlainText -Force)
           }
 
-          ./eng/promote-packages.ps1 @arguments
+          .\eng\promote-packages.ps1 @arguments
