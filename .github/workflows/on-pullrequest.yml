@@ -3,14 +3,16 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-name: On Pull Request
+name: On Pull Request - C#
 
 on:
   pull_request:
     branches:
       - main
     paths:
-      # TODO: restore this with AA-1601
+      # TODO: restore this with AA-1601, except run in a PS-specific
+      # workflow, so that the C# build and CodeQL do not run
+      # unnecessarily.
       # - "**/*.ps1"
       # - "**/*.psm1"
       - "**/*.cs"
@@ -51,3 +53,13 @@ jobs:
           name: csharp-tests
           path: TestResults/unit-tests.trx
           retention-days: 5
+
+      - name: Initialize CodeQL
+        if: success()
+        uses: github/codeql-action/init@1fae5bf71b0ecdc7d0a2ef0d0c28409d99693966 # v2.9.2
+        with:
+          languages: csharp
+
+      - name: Perform CodeQL Analysis
+        if: success()
+        uses: github/codeql-action/analyze@1fae5bf71b0ecdc7d0a2ef0d0c28409d99693966 # v2.9.2
