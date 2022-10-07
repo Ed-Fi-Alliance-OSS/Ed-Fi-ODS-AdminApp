@@ -363,7 +363,7 @@ namespace EdFi.Ods.AdminApp.Web
             {
                 var response = ctx.HttpContext.Response;
                 if (response.StatusCode == (int) HttpStatusCode.Unauthorized || response.StatusCode == (int) HttpStatusCode.Forbidden)
-                    response.Redirect("/Home/UserUnauthorized");
+                    response.Redirect("./Home/UserUnauthorized");
                 return Task.CompletedTask;
             });
 
