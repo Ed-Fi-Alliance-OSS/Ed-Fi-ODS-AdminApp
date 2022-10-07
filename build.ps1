@@ -234,7 +234,11 @@ function RunTests {
 
     $testAssemblies | ForEach-Object {
         Write-Output "Executing: dotnet test $($_)"
-        Invoke-Execute { dotnet test $_ /logger:"trx;LogFileName=unit-tests.trx"}
+        Invoke-Execute {
+            dotnet test $_ `
+                --logger "trx;LogFileName=$($_).trx" `
+                --nologo
+        }
     }
 }
 
