@@ -46,6 +46,13 @@ jobs:
         with:
           dotnet-version: 6.0.x
 
+      - name: Initialize CodeQL
+        if: success()
+        uses: github/codeql-action/init@1fae5bf71b0ecdc7d0a2ef0d0c28409d99693966 # v2.9.2
+        with:
+          languages: csharp
+
+      # Note: the C# build _must_ occur in between CodeQL initialization and analysis.
       - name: Build
         run: ./build.ps1 -Command Build -Configuration Release
 
@@ -62,12 +69,6 @@ jobs:
 
       - name: Dependency Review ("Dependabot on PR")
         uses: actions/dependency-review-action@a9c83d3af6b9031e20feba03b904645bb23d1dab # v1.0.2
-
-      - name: Initialize CodeQL
-        if: success()
-        uses: github/codeql-action/init@1fae5bf71b0ecdc7d0a2ef0d0c28409d99693966 # v2.9.2
-        with:
-          languages: csharp
 
       - name: Perform CodeQL Analysis
         if: success()
