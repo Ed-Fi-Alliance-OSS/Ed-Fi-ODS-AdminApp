@@ -9,8 +9,8 @@ on:
     branches:
       - main
     tags:
-      - 'AdminApp.Web-v*.*.*'
-      - 'Admin.Api-v*.*.*'
+      - "AdminApp.Web-v*.*.*"
+      - "Admin.Api-v*.*.*"
 
 env:
   API_URL: https://api.github.com/repos/${{ github.repository }}
@@ -19,6 +19,8 @@ env:
 jobs:
   create-pre-releases:
     name: Create Pre-Releases
+    # Was not successful filtering out alpha in on.push.tags, so try filtering at the job level
+    if: "! contains(github.ref_name, 'alpha')"
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -46,6 +48,7 @@ jobs:
           "::set-output name=admin-api::$($apiPRefix)$(minver -t $apiPRefix)" | Write-Output
 
       - name: Create Admin App Web Pre-Release
+        if: "! startsWith(github.ref_name, 'Admin.Api-v')"
         run: |
           $version = "${{ steps.versions.outputs.admin-app }}"
 
@@ -67,6 +70,7 @@ jobs:
           Invoke-RestMethod -Method POST -Uri ${{ env.API_URL }}/releases -Body $body -Headers $headers
 
       - name: Create Admin API Pre-Release
+        if: "! startsWith(github.ref_name, 'AdminApp.Web-v')"
         run: |
           $version = "${{ steps.versions.outputs.admin-api }}"
 
@@ -86,5 +90,3 @@ jobs:
           }
 
           Invoke-RestMethod -Method POST -Uri ${{ env.API_URL }}/releases -Body $body -Headers $headers
-
-
