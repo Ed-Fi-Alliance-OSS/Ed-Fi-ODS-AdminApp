@@ -264,7 +264,7 @@ jobs:
         run: iex "& { $(irm https://aka.ms/install-artifacts-credprovider.ps1) } -AddNetfx"
 
       - name: Push Package to Azure Artifacts
-        if: ! github.event.pull_request.head.repo.fork
+        if: "! github.event.pull_request.head.repo.fork"
         run: |
           $artifact = (Get-ChildItem -Path $_ -Name -Include *.nupkg)
           $arguments = @{
