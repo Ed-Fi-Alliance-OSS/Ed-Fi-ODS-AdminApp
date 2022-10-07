@@ -67,33 +67,12 @@ jobs:
       - name: Promote Package
         shell: pwsh
         run: |
-          $release = "${{ github.ref_name }}"
-
-          # example: "AdminApp.Web-v2.5.1"
-          # output: "AdminApp.Web"
-          $packageName = ($release -split "-v")[0]
-
-          switch ($packageName) {
-            "AdminApp.Web": {
-              $packages = @(
-                  "EdFi.Suite3.ODS.AdminApp.Database",
-                  "EdFi.Suite3.ODS.AdminApp.Web"
-              )
-            }
-            "Admin.Api": {
-              $packages = @( "EdFi.Suite3.ODS.Admin.Api" )
-            }
-            "AdminApp.Installer": {
-              $packages = @( "EdFi.Suite3.Installer.AdminApp" )
-            }
-          }
-
           $arguments = @{
             FeedsURL    = "${{ env.ARTIFACTS_FEED_URL }}"
             PackagesURL = "${{ env.ARTIFACTS_PACKAGES_URL }}"
             Username    = "${{ env.ARTIFACTS_USERNAME }}"
             View        = "release"
-            Packages    = $packages
+            ReleaseRef  = "${{ github.ref_name }}"
             Password    = (ConvertTo-SecureString -String "${{ env.ARTIFACTS_API_KEY }}" -AsPlainText -Force)
           }
 
