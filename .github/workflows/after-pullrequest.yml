@@ -7,7 +7,7 @@ name: After Pull Request
 on:
   workflow_run:
     workflows:
-      - "On Pull Request - C#"
+      - "On Pull Request"
     types:
       - completed
 
