@@ -115,7 +115,7 @@ jobs:
 
       - name: Upload Packages as Artifacts
         if: success()
-        uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # v3.0.0
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
         with:
           name: "${{ steps.package-name.outputs.package-name }}-NuGet"
           path: ./*.nupkg
@@ -169,7 +169,7 @@ jobs:
 
       - name: Upload SBOM
         if: success()
-        uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # v3.0.0
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
         with:
           name: ${{ needs.pack.outputs.package-name }}-SBOM
           path: ./manifest
@@ -204,31 +204,31 @@ jobs:
       - name: Attach to release
         shell: pwsh
         run: |
-            $release = "${{ github.ref_name }}"
-            $repo = "${{ github.repository }}"
-            $token = "${{ secrets.GITHUB_TOKEN }}"
-            $file = "${{ env.MANIFEST_FILE }}"
-            $uploadName = "${{ needs.pack.outputs.package-name }}-SBOM.zip"
+          $release = "${{ github.ref_name }}"
+          $repo = "${{ github.repository }}"
+          $token = "${{ secrets.GITHUB_TOKEN }}"
+          $file = "${{ env.MANIFEST_FILE }}"
+          $uploadName = "${{ needs.pack.outputs.package-name }}-SBOM.zip"
 
-            $url = "https://api.github.com/repos/$repo/releases/tags/$release"
+          $url = "https://api.github.com/repos/$repo/releases/tags/$release"
 
-            $gh_headers = @{
-                "Accept"        = "application/vnd.github+json"
-                "Authorization" = "Bearer $token"
-            }
+          $gh_headers = @{
+              "Accept"        = "application/vnd.github+json"
+              "Authorization" = "Bearer $token"
+          }
 
-            $response = Invoke-RestMethod -Uri $url -Headers $gh_headers
-            $releaseId = $response.id
+          $response = Invoke-RestMethod -Uri $url -Headers $gh_headers
+          $releaseId = $response.id
 
-            $url = "https://uploads.github.com/repos/$repo/releases/$releaseId/assets"
+          $url = "https://uploads.github.com/repos/$repo/releases/$releaseId/assets"
 
-            Compress-Archive $file -DestinationPath $uploadName
+          Compress-Archive $file -DestinationPath $uploadName
 
-            $gh_headers["Content-Type"] = "application/octet"
-            Invoke-RestMethod -Method POST `
-                -Uri "$($url)?name=$($uploadName)" `
-                -Headers $gh_headers `
-                -InFile $uploadName
+          $gh_headers["Content-Type"] = "application/octet"
+          Invoke-RestMethod -Method POST `
+              -Uri "$($url)?name=$($uploadName)" `
+              -Headers $gh_headers `
+              -InFile $uploadName
 
   provenance-create:
     name: Create Provenance
