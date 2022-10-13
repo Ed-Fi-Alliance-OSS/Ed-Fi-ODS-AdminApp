@@ -94,7 +94,7 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
                 .NotEmpty()
                 .Must(BeAUniqueName)
                 .WithMessage(FeatureConstants.ClaimSetAlreadyExistsMessage)
-                .When(NameIsChanged);
+                .When(m => BeAnExistingClaimSet(m.Id) && NameIsChanged(m));
 
                 RuleFor(m => m.Name)
                     .MaximumLength(255)
