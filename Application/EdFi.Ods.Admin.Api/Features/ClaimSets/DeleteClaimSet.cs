@@ -35,8 +35,7 @@ namespace EdFi.Ods.Admin.Api.Features.ClaimSets
 
             if (claimSetToDelete == null)
             {
-                throw new ValidationException(new[] { new ValidationFailure(nameof(id),
-                    FeatureConstants.ClaimSetNotFound) });
+                throw new NotFoundException<int>("claimset", id);
             }
         }
 
