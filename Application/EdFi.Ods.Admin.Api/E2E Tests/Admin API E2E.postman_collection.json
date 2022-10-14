@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "36120540-134c-4acc-96a7-a147022bbb61",
+		"_postman_id": "9e8d5643-b4f2-4f2f-9e22-6e5d99a18a92",
 		"name": "Admin API E2E",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "15734759"
@@ -2505,7 +2505,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											""
+											"pm.collectionVariables.set(\"ClaimSetGUID\", pm.variables.replaceIn('{{$guid}}'));"
 										],
 										"type": "text/javascript"
 									}
@@ -2555,7 +2555,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"Test ClaimSet\",\r\n    \"resourceClaims\": [\r\n      {\r\n        \"name\": \"educationStandards\",\r\n        \"read\": true,\r\n        \"create\": true,\r\n        \"update\": true,\r\n        \"delete\": true,\r\n        \"defaultAuthStrategiesForCRUD\": [\r\n          {\r\n            \"authStrategyName\": \"NamespaceBased\",\r\n            \"isInheritedFromParent\": false\r\n          },\r\n          {\r\n            \"authStrategyName\": \"NoFurtherAuthorizationRequired\",\r\n            \"isInheritedFromParent\": false\r\n          },\r\n          {\r\n            \"authStrategyName\": \"NamespaceBased\",\r\n            \"isInheritedFromParent\": false\r\n          },\r\n          {\r\n            \"authStrategyName\": \"NamespaceBased\",\r\n            \"isInheritedFromParent\": false\r\n          }\r\n        ],\r\n        \"authStrategyOverridesForCRUD\": [\r\n          null,\r\n          null,\r\n          null,\r\n          null\r\n        ],\r\n        \"children\": [\r\n          {\r\n            \"name\": \"learningObjective\",\r\n            \"read\": true,\r\n            \"create\": true,\r\n            \"update\": true,\r\n            \"delete\": true,\r\n            \"defaultAuthStrategiesForCRUD\": [\r\n              {\r\n                \"authStrategyName\": \"NamespaceBased\",\r\n                \"isInheritedFromParent\": true\r\n              },\r\n              {\r\n                \"authStrategyName\": \"NoFurtherAuthorizationRequired\",\r\n                \"isInheritedFromParent\": true\r\n              },\r\n              {\r\n                \"authStrategyName\": \"NamespaceBased\",\r\n                \"isInheritedFromParent\": true\r\n              },\r\n              {\r\n                \"authStrategyName\": \"NamespaceBased\",\r\n                \"isInheritedFromParent\": true\r\n              }\r\n            ],\r\n            \"authStrategyOverridesForCRUD\": [\r\n              null,\r\n              null,\r\n              null,\r\n              null\r\n            ],\r\n            \"children\": []\r\n          }\r\n        ]\r\n      },\r\n      {\r\n        \"name\": \"academicSubjectDescriptor\",\r\n        \"read\": true,\r\n        \"create\": true,\r\n        \"update\": true,\r\n        \"delete\": true,\r\n        \"defaultAuthStrategiesForCRUD\": [\r\n          {\r\n            \"authStrategyName\": \"NamespaceBased\",\r\n            \"isInheritedFromParent\": true\r\n          },\r\n          {\r\n            \"authStrategyName\": \"NoFurtherAuthorizationRequired\",\r\n            \"isInheritedFromParent\": true\r\n          },\r\n          {\r\n            \"authStrategyName\": \"NamespaceBased\",\r\n            \"isInheritedFromParent\": true\r\n          },\r\n          {\r\n            \"authStrategyName\": \"NamespaceBased\",\r\n            \"isInheritedFromParent\": true\r\n          }\r\n        ],\r\n        \"authStrategyOverridesForCRUD\": [\r\n          null,\r\n          null,\r\n          null,\r\n          null\r\n        ],\r\n        \"children\": []\r\n      }      \r\n    ]\r\n}\r\n",
+									"raw": "{\r\n    \"name\": \"Test ClaimSet {{ClaimSetGUID}}\",\r\n    \"resourceClaims\": [\r\n      {\r\n        \"name\": \"educationStandards\",\r\n        \"read\": true,\r\n        \"create\": true,\r\n        \"update\": true,\r\n        \"delete\": true,\r\n        \"defaultAuthStrategiesForCRUD\": [\r\n          {\r\n            \"authStrategyName\": \"NamespaceBased\",\r\n            \"isInheritedFromParent\": false\r\n          },\r\n          {\r\n            \"authStrategyName\": \"NoFurtherAuthorizationRequired\",\r\n            \"isInheritedFromParent\": false\r\n          },\r\n          {\r\n            \"authStrategyName\": \"NamespaceBased\",\r\n            \"isInheritedFromParent\": false\r\n          },\r\n          {\r\n            \"authStrategyName\": \"NamespaceBased\",\r\n            \"isInheritedFromParent\": false\r\n          }\r\n        ],\r\n        \"authStrategyOverridesForCRUD\": [\r\n          null,\r\n          null,\r\n          null,\r\n          null\r\n        ],\r\n        \"children\": [\r\n          {\r\n            \"name\": \"learningObjective\",\r\n            \"read\": true,\r\n            \"create\": true,\r\n            \"update\": true,\r\n            \"delete\": true,\r\n            \"defaultAuthStrategiesForCRUD\": [\r\n              {\r\n                \"authStrategyName\": \"NamespaceBased\",\r\n                \"isInheritedFromParent\": true\r\n              },\r\n              {\r\n                \"authStrategyName\": \"NoFurtherAuthorizationRequired\",\r\n                \"isInheritedFromParent\": true\r\n              },\r\n              {\r\n                \"authStrategyName\": \"NamespaceBased\",\r\n                \"isInheritedFromParent\": true\r\n              },\r\n              {\r\n                \"authStrategyName\": \"NamespaceBased\",\r\n                \"isInheritedFromParent\": true\r\n              }\r\n            ],\r\n            \"authStrategyOverridesForCRUD\": [\r\n              null,\r\n              null,\r\n              null,\r\n              null\r\n            ],\r\n            \"children\": []\r\n          }\r\n        ]\r\n      },\r\n      {\r\n        \"name\": \"academicSubjectDescriptor\",\r\n        \"read\": true,\r\n        \"create\": true,\r\n        \"update\": true,\r\n        \"delete\": true,\r\n        \"defaultAuthStrategiesForCRUD\": [\r\n          {\r\n            \"authStrategyName\": \"NamespaceBased\",\r\n            \"isInheritedFromParent\": true\r\n          },\r\n          {\r\n            \"authStrategyName\": \"NoFurtherAuthorizationRequired\",\r\n            \"isInheritedFromParent\": true\r\n          },\r\n          {\r\n            \"authStrategyName\": \"NamespaceBased\",\r\n            \"isInheritedFromParent\": true\r\n          },\r\n          {\r\n            \"authStrategyName\": \"NamespaceBased\",\r\n            \"isInheritedFromParent\": true\r\n          }\r\n        ],\r\n        \"authStrategyOverridesForCRUD\": [\r\n          null,\r\n          null,\r\n          null,\r\n          null\r\n        ],\r\n        \"children\": []\r\n      }      \r\n    ]\r\n}\r\n",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2717,6 +2717,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
+											"pm.collectionVariables.set(\"OtherClaimSetGUID\", pm.variables.replaceIn('{{$guid}}'));\r",
 											"pm.sendRequest({\r",
 											"  url: `${pm.variables.get(\"API_URL\")}/v1/claimsets`,\r",
 											"  method: 'POST',\r",
@@ -2727,7 +2728,7 @@
 											"  body: {\r",
 											"    mode: 'raw',\r",
 											"    raw:JSON.stringify({\r",
-											"      \"name\": \"Other Test ClaimSet\",\r",
+											"      \"name\": `Other Test ClaimSet ${pm.collectionVariables.get(\"OtherClaimSetGUID\")}`,\r",
 											"      \"resourceClaims\": []\r",
 											"    }), \r",
 											"  }\r",
@@ -2778,7 +2779,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"Other Test ClaimSet\",\r\n    \"resourceClaims\": []\r\n}",
+									"raw": "{\r\n    \"name\": \"Other Test ClaimSet {{OtherClaimSetGUID}}\",\r\n    \"resourceClaims\": []\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -3045,7 +3046,7 @@
 											"    ).indexOf(pm.collectionVariables.get(\"CreatedClaimSetId\"));\r",
 											"\r",
 											"    const result = results[indexOfClaimSet];\r",
-											"    pm.expect(result.name).to.equal(\"Test ClaimSet\");\r",
+											"    pm.expect(result.name).to.equal(`Test ClaimSet ${pm.collectionVariables.get(\"ClaimSetGUID\")}`);\r",
 											"    pm.expect(result.isSystemReserved).to.equal(false);\r",
 											"    pm.expect(result.applicationsCount).to.equal(0);\r",
 											"});\r",
@@ -3096,7 +3097,7 @@
 											"    const claimSetId = pm.collectionVariables.get(\"CreatedClaimSetId\");\r",
 											"    \r",
 											"    pm.expect(result.id).to.equal(claimSetId);\r",
-											"    pm.expect(result.name).to.equal(\"Test ClaimSet\");\r",
+											"    pm.expect(result.name).to.equal(`Test ClaimSet ${pm.collectionVariables.get(\"ClaimSetGUID\")}`);\r",
 											"    pm.expect(result.isSystemReserved).to.equal(false);\r",
 											"    pm.expect(result.applicationsCount).to.equal(0);\r",
 											"    pm.expect(result.resourceClaims).to.not.be.empty;\r",
@@ -3382,7 +3383,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"id\": {{CreatedClaimSetId}},\r\n    \"name\": \"Other Test ClaimSet\",\r\n    \"resourceClaims\": []\r\n}",
+									"raw": "{\r\n    \"id\": {{CreatedClaimSetId}},\r\n    \"name\": \"Other Test ClaimSet {{OtherClaimSetGUID}}\",\r\n    \"resourceClaims\": []\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -3871,7 +3872,7 @@
 											"      raw:JSON.stringify({\r",
 											"        \"applicationName\": \"ClaimSet Test Vendor Application\",\r",
 											"        \"vendorId\": pm.collectionVariables.get(\"OtherApplicationVendorId\"),\r",
-											"        \"claimSetName\": \"Other Test ClaimSet\",\r",
+											"        \"claimSetName\": `Other Test ClaimSet ${pm.collectionVariables.get(\"OtherClaimSetGUID\")}`,\r",
 											"        \"profileId\": null,\r",
 											"        \"educationOrganizationIds\": [ 255901 ]\r",
 											"      }),\r",
@@ -4041,7 +4042,9 @@
 											"});\r",
 											"\r",
 											"pm.collectionVariables.unset(\"CreatedClaimSetId\");\r",
-											"pm.collectionVariables.unset(\"OtherExistingClaimSetId\");"
+											"pm.collectionVariables.unset(\"OtherExistingClaimSetId\");\r",
+											"pm.collectionVariables.unset(\"ClaimSetGUID\");\r",
+											"pm.collectionVariables.unset(\"OtherClaimSetGUID\");"
 										],
 										"type": "text/javascript"
 									}
