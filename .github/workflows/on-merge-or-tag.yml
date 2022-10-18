@@ -53,7 +53,7 @@ jobs:
           $version = "${{ steps.versions.outputs.admin-app }}"
 
           $body = @{
-            tag_name = $version
+            tag_name = "Pre-Release-$version"
             target_commitish = "main"
             name = $version
             body = ""
@@ -75,7 +75,7 @@ jobs:
           $version = "${{ steps.versions.outputs.admin-api }}"
 
           $body = @{
-            tag_name = $version
+            tag_name = "Pre-Release-$version"
             target_commitish = "main"
             name = $version
             body = ""
