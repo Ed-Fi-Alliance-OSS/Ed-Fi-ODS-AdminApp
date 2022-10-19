@@ -743,6 +743,14 @@ function IsVersionHigherThanOther($versionString, $otherVersionString) {
     return $result -gt 0
 }
 
+function IsVersionMismatch($versionString, $otherVersionString) {
+    $version = ParseVersion($versionString)
+    $otherVersion = ParseVersion($otherVersionString)
+
+    $result = $version.CompareTo($otherVersion)
+    return $result -ne 0
+}
+
 function ParseVersion($versionString) {
     $splitByTags = $versionString -split '-'
     $version = $splitByTags[0];
