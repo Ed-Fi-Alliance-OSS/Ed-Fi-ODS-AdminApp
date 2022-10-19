@@ -141,9 +141,10 @@ function Install-EdFiOdsAdminApp {
         [string]
         $PackageVersion,
 
-        # NuGet package source. Defaults to "https://pkgs.dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_packaging/EdFi/nuget/v3/index.json".
+        # NuGet package source. Please specify the path to the AdminApp sub-directory within the AdminApp.Web nuget package.
+        [Parameter(Mandatory=$true)]
         [string]
-        $PackageSource = "https://pkgs.dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_packaging/EdFi/nuget/v3/index.json",
+        $PackageSource,
 
         # Path for storing installation tools, e.g. nuget.exe. Default: "C:\temp\tools".
         [string]
@@ -350,9 +351,10 @@ function Update-EdFiOdsAdminApp {
         [string]
         $PackageVersion,
 
-        # NuGet package source. Defaults to "https://pkgs.dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_packaging/EdFi/nuget/v3/index.json".
+        # NuGet package source. Please specify the path to the AdminApp sub-directory within the AdminApp.Web nuget package.
+        [Parameter(Mandatory=$true)]
         [string]
-        $PackageSource = "https://pkgs.dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_packaging/EdFi/nuget/v3/index.json",
+        $PackageSource,
 
         # Path for storing installation tools, e.g. nuget.exe. Default: "C:\temp\tools".
         [string]
