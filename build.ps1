@@ -140,6 +140,9 @@ $supportedApiVersions = @(
 )
 $maintainers = "Ed-Fi Alliance, LLC and contributors"
 
+$appCommonPackageName = "EdFi.Installer.AppCommon"
+$appCommonPackageVersion = "3.0.0"
+
 Import-Module -Name "$PSScriptRoot/eng/build-helpers.psm1" -Force
 Import-Module -Name "$PSScriptRoot/eng/package-manager.psm1" -Force
 Import-Module -Name "$PSScriptRoot/eng/database-manager.psm1" -Force
@@ -306,6 +309,21 @@ function NewDevCertificate {
     }
 }
 
+function AddAppCommonPackageForInstaller {
+    $project = "EdFi.Ods.AdminApp.Web"
+    $mainPath = "$solutionRoot/$project"
+    $destinationPath = "$mainPath/publish"
+
+    $arguments = @{
+        AppCommonPackageName = $appCommonPackageName
+        AppCommonPackageVersion = $appCommonPackageVersion
+        NuGetFeed = $EdFiNuGetFeed
+        DestinationPath = $destinationPath
+    }
+
+    Add-AppCommon @arguments
+}
+
 function BuildDatabasePackage {
     $project = "EdFi.Ods.AdminApp.Web"
     $mainPath = "$solutionRoot/$project"
@@ -415,6 +433,7 @@ function Invoke-IntegrationTestSuite {
 }
 
 function Invoke-BuildPackage {
+    Invoke-Step { AddAppCommonPackageForInstaller }
     Invoke-Step { BuildAdminAppPackage }
 }
 
