@@ -302,7 +302,7 @@ function Install-EdFiOdsAdminApp {
     $elapsed = Use-StopWatch {
         $result += Invoke-InstallationPreCheck -Config $Config
         $result += Initialize-Configuration -Config $config
-        $result += Get-AdminAppPackage -Config $Config
+        $result += Set-AdminAppPackageSource -Config $Config
         $result += Get-DbDeploy -Config $Config
         $result += Invoke-TransformAppSettings -Config $Config
         $result += Invoke-TransformConnectionStrings -Config $config
@@ -442,7 +442,7 @@ function Update-EdFiOdsAdminApp {
     $elapsed = Use-StopWatch {
         $result += Invoke-ResetIIS
         $result += Invoke-ApplicationUpgrade -Config $Config
-        $result += Get-AdminAppPackage -Config $Config
+        $result += Set-AdminAppPackageSource -Config $Config
         $result += Get-DbDeploy -Config $Config
         $result += Invoke-TransferAppsettings -Config $Config
         $result += Invoke-TransferConnectionStrings -Config $Config
@@ -937,7 +937,7 @@ function Get-DbDeploy {
     }
 }
 
-function Get-AdminAppPackage {
+function Set-AdminAppPackageSource {
     [CmdletBinding()]
     param (
         [hashtable]
@@ -946,18 +946,18 @@ function Get-AdminAppPackage {
     )
 
     Invoke-Task -Name ($MyInvocation.MyCommand.Name) -Task {
-        $parameters = @{
-            PackageName = $Config.PackageName
-            PackageVersion = $Config.PackageVersion
-            ToolsPath = $Config.ToolsPath
-            OutputDirectory = $Config.DownloadPath
-            PackageSource = $Config.PackageSource
-        }
-        $packageDir = Get-NugetPackage @parameters
-        Test-Error
 
-        $Config.PackageDirectory = $packageDir
-        $Config.WebConfigLocation = $packageDir
+        $adminAppSource = $Config.PackageSource
+        $configVersionString = $Config.PackageVersion
+        $versionString = [System.Diagnostics.FileVersionInfo]::GetVersionInfo("$adminAppSource\EdFi.Ods.AdminApp.Web.dll").FileVersion
+
+        if (IsVersionMismatch $versionString $configVersionString) {
+            Write-Warning "The specified Admin App package version $configVersionString in the configuration does not match the file version $versionString of the package used as source. Please specify the correct version in the installer configuration or use the correct source."
+            exit
+        }
+
+        $Config.PackageDirectory = $adminAppSource
+        $Config.WebConfigLocation = $adminAppSource
     }
 }
 
