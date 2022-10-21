@@ -12,6 +12,13 @@
     <license type="expression">Apache-2.0</license>
   </metadata>
   <files>
-       <file src="**" />
+       <file src="**" target="AdminApp" exclude="AppCommon\**\*.*"/>
+       <file src="..\..\..\EdFi.Suite3.Installer.AdminApp\install.ps1" target="installer"/>
+       <file src="..\..\..\EdFi.Suite3.Installer.AdminApp\upgrade.ps1" target="installer"/>
+       <file src="..\..\..\EdFi.Suite3.Installer.AdminApp\uninstall.ps1" target="installer"/>
+       <file src="..\..\..\EdFi.Suite3.Installer.AdminApp\global.json" target="installer"/>
+       <file src="..\..\..\EdFi.Suite3.Installer.AdminApp\Install-EdFiOdsAdminApp.psm1" target="installer"/>
+       <file src="AppCommon\**" target="installer/AppCommon/"/>
+       <file src="..\..\..\eng\key-management.psm1" target="installer"/>
   </files>
 </package>

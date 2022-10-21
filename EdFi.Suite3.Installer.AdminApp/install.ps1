@@ -69,11 +69,15 @@ $adminAppFeatures = @{
     ApiMode = "sharedinstance"
 }
 
+$packageSource = Split-Path $PSScriptRoot -Parent
+$adminAppSource = "$packageSource/AdminApp"
+
 $p = @{
     ToolsPath = "C:/temp/tools"
     DbConnectionInfo = $dbConnectionInfo
     OdsApiUrl = ""
-    PackageVersion = '3.0.0'
+    PackageVersion = '3.0.1.0'
+    PackageSource = $adminAppSource
     AdminAppFeatures = $adminAppFeatures
 }
 
