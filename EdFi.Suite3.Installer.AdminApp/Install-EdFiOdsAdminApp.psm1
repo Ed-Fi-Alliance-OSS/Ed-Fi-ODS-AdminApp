@@ -141,9 +141,10 @@ function Install-EdFiOdsAdminApp {
         [string]
         $PackageVersion,
 
-        # NuGet package source. Defaults to "https://pkgs.dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_packaging/EdFi/nuget/v3/index.json".
+        # NuGet package source. Please specify the path to the AdminApp sub-directory within the AdminApp.Web nuget package.
+        [Parameter(Mandatory=$true)]
         [string]
-        $PackageSource = "https://pkgs.dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_packaging/EdFi/nuget/v3/index.json",
+        $PackageSource,
 
         # Path for storing installation tools, e.g. nuget.exe. Default: "C:\temp\tools".
         [string]
@@ -302,7 +303,7 @@ function Install-EdFiOdsAdminApp {
     $elapsed = Use-StopWatch {
         $result += Invoke-InstallationPreCheck -Config $Config
         $result += Initialize-Configuration -Config $config
-        $result += Get-AdminAppPackage -Config $Config
+        $result += Set-AdminAppPackageSource -Config $Config
         $result += Get-DbDeploy -Config $Config
         $result += Invoke-TransformAppSettings -Config $Config
         $result += Invoke-TransformConnectionStrings -Config $config
@@ -350,9 +351,10 @@ function Update-EdFiOdsAdminApp {
         [string]
         $PackageVersion,
 
-        # NuGet package source. Defaults to "https://pkgs.dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_packaging/EdFi/nuget/v3/index.json".
+        # NuGet package source. Please specify the path to the AdminApp sub-directory within the AdminApp.Web nuget package.
+        [Parameter(Mandatory=$true)]
         [string]
-        $PackageSource = "https://pkgs.dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_packaging/EdFi/nuget/v3/index.json",
+        $PackageSource,
 
         # Path for storing installation tools, e.g. nuget.exe. Default: "C:\temp\tools".
         [string]
@@ -442,7 +444,7 @@ function Update-EdFiOdsAdminApp {
     $elapsed = Use-StopWatch {
         $result += Invoke-ResetIIS
         $result += Invoke-ApplicationUpgrade -Config $Config
-        $result += Get-AdminAppPackage -Config $Config
+        $result += Set-AdminAppPackageSource -Config $Config
         $result += Get-DbDeploy -Config $Config
         $result += Invoke-TransferAppsettings -Config $Config
         $result += Invoke-TransferConnectionStrings -Config $Config
@@ -743,6 +745,14 @@ function IsVersionHigherThanOther($versionString, $otherVersionString) {
     return $result -gt 0
 }
 
+function IsVersionMismatch($versionString, $otherVersionString) {
+    $version = ParseVersion($versionString)
+    $otherVersion = ParseVersion($otherVersionString)
+
+    $result = $version.CompareTo($otherVersion)
+    return $result -ne 0
+}
+
 function ParseVersion($versionString) {
     $splitByTags = $versionString -split '-'
     $version = $splitByTags[0];
@@ -929,7 +939,7 @@ function Get-DbDeploy {
     }
 }
 
-function Get-AdminAppPackage {
+function Set-AdminAppPackageSource {
     [CmdletBinding()]
     param (
         [hashtable]
@@ -938,18 +948,18 @@ function Get-AdminAppPackage {
     )
 
     Invoke-Task -Name ($MyInvocation.MyCommand.Name) -Task {
-        $parameters = @{
-            PackageName = $Config.PackageName
-            PackageVersion = $Config.PackageVersion
-            ToolsPath = $Config.ToolsPath
-            OutputDirectory = $Config.DownloadPath
-            PackageSource = $Config.PackageSource
-        }
-        $packageDir = Get-NugetPackage @parameters
-        Test-Error
 
-        $Config.PackageDirectory = $packageDir
-        $Config.WebConfigLocation = $packageDir
+        $adminAppSource = $Config.PackageSource
+        $configVersionString = $Config.PackageVersion
+        $versionString = [System.Diagnostics.FileVersionInfo]::GetVersionInfo("$adminAppSource\EdFi.Ods.AdminApp.Web.dll").FileVersion
+
+        if (IsVersionMismatch $versionString $configVersionString) {
+            Write-Warning "The specified Admin App package version $configVersionString in the configuration does not match the file version $versionString of the package used as source. Please specify the correct version in the installer configuration or use the correct source."
+            exit
+        }
+
+        $Config.PackageDirectory = $adminAppSource
+        $Config.WebConfigLocation = $adminAppSource
     }
 }
 

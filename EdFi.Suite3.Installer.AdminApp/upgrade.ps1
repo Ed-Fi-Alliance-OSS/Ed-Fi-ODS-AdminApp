@@ -14,10 +14,13 @@ Your existing appsettings.json config values and connection strings will be copi
     ToolsPath = "C:/temp/tools"
     PackageVersion = '2.3.2' }
 #>
+$packageSource = Split-Path $PSScriptRoot -Parent
+$adminAppSource = "$packageSource/AdminApp"
 
 $p = @{
     ToolsPath = "C:/temp/tools"
     PackageVersion = '2.3.2'
+    PackageSource = $adminAppSource
 }
 
 Update-EdFiOdsAdminApp @p
