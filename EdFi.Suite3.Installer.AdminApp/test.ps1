@@ -12,6 +12,9 @@ Param(
 Copy-Item -Path "$PSScriptRoot/../eng/key-management.psm1" -Destination "$PSScriptRoot/key-management.psm1"
 import-module -force "$PSScriptRoot/Install-EdFiOdsAdminApp.psm1"
 
+$packageSource = Split-Path $PSScriptRoot -Parent
+$adminAppSource = "$packageSource/AdminApp"
+
 $PackageVersion = '2.2.1'
 $existingCompatibleVersion = '2.2.0'
 $existingInCompatibleVersion = '2.1.0'
@@ -30,6 +33,7 @@ function Invoke-InstallSqlServer {
         DbConnectionInfo = $dbConnectionInfo
         OdsApiUrl = "http://example-web-api.com/WebApi"
         PackageVersion = $PackageVersion
+        PackageSource = $adminAppSource
     }
 
     Install-EdFiOdsAdminApp @p
@@ -54,6 +58,7 @@ function Invoke-InstallApplication{
         DbConnectionInfo = $dbConnectionInfo
         OdsApiUrl = "http://example-web-api.com/WebApi"
         PackageVersion = $Version
+        PackageSource = $adminAppSource
         WebSiteName = $WebSiteName
         WebSitePath = $WebSitePath
         WebApplicationName = $WebApplicationName
@@ -183,6 +188,7 @@ function Invoke-InstallMultiInstanceSqlServer {
         DbConnectionInfo = $dbConnectionInfo
         OdsApiUrl = "http://example-web-api.com/WebApi"
         PackageVersion = $PackageVersion
+        PackageSource = $adminAppSource
         AdminAppFeatures = $adminAppFeatures
     }
 
@@ -203,6 +209,7 @@ function Invoke-InstallPostgres {
         DbConnectionInfo = $dbConnectionInfo
         OdsApiUrl = "http://example-web-api.com/WebApi"
         PackageVersion = $PackageVersion
+        PackageSource = $adminAppSource
     }
 
     Install-EdFiOdsAdminApp @p
@@ -227,6 +234,7 @@ function Invoke-InstallMultiInstancePostgres {
         OdsApiUrl = "http://example-web-api.com/WebApi"
         PackageVersion = $PackageVersion
         AdminAppFeatures = $adminAppFeatures
+        PackageSource = $adminAppSource
     }
 
     Install-EdFiOdsAdminApp @p

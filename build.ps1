@@ -316,7 +316,7 @@ function NewDevCertificate {
 }
 
 function AddAppCommonPackageForInstaller {
-    $project = "EdFi.Ods.Admin.Api"
+    $project = "EdFi.Ods.AdminApp.Web"
     $mainPath = "$solutionRoot/$project"
     $destinationPath = "$mainPath/publish"
 
@@ -439,6 +439,7 @@ function Invoke-IntegrationTestSuite {
 }
 
 function Invoke-BuildPackage {
+    Invoke-Step { AddAppCommonPackageForInstaller }
     Invoke-Step { BuildAdminAppPackage }
 }
 
