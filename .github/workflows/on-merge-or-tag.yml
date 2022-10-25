@@ -51,9 +51,10 @@ jobs:
         if: "! startsWith(github.ref_name, 'Admin.Api-v')"
         run: |
           $version = "${{ steps.versions.outputs.admin-app }}"
+          $tag = $version -replace "-v","-Pre-Release-v"  
 
           $body = @{
-            tag_name = $version
+            tag_name = "$tag"
             target_commitish = "main"
             name = $version
             body = ""
@@ -73,9 +74,10 @@ jobs:
         if: "! startsWith(github.ref_name, 'AdminApp.Web-v')"
         run: |
           $version = "${{ steps.versions.outputs.admin-api }}"
+          $tag = $version -replace "-v","-Pre-Release-v"  
 
           $body = @{
-            tag_name = $version
+            tag_name = "$tag"
             target_commitish = "main"
             name = $version
             body = ""
