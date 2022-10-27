@@ -51,21 +51,21 @@ function Install-NugetCli {
         $SourceNugetExe = "https://dist.nuget.org/win-x86-commandline/v5.4.0/nuget.exe"
     )
 
+    $exePath = "$ToolsPath/nuget.exe"
     # See if NuGet >= 5.4.0 already in the path
     $info = Get-Command nuget.exe -ErrorAction SilentlyContinue
     if (MeetsMinimumNuGetVersion -Version $info.Version) {
-        return $info
+        return $info.path
     }
 
     # Next see if it is in the .tools directory
-    $info = Get-Command "$ToolsPath/nuget.exe" -ErrorAction SilentlyContinue
+    $info = Get-Command $exePath -ErrorAction SilentlyContinue
     if (MeetsMinimumNuGetVersion -Version $info.Version) {
-        return $info
+        return $exePath
     }
 
     # Not found, therefore remove any older version and download the current version
     New-Item -Path $ToolsPath -Type Directory -Force | Out-Null
-    $exePath = "$ToolsPath/nuget.exe"
     Remove-Item -Path $exePath -Force -ErrorAction SilentlyContinue | Out-Null
 
     Write-Host "Downloading nuget.exe official distribution from " $sourceNugetExe
@@ -145,8 +145,6 @@ function Get-RestApiPackage {
         $ToolsPath = "$PSScriptRoot/.tools"
     )
 
-    $nugetExe = Install-NugetCli -ToolsPath $ToolsPath
-
     $wildcardPath = "$PackagesPath/$RestApiPackageName.$RestApiPackageVersion*"
 
     # Remove anything that already exists, so that it is always easy to
@@ -173,8 +171,8 @@ function Get-RestApiPackage {
         $arguments += "$RestApiPackageVersion"
     }
 
-    Write-Host "Executing: nuget.exe $arguments" -ForegroundColor Magenta
-    &$nugetExe @arguments | Out-Null
+    Write-Host "Executing: nuget $arguments" -ForegroundColor Magenta
+    nuget @arguments | Out-Null
 
     if ($LASTEXITCODE -ne 0) {
         throw "NuGet package install failed for RestApi.Databases"
@@ -208,8 +206,6 @@ function Add-AppCommon {
         $ToolsPath = "$PSScriptRoot/.tools"
     )
 
-    $nugetExe = Install-NugetCli -ToolsPath $ToolsPath
-
     $wildcardPath = "$PackagesPath/$AppCommonPackageName.$AppCommonPackageVersion*"
 
     # Remove anything that already exists, so that it is always easy to
@@ -231,7 +227,7 @@ function Add-AppCommon {
 
     Write-Host "Downloading AppCommon"
     Write-Host -ForegroundColor Magenta "Executing nuget: $parameters"
-    &$nugetExe $parameters | Out-Null
+    nuget $parameters | Out-Null
 
     if ($LASTEXITCODE -ne 0) {
         throw "NuGet package install failed for AppCommon"
