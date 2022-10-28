@@ -66,6 +66,8 @@ Available commands:
   parameter is required for running Admin App. Valid values include 'mssql-district'
   , 'mssql-shared', 'mssql-year', 'pg-district', 'pg-shared' and 'pg-year'
 
+Note: IsLocalBuild switch is expected when user try to run build.ps1 locally.
+
 Review the parameters at the top of `build.ps1` for additional command line
 arguments.
 
