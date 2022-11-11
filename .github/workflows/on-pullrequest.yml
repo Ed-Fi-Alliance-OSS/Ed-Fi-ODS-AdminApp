@@ -26,7 +26,7 @@ jobs:
   #   name: PowerShell Linter
   #   uses: Ed-Fi-Alliance-OSS/Ed-Fi-Actions/.github/workflows/powershell-analyzer.yml@main
   scan-actions-bidi:
-    name: Scan Actions, scan all files for BIDI Trojan Attacks
+    name: Run Alliance Scanners
     uses: ed-fi-alliance-oss/ed-fi-actions/.github/workflows/repository-scanner.yml@main
     with:
       config-file-path: ./.github/workflows/bidi-config.json
