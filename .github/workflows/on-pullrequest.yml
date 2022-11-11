@@ -53,11 +53,11 @@ jobs:
         if: success()
         run: ./build.ps1 -Command UnitTest -Configuration Debug
 
-      - name: Upload Test Results
+      - name: Upload Test Results as Artifact
         uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
         with:
           name: csharp-tests
-          path: TestResults/unit-tests.trx
+          path: "**/*.trx"
           retention-days: 5
 
       - name: Dependency Review ("Dependabot on PR")
