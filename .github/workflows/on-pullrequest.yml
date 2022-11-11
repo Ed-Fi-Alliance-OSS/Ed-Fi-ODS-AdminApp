@@ -31,8 +31,8 @@ jobs:
     with:
       config-file-path: ./.github/workflows/bidi-config.json
 
-  run-cs-tests:
-    name: Run C# Tests
+  build-and-test:
+    name: Build and Test
     runs-on: ubuntu-latest
     defaults:
       run:
