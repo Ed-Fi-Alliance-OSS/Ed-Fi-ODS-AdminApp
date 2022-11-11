@@ -30,10 +30,6 @@ jobs:
           $repo = "${{ github.repository }}"
           $token = "${{ secrets.GITHUB_TOKEN }}"
 
-          # example: "AdminApp.Web-v2.5.1"
-          # output: "AdminApp.Web"
-          $packageName = ($release -split "-")[0]
-
           $page = 1
           $release_list = @()
 
