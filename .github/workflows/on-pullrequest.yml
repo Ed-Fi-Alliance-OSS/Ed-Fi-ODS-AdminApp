@@ -69,10 +69,7 @@ jobs:
         with:
           languages: csharp
 
-      # Must build the software after initialization of CodeQL; something about
-      # CodeQL initialization causes the resulting build to fail unit tests.
-      # Therefore rebuilding here, even though also built above.
-      - name: Build
+      - name: Rebuild for CodeQL
         run: ./build.ps1 -Command Build -Configuration Debug
 
       - name: Perform CodeQL Analysis
