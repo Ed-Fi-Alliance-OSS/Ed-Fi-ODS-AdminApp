@@ -53,7 +53,7 @@ jobs:
         if: success()
         run: ./build.ps1 -Command UnitTest -Configuration Debug
 
-      - name: Upload Test Results as Artifact
+      - name: Upload Results as Workflow Artifact
         uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
         with:
           name: csharp-tests
