@@ -3,7 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-Feature: Vendors
+Feature: Vendors Page Test
     Background:
         Given user is registered
         And user is logged in
