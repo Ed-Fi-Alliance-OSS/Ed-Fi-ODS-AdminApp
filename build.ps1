@@ -246,7 +246,8 @@ function RunTests {
         Invoke-Execute {
             dotnet test $_ `
                 --logger "trx;LogFileName=$($_).trx" `
-                --nologo
+                --nologo `
+                --no-build
         }
     }
 }

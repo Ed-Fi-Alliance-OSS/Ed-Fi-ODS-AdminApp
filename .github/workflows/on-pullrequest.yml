@@ -31,8 +31,8 @@ jobs:
     with:
       config-file-path: ./.github/workflows/bidi-config.json
 
-  run-cs-tests:
-    name: Run C# Tests
+  build-and-test:
+    name: Build and Test
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -53,11 +53,11 @@ jobs:
         if: success()
         run: ./build.ps1 -Command UnitTest -Configuration Debug
 
-      - name: Upload Test Results
+      - name: Upload Results as Workflow Artifact
         uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
         with:
           name: csharp-tests
-          path: TestResults/unit-tests.trx
+          path: "**/*.trx"
           retention-days: 5
 
       - name: Dependency Review ("Dependabot on PR")
@@ -69,10 +69,7 @@ jobs:
         with:
           languages: csharp
 
-      # Must build the software after initialization of CodeQL; something about
-      # CodeQL initialization causes the resulting build to fail unit tests.
-      # Therefore rebuilding here, even though also built above.
-      - name: Build
+      - name: Rebuild for CodeQL
         run: ./build.ps1 -Command Build -Configuration Debug
 
       - name: Perform CodeQL Analysis
