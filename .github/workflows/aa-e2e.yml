@@ -30,27 +30,27 @@ jobs:
       - name: Update certificates
         run: cp -r ../../eng/test-certs/ssl ./Docker
       - name: Run ODS Setup
-        run: docker-compose -f ./Compose/pgsql/compose-build-dev-with-ods.yml --env-file ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/.automation.env up -d
+        run: docker-compose -f ./Compose/pgsql/compose-build-dev-with-ods.yml --env-file ../../Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/.automation.env up -d
       - name: Verify ODS Health
         run: |
-          chmod +x ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/inspect.sh
-          ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/inspect.sh
+          chmod +x ../../Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/inspect.sh
+          ../../Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/inspect.sh
       - name: Setup node
         uses: actions/setup-node@17f8bd926464a1afa4c6a11669539e9c1ba77048 # v3.2.0
         with:
           node-version: "14"
       - name: Install dependencies
         run: npm ci
-        working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
+        working-directory: ./Application/EdFi.Ods.AdminApp.E2E.Tests
       - name: Install OS dependencies
         run: npx playwright install-deps
-        working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
+        working-directory: ./Application/EdFi.Ods.AdminApp.E2E.Tests
       - name: Set environment
         run: mv .env.example .env
-        working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
+        working-directory: ./Application/EdFi.Ods.AdminApp.E2E.Tests
       - name: Run tests
         run: npm run report
-        working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
+        working-directory: ./Application/EdFi.Ods.AdminApp.E2E.Tests
       - name: Get Docker logs
         if: failure()
         run: |
@@ -67,17 +67,17 @@ jobs:
       - name: Transform results
         if: success() || failure()
         run: python ./resultparser.py
-        working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
+        working-directory: ./Application/EdFi.Ods.AdminApp.E2E.Tests
       - name: Upload results
         uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
         with:
           name: test-results
-          path: main/Application/EdFi.Ods.AdminApp.E2E.Tests/reports/playwright-results.xml
+          path: ./Application/EdFi.Ods.AdminApp.E2E.Tests/reports/playwright-results.xml
           retention-days: 10
       - name: Upload execution traces
         if: failure()
         uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
         with:
           name: playwright-execution-traces
-          path: main/Application/EdFi.Ods.AdminApp.E2E.Tests/traces
+          path: ./Application/EdFi.Ods.AdminApp.E2E.Tests/traces
           retention-days: 10

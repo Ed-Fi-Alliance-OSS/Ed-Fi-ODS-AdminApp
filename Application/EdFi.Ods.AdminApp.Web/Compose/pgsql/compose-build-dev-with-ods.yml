@@ -97,7 +97,7 @@ services:
       - pb-admin
     restart: always
     hostname: ${ADMINAPP_VIRTUAL_NAME:-adminapp} 
-    container_name: adminapp
+    container_name: ed-fi-ods-adminapp
     healthcheck:
       test: $$ADMIN_APP_HEALTHCHECK_TEST
       start_period: "60s"
