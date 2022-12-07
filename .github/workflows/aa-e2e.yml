@@ -21,22 +21,16 @@ on:
 
 jobs:
   run-e2e-tests:
+    defaults:
+        run:
+          working-directory: ./Application/EdFi.Ods.AdminApp.Web/
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
-        with:
-          path: main
-      - name: Get ODS Docker
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
-        with:
-          repository: Ed-Fi-Alliance-OSS/Ed-Fi-ODS-Docker
-          path: ods-docker
-      - name: Copy files to Docker repo
-        run: |
-          cp -r ./main/eng/test-certs/ssl ./ods-docker
-          cp -r ./main/Application/EdFi.Ods.AdminApp.Web/Compose/pgsql/compose-build-dev-with-ods.yml ./ods-docker/Compose/pgsql
-      - name: Run ODS
-        run: docker-compose -f ./ods-docker/Compose/pgsql/compose-build-dev-with-ods.yml --env-file ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/.automation.env up -d
+      - name: Update certificates
+        run: cp -r ../../eng/test-certs/ssl ./Docker
+      - name: Run ODS Setup
+        run: docker-compose -f ./Compose/pgsql/compose-build-dev-with-ods.yml --env-file ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/.automation.env up -d
       - name: Verify ODS Health
         run: |
           chmod +x ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/inspect.sh
