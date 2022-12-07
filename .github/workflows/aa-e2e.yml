@@ -34,15 +34,9 @@ jobs:
       - name: Copy files to Docker repo
         run: |
           cp -r ./main/eng/test-certs/ssl ./ods-docker
-          cp -r ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/compose-aa-build.yml ./ods-docker/Compose/pgsql
-      - name: Setup NuGet to get latest packages
-        uses: nuget/setup-nuget@b2bc17b761a1d88cab755a776c7922eb26eefbfa #v1.0.6
-      - name: Update Admin App Docker package versions
-        run: |
-          chmod +x ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/set-versions.sh
-          ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/set-versions.sh
+          cp -r ./main/Application/EdFi.Ods.AdminApp.Web/Compose/pgsql/compose-build-dev-with-ods.yml ./ods-docker/Compose/pgsql
       - name: Run ODS
-        run: docker-compose -f ./ods-docker/Compose/pgsql/compose-aa-build.yml --env-file ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/.automation.env up -d
+        run: docker-compose -f ./ods-docker/Compose/pgsql/compose-build-dev-with-ods.yml --env-file ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/.automation.env up -d
       - name: Verify ODS Health
         run: |
           chmod +x ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/inspect.sh
