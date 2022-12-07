@@ -1,0 +1,87 @@
+# SPDX-License-Identifier: Apache-2.0
+# Licensed to the Ed-Fi Alliance under one or more agreements.
+# The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+# See the LICENSE and NOTICES files in the project root for more information.
+
+version: "3.8"
+
+services:
+  nginx:
+    build:
+      context: ../../Docker/gateway/
+      dockerfile: Dockerfile
+    environment:
+      ADMINAPP_VIRTUAL_NAME: "${ADMINAPP_VIRTUAL_NAME:-adminapp}"
+    ports:
+      - "443:443"
+      - "80:80"
+    container_name: ed-fi-adminapp-gateway
+    restart: always
+    hostname: nginx
+    volumes:
+      - ../../../../eng/test-certs/ssl:/ssl/
+    depends_on:
+      - adminapp
+  
+  adminapp:
+    build:
+      context: ../../../../
+      dockerfile: Application/EdFi.Ods.AdminApp.Web/dev.Dockerfile
+    image: adminapp
+    environment:
+      ADMIN_POSTGRES_HOST: pb-admin
+      POSTGRES_PORT: "${PGBOUNCER_LISTEN_PORT:-6432}"
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      API_MODE: ${API_MODE}
+      AUTHORITY: ${AUTHORITY}
+      ISSUER_URL: ${ISSUER_URL}
+      SIGNING_KEY: ${SIGNING_KEY}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      ADMINAPP_VIRTUAL_NAME: ${ADMINAPP_VIRTUAL_NAME:-adminapp} 
+      API_INTERNAL_URL: ${API_INTERNAL_URL}
+    volumes:
+      - ../../../../eng/test-certs/ssl:/ssl/
+    depends_on:
+      - pb-admin
+    restart: always
+    hostname: ${ADMINAPP_VIRTUAL_NAME:-adminapp} 
+    container_name: adminapp
+    healthcheck:
+      test: $$ADMIN_APP_HEALTHCHECK_TEST
+      start_period: "60s"
+      retries: 3
+
+  db-admin:
+    image: edfialliance/ods-api-db-admin:latest
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      API_MODE: ${API_MODE}
+    ports:
+      - "5880:5432"
+    volumes:
+      - vol-db-admin:/var/lib/postgresql/data
+    restart: always
+    container_name: ed-fi-db-admin
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready  -U ${POSTGRES_USER}"]
+      start_period: "60s"
+      retries: 3   
+
+  pb-admin:
+    image: pgbouncer/pgbouncer@sha256:aa8a38b7b33e5fe70c679053f97a8e55c74d52b00c195f0880845e52b50ce516 #pgbouncer:1.15.0
+    environment:
+      DATABASES: "* = host = db-admin port=5432 user=${POSTGRES_USER} password=${POSTGRES_PASSWORD}"
+      PGBOUNCER_LISTEN_PORT: "${PGBOUNCER_LISTEN_PORT:-6432}"
+    ports:
+      - "5401:${PGBOUNCER_LISTEN_PORT:-6432}"
+    restart: always
+    container_name: ed-fi-pb-admin
+    depends_on:
+      - db-admin
+
+volumes:
+  vol-db-admin:
+    driver: local
+    name: vol-db-admin
