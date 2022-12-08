@@ -79,6 +79,7 @@ services:
     image: adminapp
     environment:
       ADMIN_POSTGRES_HOST: pb-admin
+      ODS_POSTGRES_HOST: pb-ods
       POSTGRES_PORT: "${PGBOUNCER_LISTEN_PORT:-6432}"
       POSTGRES_USER: "${POSTGRES_USER}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
