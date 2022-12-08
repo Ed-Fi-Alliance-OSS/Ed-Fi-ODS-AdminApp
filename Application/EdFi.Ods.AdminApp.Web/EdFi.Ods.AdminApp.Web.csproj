@@ -3,6 +3,12 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <IsPackable>true</IsPackable>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>../..</DockerfileContext>
+    <DockerfileFile>dev.Dockerfile</DockerfileFile>
+    <DockerfileBuildArguments>--no-cache</DockerfileBuildArguments>
+    <DockerfileRunEnvironmentFiles>.env</DockerfileRunEnvironmentFiles>
+    <DockerfileTag>adminapp-dev</DockerfileTag>
   </PropertyGroup>
 
   <ItemGroup>
@@ -40,6 +46,7 @@
     <PackageReference Include="log4net" Version="2.0.13" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.9" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
     <PackageReference Include="Npgsql" Version="6.0.3" />
     <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="6.1.0" />
   </ItemGroup>
