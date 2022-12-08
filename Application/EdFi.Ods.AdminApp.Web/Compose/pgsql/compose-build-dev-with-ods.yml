@@ -47,7 +47,7 @@ services:
     restart: always
     hostname: nginx
     volumes:
-      - ../../Docker/ssl:/ssl/
+      - ../../../../eng/test-certs/ssl:/ssl/
     depends_on:
       - api
       - adminapp
@@ -92,7 +92,7 @@ services:
     volumes:
       - ${LOGS_FOLDER}:/app/logs
       - adminapp-bulk-hashcache:/app/BulkUploadHashCache
-      - ../../Docker/ssl:/ssl/
+      - ../../../../eng/test-certs/ssl:/ssl/
     depends_on:
       - pb-admin
     restart: always
