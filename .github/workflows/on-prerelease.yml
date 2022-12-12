@@ -44,10 +44,10 @@ jobs:
           $appVersion = $(minver -t $webPrefix)
 
           # Full release name
-          "::set-output name=admin-app::$appVersion" | Write-Output
+          "admin-app=$appVersion" >> $GITHUB_OUTPUT
 
           # SemVer
-          "::set-output name=admin-app-semver::$($appVersion -Replace $webPrefix)" | Write-Output
+          "admin-app-semver=$($appVersion -Replace $webPrefix)" >> $GITHUB_OUTPUT
 
       - name: Setup .NET
         uses: actions/setup-dotnet@9211491ffb35dd6a6657ca4f45d43dfe6e97c829 # v2.0.0
@@ -87,7 +87,7 @@ jobs:
         id: hash-code
         shell: bash
         run: |
-          echo "::set-output name=hash-code::$(sha256sum *.nupkg | base64 -w0)"
+          echo "hash-code=$(sha256sum *.nupkg | base64 -w0)" >> $GITHUB_OUTPUT
 
       - name: Upload Packages as Artifacts
         if: success()
@@ -155,7 +155,7 @@ jobs:
         run: |
           # sha256sum returns "<hashcode>  <name of file". Split that and return only the <hashcode>.
           sbom_hash=$(sha256sum ./manifest/${{ env.MANIFEST_FILE }} | awk '{split($0,a); print a[1]}')
-          echo "::set-output name=sbom-hash-code::$sbom_hash"
+          echo "sbom-hash-code=$sbom_hash" >> $GITHUB_OUTPUT
 
   sbom-attach:
     name: Attach SBOM file
