@@ -35,6 +35,8 @@ Import-Module -Force "$appCommonDirectory/Application/Install.psm1" -Scope Globa
 Import-Module -Force "$appCommonDirectory/Application/Uninstall.psm1" -Scope Global
 Import-Module -Force "$appCommonDirectory/Application/Configuration.psm1" -Scope Global
 
+Import-Module -Force "$appCommonDirectory/IIS/IIS-Components.psm1" -Scope Global
+
 $DbDeployVersion = "3.0.1"
 
 function Install-EdFiOdsAdminApp {
@@ -562,8 +564,8 @@ function Invoke-InstallationPreCheck{
 
     Invoke-Task -Name ($MyInvocation.MyCommand.Name) -Task {
         $existingWebSiteName = $Config.WebsiteName
-        $webSite = Get-Website | Where-Object { $_.name -eq $existingWebSiteName }
-        $existingAdminAppApplication = get-webapplication $Config.WebApplicationName
+        $webSite = Get-WebsiteByName $existingWebSiteName
+        $existingAdminAppApplication = Get-WebApplicationByName $webSite.Name $Config.WebApplicationName
 
         if($webSite -AND $existingAdminAppApplication)
         {
@@ -621,12 +623,12 @@ function Invoke-ApplicationUpgrade {
     Invoke-Task -Name ($MyInvocation.MyCommand.Name) -Task {
 
         $existingWebSiteName = $Config.WebsiteName
-        $webSite = Get-Website | Where-Object { $_.name -eq $existingWebSiteName }
+        $webSite = Get-WebsiteByName $existingWebSiteName
         if($null -eq $webSite)
         {
             Write-Warning "Unable to find $existingWebSiteName on IIS."
             $customWebSiteName = Request-Information -DefaultValue "Ed-Fi" -Prompt "Ed-Fi applications are usually deployed in IIS underneath a 'Ed-Fi' website entry. If you previously installed with a custom name for that entry other than 'Ed-Fi', please enter that custom name"
-            $customWebSite = Get-Website | Where-Object { $_.name -eq $customWebSiteName }
+            $customWebSite = Get-WebsiteByName $customWebSiteName
             if($null -eq $customWebSite)
             {
                 throw "Unable to find $customWebSite on IIS. Please use install.ps1 for installing Ed-Fi website."
@@ -637,12 +639,12 @@ function Invoke-ApplicationUpgrade {
         $existingWebSitePath = ($webSite).PhysicalPath
 
         $existingAppName = $Config.WebApplicationName
-        $existingAdminApp = get-webapplication $existingAppName
+        $existingAdminApp = Get-WebApplicationByName $webSite.Name $existingAppName
         if($null -eq $existingAdminApp)
         {
             Write-Warning "Unable to find $existingAppName on IIS."
             $customApplicationName = Request-Information -DefaultValue "AdminApp" -Prompt "If you previously installed AdminApp with a custom name, please enter that custom name"
-            $customAdminAppApplication = get-webapplication $customApplicationName
+            $customAdminAppApplication = Get-WebApplicationByName $webSite.Name $customApplicationName
             if($null -eq $customAdminAppApplication)
             {
                 throw "Unable to find $customAdminAppApplication on IIS. Please use install.ps1 for installing AdminApp web application."
@@ -848,15 +850,15 @@ function Invoke-TransferConnectionStrings{
 function Invoke-StartWebSite($webSiteName, $portNumber){
 
     Invoke-Task -Name ($MyInvocation.MyCommand.Name) -Task {
-        $webSite = Get-Website | Where-Object { $_.name -eq $webSiteName -and $_.State -eq 'Stopped'}
-        if($webSite)
+        $webSite = Get-WebsiteByName $webSiteName
+        if("Stopped" -eq $webSite.State)
         {
-            $Websites = Get-ChildItem IIS:\Sites
+            $Websites = (Get-IISServerManager).Sites
             foreach ($Site in $Websites)
             {
                 if($Site.Name -ne $webSiteName -and $Site.State -eq 'Started')
                 {
-                    $webBinding = Get-WebBinding -Port $portNumber -Name $Site.Name -Protocol 'HTTPS'
+                    $webBinding = $Site.Bindings | Where-Object -FilterScript {$_.BindingInformation -like "*$portNumber*" -and $_.protocol -eq 'https'}
                     if($webBinding)
                     {
                         $webSiteUsingSamePort = $true
