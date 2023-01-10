@@ -1,4 +1,4 @@
-﻿# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: Apache-2.0
 # Licensed to the Ed-Fi Alliance under one or more agreements.
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
@@ -145,7 +145,7 @@ $supportedApiVersions = @(
 $maintainers = "Ed-Fi Alliance, LLC and contributors"
 
 $appCommonPackageName = "EdFi.Installer.AppCommon"
-$appCommonPackageVersion = "3.0.0"
+$appCommonPackageVersion = "3.1.0-pre0018"
 
 Import-Module -Name "$PSScriptRoot/eng/build-helpers.psm1" -Force
 Import-Module -Name "$PSScriptRoot/eng/package-manager.psm1" -Force
