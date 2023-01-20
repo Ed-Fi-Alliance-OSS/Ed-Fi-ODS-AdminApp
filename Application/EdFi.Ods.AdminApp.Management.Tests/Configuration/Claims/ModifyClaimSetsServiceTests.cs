@@ -46,8 +46,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Claims
         [Test]
         public void ShouldHandleClaimsetThatDoesNotExist()
         {
-            var noFurtherAuthRequiredCount = TestContext.ResourceClaimActions.Count(x =>
-                x.AuthorizationStrategies.FirstOrDefault().AuthorizationStrategy.AuthorizationStrategyName ==
+            var noFurtherAuthRequiredCount = TestContext.ResourceClaimAuthorizationMetadatas.Count(x =>
+                x.AuthorizationStrategy.AuthorizationStrategyName ==
                 CloudOdsClaimAuthorizationStrategy.NoFurtherAuthorizationRequired.StrategyName);
 
             var modifyClaimSets = new ModifyClaimSetsService(TestContext);
@@ -57,8 +57,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Claims
 
             TestContext.Actions.Count(x => x.ActionName == "NotAnAction").ShouldBe(0);
 
-            TestContext.ResourceClaimActions
-                .Count(x => x.AuthorizationStrategies.FirstOrDefault().AuthorizationStrategy.AuthorizationStrategyName ==
+            TestContext.ResourceClaimAuthorizationMetadatas
+                .Count(x => x.AuthorizationStrategy.AuthorizationStrategyName ==
                             CloudOdsClaimAuthorizationStrategy.NoFurtherAuthorizationRequired.StrategyName)
                 .ShouldBe(noFurtherAuthRequiredCount);
         }

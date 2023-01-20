@@ -38,8 +38,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                 addedClaimSet = context.ClaimSets.Single(x => x.ClaimSetId == addedClaimSetId);
             }
             addedClaimSet.ClaimSetName.ShouldBe(newClaimSet.ClaimSetName);
-            addedClaimSet.ForApplicationUseOnly.ShouldBe(false);
-            addedClaimSet.IsEdfiPreset.ShouldBe(false);
         }
 
         [Test]

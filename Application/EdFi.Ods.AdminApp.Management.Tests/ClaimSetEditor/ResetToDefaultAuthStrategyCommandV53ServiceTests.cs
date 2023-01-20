@@ -46,9 +46,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             Save(testClaimSet);
 
             var appAuthorizationStrategies = SetupApplicationAuthorizationStrategies(testApplication).ToList();
-            var parentRcs = UniqueNameList("Parent", 1);
-            var testResourceClaims = SetupParentResourceClaimsWithChildren(testClaimSet, testApplication, parentRcs, UniqueNameList("Child", 1));
-            var testResourceToEdit = testResourceClaims.Select(x => x.ResourceClaim).Single(x => x.ResourceName == parentRcs.First());
+            var testResourceClaims = SetupParentResourceClaimsWithChildren(testClaimSet, testApplication);
+            var testResourceToEdit = testResourceClaims.Select(x => x.ResourceClaim).Single(x => x.ResourceName == "TestParentResourceClaim1");
 
             var resultResourceClaimBeforeOverride = SingleResourceClaimForClaimSet(testClaimSet.ClaimSetId, testResourceToEdit.ResourceClaimId);
             resultResourceClaimBeforeOverride.AuthStrategyOverridesForCRUD[0].ShouldBeNull();
@@ -79,7 +78,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
             var command = new ResetToDefaultAuthStrategyCommand(new StubOdsSecurityModelVersionResolver.V3_5(),
                     new ResetToDefaultAuthStrategyCommandV53Service(securityContext), null);
-                command.Execute(resetModel);
+            command.Execute(resetModel);
 
             var resultResourceClaimAfterReset = SingleResourceClaimForClaimSet(testClaimSet.ClaimSetId, testResourceToEdit.ResourceClaimId);
             resultResourceClaimAfterReset.AuthStrategyOverridesForCRUD[0].ShouldBeNull();
@@ -105,15 +104,11 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             Save(testClaimSet);
 
             var appAuthorizationStrategies = SetupApplicationAuthorizationStrategies(testApplication).ToList();
-            var parentRcs = UniqueNameList("Parent", 1);
-            var childRcs = UniqueNameList("Child", 1);
-            var testResourceClaims = SetupParentResourceClaimsWithChildren(testClaimSet, testApplication, parentRcs, childRcs);
+            var testResourceClaims = SetupParentResourceClaimsWithChildren(testClaimSet, testApplication);
 
-            var testParentResource = testResourceClaims.Select(x => x.ResourceClaim).Single(x => x.ResourceName == parentRcs.First());
-
-            var testChildResourceClaim = $"{childRcs.First()}-{parentRcs.First()}";
+            var testParentResource = testResourceClaims.Select(x => x.ResourceClaim).Single(x => x.ResourceName == "TestParentResourceClaim1");
             var testChildResourceToEdit = testResourceClaims.Select(x => x.ResourceClaim).Single(x =>
-                x.ResourceName == testChildResourceClaim &&
+                x.ResourceName == "TestChildResourceClaim1" &&
                 x.ParentResourceClaimId == testParentResource.ResourceClaimId);
 
             using var securityContext = TestContext;
@@ -148,7 +143,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
             var command = new ResetToDefaultAuthStrategyCommand(new StubOdsSecurityModelVersionResolver.V3_5(),
                     new ResetToDefaultAuthStrategyCommandV53Service(securityContext), null);
-                command.Execute(resetModel);
+            command.Execute(resetModel);
 
             resultParentResource = SingleResourceClaimForClaimSet(testClaimSet.ClaimSetId, testParentResource.ResourceClaimId);
             var resultResourceClaimAfterReset = resultParentResource.Children.Single(x => x.Id == testChildResourceToEdit.ResourceClaimId);
@@ -174,10 +169,9 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             };
             Save(testClaimSet);
 
-            var parentRcs = UniqueNameList("Parent", 1);
-            var testResourceClaims = SetupResourceClaims(testApplication, parentRcs, UniqueNameList("Child", 1));
+            var testResourceClaims = SetupResourceClaims(testApplication);
 
-            var testResourceToEdit = testResourceClaims.Single(x => x.ResourceName == parentRcs.First());
+            var testResourceToEdit = testResourceClaims.Single(x => x.ResourceName == "TestParentResourceClaim1");
 
             using var securityContext = TestContext;
             securityContext.ClaimSetResourceClaims
@@ -218,7 +212,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             var command = new OverrideDefaultAuthorizationStrategyCommand(
                     new StubOdsSecurityModelVersionResolver.V3_5(),
                     new OverrideDefaultAuthorizationStrategyV53Service(securityContext), null);
-                command.Execute(overrideModel);
+            command.Execute(overrideModel);
         }
     }
 }

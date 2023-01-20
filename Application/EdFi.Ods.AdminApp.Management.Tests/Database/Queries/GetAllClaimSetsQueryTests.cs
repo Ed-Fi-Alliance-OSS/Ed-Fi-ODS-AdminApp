@@ -46,52 +46,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries
             claimSetNames.ShouldContain(claimSet2.ClaimSetName);
         }
 
-        [Test]
-        public void Should_Retreive_ClaimSetNames_Excluding_SystemReserved_ClaimSets()
-        {
-            var application = new Application
-            {
-                ApplicationName = $"Test Application {DateTime.Now:O}"
-            };
-            Save(application);
-
-            var systemReservedClaimSet = GetClaimSet(application, systemReserved:true);
-            var nonSystemReservedClaimSet = GetClaimSet(application, systemReserved:false);
-            Save(systemReservedClaimSet, nonSystemReservedClaimSet);
-
-            var claimSetNames = Scoped<ISecurityContext, string[]>(securityContext =>
-            {
-                var query = new GetClaimSetNamesQuery(securityContext);
-                return query.Execute(excludeSystemReservedClaimSets:true).ToArray();
-            });
-
-            claimSetNames.ShouldNotContain(systemReservedClaimSet.ClaimSetName);
-            claimSetNames.ShouldContain(nonSystemReservedClaimSet.ClaimSetName);
-        }
-
-        [Test]
-        public void Should_Retreive_ClaimSetNames_Excluding_Preset_ClaimSets()
-        {
-            var application = new Application
-            {
-                ApplicationName = $"Test Application {DateTime.Now:O}"
-            };
-            Save(application);
-
-            var edfiPresetClaimSet = GetClaimSet(application, edfiPreset:true);
-            var nonEdfiPresetClaimSet = GetClaimSet(application, edfiPreset:false);
-            Save(edfiPresetClaimSet, nonEdfiPresetClaimSet);
-
-            var claimSetNames = Scoped<ISecurityContext, string[]>(securityContext =>
-            {
-                var query = new GetClaimSetNamesQuery(securityContext);
-                return query.Execute(excludeEdFiPresetClaimSets:true).ToArray();
-            });
-
-            claimSetNames.ShouldNotContain(edfiPresetClaimSet.ClaimSetName);
-            claimSetNames.ShouldContain(nonEdfiPresetClaimSet.ClaimSetName);
-        }
-
         private static int _claimSetId = 0;
         private ClaimSet GetClaimSet(Application application, bool systemReserved = false, bool edfiPreset = false)
         {

@@ -32,9 +32,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             Save(new ClaimSet
             {
                 ClaimSetName = CloudOdsAdminApp.InternalAdminAppClaimSet,
-                Application = testApplication,
-                ForApplicationUseOnly = true,
-                IsEdfiPreset = true
+                Application = testApplication
             });
 
             using var securityContext = TestContext;
@@ -57,17 +55,13 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             Save(new ClaimSet
             {
                 ClaimSetName = "Bootstrap Descriptors and EdOrgs",
-                Application = testApplication,
-                ForApplicationUseOnly = true,
-                IsEdfiPreset = true
+                Application = testApplication
             });
 
             Save(new ClaimSet
             {
                 ClaimSetName = CloudOdsAdminApp.InternalAdminAppClaimSet,
-                Application = testApplication,
-                ForApplicationUseOnly = true,
-                IsEdfiPreset = true
+                Application = testApplication
             });
 
             using var securityContext = TestContext;
@@ -125,8 +119,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             Save(new ClaimSet
             {
                 ClaimSetName = "SIS Vendor",
-                Application = testApplication,
-                IsEdfiPreset = true
+                Application = testApplication
             });
 
             using var securityContext = TestContext;
