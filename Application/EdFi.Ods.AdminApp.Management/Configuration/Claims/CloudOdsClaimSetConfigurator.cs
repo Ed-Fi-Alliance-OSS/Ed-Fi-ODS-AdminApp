@@ -39,7 +39,9 @@ namespace EdFi.Ods.AdminApp.Management.Configuration.Claims
             var claimSet = new ClaimSet
             {
                 Application = apiApplication,
-                ClaimSetName = configuration.ClaimSetName
+                ClaimSetName = configuration.ClaimSetName,
+                IsEdfiPreset = false,
+                ForApplicationUseOnly = false
             };
 
             _securityContext.ClaimSets.Add(claimSet);
@@ -57,12 +59,13 @@ namespace EdFi.Ods.AdminApp.Management.Configuration.Claims
                     new ClaimSetResourceClaim
                     {
                         Action = actions.Single(a => a.ActionName == action.ActionName),
-                        AuthorizationStrategyOverride = authOverride,
+                        AuthorizationStrategyOverrides = authOverride != null ? new List<ClaimSetResourceClaimActionAuthorizationStrategyOverrides> { new
+                    ClaimSetResourceClaimActionAuthorizationStrategyOverrides{ AuthorizationStrategy = authOverride } } : null,
                         ClaimSet = claimSet,
                         ResourceClaim = resourceClaim
                     }))
                 {
-                    _securityContext.ClaimSetResourceClaims.Add(claimSetResourceClaim);
+                    _securityContext.ClaimSetResourceClaimActions.Add(claimSetResourceClaim);
                 }
             }
 

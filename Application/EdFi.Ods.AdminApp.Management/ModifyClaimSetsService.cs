@@ -5,6 +5,7 @@
 
 using System.Data.Entity;
 using System.Linq;
+using System.Collections.Generic;
 using EdFi.Ods.AdminApp.Management.Configuration.Claims;
 using EdFi.SecurityCompatiblity53.DataAccess.Contexts;
 
@@ -40,7 +41,14 @@ namespace EdFi.Ods.AdminApp.Management
 
             if (authStrategy == null) return;
 
-            claimAuthMetadata.AuthorizationStrategy = authStrategy;
+            var existingAuthOverride = _securityContext.ResourceClaimActionAuthorizationStrategies.First(x => x.ResourceClaimActionId == claimAuthMetadata.ResourceClaimActionId);
+            if (existingAuthOverride != null)
+            {
+                _securityContext.ResourceClaimActionAuthorizationStrategies.Remove(existingAuthOverride);
+            }
+            claimAuthMetadata.AuthorizationStrategies.Clear();
+            claimAuthMetadata.AuthorizationStrategies = new List<ResourceClaimActionAuthorizationStrategies> { new
+                ResourceClaimActionAuthorizationStrategies{ AuthorizationStrategy = authStrategy } };
         }
     }
 }

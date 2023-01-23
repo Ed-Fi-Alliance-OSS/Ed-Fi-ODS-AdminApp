@@ -15,8 +15,9 @@ namespace EdFi.Ods.AdminApp.Management
 
         public static readonly string[] SystemReservedClaimSets =
         {
-            InternalAdminAppClaimSet,
-            "Bootstrap Descriptors and EdOrgs"
+            "Ed-Fi API Publisher - Reader",
+            "Ed-Fi API Publisher - Writer",
+            "Finance Vendor"
         };
 
         public static readonly string[] DefaultClaimSets =
