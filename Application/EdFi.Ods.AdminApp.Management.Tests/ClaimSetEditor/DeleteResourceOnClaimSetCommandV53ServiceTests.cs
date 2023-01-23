@@ -44,8 +44,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             var testClaimSet = new ClaimSet { ClaimSetName = "TestClaimSet", Application = testApplication };
             Save(testClaimSet);
 
-            var parentIds = UniqueNameList("ParentRc", 1);
-            var testResources = SetupParentResourceClaimsWithChildren(testClaimSet, testApplication, parentIds, UniqueNameList("ChildRc", 1));
+            var testResources = SetupParentResourceClaimsWithChildren(testClaimSet, testApplication);
 
             var parentResourcesOnClaimSetOriginalCount =
                 testResources.Count(x => x.ResourceClaim.ParentResourceClaim == null);
@@ -84,17 +83,14 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             var testClaimSet = new ClaimSet { ClaimSetName = "TestClaimSet", Application = testApplication };
             Save(testClaimSet);
 
-            var parentRcNames = UniqueNameList("ParentRc", 1);
-            var childRcNames = UniqueNameList("ChildRc", 1);
-            var testResources = SetupParentResourceClaimsWithChildren(testClaimSet, testApplication, parentRcNames, childRcNames);
+            var testResources = SetupParentResourceClaimsWithChildren(testClaimSet, testApplication);
 
-            var childRcNameToTest = $"{childRcNames.First()}-{parentRcNames.First()}";
             var parentResourcesOnClaimSetOriginalCount =
                 testResources.Count(x => x.ResourceClaim.ParentResourceClaim == null);
 
-            var testParentResource = testResources.Select(x => x.ResourceClaim).Single(x => x.ResourceName == parentRcNames.First());
+            var testParentResource = testResources.Select(x => x.ResourceClaim).Single(x => x.ResourceName == "TestParentResourceClaim1");
             var childResourcesForParentOriginalCount = testResources.Count(x => x.ResourceClaim.ParentResourceClaimId == testParentResource.ResourceClaimId);
-            var testChildResourceToDelete = testResources.Select(x => x.ResourceClaim).Single(x => x.ResourceName == childRcNameToTest && x.ParentResourceClaimId == testParentResource.ResourceClaimId);
+            var testChildResourceToDelete = testResources.Select(x => x.ResourceClaim).Single(x => x.ResourceName == "TestChildResourceClaim1" && x.ParentResourceClaimId == testParentResource.ResourceClaimId);
 
             var deleteResourceOnClaimSetModel = new DeleteClaimSetResourceModel
             {
