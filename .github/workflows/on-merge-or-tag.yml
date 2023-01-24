@@ -51,7 +51,7 @@ jobs:
           # Install the MinVer CLI tool
           &dotnet tool install --global minver-cli
 
-          "::set-output name=admin-app::$($webPrefix)$(minver -t $webPrefix)" | Write-Output
+          "admin-app=$($webPrefix)$(minver -t $webPrefix)" >> $env:GITHUB_OUTPUT
 
       - name: Create Admin App Web Pre-Release
         run: |
