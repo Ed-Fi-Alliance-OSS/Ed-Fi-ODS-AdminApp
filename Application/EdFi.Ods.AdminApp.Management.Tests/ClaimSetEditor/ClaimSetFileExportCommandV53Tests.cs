@@ -12,16 +12,16 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using Shouldly;
 using static EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets.ClaimSetFileExportModel;
-using Application = EdFi.Security.DataAccess.Models.Application;
-using ClaimSet = EdFi.Security.DataAccess.Models.ClaimSet;
-using EdFi.Security.DataAccess.Contexts;
+using Application = EdFi.SecurityCompatiblity53.DataAccess.Models.Application;
+using ClaimSet = EdFi.SecurityCompatiblity53.DataAccess.Models.ClaimSet;
+using EdFi.SecurityCompatiblity53.DataAccess.Contexts;
 using EdFi.Ods.AdminApp.Management.Api.Automapper;
 using AutoMapper;
 
 namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 {
     [TestFixture]
-    public class ClaimSetFileExportCommandTests : SecurityDataTestBase
+    public class ClaimSetFileExportCommandV53Tests : SecurityData53TestBase
     {
         private IMapper _mapper;
 
@@ -48,7 +48,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             Save(testClaimSet2);
 
             using var securityContext = TestContext;
-            var getClaimSetById = new GetClaimSetByIdQueryV6Service(securityContext);
+            var getClaimSetById = new GetClaimSetByIdQueryV53Service(securityContext);
             var editorClaimSets = new List<Management.ClaimSetEditor.ClaimSet>
             {
                 getClaimSetById.Execute(testClaimSet1.ClaimSetId),
@@ -64,8 +64,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                     }
             };
 
+            var getClaimSetByIdQuery = new GetClaimSetByIdQuery(new StubOdsSecurityModelVersionResolver.V3_5(),
+                new GetClaimSetByIdQueryV53Service(securityContext), null);
             SharingModel sharingModel = null;
-            var command = new ClaimSetFileExportCommand(securityContext, ResourcesByClaimSetIdQuery(securityContext));
+            var command = new ClaimSetFileExportCommand(getClaimSetByIdQuery, ResourcesByClaimSetIdQuery(securityContext));
             sharingModel = command.Execute(exportModel);
 
             var resourcesForClaimSet1 = ResourceClaimsForClaimSet(testClaimSet1.ClaimSetId).ToArray();
@@ -122,7 +124,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             Save(testClaimSet2);
 
             using var securityContext = TestContext;
-            var getClaimSetById = new GetClaimSetByIdQueryV6Service(securityContext);
+            var getClaimSetById = new GetClaimSetByIdQueryV53Service(securityContext);
             var exportModel = new ClaimSetFileExportModel
             {
                 Title = "TestDownload",
@@ -156,7 +158,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             Save(testClaimSet2);
 
             using var securityContext = TestContext;
-            var getClaimSetById = new GetClaimSetByIdQueryV6Service(securityContext);
+            var getClaimSetById = new GetClaimSetByIdQueryV53Service(securityContext);
             var exportModel = new ClaimSetFileExportModel
             {
                 ClaimSets = new List<Management.ClaimSetEditor.ClaimSet>
@@ -178,8 +180,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
         private GetResourcesByClaimSetIdQuery ResourcesByClaimSetIdQuery(ISecurityContext context)
         {
-            return new GetResourcesByClaimSetIdQuery(new StubOdsSecurityModelVersionResolver.V6(),
-                    null, new GetResourcesByClaimSetIdQueryV6Service(context, _mapper));
+            return new GetResourcesByClaimSetIdQuery(new StubOdsSecurityModelVersionResolver.V3_5(),
+                    new GetResourcesByClaimSetIdQueryV53Service(context, _mapper), null);
         }
     }
 }
