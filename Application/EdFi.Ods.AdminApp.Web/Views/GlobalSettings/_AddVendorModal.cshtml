@@ -21,7 +21,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                 {
                     @Html.ValidationBlock()
                     @Html.InputBlock(m => m.Company, "Vendor Name")
-                    @Html.InputTextAreaBlock(m => m.NamespacePrefixes, placeholderText:"http://vendor1.com, http://vendor2.com, http://vendor3.com ..."
+                    @Html.InputTextAreaBlock(m => m.NamespacePrefixes, placeholderText:"uri://vendor1.com, uri://vendor2.com, uri://vendor3.com ..."
                         , helpText:"You can provide a comma separated list of vendor namespace prefixes."
                         , inputModifier: x =>
                         {
@@ -33,7 +33,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                             <div class="col-xs-4"></div>
                             <div class="col-xs-6 text-left">
                                 <div class="input-group">
-                                    <input id="add-namespace-prefix-input" type="text" class="form-control" placeholder="http://vendorwebsite.com">
+                                    <input id="add-namespace-prefix-input" type="text" class="form-control" placeholder="uri://vendorwebsite.com">
                                     <span class="input-group-btn">
                                         <button id="add-namespace-prefix" class="btn btn-primary" type="button">Add</button>
                                     </span>

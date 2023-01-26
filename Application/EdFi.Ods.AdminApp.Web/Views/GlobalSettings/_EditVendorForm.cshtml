@@ -1,4 +1,4 @@
-﻿@*
+@*
 SPDX-License-Identifier: Apache-2.0
 Licensed to the Ed-Fi Alliance under one or more agreements.
 The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
@@ -21,7 +21,7 @@ else
         @Html.ValidationBlock()
         @Html.Input(m => m.VendorId).Hide()
         @Html.InputBlock(m => m.Company, "Vendor Name")
-        @Html.InputTextAreaBlock(m => m.NamespacePrefixes, Model.NamespacePrefixes, "http://vendor1.com, http://vendor2.com, http://vendor3.com ..."
+        @Html.InputTextAreaBlock(m => m.NamespacePrefixes, Model.NamespacePrefixes, "uri://vendor1.com, uri://vendor2.com, uri://vendor3.com ..."
             , "You can provide a comma separated list of vendor namespace prefixes. You can remove an already assigned namespace prefixes by not including it in the list."
             , x =>
             {
@@ -33,7 +33,7 @@ else
                 <div class="col-xs-4"></div>
                 <div class="col-xs-6 text-left">
                     <div class="input-group">
-                        <input id="edit-namespace-prefix-input" type="text" class="form-control" placeholder="http://vendorwebsite.com">
+                        <input id="edit-namespace-prefix-input" type="text" class="form-control" placeholder="uri://vendorwebsite.com">
                         <span class="input-group-btn">
                             <button id="edit-namespace-prefix" class="btn btn-primary" type="button">Add</button>
                         </span>
