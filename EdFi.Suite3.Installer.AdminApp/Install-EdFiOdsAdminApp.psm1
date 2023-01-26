@@ -35,6 +35,8 @@ Import-Module -Force "$appCommonDirectory/Application/Install.psm1" -Scope Globa
 Import-Module -Force "$appCommonDirectory/Application/Uninstall.psm1" -Scope Global
 Import-Module -Force "$appCommonDirectory/Application/Configuration.psm1" -Scope Global
 
+Import-Module -Force "$appCommonDirectory/IIS/IIS-Components.psm1" -Scope Global
+
 $DbDeployVersion = "3.0.1"
 
 function Install-EdFiOdsAdminApp {
@@ -560,43 +562,46 @@ function Invoke-InstallationPreCheck{
         $Config
     )
 
-    Invoke-Task -Name ($MyInvocation.MyCommand.Name) -Task {
-        $existingWebSiteName = $Config.WebsiteName
-        $webSite = Get-Website | Where-Object { $_.name -eq $existingWebSiteName }
-        $existingAdminAppApplication = get-webapplication $Config.WebApplicationName
+    Invoke-Task -Name ($MyInvocation.MyCommand.Name) -Task { 
+        $existingWebSiteName = $Config.WebSiteName
+        $webSite = Get-WebsiteByName $existingWebSiteName         
 
-        if($webSite -AND $existingAdminAppApplication)
+        if($webSite)
         {
-            $existingApplicationPath, $versionString = GetExistingAppVersion $webSite.PhysicalPath $existingAdminAppApplication
-            $installVersionString = $Config.PackageVersion
+            $existingAdminAppApplication = Get-WebApplicationByName $webSite.Name $Config.WebApplicationName
+            if($existingAdminAppApplication)
+            {
+                $existingApplicationPath, $versionString = GetExistingAppVersion $webSite.PhysicalPath $existingAdminAppApplication
+                $installVersionString = $Config.PackageVersion
 
-            $targetIsNewer = IsVersionHigherThanOther $installVersionString $versionString
-            $upgradeIsSupported = CheckVersionSupportsUpgrade $versionString
+                $targetIsNewer = IsVersionHigherThanOther $installVersionString $versionString
+                $upgradeIsSupported = CheckVersionSupportsUpgrade $versionString
 
-            if($targetIsNewer -and $upgradeIsSupported) {
-                Write-Host "We found a preexisting Admin App $versionString installation. If you are seeking to upgrade to the new version, consider using the included upgrade script instead." -ForegroundColor Green
-                Write-Host "Note: Using the upgrade script, all the appsettings and database connection string values would be copied forward from the existing installation, so only continue if you are you seeking to change the configuration." -ForegroundColor Yellow
+                if($targetIsNewer -and $upgradeIsSupported) {
+                    Write-Host "We found a preexisting Admin App $versionString installation. If you are seeking to upgrade to the new version, consider using the included upgrade script instead." -ForegroundColor Green
+                    Write-Host "Note: Using the upgrade script, all the appsettings and database connection string values would be copied forward from the existing installation, so only continue if you are you seeking to change the configuration." -ForegroundColor Yellow
 
-                $confirmation = Request-Information -DefaultValue 'y' -Prompt "Please enter 'y' to continue the installation process, or enter 'n' to cancel the installation so that you can instead run the upgrade script"
+                    $confirmation = Request-Information -DefaultValue 'y' -Prompt "Please enter 'y' to continue the installation process, or enter 'n' to cancel the installation so that you can instead run the upgrade script"
 
-                if(-not ($confirmation -ieq 'y')) {
-                    Write-Host "Exiting."
+                    if(-not ($confirmation -ieq 'y')) {
+                        Write-Host "Exiting."
+                        exit
+                    }else {
+                        $appsettingsFile =  Join-Path $existingApplicationPath "appsettings.json"
+                        if(Test-Path -Path $appsettingsFile)
+                        {
+                            Write-Host "To ensure your existing ODS / API Key and Secret values will continue to work, your existing encryption key is being copied forward from the appsettings.json file at $appsettingsFile"
+                            $appSettings = Get-Content $appsettingsFile | ConvertFrom-Json | ConvertTo-Hashtable
+                            $Config.EncryptionKey = $appSettings.AppSettings.EncryptionKey
+                        }
+                    }
+                }elseif ($targetIsNewer) {
+                    Write-Warning "We found a preexisting Admin App $versionString installation. That version cannot be automatically upgraded in-place by this script. Please refer to https://techdocs.ed-fi.org/display/ADMIN/Upgrading+Admin+App+from+1.x+Line for setting up the newer version of AdminApp. Exiting."
                     exit
                 }else {
-                    $appsettingsFile =  Join-Path $existingApplicationPath "appsettings.json"
-                    if(Test-Path -Path $appsettingsFile)
-                    {
-                        Write-Host "To ensure your existing ODS / API Key and Secret values will continue to work, your existing encryption key is being copied forward from the appsettings.json file at $appsettingsFile"
-                        $appSettings = Get-Content $appsettingsFile | ConvertFrom-Json | ConvertTo-Hashtable
-                        $Config.EncryptionKey = $appSettings.AppSettings.EncryptionKey
-                    }
+                    Write-Warning "We found a preexisting Admin App $versionString installation newer than the target version $installVersionString. Downgrades are not supported. Please fully uninstall the existing Admin App first and retry. Exiting."
+                    exit
                 }
-            }elseif ($targetIsNewer) {
-                Write-Warning "We found a preexisting Admin App $versionString installation. That version cannot be automatically upgraded in-place by this script. Please refer to https://techdocs.ed-fi.org/display/ADMIN/Upgrading+Admin+App+from+1.x+Line for setting up the newer version of AdminApp. Exiting."
-                exit
-            }else {
-                Write-Warning "We found a preexisting Admin App $versionString installation newer than the target version $installVersionString. Downgrades are not supported. Please fully uninstall the existing Admin App first and retry. Exiting."
-                exit
             }
         }
 
@@ -621,12 +626,12 @@ function Invoke-ApplicationUpgrade {
     Invoke-Task -Name ($MyInvocation.MyCommand.Name) -Task {
 
         $existingWebSiteName = $Config.WebsiteName
-        $webSite = Get-Website | Where-Object { $_.name -eq $existingWebSiteName }
+        $webSite = Get-WebsiteByName $existingWebSiteName
         if($null -eq $webSite)
         {
             Write-Warning "Unable to find $existingWebSiteName on IIS."
             $customWebSiteName = Request-Information -DefaultValue "Ed-Fi" -Prompt "Ed-Fi applications are usually deployed in IIS underneath a 'Ed-Fi' website entry. If you previously installed with a custom name for that entry other than 'Ed-Fi', please enter that custom name"
-            $customWebSite = Get-Website | Where-Object { $_.name -eq $customWebSiteName }
+            $customWebSite = Get-WebsiteByName $customWebSiteName
             if($null -eq $customWebSite)
             {
                 throw "Unable to find $customWebSite on IIS. Please use install.ps1 for installing Ed-Fi website."
@@ -637,12 +642,12 @@ function Invoke-ApplicationUpgrade {
         $existingWebSitePath = ($webSite).PhysicalPath
 
         $existingAppName = $Config.WebApplicationName
-        $existingAdminApp = get-webapplication $existingAppName
+        $existingAdminApp = Get-WebApplicationByName $webSite.Name $existingAppName
         if($null -eq $existingAdminApp)
         {
             Write-Warning "Unable to find $existingAppName on IIS."
             $customApplicationName = Request-Information -DefaultValue "AdminApp" -Prompt "If you previously installed AdminApp with a custom name, please enter that custom name"
-            $customAdminAppApplication = get-webapplication $customApplicationName
+            $customAdminAppApplication = Get-WebApplicationByName $webSite.Name $customApplicationName
             if($null -eq $customAdminAppApplication)
             {
                 throw "Unable to find $customAdminAppApplication on IIS. Please use install.ps1 for installing AdminApp web application."
@@ -848,15 +853,15 @@ function Invoke-TransferConnectionStrings{
 function Invoke-StartWebSite($webSiteName, $portNumber){
 
     Invoke-Task -Name ($MyInvocation.MyCommand.Name) -Task {
-        $webSite = Get-Website | Where-Object { $_.name -eq $webSiteName -and $_.State -eq 'Stopped'}
-        if($webSite)
+        $webSite = Get-WebsiteByName $webSiteName
+        if("Stopped" -eq $webSite.State)
         {
-            $Websites = Get-ChildItem IIS:\Sites
+            $Websites = (Get-IISServerManager).Sites
             foreach ($Site in $Websites)
             {
                 if($Site.Name -ne $webSiteName -and $Site.State -eq 'Started')
                 {
-                    $webBinding = Get-WebBinding -Port $portNumber -Name $Site.Name -Protocol 'HTTPS'
+                    $webBinding = $Site.Bindings | Where-Object -FilterScript {$_.BindingInformation -like "*$portNumber*" -and $_.protocol -eq 'https'}
                     if($webBinding)
                     {
                         $webSiteUsingSamePort = $true
