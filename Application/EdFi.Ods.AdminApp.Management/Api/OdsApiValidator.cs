@@ -23,6 +23,8 @@ namespace EdFi.Ods.AdminApp.Management.Api
     {
         public bool IsValidOdsApi { get; set; }
 
+        public Version Version { get; set; }
+
         public Exception Exception { get; set; }
     }
 
@@ -45,13 +47,19 @@ namespace EdFi.Ods.AdminApp.Management.Api
                 var parsedContent = ParseJson(contentAsString);
 
                 var errors = schema.Validate(parsedContent);
-                if (errors.Count == 0)
+
+                if (errors.Count == 0 && parsedContent.TryGetValue("version", out var version))
+                {
                     return new OdsApiValidatorResult
                     {
+                        Version = Version.Parse(version.Value<string>()!),
                         IsValidOdsApi = true
                     };
+                }
 
-                return InvalidOdsApiValidatorResult("The API provided does not have a valid root JSON document.");
+                return errors.Count == 0
+                    ? new OdsApiValidatorResult { IsValidOdsApi = true }
+                    : InvalidOdsApiValidatorResult("The API provided does not have a valid root JSON document.");
             }
             catch (InvalidOperationException exception)
             {
@@ -63,7 +71,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
             }
             catch (HttpRequestException exception)
             {
-                return InvalidOdsApiValidatorResult(exception.Message, exception.StatusCode??HttpStatusCode.ServiceUnavailable);
+                return InvalidOdsApiValidatorResult(exception.Message, exception.StatusCode ?? HttpStatusCode.ServiceUnavailable);
             }
             catch (Exception exception)
             {
@@ -162,7 +170,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
                     IsValidOdsApi = false,
                     Exception = new OdsApiConnectionException(
                             statusCode, "Invalid ODS API configured.", message)
-                        { AllowFeedback = false }
+                    { AllowFeedback = false }
                 };
             }
         }

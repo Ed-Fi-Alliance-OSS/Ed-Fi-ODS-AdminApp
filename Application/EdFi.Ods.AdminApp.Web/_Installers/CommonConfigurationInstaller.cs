@@ -42,6 +42,16 @@ namespace EdFi.Ods.AdminApp.Web._Installers
         {
             services.AddTransient<IFileUploadHandler, LocalFileSystemFileUploadHandler>();
 
+            services.AddScoped<SecurityCompatiblity53.DataAccess.Contexts.ISecurityContext>(x =>
+            {
+                var connectionStrings = x.GetService<IOptions<ConnectionStrings>>();
+
+                if (appSettings.DatabaseEngine.EqualsIgnoreCase("SqlServer"))
+                    return new SecurityCompatiblity53.DataAccess.Contexts.SqlServerSecurityContext(connectionStrings.Value.Security);
+
+                return new SecurityCompatiblity53.DataAccess.Contexts.PostgresSecurityContext(connectionStrings.Value.Security);
+            });
+
             services.AddScoped<ISecurityContext>(x =>
             {
                 var connectionStrings = x.GetService<IOptions<ConnectionStrings>>();
@@ -130,7 +140,8 @@ namespace EdFi.Ods.AdminApp.Web._Installers
                     else if (interfaces.Length == 0)
                     {
                         if (concreteClass.Name.EndsWith("Command") ||
-                            concreteClass.Name.EndsWith("Query"))
+                            concreteClass.Name.EndsWith("Query") ||
+                            concreteClass.Name.EndsWith("Service"))
                             services.AddTransient(concreteClass);
                     }
                 }
@@ -138,6 +149,13 @@ namespace EdFi.Ods.AdminApp.Web._Installers
 
             services.AddSingleton<IStringEncryptorService, AESEncryptorService>(
                     x => new AESEncryptorService(appSettings.EncryptionKey));
+
+            services.AddSingleton<IOdsSecurityModelVersionResolver>(sp =>
+            {
+                var apiServerUrl = appSettings.ProductionApiUrl;
+                var validator = sp.GetRequiredService<IOdsApiValidator>();
+                return new OdsSecurityVersionResolver(validator, apiServerUrl);
+            });
         }
 
         protected abstract void InstallHostingSpecificClasses(IServiceCollection services);

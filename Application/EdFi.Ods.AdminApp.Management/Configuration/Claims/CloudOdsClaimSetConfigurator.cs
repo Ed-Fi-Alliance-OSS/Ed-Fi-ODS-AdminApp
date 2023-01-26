@@ -4,9 +4,8 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using System.Linq;
-using System.Collections.Generic;
-using EdFi.Security.DataAccess.Contexts;
-using EdFi.Security.DataAccess.Models;
+using EdFi.SecurityCompatiblity53.DataAccess.Contexts;
+using EdFi.SecurityCompatiblity53.DataAccess.Models;
 
 namespace EdFi.Ods.AdminApp.Management.Configuration.Claims
 {
@@ -36,13 +35,11 @@ namespace EdFi.Ods.AdminApp.Management.Configuration.Claims
             var apiApplication = Queryable.Single(_securityContext.Applications, a => a.ApplicationName == configuration.ApplicationName);
             var resourceClaims = _securityContext.ResourceClaims.Where(rc => Enumerable.Contains(resourceTypes, rc.ResourceName)).ToList();
             var actions = _securityContext.Actions.Where(a => actionNames.Contains(a.ActionName)).ToList();
-            
+
             var claimSet = new ClaimSet
             {
                 Application = apiApplication,
-                ClaimSetName = configuration.ClaimSetName,
-                IsEdfiPreset = false,
-                ForApplicationUseOnly = false
+                ClaimSetName = configuration.ClaimSetName
             };
 
             _securityContext.ClaimSets.Add(claimSet);
@@ -52,21 +49,20 @@ namespace EdFi.Ods.AdminApp.Management.Configuration.Claims
                 var resourceClaim = resourceClaims.Single(rc => rc.ResourceName.Equals(requiredClaim.EntityName));
                 var authOverride = requiredClaim.AuthorizationStrategy != null
                     ? Queryable.FirstOrDefault(_securityContext.AuthorizationStrategies, a =>
-                        a.Application.ApplicationId == apiApplication.ApplicationId && 
+                        a.Application.ApplicationId == apiApplication.ApplicationId &&
                         a.AuthorizationStrategyName == requiredClaim.AuthorizationStrategy.StrategyName)
                     : null;
 
-                foreach (var claimSetResourceClaim in requiredClaim.Actions.Select(action => 
-                    new ClaimSetResourceClaimAction
+                foreach (var claimSetResourceClaim in requiredClaim.Actions.Select(action =>
+                    new ClaimSetResourceClaim
                     {
                         Action = actions.Single(a => a.ActionName == action.ActionName),
-                        AuthorizationStrategyOverrides = authOverride != null ? new List<ClaimSetResourceClaimActionAuthorizationStrategyOverrides> { new
-                    ClaimSetResourceClaimActionAuthorizationStrategyOverrides{ AuthorizationStrategy = authOverride } } : null,
+                        AuthorizationStrategyOverride = authOverride,
                         ClaimSet = claimSet,
                         ResourceClaim = resourceClaim
                     }))
                 {
-                    _securityContext.ClaimSetResourceClaimActions.Add(claimSetResourceClaim);
+                    _securityContext.ClaimSetResourceClaims.Add(claimSetResourceClaim);
                 }
             }
 

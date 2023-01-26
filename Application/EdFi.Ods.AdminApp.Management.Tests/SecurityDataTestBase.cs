@@ -6,12 +6,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using EdFi.Ods.AdminApp.Web;
+using AutoMapper;
+using EdFi.Ods.AdminApp.Management.Api.Automapper;
 using EdFi.Security.DataAccess.Contexts;
 using EdFi.Security.DataAccess.Models;
 using NUnit.Framework;
 using Action = EdFi.Security.DataAccess.Models.Action;
 using ActionName = EdFi.Ods.AdminApp.Management.ClaimSetEditor.Action;
+using ClaimSetEditorTypes = EdFi.Ods.AdminApp.Management.ClaimSetEditor;
 
 namespace EdFi.Ods.AdminApp.Management.Tests
 {
@@ -22,7 +24,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
         {
             get
             {
-                return Startup.ConfigurationConnectionStrings.Security;
+                return "Data Source=.\\;Initial Catalog=EdFi_Security_Test;Integrated Security=True;";
             }
         }
 
@@ -40,7 +42,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
         {
             if (SeedSecurityContextOnFixtureSetup)
             {
-                SetupContext.Database.Initialize(true);
+                TestContext.Database.Initialize(true);
             }
         }
 
@@ -212,7 +214,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
 
         protected IReadOnlyCollection<ClaimSetResourceClaimAction> SetupParentResourceClaimsWithChildren(ClaimSet testClaimSet, Application testApplication, IList<string> parentRcNames, IList<string> childRcNames)
         {
-            var actions = ActionName.GetAll().Select(action => new Action {ActionName = action.Value, ActionUri = action.Value}).ToList();
+            var actions = ActionName.GetAll().Select(action => new Action { ActionName = action.Value, ActionUri = action.Value }).ToList();
             Save(actions.Cast<object>().ToArray());
 
             var parentResourceClaims = parentRcNames.Select(parentRcName => {
@@ -308,6 +310,32 @@ namespace EdFi.Ods.AdminApp.Management.Tests
             Save(resourceClaimWithDefaultAuthStrategies.Cast<object>().ToArray());
 
             return resourceClaimWithDefaultAuthStrategies;
+        }
+
+        private IMapper Mapper() => new MapperConfiguration(cfg => cfg.AddProfile<AdminManagementMappingProfile>()).CreateMapper();
+
+        protected List<ClaimSetEditorTypes.ResourceClaim> ResourceClaimsForClaimSet(int securityContextClaimSetId)
+        {
+            List<ClaimSetEditorTypes.ResourceClaim> list = null;
+            using (var securityContext = CreateDbContext())
+            {
+                var getResourcesByClaimSetIdQuery = new ClaimSetEditorTypes.GetResourcesByClaimSetIdQuery(new StubOdsSecurityModelVersionResolver.V6(),
+                    null, new ClaimSetEditorTypes.GetResourcesByClaimSetIdQueryV6Service(securityContext, Mapper()));
+                list = getResourcesByClaimSetIdQuery.AllResources(securityContextClaimSetId).ToList();
+            }
+            return list;
+        }
+
+        protected ClaimSetEditorTypes.ResourceClaim SingleResourceClaimForClaimSet(int securityContextClaimSetId, int resourceClaimId)
+        {
+            ClaimSetEditorTypes.ResourceClaim resourceClaim = null;
+            using (var securityContext = CreateDbContext())
+            {
+                var getResourcesByClaimSetIdQuery = new ClaimSetEditorTypes.GetResourcesByClaimSetIdQuery(new StubOdsSecurityModelVersionResolver.V6(),
+                    null, new ClaimSetEditorTypes.GetResourcesByClaimSetIdQueryV6Service(securityContext, Mapper()));
+                resourceClaim = getResourcesByClaimSetIdQuery.SingleResource(securityContextClaimSetId, resourceClaimId);
+            }
+            return resourceClaim;
         }
     }
 }

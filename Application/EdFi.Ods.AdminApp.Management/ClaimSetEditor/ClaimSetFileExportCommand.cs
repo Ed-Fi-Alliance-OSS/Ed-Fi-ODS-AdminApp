@@ -1,29 +1,29 @@
-﻿// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: Apache-2.0
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using System.Collections.Generic;
 using System.Linq;
-using EdFi.Security.DataAccess.Contexts;
 using Newtonsoft.Json.Linq;
 
 namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
 {
     public class ClaimSetFileExportCommand
     {
-        private readonly ISecurityContext _context;
+        private readonly IGetClaimSetByIdQuery _getClaimSetByIdQuery;
         private readonly IGetResourcesByClaimSetIdQuery _getResourcesByClaimSetIdQuery;
 
-        public ClaimSetFileExportCommand(ISecurityContext context, IGetResourcesByClaimSetIdQuery getResourcesByClaimSetIdQuery)
+        public ClaimSetFileExportCommand(IGetClaimSetByIdQuery getClaimSetByIdQuery,
+            IGetResourcesByClaimSetIdQuery getResourcesByClaimSetIdQuery)
         {
-            _context = context;
+            _getClaimSetByIdQuery = getClaimSetByIdQuery;
             _getResourcesByClaimSetIdQuery = getResourcesByClaimSetIdQuery;
         }
 
         public SharingModel Execute(IClaimSetFileExportModel model)
         {
-            var sharingClaimSets = ClaimSetExports(_context, model.SelectedForExport.ToArray());
+            var sharingClaimSets = ClaimSetExports(model.SelectedForExport.ToArray());
             var sharingTemplate = new SharingTemplate
             {
                 ClaimSets = sharingClaimSets.ToArray()
@@ -36,7 +36,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
             };
         }
 
-        private List<SharingClaimSet> ClaimSetExports(ISecurityContext context, int[] selectedIds)
+        private List<SharingClaimSet> ClaimSetExports(int[] selectedIds)
         {
             if (!selectedIds.Any())
                 return new List<SharingClaimSet>();
@@ -44,9 +44,8 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
             foreach (var claimSetId in selectedIds)
             {
                 var sharingClaimSet = new SharingClaimSet();
-                var claimSet = context.ClaimSets
-                    .Single(x => x.ClaimSetId == claimSetId);
-                sharingClaimSet.Name = claimSet.ClaimSetName;
+                var claimSet = _getClaimSetByIdQuery.Execute(claimSetId);
+                sharingClaimSet.Name = claimSet.Name;
 
                 var resources = _getResourcesByClaimSetIdQuery.AllResources(claimSetId);
                 sharingClaimSet.ResourceClaims =
@@ -57,7 +56,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
                         {
                             "ParentId",
                             "Id"
-                        });                        
+                        });
                         return jsonObject;
                     }).ToList();
                 sharingClaimSets.Add(sharingClaimSet);
