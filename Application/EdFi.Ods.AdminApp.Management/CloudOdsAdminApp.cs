@@ -7,7 +7,7 @@ namespace EdFi.Ods.AdminApp.Management
 {
     public static class CloudOdsAdminApp
     {
-        public const string ApplicationName = "Ed-Fi ODS Admin App for Suite 3";
+        public const string ApplicationName = "Ed-Fi ODS Admin App";
         public const string SecurityContextApplicationName = "Ed-Fi ODS API";
         public const string VendorName = "EdFi";
         public const string VendorNamespacePrefix = "http://ed-fi.org";
