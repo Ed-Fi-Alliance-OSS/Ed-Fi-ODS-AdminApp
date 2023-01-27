@@ -33,6 +33,9 @@ jobs:
     defaults:
       run:
         shell: pwsh
+    outputs:
+      admin-app: ${{ steps.versions.outputs.admin-app }}
+      admin-app-semver: ${{ steps.versions.outputs.admin-app-semver }}
     steps:
       - name: Checkout the Repo
         uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
@@ -51,7 +54,13 @@ jobs:
           # Install the MinVer CLI tool
           &dotnet tool install --global minver-cli
 
-          "admin-app=$($webPrefix)$(minver -t $webPrefix)" >> $env:GITHUB_OUTPUT
+          $appVersion = $(minver -t $webPrefix)
+
+          # Full release name
+          echo "admin-app=$($webPrefix)$appVersion" >> $env:GITHUB_OUTPUT
+
+          # SemVer
+          echo "admin-app-semver=$($appVersion -Replace $webPrefix)" >> $env:GITHUB_OUTPUT
 
       - name: Create Admin App Web Pre-Release
         run: |
@@ -83,28 +92,11 @@ jobs:
         shell: pwsh
     outputs:
       hash-code: ${{ steps.hash-code.outputs.hash-code }}
-      admin-app-version: ${{ steps.versions.outputs.admin-app }}
 
     steps:
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
         with:
           fetch-depth: 0
-
-      - name: Set Version Numbers
-        id: versions
-        run: |
-          $webPrefix = "v"
-
-          # Install the MinVer CLI tool
-          &dotnet tool install --global minver-cli
-
-          $appVersion = $(minver -t $webPrefix)
-
-          # Full release name
-          "admin-app=$appVersion" >> $env:GITHUB_OUTPUT
-
-          # SemVer
-          "admin-app-semver=$($appVersion -Replace $webPrefix)" >> $env:GITHUB_OUTPUT
 
       - name: Setup .NET
         uses: actions/setup-dotnet@9211491ffb35dd6a6657ca4f45d43dfe6e97c829 # v2.0.0
@@ -113,7 +105,7 @@ jobs:
 
       - name: Publish .NET Assemblies
         run: |
-          $appVersion = "${{ steps.versions.outputs.admin-app-semver }}"
+          $appVersion = "${{ needs.create-pre-releases.outputs.admin-app-semver }}"
 
           ./build.ps1 -Command BuildAndPublish `
               -Configuration Release `
@@ -128,7 +120,7 @@ jobs:
       - name: Create NuGet Packages
         if: success()
         run: |
-          $appVersion = "${{ steps.versions.outputs.admin-app-semver }}"
+          $appVersion = "${{ needs.create-pre-releases.outputs.admin-app-semver }}"
 
           "Building ${{ env.PACKAGE_NAME }} NuGet Package" | Write-Output
           # Web, and DB
@@ -185,7 +177,7 @@ jobs:
           Get-ChildItem -Include "EdFi.Suite3.ODS.$packageName.*.nupkg" -Recurse | ForEach-Object { $_.FullName } > buildfilelist.txt
           New-Item -Path manifest -Type Directory
 
-          $version = "${{ needs.pack.outputs.admin-app-version }}"
+          $version = "${{ needs.create-pre-releases.outputs.admin-app }}"
 
           &$out generate `
               -b ./ `
