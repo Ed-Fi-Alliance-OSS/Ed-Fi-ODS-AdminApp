@@ -3,14 +3,12 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
-using System.Linq;
 using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
-using EdFi.Security.DataAccess.Contexts;
 using FluentValidation;
 
 namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets
 {
-    public class OverrideDefaultAuthorizationStrategyModel: IOverrideDefaultAuthorizationStrategyModel
+    public class OverrideDefaultAuthorizationStrategyModel : IOverrideDefaultAuthorizationStrategyModel
     {
         public int ClaimSetId { get; set; }
         public int ResourceClaimId { get; set; }
@@ -22,19 +20,18 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets
 
     public class OverrideDefaultAuthorizationStrategyModelValidator : AbstractValidator<OverrideDefaultAuthorizationStrategyModel>
     {
-        private readonly ISecurityContext _context;
+        private readonly IGetResourcesByClaimSetIdQuery _getResourcesByClaimSetIdQuery;
 
-        public OverrideDefaultAuthorizationStrategyModelValidator(ISecurityContext context)
+        public OverrideDefaultAuthorizationStrategyModelValidator(IGetResourcesByClaimSetIdQuery getResourcesByClaimSetIdQuery)
         {
-            _context = context;
+            _getResourcesByClaimSetIdQuery = getResourcesByClaimSetIdQuery;
 
-            RuleFor(m => m).Must(m => ExistInTheSystem(m.ResourceClaimId, m.ClaimSetId)).WithMessage("No actions for this claimset and resource exist in the system");
+            RuleFor(m => m).Must(m => ExistInTheSystem(m.ClaimSetId, m.ResourceClaimId)).WithMessage("No actions for this claimset and resource exist in the system");
         }
 
-        private bool ExistInTheSystem(int resourceClaimId, int claimSetId)
+        private bool ExistInTheSystem(int claimSetId, int resourceClaimId)
         {
-            return _context.ClaimSetResourceClaimActions.Any(x =>
-                x.ResourceClaim.ResourceClaimId == resourceClaimId && x.ClaimSet.ClaimSetId == claimSetId);
+            return _getResourcesByClaimSetIdQuery.SingleResource(claimSetId, resourceClaimId) != null;
         }
     }
 }
