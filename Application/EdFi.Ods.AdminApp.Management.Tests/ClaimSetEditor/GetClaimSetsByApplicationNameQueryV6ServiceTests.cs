@@ -10,16 +10,15 @@ using EdFi.Admin.DataAccess.Contexts;
 using NUnit.Framework;
 using Shouldly;
 using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
-using EdFi.Ods.AdminApp.Web;
-using Application = EdFi.Security.DataAccess.Models.Application;
-using VendorApplication = EdFi.Admin.DataAccess.Models.Application;
-using ClaimSet = EdFi.Security.DataAccess.Models.ClaimSet;
 using static EdFi.Ods.AdminApp.Management.Tests.Testing;
+using Application = EdFi.Security.DataAccess.Models.Application;
+using ClaimSet = EdFi.Security.DataAccess.Models.ClaimSet;
+using VendorApplication = EdFi.Admin.DataAccess.Models.Application;
 
 namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 {
     [TestFixture]
-    public class GetClaimSetsByApplicationNameQueryTests : SecurityDataTestBase
+    public class GetClaimSetsByApplicationNameQueryV6ServiceTests : SecurityDataTestBase
     {
         [Test]
         public void ShouldExcludeInternalAdminAppClaimSet()
@@ -35,11 +34,11 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                 ForApplicationUseOnly = true,
                 IsEdfiPreset = true
             });
-
-            Scoped<IGetClaimSetsByApplicationNameQuery>(query =>
+            using var securityContext = TestContext;
+            Scoped<IUsersContext>(usersContext =>
             {
+                var query = new GetClaimSetsByApplicationNameQueryV6Service(securityContext, usersContext);
                 var results = query.Execute(testApplication.ApplicationName).ToArray();
-
                 results.ShouldNotContain(x => x.Name == CloudOdsAdminApp.InternalAdminAppClaimSet);
             });
         }
@@ -67,8 +66,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                 IsEdfiPreset = true
             });
 
-            Scoped<IGetClaimSetsByApplicationNameQuery>(query =>
+            using var securityContext = TestContext;
+            Scoped<IUsersContext>(usersContext =>
             {
+                var query = new GetClaimSetsByApplicationNameQueryV6Service(securityContext, usersContext);
                 var results = query.Execute(testApplication.ApplicationName).ToArray();
 
                 results.ShouldNotContain(x => x.Name == CloudOdsAdminApp.InternalAdminAppClaimSet);
@@ -81,8 +82,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
         {
             var testClaimSets = SetupApplicationClaimSets();
 
-            Scoped<IGetClaimSetsByApplicationNameQuery>(query =>
+            using var securityContext = TestContext;
+            Scoped<IUsersContext>(usersContext =>
             {
+                var query = new GetClaimSetsByApplicationNameQueryV6Service(securityContext, usersContext);
                 var results = query.Execute(testClaimSets.First().Application.ApplicationName).ToArray();
 
                 results.Length.ShouldBe(testClaimSets.Count);
@@ -98,8 +101,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
             var testClaimSets = SetupApplicationClaimSets();
 
-            Scoped<IGetClaimSetsByApplicationNameQuery>(query =>
+            using var securityContext = TestContext;
+            Scoped<IUsersContext>(usersContext =>
             {
+                var query = new GetClaimSetsByApplicationNameQueryV6Service(securityContext, usersContext);
                 var results = query.Execute(testClaimSets.First().Application.ApplicationName).ToArray();
 
                 results.Length.ShouldBe(testClaimSets.Count);
@@ -120,8 +125,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                 IsEdfiPreset = true
             });
 
-            Scoped<IGetClaimSetsByApplicationNameQuery>(query =>
+            using var securityContext = TestContext;
+            Scoped<IUsersContext>(usersContext =>
             {
+                var query = new GetClaimSetsByApplicationNameQueryV6Service(securityContext, usersContext);
                 var results = query.Execute(testApplication.ApplicationName).ToArray();
 
                 results.Count(x => x.IsEditable).ShouldBe(testClaimSets.Count);
@@ -157,8 +164,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                 usersContext.SaveChanges();
             });
 
-            Scoped<IGetClaimSetsByApplicationNameQuery>(query =>
+            using var securityContext = TestContext;
+            Scoped<IUsersContext>(usersContext =>
             {
+                var query = new GetClaimSetsByApplicationNameQueryV6Service(securityContext, usersContext);
                 var results = query.Execute(testClaimSets.First().Application.ApplicationName).ToArray();
 
                 results.Length.ShouldBe(testClaimSets.Count);

@@ -3,66 +3,37 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
-using System.Data.Entity;
-using System.Linq;
-using EdFi.Security.DataAccess.Contexts;
-using EdFi.Security.DataAccess.Models;
-using System.Collections.Generic;
-
 namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
 {
-    public class CopyClaimSetCommand
+    public interface ICopyClaimSetCommand
     {
-        private readonly ISecurityContext _context;
+        int Execute(ICopyClaimSetModel claimSet);
+    }
 
-        public CopyClaimSetCommand(ISecurityContext context)
+    public class CopyClaimSetCommand : ICopyClaimSetCommand
+    {
+        private readonly IOdsSecurityModelVersionResolver _resolver;
+        private readonly CopyClaimSetCommandV53Service _v53Service;
+        private readonly CopyClaimSetCommandV6Service _v6Service;
+
+        public CopyClaimSetCommand(IOdsSecurityModelVersionResolver resolver,
+            CopyClaimSetCommandV53Service v53Service,
+            CopyClaimSetCommandV6Service v6Service)
         {
-            _context = context;
+            _resolver = resolver;
+            _v53Service = v53Service;
+            _v6Service = v6Service;
         }
 
         public int Execute(ICopyClaimSetModel claimSet)
         {
-            var newClaimSet = new Security.DataAccess.Models.ClaimSet
-            {
-                ClaimSetName = claimSet.Name,
-                Application = _context.Applications.Single(),
-                IsEdfiPreset = false,
-                ForApplicationUseOnly = false
-            };
-
-            var originalResourceClaims =
-                _context.ClaimSetResourceClaimActions
-                    .Where(x => x.ClaimSet.ClaimSetId == claimSet.OriginalId)
-                    .Include(x => x.ResourceClaim)
-                    .Include(x => x.Action)
-                    .Include(x => x.AuthorizationStrategyOverrides.Select(x => x.AuthorizationStrategy))
-                    .ToList();
-            _context.ClaimSets.Add(newClaimSet);
-
-            foreach (var resourceClaim in originalResourceClaims.ToList())
-            {
-                List<ClaimSetResourceClaimActionAuthorizationStrategyOverrides> authStrategyOverrides = null;
-                if (resourceClaim.AuthorizationStrategyOverrides != null && resourceClaim.AuthorizationStrategyOverrides.Any())
-                {
-                    authStrategyOverrides = new List<ClaimSetResourceClaimActionAuthorizationStrategyOverrides>();
-                    foreach (var authStrategyOverride in resourceClaim.AuthorizationStrategyOverrides)
-                    {
-                        authStrategyOverrides.Add(new ClaimSetResourceClaimActionAuthorizationStrategyOverrides
-                        { AuthorizationStrategy = authStrategyOverride.AuthorizationStrategy });
-                    }
-                }
-                var copyResourceClaim = new ClaimSetResourceClaimAction
-                {
-                    ClaimSet = newClaimSet,
-                    Action = resourceClaim.Action,
-                    AuthorizationStrategyOverrides = authStrategyOverrides,
-                    ResourceClaim = resourceClaim.ResourceClaim
-                };
-                _context.ClaimSetResourceClaimActions.Add(copyResourceClaim);
-            }
-            _context.SaveChanges();
-
-            return newClaimSet.ClaimSetId;
+            var securityModel = _resolver.DetermineSecurityModel();
+            if (securityModel == EdFiOdsSecurityModelCompatibility.ThreeThroughFive)
+                return _v53Service.Execute(claimSet);
+            else if (securityModel == EdFiOdsSecurityModelCompatibility.Six)
+                return _v6Service.Execute(claimSet);
+            else
+                throw new EdFiOdsSecurityModelCompatibilityException(securityModel);
         }
     }
 

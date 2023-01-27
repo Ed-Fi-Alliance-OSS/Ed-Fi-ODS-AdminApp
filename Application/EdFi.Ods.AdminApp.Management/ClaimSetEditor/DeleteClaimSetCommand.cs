@@ -3,36 +3,37 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
-using System.Linq;
-using EdFi.Security.DataAccess.Contexts;
-
 namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
 {
-    public class DeleteClaimSetCommand
+    public interface IDeleteClaimSetCommand
     {
-        private readonly ISecurityContext _context;
+        void Execute(IDeleteClaimSetModel claimSet);
+    }
 
-        public DeleteClaimSetCommand(ISecurityContext context)
+    public class DeleteClaimSetCommand : IDeleteClaimSetCommand
+    {
+        private readonly IOdsSecurityModelVersionResolver _resolver;
+        private readonly DeleteClaimSetCommandV53Service _v53Service;
+        private readonly DeleteClaimSetCommandV6Service _v6Service;
+
+        public DeleteClaimSetCommand(IOdsSecurityModelVersionResolver resolver,
+            DeleteClaimSetCommandV53Service v53Service,
+            DeleteClaimSetCommandV6Service v6Service)
         {
-            _context = context;
+            _resolver = resolver;
+            _v53Service = v53Service;
+            _v6Service = v6Service;
         }
 
         public void Execute(IDeleteClaimSetModel claimSet)
         {
-            var claimSetToDelete = _context.ClaimSets.Single(x => x.ClaimSetId == claimSet.Id);
-            var resourceClaimsForClaimSetId =
-                      _context.ClaimSetResourceClaimActions.Where(x => x.ClaimSet.ClaimSetId == claimSet.Id).ToList();
-            foreach (var resourceClaimAction in resourceClaimsForClaimSetId)
-            {
-                var resourceClaimActionAuthorizationStrategyOverrides = _context.ClaimSetResourceClaimActionAuthorizationStrategyOverrides.
-                    Where(x => x.ClaimSetResourceClaimActionId == resourceClaimAction.ClaimSetResourceClaimActionId);
-
-                _context.ClaimSetResourceClaimActionAuthorizationStrategyOverrides.RemoveRange(resourceClaimActionAuthorizationStrategyOverrides);
-            }
-
-            _context.ClaimSetResourceClaimActions.RemoveRange(resourceClaimsForClaimSetId);
-            _context.ClaimSets.Remove(claimSetToDelete);
-            _context.SaveChanges();
+            var securityModel = _resolver.DetermineSecurityModel();
+            if (securityModel == EdFiOdsSecurityModelCompatibility.ThreeThroughFive)
+                _v53Service.Execute(claimSet);
+            else if (securityModel == EdFiOdsSecurityModelCompatibility.Six)
+                _v6Service.Execute(claimSet);
+            else
+                throw new EdFiOdsSecurityModelCompatibilityException(securityModel);
         }
     }
 

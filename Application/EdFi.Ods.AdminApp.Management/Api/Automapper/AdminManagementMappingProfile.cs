@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: Apache-2.0
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
@@ -161,6 +161,16 @@ namespace EdFi.Ods.AdminApp.Management.Api.Automapper
                 .ForCtorParam("postSecondaryInstitutionLevelDescriptor", opt => opt.MapFrom(src => src.PostSecondaryInstitutionLevel))
                 .ForCtorParam("administrativeFundingControlDescriptor", opt => opt.MapFrom(src => src.AdministrativeFundingControl))
                 .ForCtorParam("nameOfInstitution", opt => opt.MapFrom(src => src.Name));
+
+            CreateMap<SecurityCompatiblity53.DataAccess.Models.AuthorizationStrategy, ClaimSetEditor.AuthorizationStrategy>()
+              .ForMember(dst => dst.AuthStrategyName, opt => opt.MapFrom(src => src.AuthorizationStrategyName))
+              .ForMember(dst => dst.AuthStrategyId, opt => opt.MapFrom(src => src.AuthorizationStrategyId))
+              .ForMember(dst => dst.IsInheritedFromParent, opt => opt.Ignore());
+
+            CreateMap<Security.DataAccess.Models.AuthorizationStrategy, ClaimSetEditor.AuthorizationStrategy>()
+                .ForMember(dst => dst.AuthStrategyName, opt => opt.MapFrom(src => src.AuthorizationStrategyName))
+                .ForMember(dst => dst.AuthStrategyId, opt => opt.MapFrom(src => src.AuthorizationStrategyId))
+                .ForMember(dst => dst.IsInheritedFromParent, opt => opt.Ignore());
 
             List<EdFiEducationOrganizationAddress> AddressResolver(EducationOrganization source,
                 ResolutionContext context)

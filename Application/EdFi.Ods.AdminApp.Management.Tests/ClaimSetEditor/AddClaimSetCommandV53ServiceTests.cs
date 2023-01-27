@@ -7,18 +7,16 @@ using System;
 using System.Linq;
 using NUnit.Framework;
 using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
-using ClaimSet = EdFi.Security.DataAccess.Models.ClaimSet;
-using Application = EdFi.Security.DataAccess.Models.Application;
 using EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets;
-using EdFi.Security.DataAccess.Contexts;
 using Shouldly;
+using ClaimSet = EdFi.SecurityCompatiblity53.DataAccess.Models.ClaimSet;
+using Application = EdFi.SecurityCompatiblity53.DataAccess.Models.Application;
 using AddClaimSetModel = EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets.AddClaimSetModel;
-using static EdFi.Ods.AdminApp.Management.Tests.Testing;
 
 namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 {
     [TestFixture]
-    public class AddClaimSetCommandTests : SecurityDataTestBase
+    public class AddClaimSetCommandV53ServiceTests : SecurityData53TestBase
     {
         [Test]
         public void ShouldAddClaimSet()
@@ -31,18 +29,15 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
             var newClaimSet = new AddClaimSetModel {ClaimSetName = "TestClaimSet"};
 
-            int addedClaimSetId = 0;
-            Scoped<ISecurityContext>(securityContext =>
+            var addedClaimSetId = 0;
+            ClaimSet addedClaimSet = null;
+            using (var context = TestContext)
             {
-                var command = new AddClaimSetCommand(securityContext);
-
+                var command = new AddClaimSetCommandV53Service(context);
                 addedClaimSetId = command.Execute(newClaimSet);
-            });
-
-            var addedClaimSet = Transaction(securityContext => securityContext.ClaimSets.Single(x => x.ClaimSetId == addedClaimSetId));
+                addedClaimSet = context.ClaimSets.Single(x => x.ClaimSetId == addedClaimSetId);
+            }
             addedClaimSet.ClaimSetName.ShouldBe(newClaimSet.ClaimSetName);
-            addedClaimSet.ForApplicationUseOnly.ShouldBe(false);
-            addedClaimSet.IsEdfiPreset.ShouldBe(false);
         }
 
         [Test]
@@ -59,13 +54,13 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
             var newClaimSet = new AddClaimSetModel { ClaimSetName = "TestClaimSet" };
 
-            Scoped<ISecurityContext>(securityContext =>
+            using (var context = TestContext)
             {
-                var validator = new AddClaimSetModelValidator(securityContext);
+                var validator = new AddClaimSetModelValidator(new GetAllClaimSets53Query(context));
                 var validationResults = validator.Validate(newClaimSet);
                 validationResults.IsValid.ShouldBe(false);
                 validationResults.Errors.Single().ErrorMessage.ShouldBe("A claim set with this name already exists in the database. Please enter a unique name.");
-            });
+            }
         }
 
         [Test]
@@ -73,13 +68,13 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
         {
             var newClaimSet = new AddClaimSetModel { ClaimSetName = "" };
 
-            Scoped<ISecurityContext>(securityContext =>
+            using (var context = TestContext)
             {
-                var validator = new AddClaimSetModelValidator(securityContext);
+                var validator = new AddClaimSetModelValidator(new GetAllClaimSets53Query(context));
                 var validationResults = validator.Validate(newClaimSet);
                 validationResults.IsValid.ShouldBe(false);
                 validationResults.Errors.Single().ErrorMessage.ShouldBe("'Claim Set Name' must not be empty.");
-            });
+            }
         }
 
         [Test]
@@ -89,18 +84,17 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             {
                 ApplicationName = $"Test Application {DateTime.Now:O}"
             };
-            Save(testApplication);           
+            Save(testApplication);
 
             var newClaimSet = new AddClaimSetModel { ClaimSetName = "ThisIsAClaimSetWithNameLengthGreaterThan255CharactersThisIsAClaimSetWithNameLengthGreaterThan255CharactersThisIsAClaimSetWithNameLengthGreaterThan255CharactersThisIsAClaimSetWithNameLengthGreaterThan255CharactersThisIsAClaimSetWithNameLengthGreaterThan255CharactersThisIsAClaimSetWithNameLengthGreaterThan255Characters" };
 
-            Scoped<ISecurityContext>(securityContext =>
+            using (var context = TestContext)
             {
-                var validator = new AddClaimSetModelValidator(securityContext);
+                var validator = new AddClaimSetModelValidator(new GetAllClaimSets53Query(context));
                 var validationResults = validator.Validate(newClaimSet);
                 validationResults.IsValid.ShouldBe(false);
                 validationResults.Errors.Single().ErrorMessage.ShouldBe("The claim set name must be less than 255 characters.");
-            });
+            }
         }
-
     }
 }
