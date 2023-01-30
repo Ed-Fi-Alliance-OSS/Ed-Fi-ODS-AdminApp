@@ -36,21 +36,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _userContext = userContext;
         }
 
-        public ActionResult EditConfiguration()
-        {
-            GuardForDisabledConfig();
-            return View(GetProductImprovementModel());
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> EditConfiguration(ProductImprovementModel model)
-        {
-            GuardForDisabledConfig();
-            SaveProductImprovementModel(model);
-            await _productRegistration.NotifyWhenEnabled(_userContext.User);
-            return RedirectToAction("Index", "Home");
-        }
-
         public ActionResult EnableProductImprovementFirstTimeSetup()
         {
             GuardForDisabledConfig();
