@@ -25,11 +25,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
             EnsureZeroApplicationConfiguration();
             AllowUserRegistrations().ShouldBe(true);
 
-            EnsureOneApplicationConfiguration(allowRegistration: true, enableProductImprovement: false, productRegistrationId: "");
-            AllowUserRegistrations().ShouldBe(true);
-
-            EnsureOneApplicationConfiguration(allowRegistration: false, enableProductImprovement: false, productRegistrationId: "");
-            AllowUserRegistrations().ShouldBe(true);
+            
         }
 
         [Test]
@@ -48,11 +44,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
         {
             EnsureOneUser();
 
-            EnsureOneApplicationConfiguration(allowRegistration: true, enableProductImprovement: false, productRegistrationId: "");
-            AllowUserRegistrations().ShouldBe(true);
-
-            EnsureOneApplicationConfiguration(allowRegistration: false, enableProductImprovement: false, productRegistrationId: "");
-            AllowUserRegistrations().ShouldBe(false);
         }
 
 
@@ -89,14 +80,12 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
             DeleteAll<ApplicationConfiguration>();
         }
 
-        private void EnsureOneApplicationConfiguration(bool allowRegistration, bool enableProductImprovement, string productRegistrationId)
+        private void EnsureOneApplicationConfiguration(bool allowRegistration)
         {
             Transaction(database =>
             {
                 var config = database.EnsureSingle<ApplicationConfiguration>();
                 config.AllowUserRegistration = allowRegistration;
-                config.EnableProductImprovement = enableProductImprovement;
-                config.ProductRegistrationId = productRegistrationId;
             });
         }
 

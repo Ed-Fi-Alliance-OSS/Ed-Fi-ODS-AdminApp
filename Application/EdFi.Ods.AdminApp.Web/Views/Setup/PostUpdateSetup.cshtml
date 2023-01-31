@@ -41,7 +41,7 @@ See the LICENSE and NOTICES files in the project root for more information.
         $("#transient-error-note").hide();
         
         $.ajax({
-            url: "@Url.Action("CompletePostUpdateSetup")",
+			url: "@Url.Action("CompleteFirstTimeSetup")",
             method: "POST",
             dataType: "json",
             data: appendAntiForgeryToken({})
