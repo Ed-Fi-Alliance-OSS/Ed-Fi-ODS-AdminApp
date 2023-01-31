@@ -64,7 +64,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        [AddTelemetry("Bulk Upload Index", TelemetryType.View)]
         public async Task<ActionResult> Index()
         {
             var config = await _odsSecretConfigurationProvider.GetSecretConfiguration(_instanceContext.Id);
@@ -92,7 +91,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
-        [AddTelemetry("Bulk File Uploaded")]
         public async Task<ActionResult> BulkFileUpload(BulkFileUploadModel model)
         {
             var bulkFiles = model.BulkFiles.Where(file => file != null && file.Length > 0).ToArray();
@@ -178,7 +176,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
-        [AddTelemetry("Save Bulk Load Credentials")]
         public async Task<ActionResult> SaveBulkLoadCredentials(SaveBulkUploadCredentialsModel model)
         {
             var config = await _odsSecretConfigurationProvider.GetSecretConfiguration(_instanceContext.Id);
@@ -193,7 +190,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
-        [AddTelemetry("Reset Bulk Load Credentials")]
         public async Task<ActionResult> ResetCredentials()
         {
             var config = await _odsSecretConfigurationProvider.GetSecretConfiguration(_instanceContext.Id);

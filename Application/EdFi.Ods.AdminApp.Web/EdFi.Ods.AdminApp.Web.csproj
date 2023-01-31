@@ -13,6 +13,8 @@
 
     <Content Include="Artifacts\**" CopyToPublishDirectory="Always" CopyToOutputDirectory="Never" />
     <Content Include="Schema/**/*.*" CopyToPublishDirectory="Always" />
+    <None Remove="Artifacts\MsSql\Structure\Admin\202301301600-RemoveProductImprovement.sql" />
+    <None Remove="Artifacts\PgSql\Structure\Admin\202301301600-RemoveProductImprovement.sql" />
     <Content Include="uploads\placeholder.txt">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -52,6 +54,10 @@
     <Content Update="appsettings.SqlServer-DistrictSpecific.json" CopyToPublishDirectory="Never" />
     <Content Update="appsettings.SqlServer-SharedInstance.json" CopyToPublishDirectory="Never" />
     <Content Update="appsettings.SqlServer-YearSpecific.json" CopyToPublishDirectory="Never" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Views\Shared\Components\Tracker\" />
   </ItemGroup>
 
 </Project>

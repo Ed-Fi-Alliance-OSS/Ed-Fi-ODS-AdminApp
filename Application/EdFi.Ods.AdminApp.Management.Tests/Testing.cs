@@ -14,11 +14,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests
         static Testing()
         {
             var serviceProvider = Program.CreateHostBuilder(new string[] { })
-                .ConfigureServices((context, services) =>
-                {
-                    // Test-specific IoC modifications here.
-                    services.AddTransient<ITelemetry, StubTelemetry>();
-                })
                 .Build()
                 .Services;
 

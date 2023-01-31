@@ -48,7 +48,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _inferOdsApiVersion = inferOdsApiVersion;
         }
 
-        [AddTelemetry("ODS Instance Settings > Logging", TelemetryType.View)]
         public async Task<ActionResult> Logging()
         {
             var settings = await _cloudOdsSettingsService.GetSettings(_appSettings.DefaultOdsInstance);

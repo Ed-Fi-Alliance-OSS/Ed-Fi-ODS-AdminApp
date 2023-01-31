@@ -33,9 +33,12 @@ namespace EdFi.Ods.AdminApp.Web.ActionFilters
             if (ShouldBypassThisFilter(filterContext))
                 return;
 
-            filterContext.Result = OdsInstanceFirstTimeSetupCompleted()
-                ? RouteHelpers.RedirectToActionRoute<SetupController>(x => x.PostUpdateSetup())
-                : RouteHelpers.RedirectToActionRoute<SetupController>(x => x.FirstTimeSetup());
+            filterContext.Result = RouteHelpers.RedirectToActionRoute<SetupController>(x => x.PostUpdateSetup());
+
+
+            //filterContext.Result = OdsInstanceFirstTimeSetupCompleted()
+            //    ? RouteHelpers.RedirectToActionRoute<SetupController>(x => x.PostUpdateSetup())
+                //: RouteHelpers.RedirectToActionRoute<SetupController>(x => x.FirstTimeSetup());
         }
 
         private bool ShouldBypassThisFilter(ActionExecutingContext filterContext)

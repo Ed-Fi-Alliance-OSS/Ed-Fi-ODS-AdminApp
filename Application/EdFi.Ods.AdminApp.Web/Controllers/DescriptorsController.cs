@@ -35,7 +35,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _instanceContext = instanceContext;
         }
 
-        [AddTelemetry("Descriptors Index", TelemetryType.View)]
         public ActionResult Index()
         {
             var model = new DescriptorsIndexModel
@@ -64,7 +63,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
            return PartialView("_DescriptorCategories", model);
         }
 
-        [AddTelemetry("Individual Descriptor", TelemetryType.View)]
         public async Task<ActionResult> GetDescriptorsFromCategory(string categoryPath)
         {
             var descriptors = (await _odsApiFacadeFactory.Create()).GetDescriptorsByPath(categoryPath);

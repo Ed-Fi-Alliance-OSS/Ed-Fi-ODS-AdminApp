@@ -46,7 +46,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _odsApiValidator = odsApiValidator;
         }
 
-        [AddTelemetry("Local Education Agencies Index", TelemetryType.View)]
         public async Task<ActionResult> LocalEducationAgencies()
         {
             var validatorResult = await _odsApiValidator.Validate(CloudOdsAdminAppSettings.AppSettings.ProductionApiUrl);
@@ -69,7 +68,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             return View("Index", model);
         }
 
-        [AddTelemetry("Post-Secondary Institutions Index", TelemetryType.View)]
+        
         public async Task<ActionResult> PostSecondaryInstitutions()
         {
             var validatorResult = await _odsApiValidator.Validate(CloudOdsAdminAppSettings.AppSettings.ProductionApiUrl);
@@ -93,7 +92,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
-        [AddTelemetry("Add Local Education Agency")]
         public async Task<ActionResult> AddLocalEducationAgency(AddLocalEducationAgencyModel viewModel)
         {
             var apiFacade = await _odsApiFacadeFactory.Create();
@@ -116,7 +114,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
-        [AddTelemetry("Add Post-Secondary Institution")]
         public async Task<ActionResult> AddPostSecondaryInstitution(AddPostSecondaryInstitutionModel viewModel)
         {
             var apiFacade = await _odsApiFacadeFactory.Create();
@@ -139,7 +136,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
-        [AddTelemetry("Add School")]
         public async Task<ActionResult> AddSchool(AddSchoolModel viewModel)
         {
             var apiFacade = await _odsApiFacadeFactory.Create();
@@ -162,7 +158,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
-        [AddTelemetry("Add Post-Secondary Institution School")]
         public async Task<ActionResult> AddPsiSchool(AddPsiSchoolModel viewModel)
         {
             var apiFacade = await _odsApiFacadeFactory.Create();
@@ -199,7 +194,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
-        [AddTelemetry("Edit Local Education Agency")]
         public async Task<ActionResult> EditLocalEducationAgency(EditLocalEducationAgencyModel model)
         {
             var editResult = (await _odsApiFacadeFactory.Create()).EditLocalEducationAgency(_mapper.Map<LocalEducationAgency>(model));
@@ -223,7 +217,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
-        [AddTelemetry("Edit Post-Secondary Institution")]
         public async Task<ActionResult> EditPostSecondaryInstitution(EditPostSecondaryInstitutionModel model)
         {
             var editResult = (await _odsApiFacadeFactory.Create()).EditPostSecondaryInstitution(_mapper.Map<PostSecondaryInstitution>(model));
@@ -245,7 +238,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
-        [AddTelemetry("Edit School")]
         public async Task<ActionResult> EditSchool(EditSchoolModel model)
         {
             var editResult = (await _odsApiFacadeFactory.Create()).EditSchool(_mapper.Map<School>(model));
@@ -271,7 +263,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
-        [AddTelemetry("Edit Post-Secondary Institution School")]
         public async Task<ActionResult> EditPsiSchool(EditPsiSchoolModel model)
         {
             var editResult = (await _odsApiFacadeFactory.Create()).EditPsiSchool(_mapper.Map<PsiSchool>(model));
@@ -366,7 +357,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
-        [AddTelemetry("Delete Local Education Agency")]
         public async Task<ActionResult> DeleteLocalEducationAgency(DeleteEducationOrganizationModel model)
         {
             var deletionResult = (await _odsApiFacadeFactory.Create()).DeleteLocalEducationAgency(model.Id);
@@ -374,7 +364,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
-        [AddTelemetry("Delete Post-Secondary Institution")]
         public async Task<ActionResult> DeletePostSecondaryInstitution(DeleteEducationOrganizationModel model)
         {
             var deletionResult = (await _odsApiFacadeFactory.Create()).DeletePostSecondaryInstitution(model.Id);
@@ -382,7 +371,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
-        [AddTelemetry("Delete School")]
         public async Task<ActionResult> DeleteSchool(DeleteEducationOrganizationModel model)
         {
             var deletionResult = (await _odsApiFacadeFactory.Create()).DeleteSchool(model.Id);
