@@ -4,8 +4,8 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using System.Linq;
-using EdFi.Security.DataAccess.Contexts;
-using EdFi.Security.DataAccess.Models;
+using EdFi.SecurityCompatiblity53.DataAccess.Contexts;
+using EdFi.SecurityCompatiblity53.DataAccess.Models;
 
 namespace EdFi.Ods.AdminApp.Management
 {
@@ -34,10 +34,10 @@ namespace EdFi.Ods.AdminApp.Management
             var createAction = _securityContext.Actions.Single(x => x.ActionName == "Create");
             var readAction = _securityContext.Actions.Single(x => x.ActionName == "Read");
 
-            _securityContext.ClaimSetResourceClaimActions.AddRange(new[]
+            _securityContext.ClaimSetResourceClaims.AddRange(new[]
                     {
-                new ClaimSetResourceClaimAction {Action = createAction, ClaimSet = claimSet, ResourceClaim = resource},
-                new ClaimSetResourceClaimAction {Action = readAction, ClaimSet = claimSet, ResourceClaim = resource}
+                new ClaimSetResourceClaim {Action = createAction, ClaimSet = claimSet, ResourceClaim = resource},
+                new ClaimSetResourceClaim {Action = readAction, ClaimSet = claimSet, ResourceClaim = resource}
             });
 
             _securityContext.SaveChanges();
