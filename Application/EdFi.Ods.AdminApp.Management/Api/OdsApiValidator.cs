@@ -119,33 +119,6 @@ namespace EdFi.Ods.AdminApp.Management.Api
                                       ]
                                     }
                                   ]
-                                },
-                                ""urls"": {
-                                  ""type"": ""object"",
-                                  ""properties"": {
-                                    ""dependencies"": {
-                                      ""type"": ""string""
-                                    },
-                                    ""openApiMetadata"": {
-                                      ""type"": ""string""
-                                    },
-                                    ""oauth"": {
-                                      ""type"": ""string""
-                                    },
-                                    ""dataManagementApi"": {
-                                      ""type"": ""string""
-                                    },
-                                    ""xsdMetadata"": {
-                                      ""type"": ""string""
-                                    }
-                                  },
-                                  ""required"": [
-                                    ""dependencies"",
-                                    ""openApiMetadata"",
-                                    ""oauth"",
-                                    ""dataManagementApi"",
-                                    ""xsdMetadata""
-                                  ]
                                 }
                               },
                               ""required"": [
