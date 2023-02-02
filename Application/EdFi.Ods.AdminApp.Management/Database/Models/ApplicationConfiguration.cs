@@ -10,9 +10,5 @@ namespace EdFi.Ods.AdminApp.Management.Database.Models
         public bool AllowUserRegistration { get; set; }
 
         public bool FirstTimeSetUpCompleted { get; set; }
-
-        //public bool EnableProductImprovement { get; set; }
-
-        //public string ProductRegistrationId { get; set; }
     }
 }

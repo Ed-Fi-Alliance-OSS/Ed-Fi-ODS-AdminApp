@@ -55,7 +55,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
 
                 Scoped<AdminAppIdentityDbContext>(identity =>
                 {
-                    //var appSettings = new AppSettings { EnableProductImprovementSettings = true };
                     allowUserRegistration = new ApplicationConfigurationService(database, identity).AllowUserRegistration();
                 });
 
