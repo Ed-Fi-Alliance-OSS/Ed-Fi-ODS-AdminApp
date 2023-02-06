@@ -13,9 +13,7 @@
             "launchBrowser": true,
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "SqlServer-DistrictSpecific",
-                "AppSettings:GoogleAnalyticsMeasurementId": "UA-65907370-11",
-                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI=",
-                "AppSettings:ProductRegistrationUrl": "https://localhost:44374/development-product-registration-sink"
+                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI="
             }
         },
         "Shared Instance (SQL Server)": {
@@ -23,9 +21,7 @@
             "launchBrowser": true,
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "SqlServer-SharedInstance",
-                "AppSettings:GoogleAnalyticsMeasurementId": "UA-65907370-11",
-                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI=",
-                "AppSettings:ProductRegistrationUrl": "https://localhost:44374/development-product-registration-sink"
+                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI="
             }
         },
         "Year Specific (SQL Server)": {
@@ -33,9 +29,7 @@
             "launchBrowser": true,
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "SqlServer-YearSpecific",
-                "AppSettings:GoogleAnalyticsMeasurementId": "UA-65907370-11",
-                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI=",
-                "AppSettings:ProductRegistrationUrl": "https://localhost:44374/development-product-registration-sink"
+                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI="
             }
         },
         "District Specific (Postgres)": {
@@ -43,9 +37,7 @@
             "launchBrowser": true,
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "PostgreSql-DistrictSpecific",
-                "AppSettings:GoogleAnalyticsMeasurementId": "UA-65907370-11",
-                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI=",
-                "AppSettings:ProductRegistrationUrl": "https://localhost:44374/development-product-registration-sink"
+                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI="
             }
         },
         "Shared Instance (Postgres)": {
@@ -53,9 +45,7 @@
             "launchBrowser": true,
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "PostgreSql-SharedInstance",
-                "AppSettings:GoogleAnalyticsMeasurementId": "UA-65907370-11",
-                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI=",
-                "AppSettings:ProductRegistrationUrl": "https://localhost:44374/development-product-registration-sink"
+                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI="
             }
         },
         "Year Specific (Postgres)": {
@@ -63,9 +53,7 @@
             "launchBrowser": true,
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "PostgreSql-YearSpecific",
-                "AppSettings:GoogleAnalyticsMeasurementId": "UA-65907370-11",
-                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI=",
-                "AppSettings:ProductRegistrationUrl": "https://localhost:44374/development-product-registration-sink"
+                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI="
             }
         },
         "Shared Instance (Docker-Postgres)": {
@@ -73,9 +61,7 @@
             "launchBrowser": true,
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "Docker-SharedInstance",
-                "AppSettings:GoogleAnalyticsMeasurementId": "UA-65907370-11",
-                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI=",
-                "AppSettings:ProductRegistrationUrl": "https://localhost:44374/development-product-registration-sink"
+                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI="
             }
         },
         "mssql-district": {
@@ -84,9 +70,7 @@
             "applicationUrl": "https://localhost:5123;http://localhost:5122",
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "SqlServer-DistrictSpecific",
-                "AppSettings:GoogleAnalyticsMeasurementId": "UA-65907370-11",
-                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI=",
-                "AppSettings:ProductRegistrationUrl": "https://localhost:5123/development-product-registration-sink"
+                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI="
             }
         },
         "mssql-shared": {
@@ -95,9 +79,7 @@
             "applicationUrl": "https://localhost:5123;http://localhost:5122",
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "SqlServer-SharedInstance",
-                "AppSettings:GoogleAnalyticsMeasurementId": "UA-65907370-11",
-                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI=",
-                "AppSettings:ProductRegistrationUrl": "https://localhost:5123/development-product-registration-sink"
+                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI="
             }
         },
         "mssql-year": {
@@ -106,9 +88,7 @@
             "applicationUrl": "https://localhost:5123;http://localhost:5122",
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "SqlServer-YearSpecific",
-                "AppSettings:GoogleAnalyticsMeasurementId": "UA-65907370-11",
-                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI=",
-                "AppSettings:ProductRegistrationUrl": "https://localhost:5123/development-product-registration-sink"
+                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI="
             }
         },
         "pg-district": {
@@ -117,9 +97,7 @@
             "applicationUrl": "https://localhost:5123;http://localhost:5122",
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "PostgreSql-DistrictSpecific",
-                "AppSettings:GoogleAnalyticsMeasurementId": "UA-65907370-11",
-                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI=",
-                "AppSettings:ProductRegistrationUrl": "https://localhost:5123/development-product-registration-sink"
+                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI="
             }
         },
         "pg-shared": {
@@ -128,9 +106,7 @@
             "applicationUrl": "https://localhost:5123;http://localhost:5122",
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "PostgreSql-SharedInstance",
-                "AppSettings:GoogleAnalyticsMeasurementId": "UA-65907370-11",
-                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI=",
-                "AppSettings:ProductRegistrationUrl": "https://localhost:5123/development-product-registration-sink"
+                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI="
             }
         },
         "pg-year": {
@@ -139,9 +115,7 @@
             "applicationUrl": "https://localhost:5123;http://localhost:5122",
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "PostgreSql-YearSpecific",
-                "AppSettings:GoogleAnalyticsMeasurementId": "UA-65907370-11",
-                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI=",
-                "AppSettings:ProductRegistrationUrl": "https://localhost:5123/development-product-registration-sink"
+                "AppSettings:EncryptionKey": "bEnFYNociET2R1Wua3DHzwfU5u/Fa47N5fw0PXD0OSI="
             }
         }
     }

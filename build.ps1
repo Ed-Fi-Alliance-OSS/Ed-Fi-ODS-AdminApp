@@ -3,9 +3,6 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-# This refers to function Update-AppSettingsToAddGoogleAnalyticsMeasurementId
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Rule is irrelevant in this context', Scope = "Function")]
-
 [CmdLetBinding()]
 <#
     .SYNOPSIS
@@ -30,8 +27,7 @@
         * BuildAndDeployToAdminAppDockerContainer: runs the build operation, update the appsettings.json with provided
           DockerEnvValues and copy over the latest files to existing AdminApp docker container for testing.
         * BuildAndDeployToAdminApiDockerContainer: runs the build operation, update the appsettings.json with provided
-          DockerEnvValues and copy over the latest files to existing AdminApi docker container for testing.
-        * PopulateGoogleAnalyticsAppSettings: update the appsettings.json with provided GoogleAnalyticsMeasurementId.
+          DockerEnvValues and copy over the latest files to existing AdminApi docker container for testing.       
 
     .EXAMPLE
         .\build.ps1 build -Configuration Release -Version "2.0" -BuildCounter 45
@@ -73,7 +69,7 @@
 param(
     # Command to execute, defaults to "Build".
     [string]
-    [ValidateSet("Clean", "Build", "BuildAndPublish", "UnitTest", "IntegrationTest", "Package", "PackageApi", "PackageDatabase", "Push", "BuildAndTest", "BuildAndDeployToAdminAppDockerContainer", "BuildAndDeployToAdminApiDockerContainer", "PopulateGoogleAnalyticsAppSettings", "Run")]
+    [ValidateSet("Clean", "Build", "BuildAndPublish", "UnitTest", "IntegrationTest", "Package", "PackageApi", "PackageDatabase", "Push", "BuildAndTest", "BuildAndDeployToAdminAppDockerContainer", "BuildAndDeployToAdminApiDockerContainer", "Run")]
     $Command = "Build",
 
     # Assembly and package version number for AdminApp Web. The current package number is
@@ -111,10 +107,6 @@ param(
     # Only required with the BuildAndDeployToAdminAppDockerContainer or BuildAndDeployToAdminApiDockerContainer commands.
     [hashtable]
     $DockerEnvValues,
-
-    # Only required with the PopulateGoogleAnalyticsAppSettings command.
-    [string]
-    $GoogleAnalyticsMeasurementId,
 
     # Only required with the Run command.
     [string]
@@ -454,13 +446,6 @@ function Invoke-PushPackage {
     Invoke-Step { PushPackage }
 }
 
-function Update-AppSettingsToAddGoogleAnalyticsMeasurementId {
-    $filePath = "$solutionRoot/EdFi.Ods.AdminApp.Web/publish/appsettings.json"
-    $json = (Get-Content -Path $filePath) | ConvertFrom-Json
-    $json.AppSettings.GoogleAnalyticsMeasurementId = $GoogleAnalyticsMeasurementId
-    $json | ConvertTo-Json -Depth 10 | Set-Content $filePath
-}
-
 function UpdateAppSettingsForAdminAppDocker {
     $filePath = "$solutionRoot/EdFi.Ods.AdminApp.Web/publish/appsettings.json"
     $json = (Get-Content -Path $filePath) | ConvertFrom-Json
@@ -570,9 +555,6 @@ Invoke-Main {
         BuildAndDeployToAdminApiDockerContainer {
             Invoke-Build
             Invoke-AdminApiDockerDeploy
-        }
-        PopulateGoogleAnalyticsAppSettings {
-            Update-AppSettingsToAddGoogleAnalyticsMeasurementId
         }
         default { throw "Command '$Command' is not recognized" }
     }

@@ -10,7 +10,6 @@ on:
       - prereleased
 
 env:
-  GA_MEASUREMENT_ID: ${{ secrets.GOOGLE_ANALYTICS_MEASUREMENT_ID }}
   ARTIFACTS_API_KEY: ${{ secrets.AZURE_ARTIFACTS_PERSONAL_ACCESS_TOKEN }}
   ARTIFACTS_FEED_URL: ${{ secrets.AZURE_ARTIFACTS_FEED_URL }}
   VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: '{"endpointCredentials": [{"endpoint": "${{ secrets.AZURE_ARTIFACTS_FEED_URL }}","password": "${{ secrets.AZURE_ARTIFACTS_PERSONAL_ACCESS_TOKEN }}"}]}'
@@ -61,9 +60,6 @@ jobs:
           ./build.ps1 -Command BuildAndPublish `
               -Configuration Release `
               -Version $appVersion 
-
-      - name: Populate Google Analytics ID
-        run: .\build.ps1 -Command PopulateGoogleAnalyticsAppSettings -GoogleAnalyticsMeasurementId ${{env.GA_MEASUREMENT_ID}}
 
       - name: Setup Nuget.exe
         uses: nuget/setup-nuget@b2bc17b761a1d88cab755a776c7922eb26eefbfa #v1.0.6
