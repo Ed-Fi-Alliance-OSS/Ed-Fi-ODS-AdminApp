@@ -37,7 +37,7 @@ Import-Module -Force "$appCommonDirectory/Application/Configuration.psm1" -Scope
 
 Import-Module -Force "$appCommonDirectory/IIS/IIS-Components.psm1" -Scope Global
 
-$DbDeployVersion = "3.0.1"
+$DbDeployVersion = "3.1.24"
 
 function Install-EdFiOdsAdminApp {
     <#
