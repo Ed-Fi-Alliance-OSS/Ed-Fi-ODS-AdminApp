@@ -33,13 +33,11 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         private readonly RegisterCommand _registerCommand;
         private readonly EditUserRoleCommand _editUserRoleCommand;
         private readonly IGetOdsInstanceRegistrationsQuery _getOdsInstanceRegistrationsQuery;
-        private readonly IProductRegistration _productRegistration;
         private readonly AdminAppIdentityDbContext _identity;
         
         public IdentityController(ApplicationConfigurationService applicationConfiguration, RegisterCommand registerCommand, EditUserRoleCommand editUserRoleCommand, IGetOdsInstanceRegistrationsQuery getOdsInstanceRegistrationsQuery,
             SignInManager<AdminAppUser> signInManager,
             UserManager<AdminAppUser> userManager,
-            IProductRegistration productRegistration,
             AdminAppIdentityDbContext identity)
         {
             _applicationConfiguration = applicationConfiguration;
@@ -48,7 +46,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _getOdsInstanceRegistrationsQuery = getOdsInstanceRegistrationsQuery;
             _signInManager = signInManager;
             _userManager = userManager;
-            _productRegistration = productRegistration;
             _identity = identity;
         }
 
@@ -82,8 +79,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             if (result.Succeeded)
             {
                 var user = await _identity.Users.SingleOrDefaultAsync(x => x.UserName == model.Email);
-                
-                await _productRegistration.NotifyWhenEnabled(user);
 
                 return RedirectToLocal(returnUrl);
             }

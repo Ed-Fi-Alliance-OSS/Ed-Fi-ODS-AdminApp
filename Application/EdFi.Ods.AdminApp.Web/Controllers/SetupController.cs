@@ -41,14 +41,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _appSettings = appSettingsAccessor.Value;
         }
 
-        public ActionResult FirstTimeSetup()
-        {
-            var model = new FirstTimeSetupModel
-            {
-                AreProductImprovementSettingsEnabled = _appSettings.EnableProductImprovementSettings,
-            };
-            return View(model);
-        }
 
         [HttpPost]
         public async Task<JsonResult> CompleteFirstTimeSetup()

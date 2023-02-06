@@ -35,8 +35,6 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure
 
         public string ApiExternalUrl => AppSettings.ApiExternalUrl;
 
-        public string GoogleAnalyticsMeasurementId => AppSettings.GoogleAnalyticsMeasurementId;
-
         public string DatabaseEngine => AppSettings.DatabaseEngine;
 
         public int SecurityMetadataCacheTimeoutMinutes

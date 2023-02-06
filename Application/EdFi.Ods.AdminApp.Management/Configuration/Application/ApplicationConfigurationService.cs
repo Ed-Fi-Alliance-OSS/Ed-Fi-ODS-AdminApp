@@ -15,13 +15,11 @@ namespace EdFi.Ods.AdminApp.Management.Configuration.Application
     {
         private readonly AdminAppDbContext _database;
         private readonly AdminAppIdentityDbContext _identity;
-        private readonly AppSettings _appSettings;
 
-        public ApplicationConfigurationService(AdminAppDbContext database, AdminAppIdentityDbContext identity, IOptions<AppSettings> appSettings)
+        public ApplicationConfigurationService(AdminAppDbContext database, AdminAppIdentityDbContext identity)
         {
             _database = database;
             _identity = identity;
-            _appSettings = appSettings.Value;
         }
 
         public bool AllowUserRegistration()
@@ -39,31 +37,7 @@ namespace EdFi.Ods.AdminApp.Management.Configuration.Application
         {
             var config = _database.EnsureSingle<ApplicationConfiguration>();
             config.FirstTimeSetUpCompleted = setUpCompleted;
-            config.EnableProductImprovement = _appSettings.EnableProductImprovementSettings;
            _database.SaveChanges();
-        }
-
-        public bool IsProductImprovementEnabled()
-        {
-            return IsProductImprovementEnabled(out _);
-        }
-
-        public bool IsProductImprovementEnabled(out string productRegistrationId)
-        {
-            var config = _database.EnsureSingle<ApplicationConfiguration>();
-            var enableProductImprovement = config.EnableProductImprovement;
-
-            productRegistrationId = config.ProductRegistrationId;
-
-            return _appSettings.EnableProductImprovementSettings && enableProductImprovement;
-        }
-
-        public void EnableProductImprovement(bool enableProductImprovement, string productRegistrationId)
-        {
-            var config = _database.EnsureSingle<ApplicationConfiguration>();
-            config.EnableProductImprovement = _appSettings.EnableProductImprovementSettings && enableProductImprovement;
-            config.ProductRegistrationId = (productRegistrationId ?? "").Trim();
-            _database.SaveChanges();
         }
 
         private bool AnyUsersExist()

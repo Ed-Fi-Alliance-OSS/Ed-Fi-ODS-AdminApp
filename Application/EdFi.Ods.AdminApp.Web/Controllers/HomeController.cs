@@ -34,7 +34,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _applicationConfigurationService = applicationConfigurationService;
         }
 
-        [AddTelemetry("Home Index", TelemetryType.View)]
         public ActionResult Index(bool setupCompleted = false)
         {
             if (setupCompleted && ZeroOdsInstanceRegistrations())
@@ -49,7 +48,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             return View(model);
         }
 
-        [AddTelemetry("Post Setup", TelemetryType.View)]
         public ActionResult PostSetup(bool setupCompleted = false)
         {
             bool.TryParse(Request.Cookies["RestartRequired"], out var isRestartRequired);
@@ -70,8 +68,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
 
             _logger.Error(exception);
 
-            var errorModel = new ErrorModel(exception,
-                _applicationConfigurationService.IsProductImprovementEnabled() && HttpContext.User.Identity.IsAuthenticated);
+            var errorModel = new ErrorModel(exception,HttpContext.User.Identity.IsAuthenticated);
 
             return HttpContext.Request.IsAjaxRequest()
                 ? (ActionResult) PartialView("_ErrorFeedback", errorModel)

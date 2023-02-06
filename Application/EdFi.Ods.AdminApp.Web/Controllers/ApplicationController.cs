@@ -74,7 +74,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _inferExtensionDetails = inferExtensionDetails;
         }
 
-        [AddTelemetry("Application Index", TelemetryType.View)]
+        
         public async Task<ActionResult> Index()
         {
             var apiUrl = (await _apiConnectionInformationProvider.GetConnectionInformationForEnvironment())
@@ -155,7 +155,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
-        [AddTelemetry("Add Application")]
+        //[AddTelemetry("Add Application")]
         public ActionResult Add(AddApplicationModel model)
         {
             var result = _addApplicationCommand.Execute(model);
@@ -175,7 +175,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
-        [AddTelemetry("Delete Application")]
+        //[AddTelemetry("Delete Application")]
         public ActionResult Delete(DeleteApplicationModel model)
         {
             try
@@ -228,7 +228,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
-        [AddTelemetry("Edit Application")]
+        //[AddTelemetry("Edit Application")]
         public ActionResult Edit(EditApplicationModel model)
         {
             try
@@ -243,7 +243,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
-        [AddTelemetry("Regenerate Secret")]
+        //[AddTelemetry("Regenerate Secret")]
         public ActionResult RegenerateSecret(RegenerateSecretModel model)
         {
             var regenerationResult = _regenerateApiClientSecretCommand.Execute(model.ApplicationId);

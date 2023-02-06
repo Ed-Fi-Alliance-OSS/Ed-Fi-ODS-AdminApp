@@ -67,7 +67,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
-        [AddTelemetry("Edit School Year")]
         public ActionResult Edit(EditSchoolYearModel model)
         {
             _setCurrentSchoolYear.Execute(model.InstanceName, ApiMode, model.SchoolYear.Value);

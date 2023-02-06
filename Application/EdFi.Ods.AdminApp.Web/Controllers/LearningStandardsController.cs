@@ -59,7 +59,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _learningStandardsValidator = learningStandardsValidator;
         }
 
-        [AddTelemetry("Learning Standards Index", TelemetryType.View)]
         public async Task<ActionResult> Index()
         {
             var odsApiFacade = await _odsApiFacadeFactory.Create();
@@ -96,7 +95,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
-        [AddTelemetry("Run Learning Standards")]
         public async Task<ActionResult> LearningStandards(LearningStandardsViewModel model)
         {
             var learningStandardsModel = new LearningStandardsModel
@@ -128,7 +126,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
-        [AddTelemetry("Update Learning Standards")]
         public async Task<ActionResult> UpdateLearningStandards()
         {
             await RunLearningStandardsJob();
@@ -158,7 +155,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
-        [AddTelemetry("Reset Learning Standards")]
         public async Task<ActionResult> ResetLearningStandards()
         {
             await _resetLearningStandards.Execute();
