@@ -3,12 +3,12 @@
 NUGET_URL="https://pkgs.dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_packaging/EdFi/nuget/v3/index.json"
 
 WEB="EdFi.Suite3.ODS.AdminApp.Web"
-WEB_PACKAGE=$(nuget list $WEB -Source $NUGET_URL)
+WEB_PACKAGE=$(nuget list $WEB -Source $NUGET_URL -PreRelease)
 WEB_VERSION=$(echo $WEB_PACKAGE| cut -d' ' -f 2)
 echo "Using $WEB Version: $WEB_VERSION"
 
 DB="EdFi.Suite3.ODS.AdminApp.Database"
-DB_PACKAGE=$(nuget list $DB -Source $NUGET_URL)
+DB_PACKAGE=$(nuget list $DB -Source $NUGET_URL -PreRelease)
 DB_VERSION=$(echo $DB_PACKAGE| cut -d' ' -f 2)
 echo "Using $DB Version: $DB_VERSION"
 
