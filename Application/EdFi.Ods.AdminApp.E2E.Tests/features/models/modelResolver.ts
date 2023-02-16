@@ -9,7 +9,6 @@ import { LoginPage } from "./loginPage";
 import { HomePage } from "./homePage";
 import { LandingPage } from "./landingPage";
 import { FirstTimeSetupPage } from "./firstTimeSetupPage";
-import { ProductImprovementPage } from "./productImprovementPage";
 import { EducationOrganizationsPage } from "./educationOrganizationsPage";
 import { VendorsPage } from "./vendorsPage";
 import { ApplicationsPage } from "./applicationsPage";
@@ -48,15 +47,6 @@ export class ModelResolver {
         let model = this.getModel<FirstTimeSetupPage>(FirstTimeSetupPage.name);
         if (!model) {
             model = new FirstTimeSetupPage(this.page);
-            this.aaPages.push(model);
-        }
-        return model;
-    }
-
-    public get productImprovementPage(): ProductImprovementPage {
-        let model = this.getModel<ProductImprovementPage>(ProductImprovementPage.name);
-        if (!model) {
-            model = new ProductImprovementPage(this.page);
             this.aaPages.push(model);
         }
         return model;

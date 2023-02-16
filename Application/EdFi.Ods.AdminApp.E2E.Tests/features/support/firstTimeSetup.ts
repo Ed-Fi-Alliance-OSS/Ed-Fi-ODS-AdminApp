@@ -8,13 +8,13 @@ import { ok } from "assert";
 import { models } from "../management/setup";
 
 When("clicking Continue", async () => {
-    await models.firstTimeSetupPage.continue(models.productImprovementPage.firstTimePath());
+    await models.firstTimeSetupPage.continue(models.firstTimeSetupPage.firstTimePath());
 });
 
 Then("first time setup is successful", async () => {
     ok(
-        models.productImprovementPage.isOnPage,
+        models.firstTimeSetupPage.isOnPage,
         `Page not expected. Current page is ${models.homePage.page.url()}`
     );
-    ok(await models.productImprovementPage.hasPageTitle(), "Title not found");
+    ok(await models.firstTimeSetupPage.hasPageTitle(), "Title not found");
 });

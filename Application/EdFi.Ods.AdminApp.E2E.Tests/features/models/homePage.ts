@@ -27,4 +27,8 @@ export class HomePage extends AdminAppPage {
     private async clickLogout(): Promise<void> {
         await this.page.locator(this.logoutBtn).click();
     }
+
+    firstTimeLoadPath(): string {
+        return `${this.url}?setupCompleted=True`;
+    }
 }
