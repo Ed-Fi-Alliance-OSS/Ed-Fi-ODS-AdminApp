@@ -12,6 +12,14 @@ export class FirstTimeSetupPage extends AdminAppPage {
         return `${this.url}/Setup/FirstTimeSetup`;
     }
 
+    //Override
+    get isOnPage(): boolean {
+        const currentURL = this.page.url();
+        const baseURL = currentURL.substring(0, currentURL.indexOf("?"));
+        const URL = baseURL === "" ? currentURL : baseURL;
+        return URL === this.path() || URL === this.firstTimePath();
+    }
+
     hasTitle(): Promise<boolean> {
         return this.hasText({ text: "Additional Setup Required" });
     }
@@ -23,4 +31,13 @@ export class FirstTimeSetupPage extends AdminAppPage {
     private async clickContinue(): Promise<void> {
         await this.page.locator(this.continueBtn).click();
     }
+
+    firstTimePath(): string {
+        return `${this.url}/Setup/PostUpdateSetup`
+    }
+
+    async hasPageTitle(): Promise<boolean> {
+        return await this.hasText({ text: "Additional Setup Required", selector: "h5" });
+    }
+
 }

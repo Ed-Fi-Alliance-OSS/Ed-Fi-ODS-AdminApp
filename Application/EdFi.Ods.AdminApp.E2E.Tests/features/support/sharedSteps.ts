@@ -23,12 +23,7 @@ Given("user is logged in", async () => {
 
 Given("setup is complete", async () => {
     if (models.firstTimeSetupPage.isOnPage) {
-        await models.firstTimeSetupPage.continue(models.productImprovementPage.firstTimePath());
-    }
-
-    if (models.productImprovementPage.isOnPage) {
-        await models.productImprovementPage.uncheckAnalyticsTag();
-        await models.productImprovementPage.proceed();
+        await models.firstTimeSetupPage.continue(models.homePage.firstTimeLoadPath());
     }
 });
 

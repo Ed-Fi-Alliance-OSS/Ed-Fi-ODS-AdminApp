@@ -136,8 +136,8 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             var apiFacade = await _odsApiFacadeFactory.Create();
             var psis = apiFacade.GetAllPostSecondaryInstitutions().ToList();
             var schools = apiFacade.GetAllSchools().ToList();
-            var leas = apiFacade.GetAllLocalEducationAgencies().ToList();
             var profiles = _mapper.Map<List<ProfileModel>>(_getProfilesQuery.Execute());
+            var leas = apiFacade.GetAllLocalEducationAgencies().ToList();
 
             var model = new AddApplicationViewModel
             {
