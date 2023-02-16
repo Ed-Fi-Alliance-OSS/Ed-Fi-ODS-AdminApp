@@ -11,6 +11,6 @@ export class LandingPage extends AdminAppPage {
     }
 
     hasPageTitle(): Promise<boolean> {
-        return this.hasText({ text: "Ed-Fi ODS Admin App for Suite 3" });
+        return this.hasText({ text: "Ed-Fi ODS Admin App" });
     }
 }
