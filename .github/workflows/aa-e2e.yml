@@ -17,17 +17,17 @@ on:
       - "Application/**/*.cs"
       - "Application/EdFi.Ods.AdminApp.E2E.Tests"
       - ".github/workflows/aa-e2e.yml"
-      - "!Application/EdFi.Ods.Admin.Api" # Need to remove this extra check after we remove EdFi.Ods.Admin.Api project 
+      - "!Application/EdFi.Ods.Admin.Api" # Need to remove this extra check after we remove EdFi.Ods.Admin.Api project
 
 jobs:
   run-e2e-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
         with:
           path: main
       - name: Get ODS Docker
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
         with:
           repository: Ed-Fi-Alliance-OSS/Ed-Fi-ODS-Docker
           path: ods-docker
@@ -36,7 +36,7 @@ jobs:
           cp -r ./main/eng/test-certs/ssl ./ods-docker
           cp -r ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/compose-aa-build.yml ./ods-docker/Compose/pgsql
       - name: Setup NuGet to get latest packages
-        uses: nuget/setup-nuget@b2bc17b761a1d88cab755a776c7922eb26eefbfa #v1.0.6
+        uses: nuget/setup-nuget@fd9fffd6ca4541cf4152a9565835ca1a88a6eb37 #v1.1.1
       - name: Update Admin App Docker package versions
         run: |
           chmod +x ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/set-versions.sh
@@ -48,7 +48,7 @@ jobs:
           chmod +x ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/inspect.sh
           ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/inspect.sh
       - name: Setup node
-        uses: actions/setup-node@17f8bd926464a1afa4c6a11669539e9c1ba77048 # v3.2.0
+        uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3.6.0
         with:
           node-version: "14"
       - name: Install dependencies
@@ -71,7 +71,7 @@ jobs:
           docker logs ed-fi-ods-adminapp > docker-logs/ed-fi-adminapp.log
       - name: Upload Docker logs
         if: failure()
-        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
+        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
         with:
           name: docker-logs
           path: docker-logs/
@@ -81,14 +81,14 @@ jobs:
         run: python ./resultparser.py
         working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
       - name: Upload results
-        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
+        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
         with:
           name: test-results
           path: main/Application/EdFi.Ods.AdminApp.E2E.Tests/reports/playwright-results.xml
           retention-days: 10
       - name: Upload execution traces
         if: failure()
-        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
+        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
         with:
           name: playwright-execution-traces
           path: main/Application/EdFi.Ods.AdminApp.E2E.Tests/traces
