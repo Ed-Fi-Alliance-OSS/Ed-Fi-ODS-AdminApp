@@ -164,7 +164,7 @@ jobs:
       contents: write
     steps:
       - name: Download the SBOM
-        uses: slsa-framework/slsa-github-generator/.github/actions/secure-download-artifact@68bad40844440577b33778c9f29077a3388838e9 #v1.4.0
+        uses: slsa-framework/slsa-github-generator/.github/actions/secure-download-artifact/action.yml@68bad40844440577b33778c9f29077a3388838e9 #v1.4.0
         with:
           name: "${{ env.PACKAGE_NAME }}-SBOM"
           path: ${{ env.MANIFEST_FILE }}
