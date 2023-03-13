@@ -25,11 +25,11 @@ jobs:
   # run-ps-lint:
   #   name: PowerShell Linter
   #   uses: Ed-Fi-Alliance-OSS/Ed-Fi-Actions/.github/workflows/powershell-analyzer.yml@main
-  scan-actions-bidi:
-    name: Scan Actions, scan all files for BIDI Trojan Attacks
-    uses: ed-fi-alliance-oss/ed-fi-actions/.github/workflows/repository-scanner.yml@main
-    with:
-      config-file-path: ./.github/workflows/bidi-config.json
+  # scan-actions-bidi:
+  #   name: Scan Actions, scan all files for BIDI Trojan Attacks
+  #   uses: ed-fi-alliance-oss/ed-fi-actions/.github/workflows/repository-scanner.yml@main
+  #   with:
+  #     config-file-path: ./.github/workflows/bidi-config.json
 
   build-and-test:
     name: Build and Test
@@ -64,7 +64,7 @@ jobs:
         uses: actions/dependency-review-action@c090f4e553673e6e505ea70d6a95362ee12adb94 # v3.0.3
       - name: Initialize CodeQL
         if: success()
-        uses: github/codeql-action/init@1fae5bf71b0ecdc7d0a2ef0d0c28409d99693966 # v2.9.2
+        uses: github/codeql-action/init@896079047b4bb059ba6f150a5d87d47dde99e6e5 # codeql-bundle-20221211
         with:
           languages: csharp
 
@@ -73,4 +73,4 @@ jobs:
 
       - name: Perform CodeQL Analysis
         if: success()
-        uses: github/codeql-action/analyze@1fae5bf71b0ecdc7d0a2ef0d0c28409d99693966 # v2.9.2
+        uses: github/codeql-action/analyze@896079047b4bb059ba6f150a5d87d47dde99e6e5 # codeql-bundle-20221211

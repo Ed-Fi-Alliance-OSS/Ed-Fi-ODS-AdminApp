@@ -164,7 +164,7 @@ jobs:
       contents: write
     steps:
       - name: Download the SBOM
-        uses: slsa-framework/slsa-github-generator/.github/actions/secure-download-artifact@7f4fdb871876c23e455853d694197440c5a91506 #v1.5.0
+        uses: slsa-framework/slsa-github-generator/.github/actions/secure-download-artifact@v1.5.0 #v1.5.0
         with:
           name: "${{ env.PACKAGE_NAME }}-SBOM"
           path: ${{ env.MANIFEST_FILE }}
@@ -209,7 +209,7 @@ jobs:
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@7f4fdb871876c23e455853d694197440c5a91506 #v1.5.0
     with:
       base64-subjects: ${{ needs.pack.outputs.hash-code }}
-      attestation-name: AdminApp.Web.intoto.jsonl
+      provenance-name: AdminApp.Web.intoto.jsonl
       upload-assets: true
 
   publish-package:
@@ -237,7 +237,7 @@ jobs:
             NuGetApiKey = "${{ env.ARTIFACTS_API_KEY }}"
           }
 
-          $artifact | ForEach-Object {
-              $arguments.PackageFile = $_
-              ./build.ps1 Push @arguments
-           }
+          # $artifact | ForEach-Object {
+          #     $arguments.PackageFile = $_
+          #     ./build.ps1 Push @arguments
+          #  }
