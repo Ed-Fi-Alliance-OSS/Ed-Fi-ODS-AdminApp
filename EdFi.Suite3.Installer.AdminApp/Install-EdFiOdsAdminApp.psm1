@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: Apache-2.0
+﻿# SPDX-License-Identifier: Apache-2.0
 # Licensed to the Ed-Fi Alliance under one or more agreements.
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
@@ -571,7 +571,9 @@ function Invoke-InstallationPreCheck{
             $existingAdminAppApplication = Get-WebApplicationByName $webSite.Name $Config.WebApplicationName
             if($existingAdminAppApplication)
             {
-                $existingApplicationPath, $versionString = GetExistingAppVersion $webSite.PhysicalPath $existingAdminAppApplication
+                $webSitePhysicalPath = $webSite.Applications[0].VirtualDirectories.PhysicalPath
+                              
+                $existingApplicationPath, $versionString = GetExistingAppVersion $webSitePhysicalPath $existingAdminAppApplication
                 $installVersionString = $Config.PackageVersion
 
                 $targetIsNewer = IsVersionHigherThanOther $installVersionString $versionString
@@ -638,8 +640,7 @@ function Invoke-ApplicationUpgrade {
             }
             $webSite = $customWebSite
             $existingWebSiteName =  $customWebSiteName
-        }
-        $existingWebSitePath = ($webSite).PhysicalPath
+        }        
 
         $existingAppName = $Config.WebApplicationName
         $existingAdminApp = Get-WebApplicationByName $webSite.Name $existingAppName
@@ -655,6 +656,8 @@ function Invoke-ApplicationUpgrade {
             $existingAdminApp =  $customAdminAppApplication
             $existingAppName = $customApplicationName
         }
+
+        $existingWebSitePath = $webSite.Applications[0].VirtualDirectories.PhysicalPath        
 
         $existingApplicationPath, $versionString = CheckForCompatibleUpdate $existingWebSitePath $existingAdminApp $Config.PackageVersion
 
@@ -853,6 +856,7 @@ function Invoke-TransferConnectionStrings{
 function Invoke-StartWebSite($webSiteName, $portNumber){
 
     Invoke-Task -Name ($MyInvocation.MyCommand.Name) -Task {
+        Import-Module -Force "$appCommonDirectory/IIS/IIS-Components.psm1"
         $webSite = Get-WebsiteByName $webSiteName
         if("Stopped" -eq $webSite.State)
         {
