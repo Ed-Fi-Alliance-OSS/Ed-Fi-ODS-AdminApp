@@ -76,7 +76,7 @@ $p = @{
     ToolsPath = "C:/temp/tools"
     DbConnectionInfo = $dbConnectionInfo
     OdsApiUrl = ""
-    PackageVersion = '3.1.0.0'
+    PackageVersion = '3.1.1.0'
     PackageSource = $adminAppSource
     AdminAppFeatures = $adminAppFeatures
 }
