@@ -143,10 +143,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             {
                 return query.Invoke();
             }
-            catch (System.Data.SqlClient.SqlException e)
-            {
-                throw new AdminAppException("An error occurred trying to access the SQL views for reports.", e);
-            }
             catch (Microsoft.Data.SqlClient.SqlException e)
             {
                 throw new AdminAppException("An error occurred trying to access the SQL views for reports.", e);
