@@ -82,8 +82,8 @@ $p = @{
 }
 
 if ([string]::IsNullOrWhiteSpace($p.OdsApiUrl)) {
-    Write-Error "ODS API URL has not been configured. Edit install.ps1 to pass in a valid url for the ODS API."
+    Write-Warning "ODS API URL has not been provided. Please make sure to update appsetings.json with a valid url for the ODS API, before using Admin App."
 }
-else {
+
     Install-EdFiOdsAdminApp @p
-}
+

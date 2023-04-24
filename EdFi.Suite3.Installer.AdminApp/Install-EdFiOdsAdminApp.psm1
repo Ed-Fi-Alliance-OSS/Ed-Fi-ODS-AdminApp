@@ -178,7 +178,7 @@ function Install-EdFiOdsAdminApp {
 
         # Full URL to the Ed-Fi ODS / API version endpoint.
         [string]
-        [Parameter(Mandatory=$true)]
+        [Parameter()]
         $OdsApiUrl,
 
         # Install Credentials: User
