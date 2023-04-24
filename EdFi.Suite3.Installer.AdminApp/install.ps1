@@ -85,6 +85,5 @@ if ([string]::IsNullOrWhiteSpace($p.OdsApiUrl)) {
     Write-Warning "ODS API URL has not been provided. Please make sure to update appsetings.json with a valid url for the ODS API, before using Admin App."
 }
 
-
     Install-EdFiOdsAdminApp @p
 
