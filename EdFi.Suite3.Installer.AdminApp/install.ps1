@@ -82,8 +82,9 @@ $p = @{
 }
 
 if ([string]::IsNullOrWhiteSpace($p.OdsApiUrl)) {
-    Write-Error "ODS API URL has not been configured. Edit install.ps1 to pass in a valid url for the ODS API."
+    Write-Warning "ODS API URL has not been configured. Edit install.ps1 to pass in a valid url for the ODS API."
 }
-else {
+
+
     Install-EdFiOdsAdminApp @p
-}
+
