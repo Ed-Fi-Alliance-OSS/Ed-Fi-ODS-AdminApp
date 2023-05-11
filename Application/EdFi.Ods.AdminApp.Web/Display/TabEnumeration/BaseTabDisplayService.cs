@@ -77,14 +77,7 @@ namespace EdFi.Ods.AdminApp.Web.Display.TabEnumeration
                     IsEnabled = true,
                     IsVisible = true,
                     Tab = OdsInstanceSettingsTabEnumeration.EducationOrganizations
-                },
-
-                new TabDisplay<OdsInstanceSettingsTabEnumeration>
-                {
-                    IsEnabled = true,
-                    IsVisible = true,
-                    Tab = OdsInstanceSettingsTabEnumeration.BulkLoad
-                },
+                },               
 
                 new TabDisplay<OdsInstanceSettingsTabEnumeration>
                 {

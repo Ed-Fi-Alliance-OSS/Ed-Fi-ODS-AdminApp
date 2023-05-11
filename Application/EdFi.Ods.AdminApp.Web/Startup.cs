@@ -391,8 +391,7 @@ namespace EdFi.Ods.AdminApp.Web
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapHub<ProductionLearningStandardsHub>("/productionLearningStandardsHub");
-                endpoints.MapHub<BulkUploadHub>("/bulkUploadHub");
+                endpoints.MapHub<ProductionLearningStandardsHub>("/productionLearningStandardsHub");                
 
                 if (!env.IsProduction())
                 {
