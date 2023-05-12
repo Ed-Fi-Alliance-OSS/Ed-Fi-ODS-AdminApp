@@ -18,7 +18,6 @@ using EdFi.Ods.AdminApp.Management.Configuration.Application;
 using EdFi.Ods.AdminApp.Management.Helpers;
 using EdFi.Ods.AdminApp.Web.Hubs;
 using EdFi.Ods.AdminApp.Web.Infrastructure;
-using EdFi.Ods.AdminApp.Web.Infrastructure.IO;
 using EdFi.Ods.AdminApp.Web.Infrastructure.Jobs;
 using EdFi.Common.Security;
 using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
@@ -40,8 +39,6 @@ namespace EdFi.Ods.AdminApp.Web._Installers
 
         public void Install(IServiceCollection services, AppSettings appSettings)
         {
-            services.AddTransient<IFileUploadHandler, LocalFileSystemFileUploadHandler>();
-
             services.AddScoped<SecurityCompatiblity53.DataAccess.Contexts.ISecurityContext>(x =>
             {
                 var connectionStrings = x.GetService<IOptions<ConnectionStrings>>();
@@ -80,13 +77,8 @@ namespace EdFi.Ods.AdminApp.Web._Installers
 
             services.AddTransient<IOdsApiConnectionInformationProvider, CloudOdsApiConnectionInformationProvider>();
 
-            services.AddTransient<BulkUploadHub>();
             services.AddTransient<ProductionLearningStandardsHub>();
-            services.AddTransient<BulkImportService>();
             services.AddTransient<IBackgroundJobClient, BackgroundJobClient>();
-
-            services.AddSingleton<IBulkUploadJob, BulkUploadJob>();
-            services.AddSingleton(x => (WorkflowJob<BulkUploadJobContext, BulkUploadHub>)x.GetService<IBulkUploadJob>());//Resolve previously queued job.
 
             services.AddSingleton<IProductionLearningStandardsJob, ProductionLearningStandardsJob>();
             services.AddSingleton(x => (WorkflowJob<LearningStandardsJobContext, ProductionLearningStandardsHub>) x.GetService<IProductionLearningStandardsJob>());//Resolve previously queued job.
