@@ -24,8 +24,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             };
             Save(testApplication);
 
-            var testAbConnectClaimSet = new ClaimSet { ClaimSetName = CloudsOdsAcademicBenchmarksConnectApp.DefaultClaimSet, Application = testApplication };
-            Save(testAbConnectClaimSet);
 
             var testAdminAppClaimSet = new ClaimSet { ClaimSetName = CloudOdsAdminApp.InternalAdminAppClaimSet, Application = testApplication };
             Save(testAdminAppClaimSet);
