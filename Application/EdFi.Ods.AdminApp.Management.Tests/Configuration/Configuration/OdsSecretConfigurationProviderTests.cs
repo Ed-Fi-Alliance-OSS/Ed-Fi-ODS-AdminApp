@@ -48,8 +48,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
         {
             const string JsonConfiguration =
                 "{\"ProductionApiKeyAndSecret\":{\"Key\":\"productionKey\",\"Secret\":\"productionSecret\"}," +
-                "\"BulkUploadCredential\":{\"ApiKey\":\"bulkKey\",\"ApiSecret\":\"bulkSecret\"}," +
-                "\"LearningStandardsCredential\":null," +
                 "\"ProductionAcademicBenchmarkApiClientKeyAndSecret\":null}";
 
 
@@ -69,8 +67,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
 
             secretConfiguration.ProductionApiKeyAndSecret.Key.ShouldBe("productionKey");
             secretConfiguration.ProductionApiKeyAndSecret.Secret.ShouldBe("productionSecret");
-            secretConfiguration.BulkUploadCredential.ApiKey.ShouldBe("bulkKey");
-            secretConfiguration.BulkUploadCredential.ApiSecret.ShouldBe("bulkSecret");
             secretConfiguration.LearningStandardsCredential.ShouldBe(null);
             secretConfiguration.ProductionAcademicBenchmarkApiClientKeyAndSecret.ShouldBe(null);
         }
@@ -80,12 +76,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
         {
             const string JsonConfiguration1 =
                 "{\"ProductionApiKeyAndSecret\":{\"Key\":\"productionKey1\",\"Secret\":\"productionSecret1\"}," +
-                "\"BulkUploadCredential\":{\"ApiKey\":\"bulkKey1\",\"ApiSecret\":\"bulkSecret1\"}," +
                 "\"LearningStandardsCredential\":null," +
                 "\"ProductionAcademicBenchmarkApiClientKeyAndSecret\":null}";
             const string JsonConfiguration2 =
                 "{\"ProductionApiKeyAndSecret\":{\"Key\":\"productionKey2\",\"Secret\":\"productionSecret2\"}," +
-                "\"BulkUploadCredential\":{\"ApiKey\":\"bulkKey2\",\"ApiSecret\":\"bulkSecret2\"}," +
                 "\"LearningStandardsCredential\":null," +
                 "\"ProductionAcademicBenchmarkApiClientKeyAndSecret\":null}";
 
@@ -108,8 +102,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
 
             secretConfigurationForInstance1.ProductionApiKeyAndSecret.Key.ShouldBe("productionKey1");
             secretConfigurationForInstance1.ProductionApiKeyAndSecret.Secret.ShouldBe("productionSecret1");
-            secretConfigurationForInstance1.BulkUploadCredential.ApiKey.ShouldBe("bulkKey1");
-            secretConfigurationForInstance1.BulkUploadCredential.ApiSecret.ShouldBe("bulkSecret1");
             secretConfigurationForInstance1.LearningStandardsCredential.ShouldBe(null);
             secretConfigurationForInstance1.ProductionAcademicBenchmarkApiClientKeyAndSecret.ShouldBe(null);
 
@@ -123,8 +115,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
 
             secretConfigurationForInstance2.ProductionApiKeyAndSecret.Key.ShouldBe("productionKey2");
             secretConfigurationForInstance2.ProductionApiKeyAndSecret.Secret.ShouldBe("productionSecret2");
-            secretConfigurationForInstance2.BulkUploadCredential.ApiKey.ShouldBe("bulkKey2");
-            secretConfigurationForInstance2.BulkUploadCredential.ApiSecret.ShouldBe("bulkSecret2");
             secretConfigurationForInstance2.LearningStandardsCredential.ShouldBe(null);
             secretConfigurationForInstance2.ProductionAcademicBenchmarkApiClientKeyAndSecret.ShouldBe(null);
         }
@@ -171,7 +161,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
 
             createdSecretConfiguration.ProductionApiKeyAndSecret.Key.ShouldBe(productionApiKey);
             createdSecretConfiguration.ProductionApiKeyAndSecret.Secret.ShouldBe(productionApiSecret);
-            createdSecretConfiguration.BulkUploadCredential.ShouldBe(null);
             createdSecretConfiguration.LearningStandardsCredential.ShouldBe(null);
             createdSecretConfiguration.ProductionAcademicBenchmarkApiClientKeyAndSecret.ShouldBe(null);
 
@@ -185,7 +174,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
 
             editedSecretConfiguration.ProductionApiKeyAndSecret.Key.ShouldBe(newProductionApiKey);
             editedSecretConfiguration.ProductionApiKeyAndSecret.Secret.ShouldBe(newProductionApiSecret);
-            editedSecretConfiguration.BulkUploadCredential.ShouldBe(null);
             editedSecretConfiguration.LearningStandardsCredential.ShouldBe(null);
             editedSecretConfiguration.ProductionAcademicBenchmarkApiClientKeyAndSecret.ShouldBe(null);
 
@@ -242,7 +230,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
             record.EncryptedData.ShouldEndWith("=");
             createdSecretConfigurationForInstance2.ProductionApiKeyAndSecret.Key.ShouldBe(productionApiKey);
             createdSecretConfigurationForInstance2.ProductionApiKeyAndSecret.Secret.ShouldBe(productionApiSecret);
-            createdSecretConfigurationForInstance2.BulkUploadCredential.ShouldBe(null);
             createdSecretConfigurationForInstance2.LearningStandardsCredential.ShouldBe(null);
             createdSecretConfigurationForInstance2.ProductionAcademicBenchmarkApiClientKeyAndSecret.ShouldBe(null);
 
@@ -253,7 +240,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
             record.EncryptedData.ShouldEndWith("=");
             editedSecretConfigurationForInstance1.ProductionApiKeyAndSecret.Key.ShouldBe(newProductionApiKey);
             editedSecretConfigurationForInstance1.ProductionApiKeyAndSecret.Secret.ShouldBe(newProductionApiSecret);
-            editedSecretConfigurationForInstance1.BulkUploadCredential.ShouldBe(null);
             editedSecretConfigurationForInstance1.LearningStandardsCredential.ShouldBe(null);
             editedSecretConfigurationForInstance1.ProductionAcademicBenchmarkApiClientKeyAndSecret.ShouldBe(null);
         }

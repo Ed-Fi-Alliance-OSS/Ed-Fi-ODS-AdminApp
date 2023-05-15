@@ -157,8 +157,7 @@ namespace EdFi.Ods.AdminApp.Web
 
             services.AddHealthCheck(Configuration.GetConnectionString("Admin"), IsSqlServer(databaseEngine));
 
-            // This statement should be kept last to ensure that the IHttpClientFactory and IInferOdsApiVersion services are registered.
-            CommonConfigurationInstaller.ConfigureLearningStandards(services).Wait();
+
         }
 
         private void ConfigureForEntityFrameworkIdentity(IServiceCollection services)
@@ -391,8 +390,6 @@ namespace EdFi.Ods.AdminApp.Web
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapHub<ProductionLearningStandardsHub>("/productionLearningStandardsHub");
-                endpoints.MapHub<BulkUploadHub>("/bulkUploadHub");
 
                 if (!env.IsProduction())
                 {

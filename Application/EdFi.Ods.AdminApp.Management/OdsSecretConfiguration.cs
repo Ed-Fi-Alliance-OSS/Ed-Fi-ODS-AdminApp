@@ -8,8 +8,6 @@ namespace EdFi.Ods.AdminApp.Management
     public class OdsSecretConfiguration
     {
         public OdsApiCredential ProductionApiKeyAndSecret { get; set; }
-        public ABProxyApiCredential LearningStandardsCredential { get; set; }
-        public BulkUploadCredential BulkUploadCredential { get; set; }
         public ABProxyApiCredential ProductionAcademicBenchmarkApiClientKeyAndSecret { get; set; }
 
         public OdsAdminAppApiCredentials GetOdsAdminAppApiCredentials() => new OdsAdminAppApiCredentials
