@@ -10,7 +10,6 @@ namespace EdFi.Ods.AdminApp.Management.Helpers
         public string AppStartup { get; set; }
         public string DatabaseEngine { get; set; }
         public string ApplicationInsightsInstrumentationKey { get; set; }
-        public string XsdFolder { get; set; }
         public string DefaultOdsInstance { get; set; }
         public string ProductionApiUrl { get; set; }
         public string ApiExternalUrl { get; set; }
@@ -19,7 +18,6 @@ namespace EdFi.Ods.AdminApp.Management.Helpers
         public string LocalEducationAgencyTypeValue { get; set; }
         public string PostSecondaryInstitutionTypeValue { get; set; }
         public string SchoolTypeValue { get; set; }
-        public string BulkUploadHashCache { get; set; }
         public string IdaAADInstance { get; set; }
         public string IdaClientId { get; set; }
         public string IdaClientSecret { get; set; }
