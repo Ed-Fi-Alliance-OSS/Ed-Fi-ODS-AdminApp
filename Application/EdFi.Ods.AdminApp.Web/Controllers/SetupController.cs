@@ -40,7 +40,18 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _appSettings = appSettingsAccessor.Value;
         }
 
+        [HttpPost]
+        public async Task<JsonResult> CompleteFirstTimeSetup()
+        {
+            _logger.Info("User intiated First Time Setup");
+            return await RunSetup(async () =>
+            {
 
+                var restartRequired = await _completeOdsFirstTimeSetupCommand.Execute(_appSettings.DefaultOdsInstance, CloudOdsAdminAppClaimSetConfiguration.Default, CloudOdsAdminAppSettings.Instance.Mode);
+
+                Response.Cookies.Append("RestartRequired", restartRequired.ToString());
+            });
+        }
 
         public ActionResult PostUpdateSetup()
         {

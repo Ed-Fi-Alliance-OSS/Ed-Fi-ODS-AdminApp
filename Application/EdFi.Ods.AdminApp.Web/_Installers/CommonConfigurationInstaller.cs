@@ -21,7 +21,6 @@ using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
 using EdFi.Ods.AdminApp.Management.Services;
 using EdFi.Ods.AdminApp.Web.Display.HomeScreen;
 using EdFi.Security.DataAccess.Contexts;
-using Hangfire;
 using log4net;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -76,7 +75,6 @@ namespace EdFi.Ods.AdminApp.Web._Installers
 
             services.AddTransient<IOdsApiConnectionInformationProvider, CloudOdsApiConnectionInformationProvider>();
 
-            services.AddTransient<IBackgroundJobClient, BackgroundJobClient>();
 
             services.AddSingleton<ISecureHasher, Pbkdf2HmacSha1SecureHasher>();
             services.AddSingleton<IPackedHashConverter, PackedHashConverter>();
