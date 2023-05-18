@@ -29,7 +29,7 @@ using log4net;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
-
+using EdFi.Ods.AdminApp.Management.AdminApi;
 
 namespace EdFi.Ods.AdminApp.Web._Installers
 {
@@ -76,6 +76,7 @@ namespace EdFi.Ods.AdminApp.Web._Installers
             services.AddTransient<ICloudOdsAdminAppSettingsApiModeProvider, CloudOdsAdminAppSettingsApiModeProvider>();
 
             services.AddTransient<IOdsApiConnectionInformationProvider, OdsApiConnectionInformationProvider>();
+            services.AddTransient<IAdminApiConnectionInformationProvider, AdminApiConnectionInformationProvider>();
 
             services.AddTransient<ProductionLearningStandardsHub>();
             services.AddTransient<IBackgroundJobClient, BackgroundJobClient>();
