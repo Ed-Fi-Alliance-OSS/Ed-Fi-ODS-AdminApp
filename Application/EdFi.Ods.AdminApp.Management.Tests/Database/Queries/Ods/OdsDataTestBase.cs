@@ -12,7 +12,6 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using EdFi.Ods.AdminApp.Management.Database.Ods.Reports;
 using EdFi.Ods.AdminApp.Management.Helpers;
 using EdFi.Ods.AdminApp.Management.Instances;
 using Microsoft.Extensions.Configuration;
@@ -26,7 +25,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
     public abstract class OdsDataTestBase
     {
         protected static TestOdsConnectionProvider TestConnectionProvider = new TestOdsConnectionProvider();
-        protected static bool ReportViewsCreated;
 
         private readonly Checkpoint _checkpoint = new Checkpoint
         {
@@ -514,19 +512,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
             await _checkpoint.Reset(TestOdsConnectionProvider.ConnectionString);
         }
 
-        [OneTimeSetUp]
-        public void FixtureSetUp()
-        {
-            var mockReportConfigProvider = new Mock<IReportsConfigProvider>();
-            mockReportConfigProvider.Setup(x => x.Create(CloudOdsDatabaseNames.ProductionOds, ApiMode.Sandbox)).Returns(new ReportsConfig
-                { ConnectionString = TestOdsConnectionProvider.ConnectionString, ScriptFolder = "Reports.Sql" });
-
-            Scoped<IUpgradeEngineFactory>(upgradeEngineFactory =>
-            {
-                var reportViews = new ReportViewsSetUp(mockReportConfigProvider.Object, upgradeEngineFactory);
-                reportViews.CreateReportViews(CloudOdsDatabaseNames.ProductionOds, ApiMode.Sandbox);
-            });
-        }
+     
 
         [OneTimeTearDown]
         public void TearDown()
