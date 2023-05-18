@@ -160,7 +160,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         {
             var result = _addApplicationCommand.Execute(model);
 
-            var apiUrl = CloudOdsApiConnectionInformationProvider.GetConnectionInformationForEnvironment(
+            var apiUrl = OdsApiConnectionInformationProvider.GetConnectionInformationForEnvironment(
                 new OdsApiCredential(result.Key, result.Secret), _instanceContext.Name,
                 CloudOdsAdminAppSettings.Instance.Mode).ApiBaseUrl;
 
@@ -249,7 +249,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             var regenerationResult = _regenerateApiClientSecretCommand.Execute(model.ApplicationId);
             var application = regenerationResult.Application;
 
-            var apiUrl = CloudOdsApiConnectionInformationProvider.GetConnectionInformationForEnvironment(
+            var apiUrl = OdsApiConnectionInformationProvider.GetConnectionInformationForEnvironment(
                 new OdsApiCredential(regenerationResult.Key, regenerationResult.Secret),
                 _instanceContext.Name, CloudOdsAdminAppSettings.Instance.Mode).ApiBaseUrl;
 

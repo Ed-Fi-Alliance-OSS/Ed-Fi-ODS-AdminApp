@@ -11,13 +11,13 @@ using EdFi.Ods.AdminApp.Management.Instances;
 
 namespace EdFi.Ods.AdminApp.Web.Infrastructure
 {
-    public class CloudOdsApiConnectionInformationProvider : IOdsApiConnectionInformationProvider
+    public class OdsApiConnectionInformationProvider : IOdsApiConnectionInformationProvider
     {
         private readonly IGetOdsAdminAppApiCredentialsQuery _getOdsAdminAppApiCredentialsQuery;
         private readonly InstanceContext _instanceContext;
         private readonly ICloudOdsAdminAppSettingsApiModeProvider _apiModeProvider;
 
-        public CloudOdsApiConnectionInformationProvider(IGetOdsAdminAppApiCredentialsQuery getOdsAdminAppApiCredentialsQuery, InstanceContext instanceContext, ICloudOdsAdminAppSettingsApiModeProvider apiModeProvider)
+        public OdsApiConnectionInformationProvider(IGetOdsAdminAppApiCredentialsQuery getOdsAdminAppApiCredentialsQuery, InstanceContext instanceContext, ICloudOdsAdminAppSettingsApiModeProvider apiModeProvider)
         {
             _getOdsAdminAppApiCredentialsQuery = getOdsAdminAppApiCredentialsQuery;
             _instanceContext = instanceContext;

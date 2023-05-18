@@ -75,7 +75,7 @@ namespace EdFi.Ods.AdminApp.Web._Installers
 
             services.AddTransient<ICloudOdsAdminAppSettingsApiModeProvider, CloudOdsAdminAppSettingsApiModeProvider>();
 
-            services.AddTransient<IOdsApiConnectionInformationProvider, CloudOdsApiConnectionInformationProvider>();
+            services.AddTransient<IOdsApiConnectionInformationProvider, OdsApiConnectionInformationProvider>();
 
             services.AddTransient<ProductionLearningStandardsHub>();
             services.AddTransient<IBackgroundJobClient, BackgroundJobClient>();
