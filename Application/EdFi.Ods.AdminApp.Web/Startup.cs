@@ -145,9 +145,6 @@ namespace EdFi.Ods.AdminApp.Web
 
             var appStartup = appSettings.AppStartup;
 
-            if (appStartup == "OnPrem")
-                new OnPremInstaller().Install(services, appSettings);
-
             services.AddHangfire(configuration => configuration
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
                 .UseSimpleAssemblyNameTypeSerializer()
