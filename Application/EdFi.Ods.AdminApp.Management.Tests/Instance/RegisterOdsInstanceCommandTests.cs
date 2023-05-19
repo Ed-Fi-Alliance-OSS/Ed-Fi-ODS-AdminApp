@@ -11,7 +11,6 @@ using EdFi.Admin.DataAccess.Contexts;
 using EdFi.Ods.AdminApp.Management.Configuration.Claims;
 using EdFi.Ods.AdminApp.Management.Database;
 using EdFi.Ods.AdminApp.Management.Database.Models;
-using EdFi.Ods.AdminApp.Management.Database.Ods.Reports;
 using EdFi.Ods.AdminApp.Management.Database.Ods.SchoolYears;
 using EdFi.Ods.AdminApp.Management.Helpers;
 using EdFi.Ods.AdminApp.Management.Instances;
@@ -181,12 +180,11 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Instance
             var odsSecretConfigurationProvider = new OdsSecretConfigurationProvider(mockStringEncryptorService.Object, database);
 
             var mockFirstTimeSetupService = new Mock<IFirstTimeSetupService>();
-            var mockReportViewsSetUp = new Mock<IReportViewsSetUp>();
             var mockUsersContext = new Mock<IUsersContext>();
             mockFirstTimeSetupService.Setup(x => x.CreateAdminAppInAdminDatabase(It.IsAny<string>(), instanceName,
                 It.IsAny<string>(), apiMode)).ReturnsAsync(new ApplicationCreateResult());
             var odsInstanceFirstTimeSetupService = new OdsInstanceFirstTimeSetupService(odsSecretConfigurationProvider,
-                mockFirstTimeSetupService.Object, mockUsersContext.Object, mockReportViewsSetUp.Object, database, options);
+                mockFirstTimeSetupService.Object, mockUsersContext.Object, database, options);
             return odsInstanceFirstTimeSetupService;
         }
 

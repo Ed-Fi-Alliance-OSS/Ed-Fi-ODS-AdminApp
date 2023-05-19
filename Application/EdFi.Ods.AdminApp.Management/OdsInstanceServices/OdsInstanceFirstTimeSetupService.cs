@@ -8,7 +8,6 @@ using EdFi.Admin.DataAccess.Contexts;
 using EdFi.Ods.AdminApp.Management.Configuration.Claims;
 using EdFi.Ods.AdminApp.Management.Database;
 using EdFi.Ods.AdminApp.Management.Database.Models;
-using EdFi.Ods.AdminApp.Management.Database.Ods.Reports;
 using EdFi.Ods.AdminApp.Management.Helpers;
 using EdFi.Ods.AdminApp.Management.Instances;
 using Microsoft.Extensions.Options;
@@ -20,21 +19,18 @@ namespace EdFi.Ods.AdminApp.Management.OdsInstanceServices
         private readonly IOdsSecretConfigurationProvider _odsSecretConfigurationProvider;
         private readonly IFirstTimeSetupService _firstTimeSetupService;
         private readonly IUsersContext _usersContext;
-        private readonly IReportViewsSetUp _reportViewsSetUp;
         private readonly AdminAppDbContext _database;
         private readonly AppSettings _appSettings;
 
         public OdsInstanceFirstTimeSetupService(IOdsSecretConfigurationProvider odsSecretConfigurationProvider, 
             IFirstTimeSetupService firstTimeSetupService, 
             IUsersContext usersContext,
-            IReportViewsSetUp reportViewsSetUp,
             AdminAppDbContext database,
             IOptions<AppSettings> appSettings)
         {
             _odsSecretConfigurationProvider = odsSecretConfigurationProvider;
             _firstTimeSetupService = firstTimeSetupService;
             _usersContext = usersContext;
-            _reportViewsSetUp = reportViewsSetUp;
             _database = database;
             _appSettings = appSettings.Value;
         }
@@ -44,7 +40,6 @@ namespace EdFi.Ods.AdminApp.Management.OdsInstanceServices
         {
             await AddOdsInstanceRegistration(odsInstanceRegistration);
             await CreateAndSaveApiKeyAndSecret(odsInstanceRegistration, claimSet, apiMode);
-            _reportViewsSetUp.CreateReportViews(odsInstanceRegistration.Name, apiMode);
             _firstTimeSetupService.EnsureAdminDatabaseInitialized();
             await _usersContext.SaveChangesAsync();
         }
