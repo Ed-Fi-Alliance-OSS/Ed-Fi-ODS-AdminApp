@@ -47,9 +47,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
         public async Task ShouldRetrieveUnencryptedSecretConfiguration_SingleInstance()
         {
             const string JsonConfiguration =
-                "{\"ProductionApiKeyAndSecret\":{\"Key\":\"productionKey\",\"Secret\":\"productionSecret\"}," +
-                "\"LearningStandardsCredential\":null," +
-                "\"ProductionAcademicBenchmarkApiClientKeyAndSecret\":null}";
+                "{\"ProductionApiKeyAndSecret\":{\"Key\":\"productionKey\",\"Secret\":\"productionSecret\"},";
+
 
 
             ClearSecretConfigurationCache();
@@ -68,21 +67,16 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
 
             secretConfiguration.ProductionApiKeyAndSecret.Key.ShouldBe("productionKey");
             secretConfiguration.ProductionApiKeyAndSecret.Secret.ShouldBe("productionSecret");
-            secretConfiguration.LearningStandardsCredential.ShouldBe(null);
-            secretConfiguration.ProductionAcademicBenchmarkApiClientKeyAndSecret.ShouldBe(null);
         }
 
         [Test]
         public async Task ShouldRetrieveUnencryptedSecretConfiguration_MultiInstance()
         {
             const string JsonConfiguration1 =
-                "{\"ProductionApiKeyAndSecret\":{\"Key\":\"productionKey1\",\"Secret\":\"productionSecret1\"}," +
-                "\"LearningStandardsCredential\":null," +
-                "\"ProductionAcademicBenchmarkApiClientKeyAndSecret\":null}";
+
+                "{\"ProductionApiKeyAndSecret\":{\"Key\":\"productionKey1\",\"Secret\":\"productionSecret1\"},";
             const string JsonConfiguration2 =
-                "{\"ProductionApiKeyAndSecret\":{\"Key\":\"productionKey2\",\"Secret\":\"productionSecret2\"}," +
-                "\"LearningStandardsCredential\":null," +
-                "\"ProductionAcademicBenchmarkApiClientKeyAndSecret\":null}";
+                "{\"ProductionApiKeyAndSecret\":{\"Key\":\"productionKey2\",\"Secret\":\"productionSecret2\"},";
 
             var odsInstanceRegistration1 = CreateOdsInstanceRegistration("MultiInstance1_" + Guid.NewGuid());
             var odsInstanceRegistration2 = CreateOdsInstanceRegistration("MultiInstance2_" + Guid.NewGuid());
@@ -103,8 +97,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
 
             secretConfigurationForInstance1.ProductionApiKeyAndSecret.Key.ShouldBe("productionKey1");
             secretConfigurationForInstance1.ProductionApiKeyAndSecret.Secret.ShouldBe("productionSecret1");
-            secretConfigurationForInstance1.LearningStandardsCredential.ShouldBe(null);
-            secretConfigurationForInstance1.ProductionAcademicBenchmarkApiClientKeyAndSecret.ShouldBe(null);
 
             AddSecretConfiguration(JsonConfiguration2, odsInstanceRegistration2.Id);
             var secretConfigurationForInstance2 =
@@ -116,8 +108,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
 
             secretConfigurationForInstance2.ProductionApiKeyAndSecret.Key.ShouldBe("productionKey2");
             secretConfigurationForInstance2.ProductionApiKeyAndSecret.Secret.ShouldBe("productionSecret2");
-            secretConfigurationForInstance2.LearningStandardsCredential.ShouldBe(null);
-            secretConfigurationForInstance2.ProductionAcademicBenchmarkApiClientKeyAndSecret.ShouldBe(null);
         }
 
         [Test]
@@ -162,8 +152,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
 
             createdSecretConfiguration.ProductionApiKeyAndSecret.Key.ShouldBe(productionApiKey);
             createdSecretConfiguration.ProductionApiKeyAndSecret.Secret.ShouldBe(productionApiSecret);
-            createdSecretConfiguration.LearningStandardsCredential.ShouldBe(null);
-            createdSecretConfiguration.ProductionAcademicBenchmarkApiClientKeyAndSecret.ShouldBe(null);
+
 
             await SetSecretConfiguration(editSecretConfiguration, odsInstanceRegistration.Id);
 
@@ -175,9 +164,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
 
             editedSecretConfiguration.ProductionApiKeyAndSecret.Key.ShouldBe(newProductionApiKey);
             editedSecretConfiguration.ProductionApiKeyAndSecret.Secret.ShouldBe(newProductionApiSecret);
-            editedSecretConfiguration.LearningStandardsCredential.ShouldBe(null);
-            editedSecretConfiguration.ProductionAcademicBenchmarkApiClientKeyAndSecret.ShouldBe(null);
-
         }
 
         [Test]
@@ -231,8 +217,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
             record.EncryptedData.ShouldEndWith("=");
             createdSecretConfigurationForInstance2.ProductionApiKeyAndSecret.Key.ShouldBe(productionApiKey);
             createdSecretConfigurationForInstance2.ProductionApiKeyAndSecret.Secret.ShouldBe(productionApiSecret);
-            createdSecretConfigurationForInstance2.LearningStandardsCredential.ShouldBe(null);
-            createdSecretConfigurationForInstance2.ProductionAcademicBenchmarkApiClientKeyAndSecret.ShouldBe(null);
 
             // Verify the edited secret configuration for instance 1
             var editedSecretConfigurationForInstance1 = await GetSecretConfiguration(odsInstanceRegistration1.Id);
@@ -241,8 +225,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
             record.EncryptedData.ShouldEndWith("=");
             editedSecretConfigurationForInstance1.ProductionApiKeyAndSecret.Key.ShouldBe(newProductionApiKey);
             editedSecretConfigurationForInstance1.ProductionApiKeyAndSecret.Secret.ShouldBe(newProductionApiSecret);
-            editedSecretConfigurationForInstance1.LearningStandardsCredential.ShouldBe(null);
-            editedSecretConfigurationForInstance1.ProductionAcademicBenchmarkApiClientKeyAndSecret.ShouldBe(null);
         }
 
         private void EnsureZeroSecretConfigurations()

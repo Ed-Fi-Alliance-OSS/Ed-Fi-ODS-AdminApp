@@ -22,7 +22,6 @@ namespace EdFi.Ods.AdminApp.Management.OnPrem
         private readonly ICloudOdsClaimSetConfigurator _cloudOdsClaimSetConfigurator;
         private readonly IOdsInstanceFirstTimeSetupService _firstTimeSetupService;
         private readonly IAssessmentVendorAdjustment _assessmentVendorAdjustment;
-        private readonly ILearningStandardsSetup _learningStandardsSetup;
         private readonly IClaimSetCheckService _claimSetCheckService;
         private readonly IInferInstanceService _instanceService;
 
@@ -34,12 +33,10 @@ namespace EdFi.Ods.AdminApp.Management.OnPrem
             ICloudOdsClaimSetConfigurator cloudOdsClaimSetConfigurator,
             IOdsInstanceFirstTimeSetupService firstTimeSetupService,
             IAssessmentVendorAdjustment assessmentVendorAdjustment,
-            ILearningStandardsSetup learningStandardsSetup,
             IClaimSetCheckService claimSetCheckService,
             IInferInstanceService instanceService)
         {
             _assessmentVendorAdjustment = assessmentVendorAdjustment;
-            _learningStandardsSetup = learningStandardsSetup;
             _claimSetCheckService = claimSetCheckService;
             _instanceService = instanceService;
             _usersContext = usersContext;
@@ -86,7 +83,6 @@ namespace EdFi.Ods.AdminApp.Management.OnPrem
 
         private void ApplyAdditionalClaimSetModifications()
         {
-            _learningStandardsSetup.SetupLearningStandardsClaims();
 
             _assessmentVendorAdjustment.ReadAndCreatePerformanceLevelDescriptors();
         }

@@ -9,22 +9,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using EdFi.Common.Extensions;
 using EdFi.Admin.DataAccess.Contexts;
-using EdFi.Admin.LearningStandards.Core.Configuration;
-using EdFi.Admin.LearningStandards.Core.Services;
-using EdFi.Admin.LearningStandards.Core.Services.Interfaces;
+
 using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Management.Api;
 using EdFi.Ods.AdminApp.Management.Configuration.Application;
 using EdFi.Ods.AdminApp.Management.Helpers;
 using EdFi.Ods.AdminApp.Web.Hubs;
 using EdFi.Ods.AdminApp.Web.Infrastructure;
-using EdFi.Ods.AdminApp.Web.Infrastructure.Jobs;
 using EdFi.Common.Security;
 using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
 using EdFi.Ods.AdminApp.Management.Services;
 using EdFi.Ods.AdminApp.Web.Display.HomeScreen;
 using EdFi.Security.DataAccess.Contexts;
-using Hangfire;
 using log4net;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -76,12 +72,6 @@ namespace EdFi.Ods.AdminApp.Web._Installers
             services.AddTransient<ICloudOdsAdminAppSettingsApiModeProvider, CloudOdsAdminAppSettingsApiModeProvider>();
 
             services.AddTransient<IOdsApiConnectionInformationProvider, CloudOdsApiConnectionInformationProvider>();
-
-            services.AddTransient<ProductionLearningStandardsHub>();
-            services.AddTransient<IBackgroundJobClient, BackgroundJobClient>();
-
-            services.AddSingleton<IProductionLearningStandardsJob, ProductionLearningStandardsJob>();
-            services.AddSingleton(x => (WorkflowJob<LearningStandardsJobContext, ProductionLearningStandardsHub>) x.GetService<IProductionLearningStandardsJob>());//Resolve previously queued job.
 
             services.AddSingleton<ISecureHasher, Pbkdf2HmacSha1SecureHasher>();
             services.AddSingleton<IPackedHashConverter, PackedHashConverter>();
@@ -149,48 +139,6 @@ namespace EdFi.Ods.AdminApp.Web._Installers
 
         protected abstract void InstallHostingSpecificClasses(IServiceCollection services);
 
-        public static async Task ConfigureLearningStandards(IServiceCollection services)
-        {
-            var serviceProvider = (IServiceProvider)services.BuildServiceProvider();
-
-            var learningStandardsMaxSimultaneousRequests = await GetLearningStandardsMaxSimultaneousRequests(serviceProvider);
-
-            var config = new EdFiOdsApiClientConfiguration(
-                maxSimultaneousRequests: learningStandardsMaxSimultaneousRequests);
-
-            var serviceCollection = new ServiceCollection();
-
-            var pluginConnector = new LearningStandardsCorePluginConnector(
-                serviceCollection,
-                ServiceProviderFunc,
-                new LearningStandardLogProvider(),
-                config
-            );
-
-            services.AddSingleton<ILearningStandardsCorePluginConnector>(pluginConnector);
-        }
-
-        private static async Task<int> GetLearningStandardsMaxSimultaneousRequests(IServiceProvider serviceProvider)
-        {
-            const int IdealSimultaneousRequests = 4;
-            const int PessimisticSimultaneousRequests = 1;
-
-            try
-            {
-                var inferOdsApiVersion = serviceProvider.GetRequiredService<IInferOdsApiVersion>();
-                var odsApiVersion = await inferOdsApiVersion.Version(CloudOdsAdminAppSettings.Instance.ProductionApiUrl);
-
-                return odsApiVersion.StartsWith("3.") ? PessimisticSimultaneousRequests : IdealSimultaneousRequests;
-            }
-            catch (Exception e)
-            {
-                Logger.Warn(
-                    "Failed to infer ODS / API version to determine Learning Standards " +
-                    $"MaxSimultaneousRequests. Assuming a max of {PessimisticSimultaneousRequests}.", e);
-
-                return PessimisticSimultaneousRequests;
-            }
-        }
 
         private static IServiceProvider ServiceProviderFunc(IServiceCollection collection)
         {

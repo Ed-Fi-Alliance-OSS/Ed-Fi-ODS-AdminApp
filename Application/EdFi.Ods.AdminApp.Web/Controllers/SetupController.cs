@@ -13,7 +13,6 @@ using EdFi.Ods.AdminApp.Management.Configuration.Application;
 using EdFi.Ods.AdminApp.Management.Helpers;
 using EdFi.Ods.AdminApp.Web.ActionFilters;
 using EdFi.Ods.AdminApp.Web.Infrastructure;
-using EdFi.Ods.AdminApp.Web.Infrastructure.HangFire;
 using EdFi.Ods.AdminApp.Web.Models.ViewModels;
 using log4net;
 using Microsoft.Extensions.Options;
@@ -41,17 +40,12 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _appSettings = appSettingsAccessor.Value;
         }
 
-
         [HttpPost]
         public async Task<JsonResult> CompleteFirstTimeSetup()
         {
             _logger.Info("User intiated First Time Setup");
             return await RunSetup(async () =>
             {
-                //HangFire schema init has been deferred since the SQL login provided in the EdFi_Admin
-                //connection string by default does not have DBOwner permissions.  Hooking into the first-time
-                //setup command gives us the access to run the schema init here.
-                _completeOdsFirstTimeSetupCommand.ExtraDatabaseInitializationAction = HangFireInstance.RemoveAllScheduledJobs;
 
                 var restartRequired = await _completeOdsFirstTimeSetupCommand.Execute(_appSettings.DefaultOdsInstance, CloudOdsAdminAppClaimSetConfiguration.Default, CloudOdsAdminAppSettings.Instance.Mode);
 

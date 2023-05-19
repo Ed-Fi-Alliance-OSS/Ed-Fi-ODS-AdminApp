@@ -10,7 +10,6 @@
     <Content Include="EdFi.Ods.AdminApp.Database.nuspec" CopyToPublishDirectory="Always" CopyToOutputDirectory="Never" />
     <Content Include="../../LICENSE" CopyToPublishDirectory="Always" CopyToOutputDirectory="Never" />
     <Content Include="../../NOTICES.md" CopyToPublishDirectory="Always" CopyToOutputDirectory="Never" />
-
     <Content Include="Artifacts\**" CopyToPublishDirectory="Always" CopyToOutputDirectory="Never" />
     <Content Include="Schema/**/*.*" CopyToPublishDirectory="Always" />
     <Content Include="uploads\placeholder.txt">
@@ -28,12 +27,9 @@
     <PackageReference Include="CsvHelper" Version="27.2.1" />
     <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
-    <PackageReference Include="EdFi.Admin.LearningStandards.Core" Version="1.2.27" />
     <PackageReference Include="EdFi.Suite3.LoadTools" Version="5.4.12" />
     <PackageReference Include="FluentValidation" Version="10.4.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="10.4.0" />
-    <PackageReference Include="Hangfire" Version="1.7.28" />
-    <PackageReference Include="Hangfire.PostgreSql" Version="1.9.7" />
     <PackageReference Include="HtmlTags" Version="8.1.1" />
     <PackageReference Include="LigerShark.WebOptimizer.Core" Version="3.0.357" />
     <PackageReference Include="log4net" Version="2.0.13" />
@@ -52,5 +48,6 @@
     <Content Update="appsettings.SqlServer-SharedInstance.json" CopyToPublishDirectory="Never" />
     <Content Update="appsettings.SqlServer-YearSpecific.json" CopyToPublishDirectory="Never" />
   </ItemGroup>
+
 
 </Project>

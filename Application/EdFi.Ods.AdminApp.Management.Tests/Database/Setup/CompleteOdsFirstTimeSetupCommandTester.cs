@@ -75,7 +75,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Setup
 
             var mockAssessmentVendorAdjustment = new Mock<IAssessmentVendorAdjustment>();
 
-            var mockLearningStandardsSetup = new Mock<ILearningStandardsSetup>();
 
             var mockClaimSetCheckService = new Mock<IClaimSetCheckService>();
             mockClaimSetCheckService.Setup(a => a.RequiredClaimSetsExist()).Returns(false);
@@ -88,7 +87,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Setup
                 mockClaimSetConfigurator.Object,
                 mockFirstTimeSetupService.Object,
                 mockAssessmentVendorAdjustment.Object,
-                mockLearningStandardsSetup.Object,
                 mockClaimSetCheckService.Object,
                 mockInferInstanceService.Object);
 

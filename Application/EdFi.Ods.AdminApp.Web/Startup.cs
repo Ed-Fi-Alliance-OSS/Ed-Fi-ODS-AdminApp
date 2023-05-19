@@ -20,7 +20,6 @@ using EdFi.Ods.AdminApp.Web.ActionFilters;
 using EdFi.Ods.AdminApp.Web.Helpers;
 using EdFi.Ods.AdminApp.Web.Hubs;
 using EdFi.Ods.AdminApp.Web.Infrastructure;
-using EdFi.Ods.AdminApp.Web.Infrastructure.HangFire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +27,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using FluentValidation.AspNetCore;
-using Hangfire;
 using log4net;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -148,17 +146,10 @@ namespace EdFi.Ods.AdminApp.Web
             if (appStartup == "OnPrem")
                 new OnPremInstaller().Install(services, appSettings);
 
-            services.AddHangfire(configuration => configuration
-                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-                .UseSimpleAssemblyNameTypeSerializer()
-                .UseRecommendedSerializerSettings());
-            HangFireInstance.EnableWithoutSchemaMigration();
-            services.AddHangfireServer();
 
             services.AddHealthCheck(Configuration.GetConnectionString("Admin"), IsSqlServer(databaseEngine));
 
-            // This statement should be kept last to ensure that the IHttpClientFactory and IInferOdsApiVersion services are registered.
-            CommonConfigurationInstaller.ConfigureLearningStandards(services).Wait();
+
         }
 
         private void ConfigureForEntityFrameworkIdentity(IServiceCollection services)
@@ -391,7 +382,6 @@ namespace EdFi.Ods.AdminApp.Web
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapHub<ProductionLearningStandardsHub>("/productionLearningStandardsHub");                
 
                 if (!env.IsProduction())
                 {
