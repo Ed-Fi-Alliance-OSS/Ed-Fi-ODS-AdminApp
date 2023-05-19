@@ -6,7 +6,6 @@
 using System.Collections.Generic;
 using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Management.Database.Models;
-using EdFi.Ods.AdminApp.Web.Infrastructure;
 
 namespace EdFi.Ods.AdminApp.Web.Display.HomeScreen
 {
@@ -26,16 +25,8 @@ namespace EdFi.Ods.AdminApp.Web.Display.HomeScreen
             if (_userContext.Has(Permission.AccessGlobalSettings))
             {
                 homeScreenDisplayList.Add(HomeScreenEnumeration.Global);
-            }
-
-            if (CloudOdsAdminAppSettings.Instance.Mode.SupportsMultipleInstances)
-            {
-                homeScreenDisplayList.Add(HomeScreenEnumeration.OdsInstances);
-            }
-            else
-            {
-                homeScreenDisplayList.Add(HomeScreenEnumeration.Settings);
-            }
+            }          
+            homeScreenDisplayList.Add(HomeScreenEnumeration.OdsInstances);     
 
             return homeScreenDisplayList;
         }

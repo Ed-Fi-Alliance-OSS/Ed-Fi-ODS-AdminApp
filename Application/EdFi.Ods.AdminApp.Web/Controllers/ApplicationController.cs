@@ -110,12 +110,9 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                 var vendorsApplicationsModel = _mapper.Map<List<VendorApplicationsModel>>(
                     vendors, opts => opts.WithEducationOrganizations(edOrgs));
 
-                if (CloudOdsAdminAppSettings.Instance.Mode.SupportsMultipleInstances)
+                foreach (var model in vendorsApplicationsModel)
                 {
-                    foreach (var model in vendorsApplicationsModel)
-                    {
-                        FilterInstanceSpecificApplications(model);
-                    }
+                    FilterInstanceSpecificApplications(model);
                 }
 
                 return vendorsApplicationsModel;

@@ -79,8 +79,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
 
         private bool ZeroOdsInstanceRegistrations()
         {
-            return CloudOdsAdminAppSettings.Instance.Mode.SupportsMultipleInstances &&
-                   !_getOdsInstanceRegistrationsQuery.Execute().Any();
+            return !_getOdsInstanceRegistrationsQuery.Execute().Any();
         }
     }
 }
