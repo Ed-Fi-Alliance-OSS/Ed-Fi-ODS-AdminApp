@@ -68,7 +68,7 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure
 
         private static OdsApiConnectionInformation ConnectionInformationForEnvironment(string apiUrl, OdsApiCredential apiCredentials, string instanceName, ApiMode apiMode)
         {
-            var connectionInformation = new OdsApiConnectionInformation(instanceName, apiMode)
+            var connectionInformation = new OdsApiConnectionInformation()
             {
                 ApiServerUrl = $"{apiUrl}",
                 ClientKey = apiCredentials.Key,
