@@ -35,8 +35,6 @@ namespace EdFi.Ods.AdminApp.Web._Installers
 
         public void Install(IServiceCollection services, AppSettings appSettings)
         {
-            services.AddTransient<IFileUploadHandler, LocalFileSystemFileUploadHandler>();
-
             services.AddScoped<SecurityCompatiblity53.DataAccess.Contexts.ISecurityContext>(x =>
             {
                 var connectionStrings = x.GetService<IOptions<ConnectionStrings>>();
@@ -74,7 +72,6 @@ namespace EdFi.Ods.AdminApp.Web._Installers
             services.AddTransient<ICloudOdsAdminAppSettingsApiModeProvider, CloudOdsAdminAppSettingsApiModeProvider>();
 
             services.AddTransient<IOdsApiConnectionInformationProvider, CloudOdsApiConnectionInformationProvider>();
-
 
             services.AddSingleton<ISecureHasher, Pbkdf2HmacSha1SecureHasher>();
             services.AddSingleton<IPackedHashConverter, PackedHashConverter>();

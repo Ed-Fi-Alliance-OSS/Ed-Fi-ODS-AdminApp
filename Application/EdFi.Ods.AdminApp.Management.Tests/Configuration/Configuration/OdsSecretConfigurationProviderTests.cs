@@ -50,6 +50,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
                 "{\"ProductionApiKeyAndSecret\":{\"Key\":\"productionKey\",\"Secret\":\"productionSecret\"},";
 
 
+
             ClearSecretConfigurationCache();
 
             var odsInstanceRegistration = CreateOdsInstanceRegistration("SingleInstance_" + Guid.NewGuid());
@@ -72,6 +73,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
         public async Task ShouldRetrieveUnencryptedSecretConfiguration_MultiInstance()
         {
             const string JsonConfiguration1 =
+
                 "{\"ProductionApiKeyAndSecret\":{\"Key\":\"productionKey1\",\"Secret\":\"productionSecret1\"},";
             const string JsonConfiguration2 =
                 "{\"ProductionApiKeyAndSecret\":{\"Key\":\"productionKey2\",\"Secret\":\"productionSecret2\"},";
@@ -151,6 +153,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
             createdSecretConfiguration.ProductionApiKeyAndSecret.Key.ShouldBe(productionApiKey);
             createdSecretConfiguration.ProductionApiKeyAndSecret.Secret.ShouldBe(productionApiSecret);
 
+
             await SetSecretConfiguration(editSecretConfiguration, odsInstanceRegistration.Id);
 
             var editedSecretConfiguration = await GetSecretConfiguration(odsInstanceRegistration.Id);
@@ -161,7 +164,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
 
             editedSecretConfiguration.ProductionApiKeyAndSecret.Key.ShouldBe(newProductionApiKey);
             editedSecretConfiguration.ProductionApiKeyAndSecret.Secret.ShouldBe(newProductionApiSecret);
-
         }
 
         [Test]
