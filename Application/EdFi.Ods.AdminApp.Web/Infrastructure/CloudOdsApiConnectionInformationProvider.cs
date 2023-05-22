@@ -7,21 +7,16 @@ using System;
 using System.Threading.Tasks;
 using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Management.Api;
-using EdFi.Ods.AdminApp.Management.Instances;
 
 namespace EdFi.Ods.AdminApp.Web.Infrastructure
 {
     public class CloudOdsApiConnectionInformationProvider : IOdsApiConnectionInformationProvider
     {
         private readonly IGetOdsAdminAppApiCredentialsQuery _getOdsAdminAppApiCredentialsQuery;
-        private readonly InstanceContext _instanceContext;
-        private readonly ICloudOdsAdminAppSettingsApiModeProvider _apiModeProvider;
 
-        public CloudOdsApiConnectionInformationProvider(IGetOdsAdminAppApiCredentialsQuery getOdsAdminAppApiCredentialsQuery, InstanceContext instanceContext, ICloudOdsAdminAppSettingsApiModeProvider apiModeProvider)
+        public CloudOdsApiConnectionInformationProvider(IGetOdsAdminAppApiCredentialsQuery getOdsAdminAppApiCredentialsQuery)
         {
             _getOdsAdminAppApiCredentialsQuery = getOdsAdminAppApiCredentialsQuery;
-            _instanceContext = instanceContext;
-            _apiModeProvider = apiModeProvider;
         }
 
         public async Task<OdsApiConnectionInformation> GetConnectionInformationForEnvironment()
@@ -33,7 +28,7 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure
                 ThrowSecretCorruptionException();
             }
 
-            return GetConnectionInformationForEnvironment(apiCredentials.ProductionApiCredential, _instanceContext.Name, _apiModeProvider.GetApiMode());
+            return GetConnectionInformationForEnvironment(apiCredentials.ProductionApiCredential);
 
             bool ApiCredentialAreCorrupted()
             {
@@ -48,7 +43,7 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure
             }
         }
 
-        public static OdsApiConnectionInformation GetConnectionInformationForEnvironment(OdsApiCredential apiCredentials, string instanceName, ApiMode apiMode)
+        public static OdsApiConnectionInformation GetConnectionInformationForEnvironment(OdsApiCredential apiCredentials)
         {
             if (apiCredentials == null)
             {
@@ -63,10 +58,10 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure
                 throw new ArgumentException($"{nameof(apiCredentials.Secret)} in {nameof(apiCredentials)} cannot be null or whitespace");
             }
 
-            return ConnectionInformationForEnvironment(CloudOdsAdminAppSettings.Instance.ProductionApiUrl, apiCredentials, instanceName, apiMode);
+            return ConnectionInformationForEnvironment(CloudOdsAdminAppSettings.Instance.ProductionApiUrl, apiCredentials);
         }
 
-        private static OdsApiConnectionInformation ConnectionInformationForEnvironment(string apiUrl, OdsApiCredential apiCredentials, string instanceName, ApiMode apiMode)
+        private static OdsApiConnectionInformation ConnectionInformationForEnvironment(string apiUrl, OdsApiCredential apiCredentials)
         {
             var connectionInformation = new OdsApiConnectionInformation()
             {

@@ -72,17 +72,4 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure
             }
         }
     }
-
-    public class CloudOdsAdminAppSettingsApiModeProvider: ICloudOdsAdminAppSettingsApiModeProvider
-    {
-        public ApiMode GetApiMode()
-        {
-            return CloudOdsAdminAppSettings.Instance.Mode;
-        }
-    }
-
-    public interface ICloudOdsAdminAppSettingsApiModeProvider
-    {
-        ApiMode GetApiMode();
-    }
 }
