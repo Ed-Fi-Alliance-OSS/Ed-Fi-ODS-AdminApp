@@ -3,10 +3,9 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
-using System;
+
 using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Management.Database.Ods.SchoolYears;
-using EdFi.Ods.AdminApp.Web.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EdFi.Ods.AdminApp.Web.Controllers
@@ -31,15 +30,8 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         public IViewComponentResult Invoke()
-        {
-            var apiMode = CloudOdsAdminAppSettings.Instance.Mode;
-
-            if (apiMode.SupportsMultipleInstances)
-                throw new InvalidOperationException(
-                    $"Attempted to display {nameof(SingleInstanceCurrentYearViewComponent)}, but the " +
-                    $"ODS is configured with multi-instance API mode '{apiMode}'.");
-
-            var schoolYear = _getCurrentSchoolYear.Execute(_instanceContext.Name, apiMode);
+        {          
+            var schoolYear = _getCurrentSchoolYear.Execute();
 
             return View(
                 new Model

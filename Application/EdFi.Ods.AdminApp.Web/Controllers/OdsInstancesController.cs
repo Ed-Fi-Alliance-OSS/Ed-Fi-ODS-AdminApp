@@ -51,7 +51,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                             Description = x.Description,
                             SchoolYearDescription =
                                 _getCurrentSchoolYear
-                                    .Execute(x.Name, CloudOdsAdminAppSettings.Instance.Mode)
+                                    .Execute()
                                     ?.SchoolYearDescription ?? "Not Set"
                         }).ToList()
             };

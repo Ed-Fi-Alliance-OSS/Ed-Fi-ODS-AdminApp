@@ -6,7 +6,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Dapper;
-using EdFi.Ods.AdminApp.Management.Instances;
 
 namespace EdFi.Ods.AdminApp.Management.Database.Ods.SchoolYears
 {
@@ -19,7 +18,7 @@ namespace EdFi.Ods.AdminApp.Management.Database.Ods.SchoolYears
             _databaseConnectionProvider = databaseConnectionProvider;
         }
 
-        public IReadOnlyList<SchoolYearType> Execute(string instanceName, ApiMode apiMode)
+        public IReadOnlyList<SchoolYearType> Execute()
         {
             using (var connection = _databaseConnectionProvider.CreateNewConnection())
             {

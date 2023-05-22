@@ -55,7 +55,7 @@ namespace EdFi.Ods.AdminApp.Management.OnPrem
                 var defaultOdsInstance = new OdsInstanceRegistration
                 {
                     Name = odsInstanceName,
-                    DatabaseName = _instanceService.DatabaseName(0, apiMode),
+                    DatabaseName = _instanceService.DatabaseName(),
                     Description = "Default single ods instance"
                 };
                 await _firstTimeSetupService.CompleteSetup(defaultOdsInstance, claimSet, apiMode);
