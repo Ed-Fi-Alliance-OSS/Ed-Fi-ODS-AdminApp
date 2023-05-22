@@ -34,7 +34,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Setup
             var sqlConnectionBuilder =
                 new SqlConnectionStringBuilder(connectionString) { InitialCatalog = "Ed-Fi_Ods" };
             using var connection = new SqlConnection(sqlConnectionBuilder.ConnectionString);
-            _connectionProvider.Setup(x => x.CreateNewConnection(0, ApiMode.SharedInstance)).Returns(connection);
+            _connectionProvider.Setup(x => x.CreateNewConnection()).Returns(connection);
         }
 
 

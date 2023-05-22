@@ -20,7 +20,7 @@ namespace EdFi.Ods.AdminApp.Management.Database.Ods.SchoolYears
 
         public SchoolYearType Execute(string instanceName, ApiMode apiMode)
         {
-            using (var connection = _databaseConnectionProvider.CreateNewConnection(instanceName, apiMode))
+            using (var connection = _databaseConnectionProvider.CreateNewConnection())
             {
                 var current = connection.Query<SchoolYearType>(
                     @"SELECT SchoolYear, SchoolYearDescription, CurrentSchoolYear

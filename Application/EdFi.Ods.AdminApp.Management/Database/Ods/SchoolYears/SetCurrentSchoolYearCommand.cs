@@ -25,7 +25,7 @@ namespace EdFi.Ods.AdminApp.Management.Database.Ods.SchoolYears
 
         public void Execute(string instanceName, ApiMode apiMode, short schoolYear)
         {
-            using (var connection = _databaseConnectionProvider.CreateNewConnection(instanceName, apiMode))
+            using (var connection = _databaseConnectionProvider.CreateNewConnection())
             {
                 // Take special care that any modifications to the SQL here fall
                 // within the common subset of SQL Server and Postgres syntax.

@@ -21,7 +21,7 @@ namespace EdFi.Ods.AdminApp.Management.Database.Ods.SchoolYears
 
         public IReadOnlyList<SchoolYearType> Execute(string instanceName, ApiMode apiMode)
         {
-            using (var connection = _databaseConnectionProvider.CreateNewConnection(instanceName, apiMode))
+            using (var connection = _databaseConnectionProvider.CreateNewConnection())
             {
                 return connection.Query<SchoolYearType>(
                     @"SELECT SchoolYear, SchoolYearDescription, CurrentSchoolYear

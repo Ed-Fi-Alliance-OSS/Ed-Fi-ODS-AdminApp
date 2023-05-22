@@ -101,7 +101,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
             GetCurrentSchoolYear().ShouldBe(null);
 
             // Create an ambiguous, meaningless selection of multiple years.
-            using (var connection = TestConnectionProvider.CreateNewConnection(InstanceName, ApiMode))
+            using (var connection = TestConnectionProvider.CreateNewConnection())
                 connection.Execute(@"UPDATE edfi.SchoolYearType SET CurrentSchoolYear='true'");
 
             // Rather than throwing, the user should experience this as no valid selection.

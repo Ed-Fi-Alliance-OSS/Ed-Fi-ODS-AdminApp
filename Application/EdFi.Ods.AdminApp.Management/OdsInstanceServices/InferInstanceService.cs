@@ -24,7 +24,7 @@ namespace EdFi.Ods.AdminApp.Management.OdsInstanceServices
 
         public string DatabaseName(int odsInstanceNumericSuffix, ApiMode mode)
         {
-            using var connection = _connectionProvider.CreateNewConnection(odsInstanceNumericSuffix, mode);
+            using var connection = _connectionProvider.CreateNewConnection();
 
             return connection.Database;
         }
