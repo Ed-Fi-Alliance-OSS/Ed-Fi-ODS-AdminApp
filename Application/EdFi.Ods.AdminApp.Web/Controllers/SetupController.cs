@@ -47,7 +47,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             return await RunSetup(async () =>
             {
 
-                var restartRequired = await _completeOdsFirstTimeSetupCommand.Execute(_appSettings.DefaultOdsInstance, CloudOdsAdminAppClaimSetConfiguration.Default, CloudOdsAdminAppSettings.Instance.Mode);
+                var restartRequired = await _completeOdsFirstTimeSetupCommand.Execute(CloudOdsAdminAppClaimSetConfiguration.Default);
 
                 Response.Cookies.Append("RestartRequired", restartRequired.ToString());
             });

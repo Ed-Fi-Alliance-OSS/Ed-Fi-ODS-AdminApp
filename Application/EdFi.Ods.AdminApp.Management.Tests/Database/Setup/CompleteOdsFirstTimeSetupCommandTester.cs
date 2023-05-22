@@ -90,7 +90,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Setup
                 mockClaimSetCheckService.Object,
                 mockInferInstanceService.Object);
 
-            await command.Execute(GetOdsName(), GetClaimSet(), ApiMode.SharedInstance);
+            await command.Execute(GetClaimSet());
 
             mockClaimSetConfigurator.Verify(x => x.ApplyConfiguration(It.Is<CloudOdsClaimSet>(c => c.ClaimSetName == CloudOdsAdminApp.InternalAdminAppClaimSet && c.ApplicationName == CloudOdsAdminApp.ApplicationName)), Times.Once);
         }

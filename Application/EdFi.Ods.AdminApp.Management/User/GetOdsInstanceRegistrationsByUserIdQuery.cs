@@ -23,11 +23,15 @@ namespace EdFi.Ods.AdminApp.Management.User
 
         public IEnumerable<OdsInstanceRegistration> Execute(string userId)
         {
-            var instanceRegistrationIds = _identity.UserOdsInstanceRegistrations.Where(x => x.UserId == userId)
-                .Select(x => x.OdsInstanceRegistrationId).ToList();
+            // TODO: ODS API 7 specific implementation
+            //var instanceRegistrationIds = _identity.UserOdsInstanceRegistrations.Where(x => x.UserId == userId)
+            //    .Select(x => x.OdsInstanceRegistrationId).ToList();
+
+            //var odsInstanceRegistrations =
+            //    _database.OdsInstanceRegistrations.Where(x => instanceRegistrationIds.Contains(x.Id)).OrderBy(x => x.Name);
 
             var odsInstanceRegistrations =
-                _database.OdsInstanceRegistrations.Where(x => instanceRegistrationIds.Contains(x.Id)).OrderBy(x => x.Name);
+                _database.OdsInstanceRegistrations.OrderBy(x => x.Name);
 
             return odsInstanceRegistrations;
         }

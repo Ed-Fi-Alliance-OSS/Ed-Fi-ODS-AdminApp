@@ -45,21 +45,22 @@ namespace EdFi.Ods.AdminApp.Management.OnPrem
             _firstTimeSetupService = firstTimeSetupService;
         }
 
-        public async Task<bool> Execute(string odsInstanceName, CloudOdsClaimSet claimSet, ApiMode apiMode)
+        public async Task<bool> Execute(CloudOdsClaimSet claimSet)
         {
             ExtraDatabaseInitializationAction?.Invoke();
             var restartRequired = false;
 
-            if (apiMode.SupportsSingleInstance)
-            {
-                var defaultOdsInstance = new OdsInstanceRegistration
-                {
-                    Name = odsInstanceName,
-                    DatabaseName = _instanceService.DatabaseName(),
-                    Description = "Default single ods instance"
-                };
-                await _firstTimeSetupService.CompleteSetup(defaultOdsInstance, claimSet, apiMode);
-            }
+            // TODO: ODS API 7 specific implementation
+            //if (apiMode.SupportsSingleInstance)
+            //{
+            //    var defaultOdsInstance = new OdsInstanceRegistration
+            //    {
+            //        Name = odsInstanceName,
+            //        DatabaseName = _instanceService.DatabaseName(),
+            //        Description = "Default single ods instance"
+            //    };
+            //    await _firstTimeSetupService.CompleteSetup(defaultOdsInstance, claimSet);
+            //}
 
             if (!_claimSetCheckService.RequiredClaimSetsExist())
             {

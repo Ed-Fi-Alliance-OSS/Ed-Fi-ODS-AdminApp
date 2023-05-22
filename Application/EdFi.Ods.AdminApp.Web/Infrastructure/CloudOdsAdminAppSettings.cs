@@ -4,17 +4,14 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using System;
-using System.Configuration;
 using EdFi.Ods.AdminApp.Management.Helpers;
-using EdFi.Ods.AdminApp.Management.Instances;
-using EdFi.Common.Extensions;
 
 namespace EdFi.Ods.AdminApp.Web.Infrastructure
 {
     public class CloudOdsAdminAppSettings
     {
         private static readonly Lazy<CloudOdsAdminAppSettings> _instance =
-            new Lazy<CloudOdsAdminAppSettings>(() => new CloudOdsAdminAppSettings());
+            new(() => new CloudOdsAdminAppSettings());
 
         public static AppSettings AppSettings
         {
@@ -44,32 +41,6 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure
                 var timeOut = AppSettings.SecurityMetadataCacheTimeoutMinutes;
                 return int.Parse(timeOut ?? "0");
             }
-        }
-
-        public ApiMode Mode
-        {
-            get
-            {
-                var mode = AppSettings.ApiStartupType;
-                ApiMode startupMode;
-
-                if (string.IsNullOrWhiteSpace(mode))
-                {
-                    throw new ConfigurationErrorsException("No value found for app key 'apiStartup:type'.");
-                }
-
-                if (ApiMode.TryParse(x => x.Value.EqualsIgnoreCase(mode), out var apiMode))
-                {
-                    startupMode = apiMode;
-                }
-                else
-                {
-                    throw new NotSupportedException(
-                        $"Not supported apiStartup:type \"{mode}\". Supported modes: {ApiMode.Sandbox.Value}, {ApiMode.SharedInstance.Value}, {ApiMode.YearSpecific.Value} and {ApiMode.DistrictSpecific.Value}.");
-                }
-
-                return startupMode;
-            }
-        }
+        }        
     }
 }
