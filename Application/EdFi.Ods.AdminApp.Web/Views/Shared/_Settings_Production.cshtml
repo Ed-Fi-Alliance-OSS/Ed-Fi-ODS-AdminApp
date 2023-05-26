@@ -17,13 +17,13 @@ See the LICENSE and NOTICES files in the project root for more information.
 
 <div class="row">
 
-        <div class="col-xs-6">
+        <div class="col-xs-8">
             <h2 title="@(Model.OdsInstance?.Name)">@(Model.OdsInstance?.Description)</h2>
-        </div>
-        <div class="col-xs-3 col-xs-offset-3">
-            @Html.Button("Back to ODS Instances").AddClass("back-btn back-ajax").Data("back-url", Url.Action("Index", "OdsInstances"))
-        </div>
         @await Component.InvokeAsync("SingleInstanceCurrentYear")
+        </div>
+        <div class="col-xs-3 col-xs-offset-1">
+            @Html.Button("Back to ODS Instances").AddClass("back-btn back-ajax").Data("back-url", Url.Action("Index", "OdsInstances"))
+        </div>     
 
 </div>
 

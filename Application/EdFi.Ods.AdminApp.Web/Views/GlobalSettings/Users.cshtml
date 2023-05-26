@@ -38,15 +38,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                         <div class="text-right col-md-offset-8 col-md-4">
                             <div class="col-md-3">
                                 <a class="loads-ajax-modal" data-toggle="tooltip" title="Edit User Profile" data-url="@Url.Action("EditUser", "User", new {userId = user.UserId})"><span class="fa fa-pencil action-icons"></span></a>
-                            </div>
-                            
-                           @* <div class="col-md-3">
-                                TODO: ODS 7 specific implementation
-                                @if (CloudOdsAdminAppSettings.Instance.Mode.SupportsMultipleInstances)
-                                {
-                                    <a data-toggle="tooltip" title="Manage User Ods Instances" href="@Url.Action("EditOdsInstanceRegistrationsForUser", "User", new {userId = user.UserId})"> <span class="fa fa-server action-icons"></span></a>
-                                }
-                            </div>*@
+                            </div>         
                             <div class="col-md-3">
                                 @if (User.FindFirstValue(ClaimTypes.NameIdentifier) != user.UserId)
                                 {

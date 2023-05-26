@@ -6,10 +6,8 @@
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using EdFi.Ods.AdminApp.Management.Instances;
-using EdFi.Ods.AdminApp.Management.User;
 using EdFi.Ods.AdminApp.Web.ActionFilters;
 using EdFi.Ods.AdminApp.Management;
-using EdFi.Ods.AdminApp.Web.Infrastructure;
 using EdFi.Ods.AdminApp.Web.Models.ViewModels.OdsInstances;
 using EdFi.Ods.AdminApp.Management.Database.Ods.SchoolYears;
 using Microsoft.AspNetCore.Http;
@@ -19,16 +17,16 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
     [BypassInstanceContextFilter]
     public class OdsInstancesController : ControllerBase
     {
-        private readonly IGetOdsInstanceRegistrationsByUserIdQuery _getOdsInstanceRegistrationsByUserIdQuery;
+        private readonly IGetOdsInstanceRegistrationsQuery _getOdsInstanceRegistrationsQuery;
         private readonly AdminAppUserContext _userContext;
         private readonly GetCurrentSchoolYearQuery _getCurrentSchoolYear;
 
         public OdsInstancesController(
-            IGetOdsInstanceRegistrationsByUserIdQuery getOdsInstanceRegistrationsByUserIdQuery
+            IGetOdsInstanceRegistrationsQuery getOdsInstanceRegistrationsQuery
             , AdminAppUserContext userContext
             , GetCurrentSchoolYearQuery getCurrentSchoolYear)
         {
-            _getOdsInstanceRegistrationsByUserIdQuery = getOdsInstanceRegistrationsByUserIdQuery;
+            _getOdsInstanceRegistrationsQuery = getOdsInstanceRegistrationsQuery;
             _userContext = userContext;
             _getCurrentSchoolYear = getCurrentSchoolYear;
         }
@@ -36,7 +34,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         public ViewResult Index()
         {
             var currentUserId = _userContext.User.Id;
-            var instances = _getOdsInstanceRegistrationsByUserIdQuery.Execute(currentUserId);
+            var instances = _getOdsInstanceRegistrationsQuery.Execute();
 
             var model = new IndexModel
             {
