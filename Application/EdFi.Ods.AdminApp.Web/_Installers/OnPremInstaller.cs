@@ -21,7 +21,6 @@ namespace EdFi.Ods.AdminApp.Web._Installers
             services.AddTransient<ICompleteOdsPostUpdateSetupCommand, CompleteOnPremOdsPostUpdateSetupCommand>();
             services.AddTransient<IRestartAppServicesCommand, RestartOnPremAppServicesCommand>();
             services.AddTransient<IFirstTimeSetupService, OnPremFirstTimeSetupService>();
-            services.AddTransient<ICloudOdsDatabaseSqlServerSecurityConfiguration,OnPremOdsDatabaseSqlServerSecurityConfiguration>();
             services.AddTransient<ITabDisplayService, OnPremTabDisplayService>();
             services.AddTransient<ICompleteOdsFirstTimeSetupCommand, CompleteOnPremFirstTimeSetupCommand>();
         }
