@@ -25,17 +25,14 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         private readonly ILog _logger = LogManager.GetLogger(typeof(SetupController));
 
         private readonly ICompleteOdsFirstTimeSetupCommand _completeOdsFirstTimeSetupCommand;
-        private readonly ICompleteOdsPostUpdateSetupCommand _completeOdsPostUpdateSetupCommand;
         private readonly ApplicationConfigurationService _applicationConfigurationService;
         private readonly AppSettings _appSettings;
 
         public SetupController(ICompleteOdsFirstTimeSetupCommand completeOdsFirstTimeSetupCommand
-            , ICompleteOdsPostUpdateSetupCommand completeOdsPostUpdateSetupCommand
             , ApplicationConfigurationService applicationConfigurationService
             , IOptions<AppSettings> appSettingsAccessor)
         {
             _completeOdsFirstTimeSetupCommand = completeOdsFirstTimeSetupCommand;
-            _completeOdsPostUpdateSetupCommand = completeOdsPostUpdateSetupCommand;
             _applicationConfigurationService = applicationConfigurationService;
             _appSettings = appSettingsAccessor.Value;
         }
@@ -46,7 +43,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _logger.Info("User intiated First Time Setup");
             return await RunSetup(async () =>
             {
-
                 var restartRequired = await _completeOdsFirstTimeSetupCommand.Execute(CloudOdsAdminAppClaimSetConfiguration.Default);
 
                 Response.Cookies.Append("RestartRequired", restartRequired.ToString());
@@ -56,16 +52,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         public ActionResult PostUpdateSetup()
         {
             return View();
-        }
-
-        [HttpPost]
-        public async Task<JsonResult> CompletePostUpdateSetup()
-        {
-            _logger.Info("User initiated Post-Update Setup");
-            return await RunSetup(async () =>
-            {
-                await _completeOdsPostUpdateSetupCommand.Execute(_appSettings.DefaultOdsInstance);
-            });
         }
 
         private async Task<JsonResult> RunSetup(Func<Task> setupAction)
