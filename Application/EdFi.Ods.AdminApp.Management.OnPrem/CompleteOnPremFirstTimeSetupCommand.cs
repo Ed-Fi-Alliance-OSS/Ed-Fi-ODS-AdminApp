@@ -8,7 +8,6 @@ using EdFi.Admin.DataAccess.Contexts;
 using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
 using EdFi.Ods.AdminApp.Management.Configuration.Claims;
 using EdFi.Ods.AdminApp.Management.Database.Models;
-using EdFi.Ods.AdminApp.Management.Instances;
 using EdFi.Ods.AdminApp.Management.OdsInstanceServices;
 using EdFi.Security.DataAccess.Contexts;
 using Action = System.Action;
@@ -51,13 +50,13 @@ namespace EdFi.Ods.AdminApp.Management.OnPrem
             var restartRequired = false;
 
             // TODO: ODS API 7 specific implementation
-            //var defaultOdsInstance = new OdsInstanceRegistration
-            //{
-            //    Name = "EdFi ODS",
-            //    DatabaseName = _instanceService.DatabaseName(),
-            //    Description = "Default single ods instance"
-            //};
-            //await _firstTimeSetupService.CompleteSetup(defaultOdsInstance, claimSet);
+            var defaultOdsInstance = new OdsInstanceRegistration
+            {
+                Name = "EdFi ODS",
+                DatabaseName = _instanceService.DatabaseName(),
+                Description = "Default single ods instance"
+            };
+            await _firstTimeSetupService.CompleteSetup(defaultOdsInstance, claimSet);
 
 
             if (!_claimSetCheckService.RequiredClaimSetsExist())
