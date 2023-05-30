@@ -51,16 +51,14 @@ namespace EdFi.Ods.AdminApp.Management.OnPrem
             var restartRequired = false;
 
             // TODO: ODS API 7 specific implementation
-            //if (apiMode.SupportsSingleInstance)
+            //var defaultOdsInstance = new OdsInstanceRegistration
             //{
-            //    var defaultOdsInstance = new OdsInstanceRegistration
-            //    {
-            //        Name = odsInstanceName,
-            //        DatabaseName = _instanceService.DatabaseName(),
-            //        Description = "Default single ods instance"
-            //    };
-            //    await _firstTimeSetupService.CompleteSetup(defaultOdsInstance, claimSet);
-            //}
+            //    Name = "EdFi ODS",
+            //    DatabaseName = _instanceService.DatabaseName(),
+            //    Description = "Default single ods instance"
+            //};
+            //await _firstTimeSetupService.CompleteSetup(defaultOdsInstance, claimSet);
+
 
             if (!_claimSetCheckService.RequiredClaimSetsExist())
             {

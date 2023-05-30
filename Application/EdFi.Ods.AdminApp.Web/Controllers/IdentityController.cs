@@ -4,7 +4,6 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -16,7 +15,6 @@ using EdFi.Ods.AdminApp.Management.Identity;
 using EdFi.Ods.AdminApp.Management.Instances;
 using EdFi.Ods.AdminApp.Management.User;
 using EdFi.Ods.AdminApp.Web.ActionFilters;
-using EdFi.Ods.AdminApp.Web.Infrastructure;
 using EdFi.Ods.AdminApp.Web.Models.ViewModels.Identity;
 using EdFi.Ods.AdminApp.Web.Models.ViewModels.User;
 using Microsoft.AspNetCore.Authentication;
@@ -126,9 +124,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                     });
                     await _signInManager.SignInAsync(adminAppUser, isPersistent: false);
 
-                    if (ZeroOdsInstanceRegistrations())
-                        return RedirectToAction("RegisterOdsInstance", "OdsInstances");
-
                     return RedirectToAction("Index", "Home");
                 }
 
@@ -166,9 +161,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
 
                 TempData["PasswordChanged"] = true;
 
-                if (ZeroOdsInstanceRegistrations())
-                    return RedirectToAction("RegisterOdsInstance", "OdsInstances");
-
                 return RedirectToAction("ChangePassword");
             }
 
@@ -191,18 +183,10 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
 
         private ActionResult RedirectToLocal(string returnUrl)
         {
-            if (ZeroOdsInstanceRegistrations())
-                return RedirectToAction("RegisterOdsInstance", "OdsInstances");
-
             if (Url.IsLocalUrl(returnUrl))
                 return Redirect(returnUrl);
 
             return RedirectToAction("Index", "Home");
-        }
-
-        private bool ZeroOdsInstanceRegistrations()
-        {
-            return !_getOdsInstanceRegistrationsQuery.Execute().Any();
         }
     }
 }
