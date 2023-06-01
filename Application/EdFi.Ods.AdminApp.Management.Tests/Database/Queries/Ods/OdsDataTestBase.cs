@@ -12,11 +12,7 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using EdFi.Ods.AdminApp.Management.Helpers;
-using EdFi.Ods.AdminApp.Management.Instances;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using Moq;
 using static EdFi.Ods.AdminApp.Management.Tests.Testing;
 
 namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
@@ -39,7 +35,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
         {
             name = name ?? "n/a";
 
-            using (var sqlConnection = TestConnectionProvider.CreateNewConnection(null))
+            using (var sqlConnection = TestConnectionProvider.CreateNewConnection())
             {
                 var uniqueId = Guid.NewGuid();
 
@@ -88,7 +84,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
 
         public void CreateProgram(int localEducationAgencyId, int programTypeDescriptorId = 1, string programName = "Fake Program")
         {
-            using (var sqlConnection = TestConnectionProvider.CreateNewConnection(null))
+            using (var sqlConnection = TestConnectionProvider.CreateNewConnection())
             {
                 sqlConnection.Query(@"
                 INSERT INTO edfi.Program (EducationOrganizationId, ProgramTypeDescriptorId, ProgramName)
@@ -104,7 +100,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
 
         public void EnrollStudentInProgram(int studentUsi, int localEducationAgencyId, int programTypeDescriptorId = 1, string programName = "Fake Program", DateTime? beginDate = null, DateTime? endDate = null)
         {
-            using (var sqlConnection = TestConnectionProvider.CreateNewConnection(null))
+            using (var sqlConnection = TestConnectionProvider.CreateNewConnection())
             {
                 sqlConnection.Query(@"
                 INSERT INTO edfi.GeneralStudentProgramAssociation (StudentUSI, EducationOrganizationId, ProgramTypeDescriptorId, ProgramName, ProgramEducationOrganizationId, BeginDate, EndDate)
@@ -163,7 +159,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
 
         private static void AssociateStudentWithEdOrg(int studentUsi, int edOrgId, int sexDescriptorId, bool? isHispanicLatino)
         {
-            using (var sqlConnection = TestConnectionProvider.CreateNewConnection(null))
+            using (var sqlConnection = TestConnectionProvider.CreateNewConnection())
             {
                 sqlConnection.Execute(@"
                     INSERT INTO edfi.StudentEducationOrganizationAssociation
@@ -192,7 +188,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
 
         public void SetStudentRace(int studentUsi, int edOrgId, int raceDescriptorId)
         {
-            using (var sqlConnection = TestConnectionProvider.CreateNewConnection(null))
+            using (var sqlConnection = TestConnectionProvider.CreateNewConnection())
             {
                 sqlConnection.Execute(@"
                     INSERT INTO edfi.StudentEducationOrganizationAssociationRace
@@ -221,7 +217,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
             name = name ?? "n/a";
             localEducationAgencyId = localEducationAgencyId ?? GetNewLocalEducationAgencyId();
             var edOrgId = GetNewEducationOrganizationId(name);
-            using (var sqlConnection = TestConnectionProvider.CreateNewConnection(null))
+            using (var sqlConnection = TestConnectionProvider.CreateNewConnection())
             {
                 sqlConnection.Execute(@"
                 INSERT INTO edfi.School
@@ -258,7 +254,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
 
         public void SetSchoolCategoryDescriptor(int schoolId, int schoolCategoryDescriptorId)
         {
-            using (var sqlConnection = TestConnectionProvider.CreateNewConnection(null))
+            using (var sqlConnection = TestConnectionProvider.CreateNewConnection())
             {
                 sqlConnection.Execute(@"
                 INSERT INTO edfi.SchoolCategory (SchoolId, SchoolCategoryDescriptorId)
@@ -269,7 +265,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
 
         private static int GetLocalEducationAgencyIdFromSchool(int schoolId)
         {
-            using (var sqlConnection = TestConnectionProvider.CreateNewConnection(null))
+            using (var sqlConnection = TestConnectionProvider.CreateNewConnection())
             {
                 return
                     sqlConnection.Query<int>
@@ -283,7 +279,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
         {
             name = name ?? "n/a";
             var edOrgId = GetNewEducationOrganizationId(name);
-            using (var sqlConnection = TestConnectionProvider.CreateNewConnection(null))
+            using (var sqlConnection = TestConnectionProvider.CreateNewConnection())
             {
                 var localEducationAgencyCategoryDescriptorId = GetNewDescriptorId(descriptorName: "LocalEducationAgencyCategory");
 
@@ -309,7 +305,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
 
         private static int GetNewEducationOrganizationId(string name)
         {
-            using (var sqlConnection = TestConnectionProvider.CreateNewConnection(null))
+            using (var sqlConnection = TestConnectionProvider.CreateNewConnection())
             {
                 var edOrgId = sqlConnection.Query<int>("SELECT ISNULL(MAX(EducationOrganizationId),0) + 1 FROM edfi.EducationOrganization").Single();
                 sqlConnection.Execute(@"
@@ -338,7 +334,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
 
         private void AssociateStudentWithSchool(int studentUsi, int schoolId)
         {
-            using (var sqlConnection = TestConnectionProvider.CreateNewConnection(null))
+            using (var sqlConnection = TestConnectionProvider.CreateNewConnection())
             {
                 sqlConnection.Execute(@"
                 INSERT INTO edfi.StudentSchoolAssociation
@@ -397,7 +393,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
 
         protected static short GetNewSchoolYear(short? year = null)
         {
-            using (var sqlConnection = TestConnectionProvider.CreateNewConnection(null))
+            using (var sqlConnection = TestConnectionProvider.CreateNewConnection())
             {
                 var schoolYear = year ?? sqlConnection.Query<short>("SELECT ISNULL(MAX(SchoolYear),1990) + 1 FROM edfi.SchoolYearType").Single();
                 sqlConnection.Execute(@"
@@ -438,7 +434,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
         {
             description = description ?? Guid.NewGuid().ToString();
             int descriptorId;
-            using (var sqlConnection = TestConnectionProvider.CreateNewConnection(null))
+            using (var sqlConnection = TestConnectionProvider.CreateNewConnection())
             {
                 descriptorId = sqlConnection.Query<int>(@"
                 INSERT INTO edfi.Descriptor
@@ -480,7 +476,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
 
         public static void SetStudentInactive(int studentUsi, int schoolId, DateTime? inactiveDate = null)
         {
-            using (var sqlConnection = TestConnectionProvider.CreateNewConnection(null))
+            using (var sqlConnection = TestConnectionProvider.CreateNewConnection())
             {
                 sqlConnection.Execute(@"
                 UPDATE edfi.StudentSchoolAssociation
@@ -493,7 +489,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
 
         private static void JoinDescriptorWithDescriptorTable(int descriptorId, string descriptorName)
         {
-            using (var sqlConnection = TestConnectionProvider.CreateNewConnection(null))
+            using (var sqlConnection = TestConnectionProvider.CreateNewConnection())
             {
                 var command = string.Format(@"
                     INSERT INTO edfi.{0}Descriptor
@@ -522,7 +518,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
 
         private static void DropCreatedReportViews()
         {
-            using (var sqlConnection = TestConnectionProvider.CreateNewConnection(null))
+            using (var sqlConnection = TestConnectionProvider.CreateNewConnection())
             {
                 const string dropViewsCommand = @"select 'DROP VIEW  IF EXISTS' + QUOTENAME(sc.name) + '.' + QUOTENAME(obj.name) + ';'
                                         FROM sys.objects obj
@@ -547,12 +543,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
         public static string ConnectionString =
             Scoped<IConfiguration, string>(configuration => configuration["ConnectionStrings:OdsEmpty"]);
 
-        public IDbConnection CreateNewConnection(int odsInstanceNumericSuffix, ApiMode apiMode)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IDbConnection CreateNewConnection(string odsInstanceName = "EdFi_Ods_Production", ApiMode apiMode = null)
+      
+        public IDbConnection CreateNewConnection()
         {
             return new SqlConnection(ConnectionString);
         }

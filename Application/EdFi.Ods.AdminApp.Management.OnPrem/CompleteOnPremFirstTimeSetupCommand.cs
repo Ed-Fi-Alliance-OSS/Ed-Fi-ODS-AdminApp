@@ -8,7 +8,6 @@ using EdFi.Admin.DataAccess.Contexts;
 using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
 using EdFi.Ods.AdminApp.Management.Configuration.Claims;
 using EdFi.Ods.AdminApp.Management.Database.Models;
-using EdFi.Ods.AdminApp.Management.Instances;
 using EdFi.Ods.AdminApp.Management.OdsInstanceServices;
 using EdFi.Security.DataAccess.Contexts;
 using Action = System.Action;
@@ -45,21 +44,20 @@ namespace EdFi.Ods.AdminApp.Management.OnPrem
             _firstTimeSetupService = firstTimeSetupService;
         }
 
-        public async Task<bool> Execute(string odsInstanceName, CloudOdsClaimSet claimSet, ApiMode apiMode)
+        public async Task<bool> Execute(CloudOdsClaimSet claimSet)
         {
             ExtraDatabaseInitializationAction?.Invoke();
             var restartRequired = false;
 
-            if (apiMode.SupportsSingleInstance)
+            // TODO: ODS API 7 specific implementation
+            var defaultOdsInstance = new OdsInstanceRegistration
             {
-                var defaultOdsInstance = new OdsInstanceRegistration
-                {
-                    Name = odsInstanceName,
-                    DatabaseName = _instanceService.DatabaseName(0, apiMode),
-                    Description = "Default single ods instance"
-                };
-                await _firstTimeSetupService.CompleteSetup(defaultOdsInstance, claimSet, apiMode);
-            }
+                Name = "EdFi ODS",
+                DatabaseName = _instanceService.DatabaseName(),
+                Description = "Default single ods instance"
+            };
+            await _firstTimeSetupService.CompleteSetup(defaultOdsInstance, claimSet);
+
 
             if (!_claimSetCheckService.RequiredClaimSetsExist())
             {

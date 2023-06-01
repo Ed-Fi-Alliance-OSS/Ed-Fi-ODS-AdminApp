@@ -10,7 +10,6 @@ using NUnit.Framework;
 using Shouldly;
 using System;
 using System.Threading.Tasks;
-using EdFi.Ods.AdminApp.Management.Instances;
 
 namespace EdFi.Ods.AdminApp.Management.Tests.Infrastructure.CloudOdsApiConnectionInformationProviderTests
 {
@@ -18,15 +17,13 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Infrastructure.CloudOdsApiConnectio
     public class WhenGettingApiCredentials
     {
         private Mock<IGetOdsAdminAppApiCredentialsQuery> _mockQuery;
-        private Mock<ICloudOdsAdminAppSettingsApiModeProvider> _mockApiProvider;
         private CloudOdsApiConnectionInformationProvider _system;
 
         [SetUp]
         public void SetUp()
         {
             _mockQuery = new Mock<IGetOdsAdminAppApiCredentialsQuery>();
-            _mockApiProvider = new Mock<ICloudOdsAdminAppSettingsApiModeProvider>();
-            _system = new CloudOdsApiConnectionInformationProvider(_mockQuery.Object, new InstanceContext(), _mockApiProvider.Object);
+            _system = new CloudOdsApiConnectionInformationProvider(_mockQuery.Object);
         }
 
         protected Task<OdsApiConnectionInformation> Run()
@@ -36,7 +33,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Infrastructure.CloudOdsApiConnectio
 
         protected OdsApiConnectionInformation Run(OdsApiCredential apiCredentials)
         {
-            return CloudOdsApiConnectionInformationProvider.GetConnectionInformationForEnvironment(apiCredentials, "Ods Instance", ApiMode.Sandbox);
+            return CloudOdsApiConnectionInformationProvider.GetConnectionInformationForEnvironment(apiCredentials);
         }
 
         [Test]
@@ -80,10 +77,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Infrastructure.CloudOdsApiConnectio
                 }
 
             });
-
-            _mockApiProvider
-                .Setup(x => x.GetApiMode())
-                .Returns(ApiMode.Sandbox);
 
             // Act
             var actual = await Run();

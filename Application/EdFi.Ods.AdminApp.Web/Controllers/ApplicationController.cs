@@ -110,12 +110,9 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                 var vendorsApplicationsModel = _mapper.Map<List<VendorApplicationsModel>>(
                     vendors, opts => opts.WithEducationOrganizations(edOrgs));
 
-                if (CloudOdsAdminAppSettings.Instance.Mode.SupportsMultipleInstances)
+                foreach (var model in vendorsApplicationsModel)
                 {
-                    foreach (var model in vendorsApplicationsModel)
-                    {
-                        FilterInstanceSpecificApplications(model);
-                    }
+                    FilterInstanceSpecificApplications(model);
                 }
 
                 return vendorsApplicationsModel;
@@ -155,14 +152,12 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
-        //[AddTelemetry("Add Application")]
         public ActionResult Add(AddApplicationModel model)
         {
             var result = _addApplicationCommand.Execute(model);
 
             var apiUrl = CloudOdsApiConnectionInformationProvider.GetConnectionInformationForEnvironment(
-                new OdsApiCredential(result.Key, result.Secret), _instanceContext.Name,
-                CloudOdsAdminAppSettings.Instance.Mode).ApiBaseUrl;
+                new OdsApiCredential(result.Key, result.Secret)).ApiBaseUrl;
 
             return PartialView(
                 "_ApplicationKeyAndSecretContent", new ApplicationKeyModel
@@ -243,15 +238,13 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
-        //[AddTelemetry("Regenerate Secret")]
         public ActionResult RegenerateSecret(RegenerateSecretModel model)
         {
             var regenerationResult = _regenerateApiClientSecretCommand.Execute(model.ApplicationId);
             var application = regenerationResult.Application;
 
             var apiUrl = CloudOdsApiConnectionInformationProvider.GetConnectionInformationForEnvironment(
-                new OdsApiCredential(regenerationResult.Key, regenerationResult.Secret),
-                _instanceContext.Name, CloudOdsAdminAppSettings.Instance.Mode).ApiBaseUrl;
+                new OdsApiCredential(regenerationResult.Key, regenerationResult.Secret)).ApiBaseUrl;
 
             return PartialView("_ApplicationKeyAndSecretContent", new ApplicationKeyModel
             {

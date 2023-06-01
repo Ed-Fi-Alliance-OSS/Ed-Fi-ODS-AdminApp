@@ -47,7 +47,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
         public async Task ShouldRetrieveUnencryptedSecretConfiguration_SingleInstance()
         {
             const string JsonConfiguration =
-                "{\"ProductionApiKeyAndSecret\":{\"Key\":\"productionKey\",\"Secret\":\"productionSecret\"},";
+                "{\"ProductionApiKeyAndSecret\":{\"Key\":\"productionKey\",\"Secret\":\"productionSecret\"}}";
 
 
 
@@ -74,9 +74,9 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
         {
             const string JsonConfiguration1 =
 
-                "{\"ProductionApiKeyAndSecret\":{\"Key\":\"productionKey1\",\"Secret\":\"productionSecret1\"},";
+                "{\"ProductionApiKeyAndSecret\":{\"Key\":\"productionKey1\",\"Secret\":\"productionSecret1\"}}";
             const string JsonConfiguration2 =
-                "{\"ProductionApiKeyAndSecret\":{\"Key\":\"productionKey2\",\"Secret\":\"productionSecret2\"},";
+                "{\"ProductionApiKeyAndSecret\":{\"Key\":\"productionKey2\",\"Secret\":\"productionSecret2\"}}";
 
             var odsInstanceRegistration1 = CreateOdsInstanceRegistration("MultiInstance1_" + Guid.NewGuid());
             var odsInstanceRegistration2 = CreateOdsInstanceRegistration("MultiInstance2_" + Guid.NewGuid());

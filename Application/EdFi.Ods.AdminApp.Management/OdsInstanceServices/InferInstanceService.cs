@@ -4,13 +4,12 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using EdFi.Ods.AdminApp.Management.Database.Ods;
-using EdFi.Ods.AdminApp.Management.Instances;
 
 namespace EdFi.Ods.AdminApp.Management.OdsInstanceServices
 {
     public interface IInferInstanceService
     {
-        string DatabaseName(int odsInstanceNumericSuffix, ApiMode mode);
+        string DatabaseName();
     }
 
     public class InferInstanceService : IInferInstanceService
@@ -22,9 +21,11 @@ namespace EdFi.Ods.AdminApp.Management.OdsInstanceServices
             _connectionProvider = connectionProvider;
         }
 
-        public string DatabaseName(int odsInstanceNumericSuffix, ApiMode mode)
+
+        // TODO: ODS API 7 specific implementation
+        public string DatabaseName()
         {
-            using var connection = _connectionProvider.CreateNewConnection(odsInstanceNumericSuffix, mode);
+            using var connection = _connectionProvider.CreateNewConnection();
 
             return connection.Database;
         }

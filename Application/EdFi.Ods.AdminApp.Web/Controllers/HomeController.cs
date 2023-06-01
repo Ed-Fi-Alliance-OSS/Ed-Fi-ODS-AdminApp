@@ -36,9 +36,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
 
         public ActionResult Index(bool setupCompleted = false)
         {
-            if (setupCompleted && ZeroOdsInstanceRegistrations())
-                return RedirectToAction("RegisterOdsInstance", "OdsInstances");
-
             var model = new IndexModel
             {
                 SetupJustCompleted = setupCompleted,
@@ -76,11 +73,5 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         public ActionResult UserUnauthorized() => View();
-
-        private bool ZeroOdsInstanceRegistrations()
-        {
-            return CloudOdsAdminAppSettings.Instance.Mode.SupportsMultipleInstances &&
-                   !_getOdsInstanceRegistrationsQuery.Execute().Any();
-        }
     }
 }

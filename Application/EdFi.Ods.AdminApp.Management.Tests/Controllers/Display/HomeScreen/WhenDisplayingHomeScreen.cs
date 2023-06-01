@@ -21,9 +21,9 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Controllers.Display.HomeScreen
         }
 
         [Test]
-        public void Should_display_the_settings_button()
+        public void Should_display_the_OdsInstances_button()
         {
-            HomeScreenTabAssertions().TabShouldBeEnabled(HomeScreenEnumeration.Settings);
+            HomeScreenTabAssertions().TabShouldBeEnabled(HomeScreenEnumeration.OdsInstances);
         }
 
         [Test]

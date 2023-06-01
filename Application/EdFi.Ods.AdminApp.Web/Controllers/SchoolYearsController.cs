@@ -32,25 +32,10 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
 
         public ActionResult Edit(string instanceName)
         {
-            var currentSchoolYear = _getCurrentSchoolYear.Execute(instanceName, ApiMode)?.SchoolYear;
-            var schoolYears = _getSchoolYears.Execute(instanceName, ApiMode);
+            var currentSchoolYear = _getCurrentSchoolYear.Execute()?.SchoolYear;
+            var schoolYears = _getSchoolYears.Execute();
 
             string warning = null;
-
-            if (ApiMode == ApiMode.YearSpecific)
-            {
-                var instanceYear = instanceName.ExtractNumericInstanceSuffix();
-                var expectedSchoolYear = schoolYears.SingleOrDefault(x => x.SchoolYear == instanceYear);
-
-                var recommendation =
-                    expectedSchoolYear == null
-                        ? $"{instanceYear - 1}-{instanceYear}"
-                        : expectedSchoolYear.SchoolYearDescription;
-
-                warning = "The ODS / API is in Year-Specific mode. It is " +
-                          "strongly recommended that this instance be set " +
-                          $"to school year {recommendation}.";
-            }
 
             return PartialView(
                 new EditSchoolYearModel
@@ -69,11 +54,9 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         [HttpPost]
         public ActionResult Edit(EditSchoolYearModel model)
         {
-            _setCurrentSchoolYear.Execute(model.InstanceName, ApiMode, model.SchoolYear.Value);
+            _setCurrentSchoolYear.Execute(model.SchoolYear.Value);
 
             return JsonSuccess("School Year Saved");
         }
-
-        private static ApiMode ApiMode => CloudOdsAdminAppSettings.Instance.Mode;
     }
 }

@@ -10,7 +10,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using EdFi.Admin.DataAccess.Contexts;
 using EdFi.Admin.DataAccess.Models;
-using EdFi.Ods.AdminApp.Management.Helpers;
 using EdFi.Ods.AdminApp.Management.Instances;
 using EdFi.Common.Security;
 
@@ -18,7 +17,7 @@ namespace EdFi.Ods.AdminApp.Management
 {
     public interface IFirstTimeSetupService
     {
-        Task<ApplicationCreateResult> CreateAdminAppInAdminDatabase(string claimSetClaimSetName, string odsInstanceName, string odsInstanceVersion, ApiMode apiMode);
+        Task<ApplicationCreateResult> CreateAdminAppInAdminDatabase(string claimSetClaimSetName, string odsInstanceName, string odsInstanceVersion);
         void EnsureAdminDatabaseInitialized();
     }
 
@@ -44,7 +43,7 @@ namespace EdFi.Ods.AdminApp.Management
         public abstract void EnsureAdminDatabaseInitialized();
 
         public async Task<ApplicationCreateResult> CreateAdminAppInAdminDatabase(string claimSetClaimSetName,
-            string odsInstanceName, string odsInstanceVersion, ApiMode apiMode)
+            string odsInstanceName, string odsInstanceVersion)
         {
             var applicationName = odsInstanceName.GetAdminApplicationName();
 
@@ -78,23 +77,6 @@ namespace EdFi.Ods.AdminApp.Management
 
             result.Application.ApiClients.Add(apiWithCredentials.ApiClient);
             result.ProductionKeyAndSecret = apiWithCredentials.ApiCredentials;
-
-            if (apiMode.Equals(ApiMode.DistrictSpecific))
-            {
-                var edOrgId = OdsInstanceIdentityHelper.GetIdentityValue(odsInstanceName);
-
-                var applicationEdOrgs = new List<ApplicationEducationOrganization>
-                {
-                    new ApplicationEducationOrganization
-                    {
-                        Clients = new List<ApiClient> {apiWithCredentials.ApiClient},
-                        EducationOrganizationId = edOrgId
-                    }
-                };
-
-                result.Application.ApplicationEducationOrganizations =
-                    new List<ApplicationEducationOrganization>(applicationEdOrgs);
-            }
 
             UsersContext.Applications.Add(result.Application);
 

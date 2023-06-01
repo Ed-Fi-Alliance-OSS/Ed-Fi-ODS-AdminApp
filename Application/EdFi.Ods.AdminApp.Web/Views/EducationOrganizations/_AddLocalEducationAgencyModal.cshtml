@@ -22,15 +22,8 @@
             <div class="modal-body center-block text-center">
                 @using (Html.BeginForm("AddLocalEducationAgency", "EducationOrganizations", FormMethod.Post, new { id = "addLocalEducationFormModal" }))
                 {
-                    @Html.ValidationBlock()
-                    if (CloudOdsAdminAppSettings.Instance.Mode == ApiMode.DistrictSpecific)
-                    {
-                        @Html.InputBlock(m => m.LocalEducationAgencyId, inputModifier:x => x.Attr("readonly", "readonly"))
-                    }
-                    else
-                    {
-                        @Html.InputBlock(m => m.LocalEducationAgencyId)
-                    }
+                    @Html.ValidationBlock()                 
+                    @Html.InputBlock(m => m.LocalEducationAgencyId)                  
                     @Html.SelectListBlock(m => m.LocalEducationAgencyCategoryType, Model.LocalEducationAgencyCategoryTypeOptions, x => new SelectListItem {Text = x.DisplayText, Value = x.Value})
                     @Html.InputBlock(m => m.Name)
                     @Html.InputBlock(m => m.StreetNumberName)

@@ -5,13 +5,12 @@
 
 using System;
 using Dapper;
-using EdFi.Ods.AdminApp.Management.Instances;
 
 namespace EdFi.Ods.AdminApp.Management.Database.Ods.SchoolYears
 {
     public interface ISetCurrentSchoolYearCommand
     {
-        void Execute(string instanceName, ApiMode apiMode, short schoolYear);
+        void Execute(short schoolYear);
     }
 
     public class SetCurrentSchoolYearCommand : ISetCurrentSchoolYearCommand
@@ -23,9 +22,9 @@ namespace EdFi.Ods.AdminApp.Management.Database.Ods.SchoolYears
             _databaseConnectionProvider = databaseConnectionProvider;
         }
 
-        public void Execute(string instanceName, ApiMode apiMode, short schoolYear)
+        public void Execute(short schoolYear)
         {
-            using (var connection = _databaseConnectionProvider.CreateNewConnection(instanceName, apiMode))
+            using (var connection = _databaseConnectionProvider.CreateNewConnection())
             {
                 // Take special care that any modifications to the SQL here fall
                 // within the common subset of SQL Server and Postgres syntax.

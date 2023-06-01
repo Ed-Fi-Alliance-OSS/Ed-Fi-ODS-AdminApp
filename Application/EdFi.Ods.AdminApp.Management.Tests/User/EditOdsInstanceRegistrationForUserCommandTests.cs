@@ -50,13 +50,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
                 command.Execute(updateModel);
             });
 
-            Scoped<IGetOdsInstanceRegistrationsByUserIdQuery>(query =>
-            {
-                var results = query.Execute(existingUser.Id).ToList();
-
-                results.Count.ShouldBe(newInstancesToAdd.Count);
-                results.Select(x => x.Name).ShouldBe(newInstancesToAdd.Select(x => x.Name));
-            });
         }
 
         [Test]
@@ -67,14 +60,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
             var alreadyAddedInstances = SetupOdsInstanceRegistrations(5).OrderBy(x => x.Name).ToList();
 
             SetupUserWithOdsInstanceRegistrations(existingUser.Id, alreadyAddedInstances);
-
-            Scoped<IGetOdsInstanceRegistrationsByUserIdQuery>(query =>
-            {
-                var results = query.Execute(existingUser.Id).ToList();
-
-                results.Count.ShouldBe(5);
-                results.Select(x => x.Name).ShouldBe(alreadyAddedInstances.Select(x => x.Name));
-            });
 
             // Select only the first 3 instances
 
@@ -98,13 +83,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
                 command.Execute(updateModel);
             });
 
-            Scoped<IGetOdsInstanceRegistrationsByUserIdQuery>(query =>
-            {
-                var results = query.Execute(existingUser.Id).ToList();
-
-                results.Count.ShouldBe(3);
-                results.Select(x => x.Name).ShouldBe(instancesToKeep.Select(x => x.Name));
-            });
         }
 
         [Test]

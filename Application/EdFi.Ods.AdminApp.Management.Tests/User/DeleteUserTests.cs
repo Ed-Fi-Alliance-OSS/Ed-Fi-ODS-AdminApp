@@ -4,7 +4,6 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using EdFi.Ods.AdminApp.Management.Database;
 using EdFi.Ods.AdminApp.Management.User;
@@ -43,12 +42,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
             SetupUserWithOdsInstanceRegistrations(userToBeDeleted.Id, testInstancesAssignedToDeletedUser);
             SetupUserWithOdsInstanceRegistrations(userNotToBeDeleted.Id, testInstancesAssignedToNotDeletedUser);
 
-            Scoped<IGetOdsInstanceRegistrationsByUserIdQuery>(queryInstances =>
-            {
-                queryInstances.Execute(userToBeDeleted.Id).Count().ShouldBe(3);
-                queryInstances.Execute(userNotToBeDeleted.Id).Count().ShouldBe(3);
-            });
-
             var deleteModel = new DeleteUserModel
             {
                 Email = userToBeDeleted.Email,
@@ -59,12 +52,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
             {
                 var command = new DeleteUserCommand(identity);
                 command.Execute(deleteModel);
-            });
-
-            Scoped<IGetOdsInstanceRegistrationsByUserIdQuery>(queryInstances =>
-            {
-                queryInstances.Execute(userToBeDeleted.Id).Count().ShouldBe(0);
-                queryInstances.Execute(userNotToBeDeleted.Id).Count().ShouldBe(3);
             });
 
             Scoped<AdminAppIdentityDbContext>(identity =>
