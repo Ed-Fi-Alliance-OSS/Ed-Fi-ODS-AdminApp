@@ -78,24 +78,6 @@ namespace EdFi.Ods.AdminApp.Management
             result.Application.ApiClients.Add(apiWithCredentials.ApiClient);
             result.ProductionKeyAndSecret = apiWithCredentials.ApiCredentials;
 
-            // TODO: ODS API 7 specific implementation
-            //if (apiMode.Equals(ApiMode.DistrictSpecific))
-            //{
-            //    var edOrgId = OdsInstanceIdentityHelper.GetIdentityValue(odsInstanceName);
-
-            //    var applicationEdOrgs = new List<ApplicationEducationOrganization>
-            //    {
-            //        new ApplicationEducationOrganization
-            //        {
-            //            Clients = new List<ApiClient> {apiWithCredentials.ApiClient},
-            //            EducationOrganizationId = edOrgId
-            //        }
-            //    };
-
-            //    result.Application.ApplicationEducationOrganizations =
-            //        new List<ApplicationEducationOrganization>(applicationEdOrgs);
-            //}
-
             UsersContext.Applications.Add(result.Application);
 
             return result;

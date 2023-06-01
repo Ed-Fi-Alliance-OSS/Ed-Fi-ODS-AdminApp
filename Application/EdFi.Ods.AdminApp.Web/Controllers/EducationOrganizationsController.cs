@@ -286,7 +286,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             {
                 Schools = schools,
                 LocalEducationAgencies = localEducationAgencies,
-                ShouldAllowMultipleDistricts = true, //CloudOdsAdminAppSettings.Instance.Mode != ApiMode.DistrictSpecific,
+                ShouldAllowMultipleDistricts = true,
                 AddSchoolModel = new AddSchoolModel
                 {
                     GradeLevelOptions = api.GetAllGradeLevels(),
@@ -300,11 +300,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                     RequiredApiDataExist = requiredApiDataExist
                 }
             };
-
-            //if (CloudOdsAdminAppSettings.Instance.Mode == ApiMode.DistrictSpecific)
-            //{
-            //    model.AddLocalEducationAgencyModel.LocalEducationAgencyId = OdsInstanceIdentityHelper.GetIdentityValue(_instanceContext.Name);
-            //}
 
             return PartialView("_LocalEducationAgencies", model);
         }

@@ -37,22 +37,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
 
             string warning = null;
 
-            // TODO: ODS API 7 specific implementation
-            //if (ApiMode == ApiMode.YearSpecific)
-            //{
-            //    var instanceYear = instanceName.ExtractNumericInstanceSuffix();
-            //    var expectedSchoolYear = schoolYears.SingleOrDefault(x => x.SchoolYear == instanceYear);
-
-            //    var recommendation =
-            //        expectedSchoolYear == null
-            //            ? $"{instanceYear - 1}-{instanceYear}"
-            //            : expectedSchoolYear.SchoolYearDescription;
-
-            //    warning = "The ODS / API is in Year-Specific mode. It is " +
-            //              "strongly recommended that this instance be set " +
-            //              $"to school year {recommendation}.";
-            //}
-
             return PartialView(
                 new EditSchoolYearModel
                 {

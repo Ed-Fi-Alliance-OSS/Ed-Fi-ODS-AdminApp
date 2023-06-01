@@ -124,8 +124,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
                               ""required"": [
                                 ""version"",
                                 ""informationalVersion"",
-                                ""build"",
-                                ""apiMode""
+                                ""build""                               
                               ]
                          }";
 
