@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: Apache-2.0
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
@@ -25,7 +25,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries
                 {
                     Name = "Foo",
                     InstanceType = "Cloud",
-                    Status = CloudOdsStatus.Ok.DisplayName,
                     IsExtended = false,
                     Version = "0.0.1"
                 }
@@ -40,7 +39,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries
             var odsInstance = query.Execute("Foo");
             odsInstance.Name.ShouldBe("Foo");
             odsInstance.InstanceType.ShouldBe("Cloud");
-            odsInstance.Status.ShouldBe(CloudOdsStatus.Ok.DisplayName);
             odsInstance.IsExtended.ShouldBe(false);
             odsInstance.Version.ShouldBe("0.0.1");
         }

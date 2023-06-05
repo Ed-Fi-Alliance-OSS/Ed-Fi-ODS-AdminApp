@@ -94,7 +94,6 @@ namespace EdFi.Ods.AdminApp.Management
                 InstanceType = "CloudOds",
                 IsExtended = false,
                 Name = odsInstanceName,
-                Status = CloudOdsStatus.Ok.DisplayName,
                 Version = odsInstanceVersion
             };
 
