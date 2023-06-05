@@ -79,9 +79,9 @@ namespace EdFi.Ods.AdminApp.Web.ActionFilters
 
         private bool IsUserAuthorizedForInstance(int instanceId, string userId)
         {
-            return _adminAppIdentityDbContext.UserOdsInstanceRegistrations.Any(
+            return _adminAppIdentityDbContext.UserOdsInstances.Any(
                 x =>
-                    x.OdsInstanceRegistrationId == instanceId
+                    x.OdsInstanceId == instanceId
                     && x.UserId == userId);
         }
     }

@@ -17,16 +17,16 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
     [BypassInstanceContextFilter]
     public class OdsInstancesController : ControllerBase
     {
-        private readonly IGetOdsInstanceRegistrationsQuery _getOdsInstanceRegistrationsQuery;
+        private readonly IGetOdsInstancesQuery _getOdsInstancesQuery;
         private readonly AdminAppUserContext _userContext;
         private readonly GetCurrentSchoolYearQuery _getCurrentSchoolYear;
 
         public OdsInstancesController(
-            IGetOdsInstanceRegistrationsQuery getOdsInstanceRegistrationsQuery
+            IGetOdsInstancesQuery getOdsInstancesQuery
             , AdminAppUserContext userContext
             , GetCurrentSchoolYearQuery getCurrentSchoolYear)
         {
-            _getOdsInstanceRegistrationsQuery = getOdsInstanceRegistrationsQuery;
+            _getOdsInstancesQuery = getOdsInstancesQuery;
             _userContext = userContext;
             _getCurrentSchoolYear = getCurrentSchoolYear;
         }
@@ -34,7 +34,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         public ViewResult Index()
         {
             var currentUserId = _userContext.User.Id;
-            var instances = _getOdsInstanceRegistrationsQuery.Execute();
+            var instances = _getOdsInstancesQuery.Execute();
 
             var model = new IndexModel
             {
@@ -43,10 +43,10 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                     instances.Select(
                         x => new OdsInstanceModel
                         {
-                            Id = x.Id,
+                            Id = x.OdsInstanceId,
                             Name = x.Name,
-                            DatabaseName = x.DatabaseName,
-                            Description = x.Description,
+                            DatabaseName = x.Name,
+                            Description = x.Name,
                             SchoolYearDescription =
                                 _getCurrentSchoolYear
                                     .Execute()

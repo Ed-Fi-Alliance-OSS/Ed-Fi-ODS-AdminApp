@@ -55,10 +55,10 @@ namespace EdFi.Ods.AdminApp.Management
             _cache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(5));
         }
 
-        private async Task<OdsSecretConfiguration> ReadSecretConfigurations(int? instanceRegistrationId)
+        private async Task<OdsSecretConfiguration> ReadSecretConfigurations(int? instanceId)
         {
             var secretConfiguration = await _database.SecretConfigurations.SingleOrDefaultAsync(
-                x => x.OdsInstanceRegistrationId == instanceRegistrationId);
+                x => x.OdsInstanceId == instanceId);
             var rawValue = secretConfiguration?.EncryptedData;
 
             if (rawValue == null)
@@ -72,17 +72,17 @@ namespace EdFi.Ods.AdminApp.Management
                     : rawValue, GetSerializerSettings());
         }
 
-        private async Task WriteSecretConfiguration(OdsSecretConfiguration configuration, int? instanceRegistrationId)
+        private async Task WriteSecretConfiguration(OdsSecretConfiguration configuration, int? instanceId)
         {
             var stringValue = JsonConvert.SerializeObject(configuration, GetSerializerSettings());
             var encryptedValue = _stringEncryptorService.Encrypt(stringValue);
 
             var secretConfiguration =
                 await _database.SecretConfigurations.SingleOrDefaultAsync(x =>
-                    x.OdsInstanceRegistrationId == instanceRegistrationId);
+                    x.OdsInstanceId == instanceId);
             if (secretConfiguration == null)
                 _database.SecretConfigurations.Add(new SecretConfiguration
-                    {EncryptedData = encryptedValue, OdsInstanceRegistrationId = instanceRegistrationId, IsEncrypted = true});
+                    {EncryptedData = encryptedValue, OdsInstanceId = instanceId, IsEncrypted = true});
             else
             {
                 secretConfiguration.EncryptedData = encryptedValue;

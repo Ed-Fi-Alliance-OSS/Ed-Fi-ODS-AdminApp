@@ -5,48 +5,48 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using EdFi.Ods.AdminApp.Management.Database;
-using EdFi.Ods.AdminApp.Management.Database.Models;
+using EdFi.Admin.DataAccess.Contexts;
+using EdFi.Admin.DataAccess.Models;
 
 namespace EdFi.Ods.AdminApp.Management.Instances
 {
-    public class GetOdsInstanceRegistrationsQuery : IGetOdsInstanceRegistrationsQuery
+    public class GetOdsInstancesQuery : IGetOdsInstancesQuery
     {
-        private readonly AdminAppDbContext _database;
+        private readonly IUsersContext _database;
 
-        public GetOdsInstanceRegistrationsQuery(AdminAppDbContext database)
+        public GetOdsInstancesQuery(IUsersContext database)
         {
             _database = database;
         }
 
-        public IEnumerable<OdsInstanceRegistration> Execute()
+        public IEnumerable<OdsInstance> Execute()
         {
-            var instances = _database.OdsInstanceRegistrations.OrderBy(x => x.Name);
+            var instances = _database.OdsInstances.OrderBy(x => x.Name);
 
             return instances;
         }
 
         public int ExecuteCount()
         {
-            return _database.OdsInstanceRegistrations.Count();
+            return _database.OdsInstances.Count();
         }
 
-        public OdsInstanceRegistration Execute(string odsInstanceRegistrationName)
+        public OdsInstance Execute(string odsInstanceName)
         {
-            return _database.OdsInstanceRegistrations.SingleOrDefault(x => x.Name == odsInstanceRegistrationName);
+            return _database.OdsInstances.SingleOrDefault(x => x.Name == odsInstanceName);
         }
 
-        public OdsInstanceRegistration Execute(int odsInstanceId)
+        public OdsInstance Execute(int odsInstanceId)
         {
-            return _database.OdsInstanceRegistrations.SingleOrDefault(x => x.Id == odsInstanceId);
+            return _database.OdsInstances.SingleOrDefault(x => x.OdsInstanceId == odsInstanceId);
         }
     }
 
-    public interface IGetOdsInstanceRegistrationsQuery
+    public interface IGetOdsInstancesQuery
     {
-        IEnumerable<OdsInstanceRegistration> Execute();
+        IEnumerable<OdsInstance> Execute();
         int ExecuteCount();
-        OdsInstanceRegistration Execute(string odsInstanceRegistrationName);
-        OdsInstanceRegistration Execute(int odsInstanceId);
+        OdsInstance Execute(string odsInstanceRegistrationName);
+        OdsInstance Execute(int odsInstanceId);
     }
 }

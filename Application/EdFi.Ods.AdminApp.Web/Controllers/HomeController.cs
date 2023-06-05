@@ -4,15 +4,12 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using System;
-using System.Linq;
 using EdFi.Ods.AdminApp.Management.Configuration.Application;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using EdFi.Ods.AdminApp.Management.Instances;
 using EdFi.Ods.AdminApp.Web.ActionFilters;
 using EdFi.Ods.AdminApp.Web.Display.HomeScreen;
 using EdFi.Ods.AdminApp.Web.Helpers;
-using EdFi.Ods.AdminApp.Web.Infrastructure;
 using EdFi.Ods.AdminApp.Web.Models.ViewModels.Home;
 using log4net;
 using Microsoft.AspNetCore.Diagnostics;
@@ -23,15 +20,11 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
     public class HomeController : ControllerBase
     {
         private readonly IHomeScreenDisplayService _homeScreenDisplayService;
-        private readonly IGetOdsInstanceRegistrationsQuery _getOdsInstanceRegistrationsQuery;
-        private readonly ApplicationConfigurationService _applicationConfigurationService;
         private readonly ILog _logger = LogManager.GetLogger(typeof(HomeController));
 
-        public HomeController(IHomeScreenDisplayService homeScreenDisplayService, IGetOdsInstanceRegistrationsQuery getOdsInstanceRegistrationsQuery, ApplicationConfigurationService applicationConfigurationService)
+        public HomeController(IHomeScreenDisplayService homeScreenDisplayService)
         {
             _homeScreenDisplayService = homeScreenDisplayService;
-            _getOdsInstanceRegistrationsQuery = getOdsInstanceRegistrationsQuery;
-            _applicationConfigurationService = applicationConfigurationService;
         }
 
         public ActionResult Index(bool setupCompleted = false)

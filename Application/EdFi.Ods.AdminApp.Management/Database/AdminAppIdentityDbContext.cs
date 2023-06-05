@@ -51,12 +51,12 @@ namespace EdFi.Ods.AdminApp.Management.Database
             modelBuilder.Entity<IdentityUserToken<string>>().Property(x => x.LoginProvider).HasMaxLength(112);
             modelBuilder.Entity<IdentityUserToken<string>>().Property(x => x.Name).HasMaxLength(112);
 
-            modelBuilder.Entity<UserOdsInstanceRegistration>()
-                .HasKey(k => new { k.UserId, k.OdsInstanceRegistrationId });
+            modelBuilder.Entity<UserOdsInstance>()
+                .HasKey(k => new { k.UserId, k.OdsInstanceId });
 
             modelBuilder.ApplyDatabaseServerSpecificConventions(_appSettings.Value.DatabaseEngine);
         }
 
-        public DbSet<UserOdsInstanceRegistration> UserOdsInstanceRegistrations { get; set; }
+        public DbSet<UserOdsInstance> UserOdsInstances { get; set; }
     }
 }

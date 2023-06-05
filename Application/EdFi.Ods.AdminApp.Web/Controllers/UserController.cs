@@ -33,7 +33,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         private readonly EditOdsInstanceRegistrationForUserCommand _editOdsInstanceRegistrationForUserCommand;
         private readonly EditUserRoleCommand _editUserRoleCommand;
         private readonly GetRoleForUserQuery _getRoleForUserQuery;
-        private readonly IGetOdsInstanceRegistrationsQuery _getOdsInstanceRegistrationsQuery;
+        private readonly IGetOdsInstancesQuery _getOdsInstancesQuery;
         private readonly ITabDisplayService _tabDisplayService;
 
         public UserController(AddUserCommand addUserCommand
@@ -43,7 +43,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             , EditOdsInstanceRegistrationForUserCommand editOdsInstanceRegistrationForUserCommand
             , EditUserRoleCommand editUserRoleCommand
             , GetRoleForUserQuery getRoleForUserQuery
-            , IGetOdsInstanceRegistrationsQuery getOdsInstanceRegistrationsQuery
+            , IGetOdsInstancesQuery getOdsInstancesQuery
             , ITabDisplayService tabDisplayService
             , SignInManager<AdminAppUser> signInManager
             , UserManager<AdminAppUser> userManager
@@ -56,7 +56,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _editOdsInstanceRegistrationForUserCommand = editOdsInstanceRegistrationForUserCommand;
             _editUserRoleCommand = editUserRoleCommand;
             _getRoleForUserQuery = getRoleForUserQuery;
-            _getOdsInstanceRegistrationsQuery = getOdsInstanceRegistrationsQuery;
+            _getOdsInstancesQuery = getOdsInstancesQuery;
             _tabDisplayService = tabDisplayService;            
 
             SignInManager = signInManager;

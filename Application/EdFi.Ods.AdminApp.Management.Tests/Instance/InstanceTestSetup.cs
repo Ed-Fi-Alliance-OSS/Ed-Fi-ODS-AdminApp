@@ -6,6 +6,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using EdFi.Admin.DataAccess.Contexts;
+using EdFi.Admin.DataAccess.Models;
 using EdFi.Ods.AdminApp.Management.Database;
 using EdFi.Ods.AdminApp.Management.Database.Models;
 using Microsoft.EntityFrameworkCore;
@@ -24,75 +26,70 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Instance
             });
         }
 
-        public static IEnumerable<OdsInstanceRegistration> SetupOdsInstanceRegistrations(int instanceCount = 5, bool useGuidName = false)
+        public static IEnumerable<OdsInstance> SetupOdsInstances(int instanceCount = 5, bool useGuidName = false)
         {
             var testInstances = Enumerable.Range(1, instanceCount)
-                .Select((x, index) => new OdsInstanceRegistration
+                .Select((x, index) => new OdsInstance
                 {
                     Name = useGuidName ? $"Ods{Guid.NewGuid():N}_{index:D4}" : $"Ods_{index:D4}",
-                    DatabaseName = $"DatabaseName_{index}",
-                    Description = Sample("Description")
+                    InstanceType = "OdsInstance",
+                    Status="Active",
+                    IsExtended= false,
+                    Version="1.0",
+                    ConnectionString= "Data Source=.\\;Initial Catalog=EdFi_Ods;Integrated Security=True;Encrypt=False"
+
                 })
                 .ToList();
 
-            Save(testInstances);
+            Scoped<IUsersContext>(database =>
+            {
+                foreach (var instance in testInstances)
+                {
+                    database.OdsInstances.Add(instance);
+                }
+                database.SaveChanges();
+            });
 
             SetupOdsInstanceSecretConfigurations(testInstances);
 
             return testInstances;
         }
 
-        public static OdsInstanceRegistration SetupOdsInstanceRegistration(string instanceName)
-        {
-            var testInstance = new OdsInstanceRegistration
-            {
-                Name = instanceName,
-                DatabaseName = instanceName,
-                Description = Sample("Description")
-            };
-
-            Save(testInstance);
-
-            SetupOdsInstanceSecretConfigurations(new List<OdsInstanceRegistration>{testInstance});
-
-            return testInstance;
-        }
-
-        private static void SetupOdsInstanceSecretConfigurations(IEnumerable<OdsInstanceRegistration> testInstances)
+        private static void SetupOdsInstanceSecretConfigurations(IEnumerable<OdsInstance> testInstances)
         {
             var secretConfigurations = new List<SecretConfiguration>();
             foreach (var testInstance in testInstances)
             {
                 secretConfigurations.Add(new SecretConfiguration
                 {
-                    OdsInstanceRegistrationId = testInstance.Id,
+                    OdsInstanceId = testInstance.OdsInstanceId,
                     EncryptedData = Sample("EncryptedData")
                 });
             }
 
-            Save(secretConfigurations);
+            SaveToAdminAppDb(secretConfigurations);
         }
 
-        public static IEnumerable<UserOdsInstanceRegistration> SetupUserWithOdsInstanceRegistrations(string userId, List<OdsInstanceRegistration> instanceRegistrations)
+        public static IEnumerable<UserOdsInstance> SetupUserWithOdsInstances(string userId, List<OdsInstance> instances)
         {
-            var userOdsInstanceRegistrations = new List<UserOdsInstanceRegistration>();
+            var userOdsInstances = new List<UserOdsInstance>();
 
-            foreach (var instanceRegistration in instanceRegistrations)
+            foreach (var instance in instances)
             {
-                userOdsInstanceRegistrations.Add(new UserOdsInstanceRegistration()
+                userOdsInstances.Add(new UserOdsInstance()
                 {
-                    OdsInstanceRegistrationId = instanceRegistration.Id,
+                    OdsInstanceId = instance.OdsInstanceId,
                     UserId = userId
                 });
             }
 
             Scoped<AdminAppIdentityDbContext>(database =>
             {
-                database.UserOdsInstanceRegistrations.AddRange(userOdsInstanceRegistrations);
+                database.UserOdsInstances.AddRange(userOdsInstances);
                 database.SaveChanges();
             });
 
-            return userOdsInstanceRegistrations;
+            return userOdsInstances;
         }
     }
 }

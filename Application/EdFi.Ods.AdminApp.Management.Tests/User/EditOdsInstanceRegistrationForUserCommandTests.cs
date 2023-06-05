@@ -26,11 +26,11 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
         {
             var existingUser = SetupUsers(1).Single();
 
-            var alreadyAddedInstances = SetupOdsInstanceRegistrations().OrderBy(x => x.Name).ToList();
+            var alreadyAddedInstances = SetupOdsInstances(useGuidName:true).OrderBy(x => x.Name).ToList();
 
-            SetupUserWithOdsInstanceRegistrations(existingUser.Id, alreadyAddedInstances);
+            SetupUserWithOdsInstances(existingUser.Id, alreadyAddedInstances);
 
-            var newInstancesToAdd = SetupOdsInstanceRegistrations().OrderBy(x => x.Name).ToList();
+            var newInstancesToAdd = SetupOdsInstances(useGuidName: true).OrderBy(x => x.Name).ToList();
 
             var updateModel = new EditOdsInstanceRegistrationForUserModel
             {
@@ -38,7 +38,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
                 OdsInstanceRegistrations = newInstancesToAdd.Select(x => new OdsInstanceRegistrationSelection
                 {
                     Name = x.Name,
-                    OdsInstanceRegistrationId = x.Id,
+                    OdsInstanceRegistrationId = x.OdsInstanceId,
                     Selected = true
                 }).ToList()
             };
@@ -57,9 +57,9 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
         {
             var existingUser = SetupUsers(1).Single();
 
-            var alreadyAddedInstances = SetupOdsInstanceRegistrations(5).OrderBy(x => x.Name).ToList();
+            var alreadyAddedInstances = SetupOdsInstances(5).OrderBy(x => x.Name).ToList();
 
-            SetupUserWithOdsInstanceRegistrations(existingUser.Id, alreadyAddedInstances);
+            SetupUserWithOdsInstances(existingUser.Id, alreadyAddedInstances);
 
             // Select only the first 3 instances
 
@@ -71,7 +71,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
                 OdsInstanceRegistrations = instancesToKeep.Select(x => new OdsInstanceRegistrationSelection
                 {
                     Name = x.Name,
-                    OdsInstanceRegistrationId = x.Id,
+                    OdsInstanceRegistrationId = x.OdsInstanceId,
                     Selected = true
                 }).ToList()
             };
@@ -113,7 +113,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
                 UserName = $"testuser{Guid.NewGuid():N}@test.com"
             };
 
-            var testInstances = SetupOdsInstanceRegistrations(5).OrderBy(x => x.Name).ToList();
+            var testInstances = SetupOdsInstances(5).OrderBy(x => x.Name).ToList();
 
             var updateModel = new EditOdsInstanceRegistrationForUserModel
             {
@@ -121,7 +121,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
                 OdsInstanceRegistrations = testInstances.Select(x => new OdsInstanceRegistrationSelection
                 {
                     Name = x.Name,
-                    OdsInstanceRegistrationId = x.Id,
+                    OdsInstanceRegistrationId = x.OdsInstanceId,
                     Selected = true
                 }).ToList()
             };
@@ -139,7 +139,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
         {
             var existingUser = SetupUsers(1).Single();
 
-            var testInstanceInSystem = SetupOdsInstanceRegistrations(1).Single();
+            var testInstanceInSystem = SetupOdsInstances(1).Single();
 
             var testInstanceNotInSystem = new OdsInstanceRegistration
             {
@@ -155,7 +155,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
                     new OdsInstanceRegistrationSelection
                     {
                         Name = testInstanceInSystem.Name,
-                        OdsInstanceRegistrationId = testInstanceInSystem.Id,
+                        OdsInstanceRegistrationId = testInstanceInSystem.OdsInstanceId,
                         Selected = true
                     },
                     new OdsInstanceRegistrationSelection

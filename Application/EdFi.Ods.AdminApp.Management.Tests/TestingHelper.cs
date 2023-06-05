@@ -13,6 +13,7 @@ using static EdFi.Ods.AdminApp.Management.Tests.Testing;
 
 namespace EdFi.Ods.AdminApp.Management.Tests
 {
+    using EdFi.Admin.DataAccess.Contexts;
     using System;
 
     public static class TestingHelper
@@ -29,21 +30,18 @@ namespace EdFi.Ods.AdminApp.Management.Tests
             return result;
         }
 
-        public static TEntity Query<TEntity>(int id) where TEntity : Entity
-        {
-            return Query(database => database.Set<TEntity>().Find(id));
-        }
-
         public static void Save<TEntity>(TEntity value) where TEntity : Entity
         {
-            Scoped<AdminAppDbContext>(database =>
+            Scoped<IUsersContext>(usersContext =>
             {
-                database.Set<TEntity>().Add(value);
-                database.SaveChanges();
+                var context = (SqlServerUsersContext)usersContext;
+                context.Set<TEntity>().Add(value);
+                context.SaveChanges();
+
             });
         }
 
-        public static void Save<TEntity>(List<TEntity> values) where TEntity : Entity
+        public static void SaveToAdminAppDb<TEntity>(List<TEntity> values) where TEntity : Entity
         {
             Scoped<AdminAppDbContext>(database =>
             {
@@ -56,12 +54,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests
         {
             Query(database => database.Set<TEntity>()
                 .FirstOrDefault(booleanQueryExpression)).ShouldBeNull();
-        }
-
-        public static void ShouldNotBeNull<TEntity>(Func<TEntity, bool> booleanQueryExpression) where TEntity : Entity
-        {
-            Query(database => database.Set<TEntity>()
-                .FirstOrDefault(booleanQueryExpression)).ShouldNotBeNull();
         }
 
         public static string Sample(string prefix)

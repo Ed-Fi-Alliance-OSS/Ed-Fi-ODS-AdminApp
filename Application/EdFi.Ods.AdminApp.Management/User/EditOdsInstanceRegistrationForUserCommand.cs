@@ -21,7 +21,7 @@ namespace EdFi.Ods.AdminApp.Management.User
 
         public void Execute(IEditOdsInstanceRegistrationForUserModel model)
         {
-            var preexistingAssociations = _identity.UserOdsInstanceRegistrations.Where(x => x.UserId == model.UserId).ToList();
+            var preexistingAssociations = _identity.UserOdsInstances.Where(x => x.UserId == model.UserId).ToList();
 
             var selectedOdsInstanceRegistrationIds =
                 model.OdsInstanceRegistrations.Where(x => x.Selected).Select(x => x.OdsInstanceRegistrationId).ToList();
@@ -29,34 +29,34 @@ namespace EdFi.Ods.AdminApp.Management.User
             var recordsToAdd = NewAssignments(model.UserId, selectedOdsInstanceRegistrationIds, preexistingAssociations);
 
             if (recordsToAdd.Any())
-                _identity.UserOdsInstanceRegistrations.AddRange(recordsToAdd);
+                _identity.UserOdsInstances.AddRange(recordsToAdd);
 
             var recordsToRemove = AssignmentsToRemove(selectedOdsInstanceRegistrationIds, preexistingAssociations);
 
             if (recordsToRemove.Any())
-                _identity.UserOdsInstanceRegistrations.RemoveRange(recordsToRemove);
+                _identity.UserOdsInstances.RemoveRange(recordsToRemove);
 
             _identity.SaveChanges();
         }
 
-        private static List<UserOdsInstanceRegistration> AssignmentsToRemove(List<int> requestedOdsInstanceRegistrationIds, List<UserOdsInstanceRegistration> preexistingAssociations)
+        private static List<UserOdsInstance> AssignmentsToRemove(List<int> requestedOdsInstanceRegistrationIds, List<UserOdsInstance> preexistingAssociations)
         {
             return preexistingAssociations
-                .Where(record => !requestedOdsInstanceRegistrationIds.Contains(record.OdsInstanceRegistrationId))
+                .Where(record => !requestedOdsInstanceRegistrationIds.Contains(record.OdsInstanceId))
                 .ToList();
         }
 
-        private static List<UserOdsInstanceRegistration> NewAssignments(string userId, List<int> requestedOdsInstanceRegistrationIds, List<UserOdsInstanceRegistration> preexistingAssociations)
+        private static List<UserOdsInstance> NewAssignments(string userId, List<int> requestedOdsInstanceRegistrationIds, List<UserOdsInstance> preexistingAssociations)
         {
             var missingOdsInstanceRegistrationIds =
                 requestedOdsInstanceRegistrationIds.Except(
-                    preexistingAssociations.Select(x => x.OdsInstanceRegistrationId));
+                    preexistingAssociations.Select(x => x.OdsInstanceId));
 
             return missingOdsInstanceRegistrationIds
-                .Select(x => new UserOdsInstanceRegistration
+                .Select(x => new UserOdsInstance
                 {
                     UserId = userId,
-                    OdsInstanceRegistrationId = x
+                    OdsInstanceId = x
                 }).ToList();
         }
     }
