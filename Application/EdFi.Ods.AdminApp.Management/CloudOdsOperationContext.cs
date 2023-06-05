@@ -9,13 +9,13 @@ namespace EdFi.Ods.AdminApp.Management
     {
         CloudOdsInstance Instance { get; }
         
-        CloudOdsRole TargetRole { get; }
+        
     }
     public class CloudOdsOperationContext : ICloudOdsOperationContext
     {
         public CloudOdsInstance Instance { get; set; }
        
-        public CloudOdsRole TargetRole { get; set; }
+        
     }
 
     public class CloudOdsApiOperationContext : ICloudOdsOperationContext
@@ -28,6 +28,6 @@ namespace EdFi.Ods.AdminApp.Management
 
         public CloudOdsInstance Instance { get; }
         
-        public CloudOdsRole TargetRole => CloudOdsRole.Api;
+        
     }
 }
