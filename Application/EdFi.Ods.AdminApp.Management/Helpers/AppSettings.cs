@@ -18,7 +18,6 @@ namespace EdFi.Ods.AdminApp.Management.Helpers
         public string LocalEducationAgencyTypeValue { get; set; }
         public string PostSecondaryInstitutionTypeValue { get; set; }
         public string SchoolTypeValue { get; set; }
-        public string AwsCurrentVersion { get; set; }
         public string Log4NetConfigPath { get; set; }
         public string EncryptionKey { get; set; }
         public string ProductRegistrationUrl { get; set; }
