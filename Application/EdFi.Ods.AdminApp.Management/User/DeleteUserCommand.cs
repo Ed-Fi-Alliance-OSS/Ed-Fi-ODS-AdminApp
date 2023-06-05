@@ -31,11 +31,11 @@ namespace EdFi.Ods.AdminApp.Management.User
         private void RemoveExistingUserOdsInstanceRegistrations(string userId)
         {
             var existingUserOdsInstanceRegistrations =
-                _identity.UserOdsInstanceRegistrations.Where(x => x.UserId == userId);
+                _identity.UserOdsInstances.Where(x => x.UserId == userId);
 
             if (existingUserOdsInstanceRegistrations.Any())
             {
-                _identity.UserOdsInstanceRegistrations.RemoveRange(existingUserOdsInstanceRegistrations);
+                _identity.UserOdsInstances.RemoveRange(existingUserOdsInstanceRegistrations);
             }
 
             _identity.SaveChanges();

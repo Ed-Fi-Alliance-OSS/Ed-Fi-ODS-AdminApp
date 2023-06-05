@@ -238,7 +238,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
             });
         }
 
-        private void AddSecretConfiguration(string jsonConfigurationPlainText, int odsInstanceRegistrationId)
+        private void AddSecretConfiguration(string jsonConfigurationPlainText, int odsInstanceId)
         {
             Scoped<AdminAppDbContext>(database =>
             {
@@ -246,7 +246,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
                     new SecretConfiguration
                     {
                         EncryptedData = jsonConfigurationPlainText,
-                        OdsInstanceRegistrationId = odsInstanceRegistrationId,
+                        OdsInstanceId = odsInstanceId,
                         IsEncrypted = false
                     });
 
@@ -278,7 +278,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
             }
         }
 
-        private static SecretConfiguration GetSecretConfigurationRecord(int odsInstanceRegistrationId)
-            => Query(db => db.SecretConfigurations.Single(x => x.OdsInstanceRegistrationId == odsInstanceRegistrationId));
+        private static SecretConfiguration GetSecretConfigurationRecord(int odsInstanceId)
+            => Query(db => db.SecretConfigurations.Single(x => x.OdsInstanceId == odsInstanceId));
     }
 }
