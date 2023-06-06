@@ -6,7 +6,7 @@ See the LICENSE and NOTICES files in the project root for more information.
 *@
 
 @using EdFi.Ods.AdminApp.Web.Helpers
-@model EdFi.Ods.AdminApp.Web.Models.ViewModels.User.EditOdsInstanceRegistrationForUserModel
+@model EdFi.Ods.AdminApp.Web.Models.ViewModels.User.EditOdsInstanceForUserModel
 
 @{
     ViewBag.Title = "Global | Users | Manage Instances";
@@ -21,9 +21,9 @@ See the LICENSE and NOTICES files in the project root for more information.
             <h4 style="display: inline"><b>@Model.Email</b></h4>
         </div>
 
-        @if (Model.OdsInstanceRegistrations.Any())
+        @if (Model.OdsInstances.Any())
         {
-            using (Html.BeginForm("EditOdsInstanceRegistrationsForUser", "User", FormMethod.Post, new
+            using (Html.BeginForm("EditOdsInstancesForUser", "User", FormMethod.Post, new
             {
                 @id = "edit-ods-instances-on-user-form",
                 @class = "padding-15"
@@ -37,13 +37,13 @@ See the LICENSE and NOTICES files in the project root for more information.
                     @Html.ValidationSummary("", new { @class = "alert alert-danger" })
                 }
                 <input type="checkbox" id="selectAllCheckbox" /><label class="padding-left" for="selectAllCheckbox">Select All</label>
-                for (int i = 0; i < Model.OdsInstanceRegistrations.Count(); i++)
+                for (int i = 0; i < Model.OdsInstances.Count(); i++)
                 {
                     <div>
-                        @Html.HiddenFor(m => m.OdsInstanceRegistrations[i].OdsInstanceRegistrationId)
-                        @Html.HiddenFor(m => m.OdsInstanceRegistrations[i].Name)
-                        @Html.CheckBoxFor(m => m.OdsInstanceRegistrations[i].Selected, new { @class = "instance-checkbox" })
-                        @Html.LabelFor(m => m.OdsInstanceRegistrations[i].Selected, Model.OdsInstanceRegistrations[i].Name)
+                        @Html.HiddenFor(m => m.OdsInstances[i].OdsInstanceId)
+                        @Html.HiddenFor(m => m.OdsInstances[i].Name)
+                        @Html.CheckBoxFor(m => m.OdsInstances[i].Selected, new { @class = "instance-checkbox" })
+                        @Html.LabelFor(m => m.OdsInstances[i].Selected, Model.OdsInstances[i].Name)
                     </div>
                 }
 

@@ -13,52 +13,39 @@ using FluentValidation;
 
 namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.User
 {
-    public class EditOdsInstanceRegistrationForUserModel: IEditOdsInstanceRegistrationForUserModel
+    public class EditOdsInstanceForUserModel: IEditOdsInstanceForUserModel
     {
         public string UserId { get; set; }
 
         public string Email { get; set; }
 
         [Display(Name = "Selected ODS Instances")]
-        public List<OdsInstanceRegistrationSelection> OdsInstanceRegistrations { get; set; }
+        public List<OdsInstanceSelection> OdsInstances { get; set; }
 
         public List<TabDisplay<GlobalSettingsTabEnumeration>> GlobalSettingsTabEnumerations { get; set; }
 
-        public EditOdsInstanceRegistrationForUserModel()
+        public EditOdsInstanceForUserModel()
         {
-            OdsInstanceRegistrations = new List<OdsInstanceRegistrationSelection>();
+            OdsInstances = new List<OdsInstanceSelection>();
         }
     }
 
-    public class EditOdsInstanceRegistrationForUserModelValidator : AbstractValidator<EditOdsInstanceRegistrationForUserModel>
+    public class EditOdsInstanceForUserModelValidator : AbstractValidator<EditOdsInstanceForUserModel>
     {
-        private static AdminAppDbContext _database;
         private readonly AdminAppIdentityDbContext _identity;
 
-        public EditOdsInstanceRegistrationForUserModelValidator(AdminAppDbContext database, AdminAppIdentityDbContext identity)
+        public EditOdsInstanceForUserModelValidator(AdminAppDbContext database, AdminAppIdentityDbContext identity)
         {
-            _database = database;
             _identity = identity;
 
             RuleFor(m => m.UserId).NotEmpty().Must(BeAnExistingUser).WithMessage("The user you are trying to edit does not exist in the database.");
             RuleFor(m => m.Email).NotEmpty();
-            RuleFor(m => m.OdsInstanceRegistrations).NotEmpty().Must(BeAnExistingOdsInstanceRegistration).WithMessage("A selected instance does not exist in the database."); ;
+            RuleFor(m => m.OdsInstances).NotEmpty();
         }
 
         private bool BeAnExistingUser(string userId)
         {
             return _identity.Users.Any(x => x.Id == userId);
-        }
-
-        private bool BeAnExistingOdsInstanceRegistration(List<OdsInstanceRegistrationSelection> instances)
-        {
-            foreach (var instance in instances)
-            {
-                if (instance.Selected && !_database.OdsInstanceRegistrations.Any(x => x.Id == instance.OdsInstanceRegistrationId))
-                    return false;
-            }
-
-            return true;
-        }
+        }      
     }
 }
