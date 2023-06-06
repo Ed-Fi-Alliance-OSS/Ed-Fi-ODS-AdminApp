@@ -46,13 +46,7 @@ namespace EdFi.Ods.AdminApp.Management.OnPrem
             ExtraDatabaseInitializationAction?.Invoke();
             var restartRequired = false;
 
-            // TODO: ODS API 7 specific implementation
-            //var defaultOdsInstance = new OdsInstance
-            //{
-            //    Name = "EdFi ODS"
-            //};
-            //await _firstTimeSetupService.CompleteSetup(defaultOdsInstance, claimSet);
-
+            // TODO: ODS API 7 - dummy first time setup flow
 
             if (!_claimSetCheckService.RequiredClaimSetsExist())
             {
