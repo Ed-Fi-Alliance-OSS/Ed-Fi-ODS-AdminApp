@@ -12,13 +12,13 @@ using static EdFi.Ods.AdminApp.Management.Tests.Instance.InstanceTestSetup;
 namespace EdFi.Ods.AdminApp.Management.Tests.Instance
 {
     [TestFixture]
-    public class GetOdsInstanceRegistrationsQueryTests: PlatformUsersContextTestBase
+    public class GetOdsInstancesQueryTests : PlatformUsersContextTestBase
     {
         [TestCase(1)]
         [TestCase(5)]
         public void ShouldGetAdminAppOdsInstancesSortedByName(int instanceCount)
         {
-            ResetOdsInstanceRegistrations();
+            ResetOdsInstances();
 
             var testInstances = SetupOdsInstances(instanceCount).OrderBy(x => x.Name).ToList();
 
@@ -37,7 +37,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Instance
         [TestCase(5)]
         public void ShouldGetAdminAppOdsInstanceCount(int instanceCount)
         {
-            ResetOdsInstanceRegistrations();
+            ResetOdsInstances();
 
             _ = SetupOdsInstances(instanceCount).OrderBy(x => x.Name).ToList();
 

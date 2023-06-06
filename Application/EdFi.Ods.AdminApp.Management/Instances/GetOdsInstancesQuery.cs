@@ -46,7 +46,7 @@ namespace EdFi.Ods.AdminApp.Management.Instances
     {
         IEnumerable<OdsInstance> Execute();
         int ExecuteCount();
-        OdsInstance Execute(string odsInstanceRegistrationName);
+        OdsInstance Execute(string odsInstanceName);
         OdsInstance Execute(int odsInstanceId);
     }
 }

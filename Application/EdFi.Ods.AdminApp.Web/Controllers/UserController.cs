@@ -30,7 +30,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         private readonly EditUserCommand _editUserCommand;
         private readonly DeleteUserCommand _deleteUserCommand;
         private readonly GetAdminAppUserByIdQuery _getAdminAppUserByIdQuery;
-        private readonly EditOdsInstanceRegistrationForUserCommand _editOdsInstanceRegistrationForUserCommand;
+        private readonly EditOdsInstanceForUserCommand _editOdsInstanceForUserCommand;
         private readonly EditUserRoleCommand _editUserRoleCommand;
         private readonly GetRoleForUserQuery _getRoleForUserQuery;
         private readonly IGetOdsInstancesQuery _getOdsInstancesQuery;
@@ -40,7 +40,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             , EditUserCommand editUserCommand
             , DeleteUserCommand deleteUserCommand
             , GetAdminAppUserByIdQuery getAdminAppUserByIdQuery
-            , EditOdsInstanceRegistrationForUserCommand editOdsInstanceRegistrationForUserCommand
+            , EditOdsInstanceForUserCommand editOdsInstanceForUserCommand
             , EditUserRoleCommand editUserRoleCommand
             , GetRoleForUserQuery getRoleForUserQuery
             , IGetOdsInstancesQuery getOdsInstancesQuery
@@ -53,7 +53,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _editUserCommand = editUserCommand;
             _deleteUserCommand = deleteUserCommand;
             _getAdminAppUserByIdQuery = getAdminAppUserByIdQuery;
-            _editOdsInstanceRegistrationForUserCommand = editOdsInstanceRegistrationForUserCommand;
+            _editOdsInstanceForUserCommand = editOdsInstanceForUserCommand;
             _editUserRoleCommand = editUserRoleCommand;
             _getRoleForUserQuery = getRoleForUserQuery;
             _getOdsInstancesQuery = getOdsInstancesQuery;
