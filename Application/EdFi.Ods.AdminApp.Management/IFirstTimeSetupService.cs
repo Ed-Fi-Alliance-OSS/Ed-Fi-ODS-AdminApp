@@ -46,7 +46,7 @@ namespace EdFi.Ods.AdminApp.Management
             string odsInstanceName, string odsInstanceVersion)
         {
             var applicationName = odsInstanceName.GetAdminApplicationName();
-    
+
             var existingApplication = await UsersContext.Applications.SingleOrDefaultAsync(x =>
                 x.ApplicationName.Equals(applicationName,
                     StringComparison.InvariantCultureIgnoreCase));
@@ -56,7 +56,7 @@ namespace EdFi.Ods.AdminApp.Management
                 {
                     Application = existingApplication
                 };
-            }       
+            }
 
             var result = new ApplicationCreateResult
             {
@@ -96,7 +96,7 @@ namespace EdFi.Ods.AdminApp.Management
                      ApiClient = apiClient
                 };
                 UsersContext.ApiClientOdsInstances.Add(apiClientOdsInstance);
-            }            
+            }
         }
 
         private OdsInstance GetOdsInstance(string odsInstanceName)
