@@ -92,6 +92,7 @@ When("help section is present", async () => {
 
 When("clicking define applications", async () => {
     await models.vendorsPage.defineApplicationsSingleInstance();
+    await models.firstTimeSetupPage.clickOnDefaultODSInstances();
 });
 
 When("entering vendor form {string}", async (scenario: string) => {

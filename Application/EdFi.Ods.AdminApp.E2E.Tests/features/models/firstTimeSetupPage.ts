@@ -7,6 +7,8 @@ import { AdminAppPage } from "./adminAppPage";
 
 export class FirstTimeSetupPage extends AdminAppPage {
     continueBtn = "a#finish-setup-link";
+    edfiODS = "text=EdFi ODS";
+    odsInstances = "text=Ods Instances";
 
     path(): string {
         return `${this.url}/Setup/FirstTimeSetup`;
@@ -30,6 +32,14 @@ export class FirstTimeSetupPage extends AdminAppPage {
 
     private async clickContinue(): Promise<void> {
         await this.page.locator(this.continueBtn).click();
+    }
+
+    async clickODSInstances() {
+        await this.page.locator(this.odsInstances).click();
+    }
+
+    async clickOnDefaultODSInstances() {
+        await this.page.locator(this.edfiODS).click();
     }
 
     firstTimePath(): string {

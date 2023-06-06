@@ -25,6 +25,8 @@ Given("setup is complete", async () => {
     if (models.firstTimeSetupPage.isOnPage) {
         await models.firstTimeSetupPage.continue(models.homePage.firstTimeLoadPath());
     }
+    await models.firstTimeSetupPage.clickODSInstances();
+    await models.firstTimeSetupPage.clickOnDefaultODSInstances();
 });
 
 Given("it's on the {string} page", async (pageName: string) => {
