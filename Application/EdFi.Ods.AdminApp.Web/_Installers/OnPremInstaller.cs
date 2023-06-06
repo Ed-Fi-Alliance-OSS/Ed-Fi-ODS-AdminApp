@@ -5,7 +5,6 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using EdFi.Ods.AdminApp.Management;
-using EdFi.Ods.AdminApp.Management.OnPrem;
 using EdFi.Ods.AdminApp.Web.Display.DisplayService;
 using EdFi.Ods.AdminApp.Web.Display.TabEnumeration;
 
@@ -15,13 +14,7 @@ namespace EdFi.Ods.AdminApp.Web._Installers
     {
         protected override void InstallHostingSpecificClasses(IServiceCollection services)
         {
-            services.AddTransient<IGetCloudOdsInstanceQuery, GetOnPremOdsInstanceQuery>();
-            services.AddTransient<IGetCloudOdsApiWebsiteSettingsQuery, GetOnPremOdsApiWebsiteSettingsQuery>();
-            services.AddTransient<IUpdateCloudOdsApiWebsiteSettingsCommand, UpdateOnPremOdsApiWebsiteSettingsCommand>();
-            services.AddTransient<IRestartAppServicesCommand, RestartOnPremAppServicesCommand>();
-            services.AddTransient<IFirstTimeSetupService, OnPremFirstTimeSetupService>();
             services.AddTransient<ITabDisplayService, OnPremTabDisplayService>();
-            services.AddTransient<ICompleteOdsFirstTimeSetupCommand, CompleteOnPremFirstTimeSetupCommand>();
         }
     }
 }

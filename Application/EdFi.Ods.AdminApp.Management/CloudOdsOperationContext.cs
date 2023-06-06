@@ -8,14 +8,10 @@ namespace EdFi.Ods.AdminApp.Management
     public interface ICloudOdsOperationContext
     {
         CloudOdsInstance Instance { get; }
-        CloudOdsEnvironment TargetEnvironment { get; }
-        CloudOdsRole TargetRole { get; }
     }
     public class CloudOdsOperationContext : ICloudOdsOperationContext
     {
         public CloudOdsInstance Instance { get; set; }
-        public CloudOdsEnvironment TargetEnvironment { get; set; }
-        public CloudOdsRole TargetRole { get; set; }
     }
 
     public class CloudOdsApiOperationContext : ICloudOdsOperationContext
@@ -23,11 +19,8 @@ namespace EdFi.Ods.AdminApp.Management
         public CloudOdsApiOperationContext(CloudOdsInstance instance)
         {
             Instance = instance;
-            TargetEnvironment = CloudOdsEnvironment.Production;
         }
 
         public CloudOdsInstance Instance { get; }
-        public CloudOdsEnvironment TargetEnvironment { get; }
-        public CloudOdsRole TargetRole => CloudOdsRole.Api;
     }
 }
