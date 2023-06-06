@@ -11,6 +11,9 @@ using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Web.Models.ViewModels.OdsInstances;
 using EdFi.Ods.AdminApp.Management.Database.Ods.SchoolYears;
 using Microsoft.AspNetCore.Http;
+using EdFi.Ods.AdminApp.Management.OdsInstanceServices;
+using EdFi.Ods.AdminApp.Web.Infrastructure;
+using System.Threading.Tasks;
 
 namespace EdFi.Ods.AdminApp.Web.Controllers
 {
@@ -20,15 +23,18 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         private readonly IGetOdsInstancesQuery _getOdsInstancesQuery;
         private readonly AdminAppUserContext _userContext;
         private readonly GetCurrentSchoolYearQuery _getCurrentSchoolYear;
+        private readonly IOdsInstanceFirstTimeSetupService _odsInstanceFirstTimeSetupService;
 
         public OdsInstancesController(
             IGetOdsInstancesQuery getOdsInstancesQuery
             , AdminAppUserContext userContext
-            , GetCurrentSchoolYearQuery getCurrentSchoolYear)
+            , GetCurrentSchoolYearQuery getCurrentSchoolYear
+            , IOdsInstanceFirstTimeSetupService odsInstanceFirstTimeSetupService)
         {
             _getOdsInstancesQuery = getOdsInstancesQuery;
             _userContext = userContext;
             _getCurrentSchoolYear = getCurrentSchoolYear;
+            _odsInstanceFirstTimeSetupService = odsInstanceFirstTimeSetupService;
         }
 
         public ViewResult Index()
@@ -57,9 +63,11 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             return View(model);
         }
 
-        public ActionResult ActivateOdsInstance(string instanceId)
+        public async Task<ActionResult> ActivateOdsInstance(string instanceId)
         {
             Response.Cookies.Append("Instance", instanceId, new CookieOptions());
+            var existingOdsInstance = _getOdsInstancesQuery.Execute(int.Parse(instanceId));
+            await _odsInstanceFirstTimeSetupService.CompleteSetup(existingOdsInstance, CloudOdsAdminAppClaimSetConfiguration.Default);
 
             return RedirectToAction("Index", "Application");
         }      

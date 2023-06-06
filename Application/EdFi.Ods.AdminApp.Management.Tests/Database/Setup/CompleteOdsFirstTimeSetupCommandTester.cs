@@ -11,7 +11,6 @@ using EdFi.Admin.DataAccess.Models;
 using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
 using EdFi.Ods.AdminApp.Management.Configuration.Claims;
 using EdFi.Ods.AdminApp.Management.Database.Ods;
-using EdFi.Ods.AdminApp.Management.Instances;
 using EdFi.Ods.AdminApp.Management.OdsInstanceServices;
 using EdFi.Ods.AdminApp.Management.OnPrem;
 using EdFi.Security.DataAccess.Contexts;
@@ -79,16 +78,13 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Setup
             var mockClaimSetCheckService = new Mock<IClaimSetCheckService>();
             mockClaimSetCheckService.Setup(a => a.RequiredClaimSetsExist()).Returns(false);
 
-            var mockInferInstanceService = new Mock<IInferInstanceService>();
-
             var command = new CompleteOnPremFirstTimeSetupCommand(
                 mockUsersContext.Object,
                 mockSecurityContext.Object,
                 mockClaimSetConfigurator.Object,
                 mockFirstTimeSetupService.Object,
                 mockAssessmentVendorAdjustment.Object,
-                mockClaimSetCheckService.Object,
-                mockInferInstanceService.Object);
+                mockClaimSetCheckService.Object);
 
             await command.Execute(GetClaimSet());
 
@@ -97,7 +93,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Setup
 
         #region MockGetters
 
-        private OdsSecretConfiguration GetOdsSecretConfiguration()
+        private static OdsSecretConfiguration GetOdsSecretConfiguration()
         {
             var odsSecretConfiguration = new OdsSecretConfiguration
             {
@@ -107,7 +103,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Setup
             return odsSecretConfiguration;
         }
 
-        private CloudOdsClaimSet GetClaimSet()
+        private static CloudOdsClaimSet GetClaimSet()
         {
             return new CloudOdsClaimSet
             {
@@ -116,7 +112,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Setup
             };
         }
 
-        private CloudOdsInstance GetDefaultInstance()
+        private static CloudOdsInstance GetDefaultInstance()
         {
             return new CloudOdsInstance
             {
@@ -129,7 +125,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Setup
             };
         }
 
-        private string GetOdsName()
+        private static string GetOdsName()
         {
             return "Test ODS Instance";
         }
