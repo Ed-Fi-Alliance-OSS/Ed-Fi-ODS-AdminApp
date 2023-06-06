@@ -46,18 +46,17 @@ namespace EdFi.Ods.AdminApp.Management
             string odsInstanceName, string odsInstanceVersion)
         {
             var applicationName = odsInstanceName.GetAdminApplicationName();
-
+    
             var existingApplication = await UsersContext.Applications.SingleOrDefaultAsync(x =>
                 x.ApplicationName.Equals(applicationName,
                     StringComparison.InvariantCultureIgnoreCase));
-
             if (existingApplication != null)
             {
                 return new ApplicationCreateResult
                 {
                     Application = existingApplication
                 };
-            }
+            }       
 
             var result = new ApplicationCreateResult
             {
@@ -66,7 +65,7 @@ namespace EdFi.Ods.AdminApp.Management
                     ApplicationName = applicationName,
                     Vendor = CreateEdFiVendor(),
                     ClaimSetName = claimSetClaimSetName,
-                    OdsInstance = CreateOdsInstance(odsInstanceName, odsInstanceVersion),
+                    OdsInstance = GetOdsInstance(odsInstanceName),
                     OperationalContextUri = OperationalContext.DefaultOperationalContextUri
                 }
             };
@@ -78,29 +77,39 @@ namespace EdFi.Ods.AdminApp.Management
             result.Application.ApiClients.Add(apiWithCredentials.ApiClient);
             result.ProductionKeyAndSecret = apiWithCredentials.ApiCredentials;
 
+            AssociateOdsInstanceAndApiClient(odsInstanceName, apiWithCredentials.ApiClient);
+
             UsersContext.Applications.Add(result.Application);
 
             return result;
         }
 
-        private OdsInstance CreateOdsInstance(string odsInstanceName, string odsInstanceVersion)
+        private void AssociateOdsInstanceAndApiClient(string odsInstanceName, ApiClient apiClient)
+        {
+            var existingInstance = UsersContext.OdsInstances.SingleOrDefault(x => x.Name == odsInstanceName);
+
+            if (existingInstance != null)
+            {
+                var apiClientOdsInstance = new ApiClientOdsInstance
+                {
+                     OdsInstance = existingInstance,
+                     ApiClient = apiClient
+                };
+                UsersContext.ApiClientOdsInstances.Add(apiClientOdsInstance);
+            }            
+        }
+
+        private OdsInstance GetOdsInstance(string odsInstanceName)
         {
             var existingInstance = UsersContext.OdsInstances.SingleOrDefault(x => x.Name == odsInstanceName);
             if (existingInstance != null)
-                return existingInstance;
-
-            var instance = new OdsInstance
             {
-                InstanceType = "CloudOds",
-                IsExtended = false,
-                Name = odsInstanceName,
-                Status = CloudOdsStatus.Ok.DisplayName,
-                Version = odsInstanceVersion
-            };
-
-            UsersContext.OdsInstances.Add(instance);
-
-            return instance;
+                return existingInstance;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         private Vendor CreateEdFiVendor()
