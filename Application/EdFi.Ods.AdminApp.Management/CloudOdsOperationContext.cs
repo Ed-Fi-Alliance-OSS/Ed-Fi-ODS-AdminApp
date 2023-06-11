@@ -11,12 +11,7 @@ namespace EdFi.Ods.AdminApp.Management
         CloudOdsEnvironment TargetEnvironment { get; }
         CloudOdsRole TargetRole { get; }
     }
-    public class CloudOdsOperationContext : ICloudOdsOperationContext
-    {
-        public CloudOdsInstance Instance { get; set; }
-        public CloudOdsEnvironment TargetEnvironment { get; set; }
-        public CloudOdsRole TargetRole { get; set; }
-    }
+    
 
     public class CloudOdsApiOperationContext : ICloudOdsOperationContext
     {
