@@ -257,7 +257,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
 
         private List<string> GetClaimSetNames()
         {
-            return _getClaimSetNamesQuery.Execute().Select(x => x.Name).Except(CloudOdsAdminApp.SystemReservedClaimSets).ToList();
+            return _getClaimSetNamesQuery.Execute().Select(x => x.Name).Except(OdsAdminApp.SystemReservedClaimSets).ToList();
         }
 
         private static string GetApiUrlForDisplay(string apiUrl)

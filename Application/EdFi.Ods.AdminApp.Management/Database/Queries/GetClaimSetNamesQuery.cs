@@ -25,7 +25,7 @@ namespace EdFi.Ods.AdminApp.Management.Database.Queries
             if (excludeSystemReservedClaimSets)
             {
                 claimSets = claimSets.Where(x => !x.ForApplicationUseOnly &&
-                !CloudOdsAdminApp.SystemReservedClaimSets.Contains(x.ClaimSetName));
+                !OdsAdminApp.SystemReservedClaimSets.Contains(x.ClaimSetName));
             }
 
             if (excludeEdFiPresetClaimSets)

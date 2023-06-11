@@ -31,7 +31,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
                     Id = securityContextClaimSet.ClaimSetId,
                     Name = securityContextClaimSet.ClaimSetName,
                     IsEditable = !securityContextClaimSet.ForApplicationUseOnly && !securityContextClaimSet.IsEdfiPreset &&
-                    !CloudOdsAdminApp.SystemReservedClaimSets.Contains(securityContextClaimSet.ClaimSetName)
+                    !OdsAdminApp.SystemReservedClaimSets.Contains(securityContextClaimSet.ClaimSetName)
                 };
             }
 

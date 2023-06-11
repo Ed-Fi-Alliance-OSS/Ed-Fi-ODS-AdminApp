@@ -10,7 +10,7 @@ namespace EdFi.Ods.AdminApp.Management.OnPrem
 {
     public class UpdateOnPremOdsApiWebsiteSettingsCommand : IUpdateCloudOdsApiWebsiteSettingsCommand
     {
-        public Task Execute(CloudOdsApiOperationContext context, CloudOdsApiWebsiteSettings settings)
+        public Task Execute(OdsApiOperationContext context, CloudOdsApiWebsiteSettings settings)
         {
             throw new System.NotImplementedException();
         }

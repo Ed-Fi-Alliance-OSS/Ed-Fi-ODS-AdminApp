@@ -33,7 +33,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
         private ClaimSet[] GetClaimSetsByApplicationName(string applicationName)
         {
             return _securityContext.ClaimSets
-                .Where(x => !CloudOdsAdminApp.SystemReservedClaimSets.Contains(x.ClaimSetName))
+                .Where(x => !OdsAdminApp.SystemReservedClaimSets.Contains(x.ClaimSetName))
                 .Where(x => x.Application.ApplicationName == applicationName)
                 .OrderBy(x => x.ClaimSetName)
                 .Select(x => new ClaimSet
@@ -62,7 +62,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
                 var applicationsCount = applicationsCounts
                     .SingleOrDefault(x => x.ClaimSetName == claimSet.Name)
                     ?.ApplicationsCount;
-                claimSet.IsEditable = !CloudOdsAdminApp.DefaultClaimSets.Contains(claimSet.Name);
+                claimSet.IsEditable = !OdsAdminApp.DefaultClaimSets.Contains(claimSet.Name);
                 claimSet.ApplicationsCount = applicationsCount.GetValueOrDefault();
             }
         }

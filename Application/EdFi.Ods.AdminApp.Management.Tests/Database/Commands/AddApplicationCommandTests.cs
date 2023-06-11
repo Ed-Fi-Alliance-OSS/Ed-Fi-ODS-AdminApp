@@ -164,7 +164,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
                 ProfileName = "Test Profile"
             };
 
-            var odsInstance = new OdsInstance
+            var odsInstance = new Admin.DataAccess.Models.OdsInstance
             {
                 Name = odsInstanceName,
                 InstanceType = "Ods",

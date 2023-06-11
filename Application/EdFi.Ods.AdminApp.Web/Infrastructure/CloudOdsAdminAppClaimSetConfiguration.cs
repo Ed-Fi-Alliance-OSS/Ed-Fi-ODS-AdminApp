@@ -14,8 +14,8 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure
     {
         public static CloudOdsClaimSet Default = new CloudOdsClaimSet
         {
-            ApplicationName = CloudOdsAdminApp.SecurityContextApplicationName,
-            ClaimSetName = CloudOdsAdminApp.InternalAdminAppClaimSet,
+            ApplicationName = OdsAdminApp.SecurityContextApplicationName,
+            ClaimSetName = OdsAdminApp.InternalAdminAppClaimSet,
             Claims = new[]
             {
                 new CloudOdsEntityClaim

@@ -31,7 +31,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
             Save(new ClaimSet
             {
-                ClaimSetName = CloudOdsAdminApp.InternalAdminAppClaimSet,
+                ClaimSetName = OdsAdminApp.InternalAdminAppClaimSet,
                 Application = testApplication
             });
 
@@ -41,7 +41,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                 var query = new GetClaimSetsByApplicationNameQueryV53Service(securityContext, usersContext);
                 var results = query.Execute(testApplication.ApplicationName).ToArray();
 
-                results.ShouldNotContain(x => x.Name == CloudOdsAdminApp.InternalAdminAppClaimSet);
+                results.ShouldNotContain(x => x.Name == OdsAdminApp.InternalAdminAppClaimSet);
             });
         }
 
@@ -60,7 +60,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
             Save(new ClaimSet
             {
-                ClaimSetName = CloudOdsAdminApp.InternalAdminAppClaimSet,
+                ClaimSetName = OdsAdminApp.InternalAdminAppClaimSet,
                 Application = testApplication
             });
 
@@ -70,7 +70,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                 var query = new GetClaimSetsByApplicationNameQueryV53Service(securityContext, usersContext);
                 var results = query.Execute(testApplication.ApplicationName).ToArray();
 
-                results.ShouldNotContain(x => x.Name == CloudOdsAdminApp.InternalAdminAppClaimSet);
+                results.ShouldNotContain(x => x.Name == OdsAdminApp.InternalAdminAppClaimSet);
                 results.ShouldNotContain(x => x.Name == "Bootstrap Descriptors and EdOrgs");
             });
         }

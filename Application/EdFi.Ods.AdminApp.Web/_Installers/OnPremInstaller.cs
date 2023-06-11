@@ -3,11 +3,11 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
-using Microsoft.Extensions.DependencyInjection;
 using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Management.OnPrem;
 using EdFi.Ods.AdminApp.Web.Display.DisplayService;
 using EdFi.Ods.AdminApp.Web.Display.TabEnumeration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EdFi.Ods.AdminApp.Web._Installers
 {
@@ -18,7 +18,6 @@ namespace EdFi.Ods.AdminApp.Web._Installers
             services.AddTransient<IGetCloudOdsInstanceQuery, GetOnPremOdsInstanceQuery>();
             services.AddTransient<IGetCloudOdsApiWebsiteSettingsQuery, GetOnPremOdsApiWebsiteSettingsQuery>();
             services.AddTransient<IUpdateCloudOdsApiWebsiteSettingsCommand, UpdateOnPremOdsApiWebsiteSettingsCommand>();
-            //services.AddTransient<IRestartAppServicesCommand, RestartOnPremAppServicesCommand>();
             services.AddTransient<IFirstTimeSetupService, OnPremFirstTimeSetupService>();
             services.AddTransient<ITabDisplayService, OnPremTabDisplayService>();
             services.AddTransient<ICompleteOdsFirstTimeSetupCommand, CompleteOnPremFirstTimeSetupCommand>();

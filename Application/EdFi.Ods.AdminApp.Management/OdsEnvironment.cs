@@ -5,11 +5,11 @@
 
 namespace EdFi.Ods.AdminApp.Management
 {
-    public class CloudOdsEnvironment : Enumeration<CloudOdsEnvironment>
+    public class OdsEnvironment : Enumeration<OdsEnvironment>
     {
-        public static readonly CloudOdsEnvironment Production = new CloudOdsEnvironment(1, "Production");
+        public static readonly OdsEnvironment Production = new OdsEnvironment(1, "Production");
 
-        private CloudOdsEnvironment(int value, string displayName) : base(value, displayName)
+        private OdsEnvironment(int value, string displayName) : base(value, displayName)
         {
         }
     }

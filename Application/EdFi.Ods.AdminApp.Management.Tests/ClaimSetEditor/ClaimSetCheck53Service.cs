@@ -20,7 +20,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
         public bool RequiredClaimSetsExist()
         {
-            return  ClaimSetExists(CloudOdsAdminApp.InternalAdminAppClaimSet);
+            return  ClaimSetExists(OdsAdminApp.InternalAdminAppClaimSet);
             bool ClaimSetExists(string claimSetName)
             {
                 return _securityContext.ClaimSets.Any(x => x.ClaimSetName == claimSetName);

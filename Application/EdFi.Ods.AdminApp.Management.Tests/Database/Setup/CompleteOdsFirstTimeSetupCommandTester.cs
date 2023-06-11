@@ -41,7 +41,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Setup
         [Test]
         public async Task ShouldConfigureClaimSet()
         {
-            var odsInstanceList = new List<OdsInstance>();
+            var odsInstanceList = new List<Admin.DataAccess.Models.OdsInstance>();
             var mockOdsInstances = MockExtensions.MockDbSet(odsInstanceList);
 
             var vendorsList = new List<Vendor>();
@@ -92,7 +92,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Setup
 
             await command.Execute(GetClaimSet());
 
-            mockClaimSetConfigurator.Verify(x => x.ApplyConfiguration(It.Is<CloudOdsClaimSet>(c => c.ClaimSetName == CloudOdsAdminApp.InternalAdminAppClaimSet && c.ApplicationName == CloudOdsAdminApp.ApplicationName)), Times.Once);
+            mockClaimSetConfigurator.Verify(x => x.ApplyConfiguration(It.Is<CloudOdsClaimSet>(c => c.ClaimSetName == OdsAdminApp.InternalAdminAppClaimSet && c.ApplicationName == OdsAdminApp.ApplicationName)), Times.Once);
         }
 
         #region MockGetters
@@ -111,14 +111,14 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Setup
         {
             return new CloudOdsClaimSet
             {
-                ApplicationName = CloudOdsAdminApp.ApplicationName,
-                ClaimSetName = CloudOdsAdminApp.InternalAdminAppClaimSet
+                ApplicationName = OdsAdminApp.ApplicationName,
+                ClaimSetName = OdsAdminApp.InternalAdminAppClaimSet
             };
         }
 
-        private CloudOdsInstance GetDefaultInstance()
+        private OdsInstance GetDefaultInstance()
         {
-            return new CloudOdsInstance
+            return new OdsInstance
             {
                 FriendlyName = GetOdsName(),
                 InstanceType = "Instance Type",

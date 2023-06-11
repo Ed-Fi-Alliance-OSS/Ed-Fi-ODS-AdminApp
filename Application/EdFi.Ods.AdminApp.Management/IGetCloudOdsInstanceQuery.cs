@@ -9,6 +9,6 @@ namespace EdFi.Ods.AdminApp.Management
 {
     public interface IGetCloudOdsInstanceQuery
     {
-        Task<CloudOdsInstance> Execute(string instanceName);
+        Task<OdsInstance> Execute(string instanceName);
     }
 }

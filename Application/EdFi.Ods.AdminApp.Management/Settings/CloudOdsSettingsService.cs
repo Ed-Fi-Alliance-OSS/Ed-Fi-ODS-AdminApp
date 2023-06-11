@@ -32,7 +32,7 @@ namespace EdFi.Ods.AdminApp.Management.Settings
         public async Task<CloudOdsApiWebsiteSettings> GetSettings(string instanceName)
         {
             var instance = await GetCloudOdsInstance(instanceName);
-            var context = new CloudOdsApiOperationContext(instance);
+            var context = new OdsApiOperationContext(instance);
 
             return await _getCloudOdsApiWebsiteSettingsQuery.Execute(context);
         }
@@ -40,12 +40,12 @@ namespace EdFi.Ods.AdminApp.Management.Settings
         public async Task UpdateSettings(string instanceName, CloudOdsApiWebsiteSettings newSettings)
         {
             var instance = await GetCloudOdsInstance(instanceName);
-            var context = new CloudOdsApiOperationContext(instance);
+            var context = new OdsApiOperationContext(instance);
 
             await _updateCloudOdsApiWebsiteSettingsCommand.Execute(context, newSettings);
         }
 
-        private async Task<CloudOdsInstance> GetCloudOdsInstance(string cloudOdsInstanceName)
+        private async Task<OdsInstance> GetCloudOdsInstance(string cloudOdsInstanceName)
         {
             var defaultInstance = await _getCloudOdsInstanceQuery.Execute(cloudOdsInstanceName);
             return defaultInstance;

@@ -92,7 +92,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             {
                 ClaimSetEditorModel = new ClaimSetEditorModel
                 {
-                    ClaimSets = _getClaimSetsByApplicationNameQuery.Execute(CloudOdsAdminApp.SecurityContextApplicationName)
+                    ClaimSets = _getClaimSetsByApplicationNameQuery.Execute(OdsAdminApp.SecurityContextApplicationName)
                 },
                 GlobalSettingsTabEnumerations =
                     _tabDisplayService.GetGlobalSettingsTabDisplay(

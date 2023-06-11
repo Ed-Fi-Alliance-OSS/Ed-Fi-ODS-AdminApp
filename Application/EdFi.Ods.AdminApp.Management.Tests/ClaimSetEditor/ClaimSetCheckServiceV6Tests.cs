@@ -25,7 +25,7 @@ public class ClaimSetCheckServiceV6Tests : SecurityDataTestBase
         };
         Save(testApplication);
 
-        var testAdminAppClaimSet = new ClaimSet { ClaimSetName = CloudOdsAdminApp.InternalAdminAppClaimSet, Application = testApplication };
+        var testAdminAppClaimSet = new ClaimSet { ClaimSetName = OdsAdminApp.InternalAdminAppClaimSet, Application = testApplication };
         Save(testAdminAppClaimSet);
 
         using var securityContext = TestContext;

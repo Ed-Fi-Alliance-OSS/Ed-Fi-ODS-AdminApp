@@ -12,7 +12,7 @@ namespace EdFi.Ods.AdminApp.Management.Database.Queries
     {
         public static readonly string[] ReservedNames =
         {
-            CloudOdsAdminApp.VendorName,
+            OdsAdminApp.VendorName,
         };
 
         public static bool IsSystemReservedVendorName(string vendorName)

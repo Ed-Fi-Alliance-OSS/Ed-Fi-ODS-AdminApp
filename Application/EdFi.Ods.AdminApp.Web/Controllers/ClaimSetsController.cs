@@ -125,7 +125,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             var selectList = new List<SelectListItem>{
                 new SelectListItem{ Text="Please select a value", Value = "0" , Disabled = true, Selected = true},
             };
-            var authorizationStrategies = _getAuthStrategiesByApplicationNameQuery.Execute(CloudOdsAdminApp.SecurityContextApplicationName);
+            var authorizationStrategies = _getAuthStrategiesByApplicationNameQuery.Execute(OdsAdminApp.SecurityContextApplicationName);
             selectList.AddRange(new SelectList(authorizationStrategies.Select(x => new SelectListItem()
             {
                 Text = x.AuthStrategyName,
@@ -295,7 +295,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
 
         public ActionResult ExportClaimSet()
         {
-            var claimSets = _getClaimSetsByApplicationNameQuery.Execute(CloudOdsAdminApp.SecurityContextApplicationName);
+            var claimSets = _getClaimSetsByApplicationNameQuery.Execute(OdsAdminApp.SecurityContextApplicationName);
             return PartialView("_ExportClaimSet", new ClaimSetFileExportModel()
             {
                 ClaimSets = claimSets

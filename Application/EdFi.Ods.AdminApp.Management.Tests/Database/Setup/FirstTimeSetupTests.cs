@@ -22,7 +22,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Setup
         [Test]
         public async Task ShouldRegisterInstance()
         {
-            var odsInstances = new List<OdsInstance>();
+            var odsInstances = new List<Admin.DataAccess.Models.OdsInstance>();
             var service = GetFirstTimeSetupService(odsInstances);
 
             await service.CreateAdminAppInAdminDatabase("Test Claim Set", "Test Instance", "0.0");
@@ -33,7 +33,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Setup
         [Test]
         public async Task ShouldNotRegisterInstanceMoreThanOnce()
         {
-            var odsInstances = new List<OdsInstance>();
+            var odsInstances = new List<Admin.DataAccess.Models.OdsInstance>();
 
             var service = GetFirstTimeSetupService(odsInstances);
 
@@ -47,7 +47,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Setup
         [Test]
         public async Task ShouldRegisterInstanceAndApplicationWithoutEdOrgAssociationNonDistrictSpecificMode()
         {
-            var odsInstances = new List<OdsInstance>();
+            var odsInstances = new List<Admin.DataAccess.Models.OdsInstance>();
             var applications = new List<Application>();
 
             var service = GetFirstTimeSetupService(odsInstances, applications);
@@ -58,7 +58,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Setup
             applications.FirstOrDefault()?.ApplicationEducationOrganizations.Count.ShouldBe(0);
         }     
 
-        private static OnPremFirstTimeSetupService GetFirstTimeSetupService(List<OdsInstance> instances, List<Application> applications = null)
+        private static OnPremFirstTimeSetupService GetFirstTimeSetupService(List<Admin.DataAccess.Models.OdsInstance> instances, List<Application> applications = null)
         {
             var mockApplications = applications != null ? MockExtensions.MockDbSet(applications) : MockExtensions.EmptyMockDbSet<Application>();
            

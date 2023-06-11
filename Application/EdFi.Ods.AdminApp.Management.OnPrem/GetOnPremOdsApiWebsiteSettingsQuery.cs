@@ -10,7 +10,7 @@ namespace EdFi.Ods.AdminApp.Management.OnPrem
 {
     public class GetOnPremOdsApiWebsiteSettingsQuery : IGetCloudOdsApiWebsiteSettingsQuery
     {
-        public Task<CloudOdsApiWebsiteSettings> Execute(CloudOdsApiOperationContext context)
+        public Task<CloudOdsApiWebsiteSettings> Execute(OdsApiOperationContext context)
         {
             throw new System.NotImplementedException();
         }

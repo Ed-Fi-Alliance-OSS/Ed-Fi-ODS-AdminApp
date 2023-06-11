@@ -21,8 +21,8 @@ namespace EdFi.Ods.AdminApp.Management.OdsInstanceServices
         private readonly AdminAppDbContext _database;
         private readonly AppSettings _appSettings;
 
-        public OdsInstanceFirstTimeSetupService(IOdsSecretConfigurationProvider odsSecretConfigurationProvider, 
-            IFirstTimeSetupService firstTimeSetupService, 
+        public OdsInstanceFirstTimeSetupService(IOdsSecretConfigurationProvider odsSecretConfigurationProvider,
+            IFirstTimeSetupService firstTimeSetupService,
             IUsersContext usersContext,
             AdminAppDbContext database,
             IOptions<AppSettings> appSettings)
@@ -50,7 +50,7 @@ namespace EdFi.Ods.AdminApp.Management.OdsInstanceServices
                     _appSettings.AwsCurrentVersion);
 
             secretConfiguration.ProductionApiKeyAndSecret = applicationCreateResult.ProductionKeyAndSecret;
-         
+
             await _odsSecretConfigurationProvider.SetSecretConfiguration(secretConfiguration, odsInstanceRegistration.Id);
         }
 

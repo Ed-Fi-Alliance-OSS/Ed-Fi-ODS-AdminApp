@@ -83,18 +83,18 @@ namespace EdFi.Ods.AdminApp.Management
             return result;
         }
 
-        private OdsInstance CreateOdsInstance(string odsInstanceName, string odsInstanceVersion)
+        private Admin.DataAccess.Models.OdsInstance CreateOdsInstance(string odsInstanceName, string odsInstanceVersion)
         {
             var existingInstance = UsersContext.OdsInstances.SingleOrDefault(x => x.Name == odsInstanceName);
             if (existingInstance != null)
                 return existingInstance;
 
-            var instance = new OdsInstance
+            var instance = new Admin.DataAccess.Models.OdsInstance
             {
                 InstanceType = "CloudOds",
                 IsExtended = false,
                 Name = odsInstanceName,
-                Status = CloudOdsStatus.Ok.DisplayName,
+                Status = OdsStatus.Ok.DisplayName,
                 Version = odsInstanceVersion
             };
 
@@ -105,14 +105,14 @@ namespace EdFi.Ods.AdminApp.Management
 
         private Vendor CreateEdFiVendor()
         {
-            var existingVendor = UsersContext.Vendors.SingleOrDefault(x => x.VendorName.Equals(CloudOdsAdminApp.VendorName, StringComparison.InvariantCultureIgnoreCase));
+            var existingVendor = UsersContext.Vendors.SingleOrDefault(x => x.VendorName.Equals(OdsAdminApp.VendorName, StringComparison.InvariantCultureIgnoreCase));
             if (existingVendor != null)
                 return existingVendor;
 
             var vendor = new Vendor
             {
-                VendorNamespacePrefixes = new List<VendorNamespacePrefix> { new VendorNamespacePrefix { NamespacePrefix = CloudOdsAdminApp.VendorNamespacePrefix } },
-                VendorName = CloudOdsAdminApp.VendorName
+                VendorNamespacePrefixes = new List<VendorNamespacePrefix> { new VendorNamespacePrefix { NamespacePrefix = OdsAdminApp.VendorNamespacePrefix } },
+                VendorName = OdsAdminApp.VendorName
             };
 
             UsersContext.Vendors.Add(vendor);

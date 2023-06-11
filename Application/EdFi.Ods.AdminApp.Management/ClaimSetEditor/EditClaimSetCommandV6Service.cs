@@ -27,7 +27,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
             var existingClaimSet = _securityContext.ClaimSets.Single(x => x.ClaimSetId == claimSet.ClaimSetId);
 
             if (existingClaimSet.ForApplicationUseOnly || existingClaimSet.IsEdfiPreset ||
-                    CloudOdsAdminApp.SystemReservedClaimSets.Contains(existingClaimSet.ClaimSetName))
+                    OdsAdminApp.SystemReservedClaimSets.Contains(existingClaimSet.ClaimSetName))
             {
                 throw new AdminAppException($"Claim set ({existingClaimSet.ClaimSetName}) is system reserved.May not be modified.");
             }

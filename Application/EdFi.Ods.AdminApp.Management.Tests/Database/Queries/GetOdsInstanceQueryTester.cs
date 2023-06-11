@@ -19,13 +19,13 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries
         [Test]
         public void ShouldReturnOdsInstance()
         {
-            var odsInstanceData = new List<OdsInstance>
+            var odsInstanceData = new List<Admin.DataAccess.Models.OdsInstance>
             {
-                new OdsInstance
+                new Admin.DataAccess.Models.OdsInstance
                 {
                     Name = "Foo",
                     InstanceType = "Cloud",
-                    Status = CloudOdsStatus.Ok.DisplayName,
+                    Status = OdsStatus.Ok.DisplayName,
                     IsExtended = false,
                     Version = "0.0.1"
                 }
@@ -40,7 +40,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries
             var odsInstance = query.Execute("Foo");
             odsInstance.Name.ShouldBe("Foo");
             odsInstance.InstanceType.ShouldBe("Cloud");
-            odsInstance.Status.ShouldBe(CloudOdsStatus.Ok.DisplayName);
+            odsInstance.Status.ShouldBe(OdsStatus.Ok.DisplayName);
             odsInstance.IsExtended.ShouldBe(false);
             odsInstance.Version.ShouldBe("0.0.1");
         }

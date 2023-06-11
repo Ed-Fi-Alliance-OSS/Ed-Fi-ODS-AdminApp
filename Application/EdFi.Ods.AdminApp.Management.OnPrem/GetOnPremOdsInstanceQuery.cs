@@ -18,9 +18,9 @@ namespace EdFi.Ods.AdminApp.Management.OnPrem
             _appSettings = appSettingsAccessor.Value;
         }
 
-        public Task<CloudOdsInstance> Execute(string instanceName)
+        public Task<OdsInstance> Execute(string instanceName)
         {
-            return Task.FromResult(new CloudOdsInstance
+            return Task.FromResult(new OdsInstance
             {
                 FriendlyName = instanceName,
                 Version = _appSettings.AwsCurrentVersion //leaving "AWS" reference for config file compatibility with AWS distribution
