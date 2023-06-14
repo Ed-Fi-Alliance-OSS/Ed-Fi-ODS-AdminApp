@@ -128,9 +128,9 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         public async Task<ActionResult> Add(int vendorId)
-        {
-            var vendor = _getVendorByIdQuery.Execute(vendorId);
+        {            
             var apiFacade = await _odsApiFacadeFactory.Create();
+            var vendor = _getVendorByIdQuery.Execute(vendorId);
             var psis = apiFacade.GetAllPostSecondaryInstitutions().ToList();
             var schools = apiFacade.GetAllSchools().ToList();
             var profiles = _mapper.Map<List<ProfileModel>>(_getProfilesQuery.Execute());
