@@ -96,7 +96,7 @@ services:
     hostname: adminapp
     container_name: ed-fi-ods-adminapp
     healthcheck:
-      test: $$ADMINAPP_HEALTHCHECK_TEST
+      test: $ADMINAPP_HEALTHCHECK_TEST
       start_period: "60s"
       retries: 3
 
