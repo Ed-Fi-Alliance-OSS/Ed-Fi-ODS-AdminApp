@@ -12,19 +12,19 @@ using static EdFi.Ods.AdminApp.Management.Tests.Instance.InstanceTestSetup;
 namespace EdFi.Ods.AdminApp.Management.Tests.Instance
 {
     [TestFixture]
-    public class GetOdsInstanceRegistrationsQueryTests: AdminAppDataTestBase
+    public class GetOdsInstancesQueryTests : PlatformUsersContextTestBase
     {
         [TestCase(1)]
         [TestCase(5)]
         public void ShouldGetAdminAppOdsInstancesSortedByName(int instanceCount)
         {
-            ResetOdsInstanceRegistrations();
+            ResetOdsInstances();
 
-            var testInstances = SetupOdsInstanceRegistrations(instanceCount).OrderBy(x => x.Name).ToList();
+            var testInstances = SetupOdsInstances(instanceCount).OrderBy(x => x.Name).ToList();
 
             var results = Transaction(database =>
             {
-                var command = new GetOdsInstanceRegistrationsQuery(database);
+                var command = new GetOdsInstancesQuery(database);
 
                 return command.Execute().ToList();
             });
@@ -37,13 +37,13 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Instance
         [TestCase(5)]
         public void ShouldGetAdminAppOdsInstanceCount(int instanceCount)
         {
-            ResetOdsInstanceRegistrations();
+            ResetOdsInstances();
 
-            SetupOdsInstanceRegistrations(instanceCount).OrderBy(x => x.Name).ToList();
+            _ = SetupOdsInstances(instanceCount).OrderBy(x => x.Name).ToList();
 
             var result = Transaction(database =>
             {
-                var command = new GetOdsInstanceRegistrationsQuery(database);
+                var command = new GetOdsInstancesQuery(database);
 
                 return command.ExecuteCount();
             });
@@ -54,37 +54,33 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Instance
         [Test]
         public void ShouldGetAdminAppOdsInstanceById()
         {
-            var testInstance = SetupOdsInstanceRegistrations(1).Single();
+            var testInstance = SetupOdsInstances(1).Single();
 
             var result = Transaction(database =>
             {
-                var command = new GetOdsInstanceRegistrationsQuery(database);
+                var command = new GetOdsInstancesQuery(database);
 
-                return command.Execute(testInstance.Id);
+                return command.Execute(testInstance.OdsInstanceId);
             });
 
-            result.Id.ShouldBe(testInstance.Id);
+            result.OdsInstanceId.ShouldBe(testInstance.OdsInstanceId);
             result.Name.ShouldBe(testInstance.Name);
-            result.Description.ShouldBe(testInstance.Description);
-            result.DatabaseName.ShouldBe(testInstance.DatabaseName);
         }
 
         [Test]
         public void ShouldGetAdminAppOdsInstanceByName()
         {
-            var testInstance = SetupOdsInstanceRegistrations(1).Single();
+            var testInstance = SetupOdsInstances(1).Single();
 
             var result = Transaction(database =>
             {
-                var command = new GetOdsInstanceRegistrationsQuery(database);
+                var command = new GetOdsInstancesQuery(database);
 
                 return command.Execute(testInstance.Name);
             });
 
-            result.Id.ShouldBe(testInstance.Id);
+            result.OdsInstanceId.ShouldBe(testInstance.OdsInstanceId);
             result.Name.ShouldBe(testInstance.Name);
-            result.Description.ShouldBe(testInstance.Description);
-            result.DatabaseName.ShouldBe(testInstance.DatabaseName);
         }
     }
 }

@@ -7,8 +7,11 @@ using System;
 using System.Linq;
 using System.Runtime.Caching;
 using System.Threading.Tasks;
+using EdFi.Admin.DataAccess.Contexts;
+using EdFi.Admin.DataAccess.Models;
 using EdFi.Ods.AdminApp.Management.Database;
 using EdFi.Ods.AdminApp.Management.Database.Models;
+using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using Shouldly;
 using static EdFi.Ods.AdminApp.Management.Tests.Testing;
@@ -53,15 +56,15 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
 
             ClearSecretConfigurationCache();
 
-            var odsInstanceRegistration = CreateOdsInstanceRegistration("SingleInstance_" + Guid.NewGuid());
+            var odsInstance = CreateOdsInstance("SingleInstance_" + Guid.NewGuid());
 
-            odsInstanceRegistration.ShouldNotBeNull();
+            odsInstance.ShouldNotBeNull();
 
-            AddSecretConfiguration(JsonConfiguration, odsInstanceRegistration.Id);
+            AddSecretConfiguration(JsonConfiguration, odsInstance.OdsInstanceId);
 
-            var secretConfiguration = await GetSecretConfiguration(odsInstanceRegistration.Id);
+            var secretConfiguration = await GetSecretConfiguration(odsInstance.OdsInstanceId);
 
-            var record = GetSecretConfigurationRecord(odsInstanceRegistration.Id);
+            var record = GetSecretConfigurationRecord(odsInstance.OdsInstanceId);
             record.IsEncrypted.ShouldBe(false);
             record.EncryptedData.ShouldBe(JsonConfiguration);
 
@@ -78,31 +81,31 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
             const string JsonConfiguration2 =
                 "{\"ProductionApiKeyAndSecret\":{\"Key\":\"productionKey2\",\"Secret\":\"productionSecret2\"}}";
 
-            var odsInstanceRegistration1 = CreateOdsInstanceRegistration("MultiInstance1_" + Guid.NewGuid());
-            var odsInstanceRegistration2 = CreateOdsInstanceRegistration("MultiInstance2_" + Guid.NewGuid());
+            var odsInstance1 = CreateOdsInstance("MultiInstance1_" + Guid.NewGuid());
+            var odsInstance2 = CreateOdsInstance("MultiInstance2_" + Guid.NewGuid());
 
             ClearSecretConfigurationCache();
 
-            odsInstanceRegistration1.ShouldNotBeNull();
-            odsInstanceRegistration2.ShouldNotBeNull();
+            odsInstance1.ShouldNotBeNull();
+            odsInstance2.ShouldNotBeNull();
 
-            AddSecretConfiguration(JsonConfiguration1, odsInstanceRegistration1.Id);
+            AddSecretConfiguration(JsonConfiguration1, odsInstance1.OdsInstanceId);
 
             var secretConfigurationForInstance1 =
-                await GetSecretConfiguration(odsInstanceRegistration1.Id);
+                await GetSecretConfiguration(odsInstance1.OdsInstanceId);
 
-            var record = GetSecretConfigurationRecord(odsInstanceRegistration1.Id);
+            var record = GetSecretConfigurationRecord(odsInstance1.OdsInstanceId);
             record.IsEncrypted.ShouldBe(false);
             record.EncryptedData.ShouldBe(JsonConfiguration1);
 
             secretConfigurationForInstance1.ProductionApiKeyAndSecret.Key.ShouldBe("productionKey1");
             secretConfigurationForInstance1.ProductionApiKeyAndSecret.Secret.ShouldBe("productionSecret1");
 
-            AddSecretConfiguration(JsonConfiguration2, odsInstanceRegistration2.Id);
+            AddSecretConfiguration(JsonConfiguration2, odsInstance2.OdsInstanceId);
             var secretConfigurationForInstance2 =
-                await GetSecretConfiguration(odsInstanceRegistration2.Id);
+                await GetSecretConfiguration(odsInstance2.OdsInstanceId);
 
-            record = GetSecretConfigurationRecord(odsInstanceRegistration2.Id);
+            record = GetSecretConfigurationRecord(odsInstance2.OdsInstanceId);
             record.IsEncrypted.ShouldBe(false);
             record.EncryptedData.ShouldBe(JsonConfiguration2);
 
@@ -139,14 +142,14 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
                 }
             };
 
-            var odsInstanceRegistration = CreateOdsInstanceRegistration("SingleInstance-EditConfig_" + Guid.NewGuid());
+            var odsInstance = CreateOdsInstance("SingleInstance-EditConfig_" + Guid.NewGuid());
 
-            odsInstanceRegistration.ShouldNotBeNull();
+            odsInstance.ShouldNotBeNull();
             
-            await SetSecretConfiguration(secretConfiguration, odsInstanceRegistration.Id);
-            var createdSecretConfiguration = await GetSecretConfiguration(odsInstanceRegistration.Id);
+            await SetSecretConfiguration(secretConfiguration, odsInstance.OdsInstanceId);
+            var createdSecretConfiguration = await GetSecretConfiguration(odsInstance.OdsInstanceId);
 
-            var record = GetSecretConfigurationRecord(odsInstanceRegistration.Id);
+            var record = GetSecretConfigurationRecord(odsInstance.OdsInstanceId);
             record.IsEncrypted.ShouldBe(true);
             record.EncryptedData.ShouldEndWith("=");
 
@@ -154,11 +157,11 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
             createdSecretConfiguration.ProductionApiKeyAndSecret.Secret.ShouldBe(productionApiSecret);
 
 
-            await SetSecretConfiguration(editSecretConfiguration, odsInstanceRegistration.Id);
+            await SetSecretConfiguration(editSecretConfiguration, odsInstance.OdsInstanceId);
 
-            var editedSecretConfiguration = await GetSecretConfiguration(odsInstanceRegistration.Id);
+            var editedSecretConfiguration = await GetSecretConfiguration(odsInstance.OdsInstanceId);
 
-            record = GetSecretConfigurationRecord(odsInstanceRegistration.Id);
+            record = GetSecretConfigurationRecord(odsInstance.OdsInstanceId);
             record.IsEncrypted.ShouldBe(true);
             record.EncryptedData.ShouldEndWith("=");
 
@@ -195,32 +198,32 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
                 }
             };
 
-            var odsInstanceRegistration1 = CreateOdsInstanceRegistration("MultiInstance1-EditConfig_" + Guid.NewGuid());
-            var odsInstanceRegistration2 = CreateOdsInstanceRegistration("MultiInstance2-EditConfig_" + Guid.NewGuid());
+            var odsInstance1 = CreateOdsInstance("MultiInstance1-EditConfig_" + Guid.NewGuid());
+            var odsInstance2 = CreateOdsInstance("MultiInstance2-EditConfig_" + Guid.NewGuid());
 
-            odsInstanceRegistration1.ShouldNotBeNull();
-            odsInstanceRegistration2.ShouldNotBeNull();
+            odsInstance1.ShouldNotBeNull();
+            odsInstance2.ShouldNotBeNull();
 
             // Set secret configuration for instance 1
-            await SetSecretConfiguration(secretConfiguration, odsInstanceRegistration1.Id);
+            await SetSecretConfiguration(secretConfiguration, odsInstance1.OdsInstanceId);
 
             // Set secret configuration for instance 2
-            await SetSecretConfiguration(secretConfiguration, odsInstanceRegistration2.Id);
+            await SetSecretConfiguration(secretConfiguration, odsInstance2.OdsInstanceId);
 
             // Edit the secret configuration for instance 1
-            await SetSecretConfiguration(editSecretConfiguration, odsInstanceRegistration1.Id);
+            await SetSecretConfiguration(editSecretConfiguration, odsInstance1.OdsInstanceId);
 
             // Verify the secret configuration for instance 2
-            var createdSecretConfigurationForInstance2 = await GetSecretConfiguration(odsInstanceRegistration2.Id);
-            var record = GetSecretConfigurationRecord(odsInstanceRegistration2.Id);
+            var createdSecretConfigurationForInstance2 = await GetSecretConfiguration(odsInstance2.OdsInstanceId);
+            var record = GetSecretConfigurationRecord(odsInstance2.OdsInstanceId);
             record.IsEncrypted.ShouldBe(true);
             record.EncryptedData.ShouldEndWith("=");
             createdSecretConfigurationForInstance2.ProductionApiKeyAndSecret.Key.ShouldBe(productionApiKey);
             createdSecretConfigurationForInstance2.ProductionApiKeyAndSecret.Secret.ShouldBe(productionApiSecret);
 
             // Verify the edited secret configuration for instance 1
-            var editedSecretConfigurationForInstance1 = await GetSecretConfiguration(odsInstanceRegistration1.Id);
-            record = GetSecretConfigurationRecord(odsInstanceRegistration1.Id);
+            var editedSecretConfigurationForInstance1 = await GetSecretConfiguration(odsInstance1.OdsInstanceId);
+            record = GetSecretConfigurationRecord(odsInstance1.OdsInstanceId);
             record.IsEncrypted.ShouldBe(true);
             record.EncryptedData.ShouldEndWith("=");
             editedSecretConfigurationForInstance1.ProductionApiKeyAndSecret.Key.ShouldBe(newProductionApiKey);
@@ -238,7 +241,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
             });
         }
 
-        private void AddSecretConfiguration(string jsonConfigurationPlainText, int odsInstanceRegistrationId)
+        private void AddSecretConfiguration(string jsonConfigurationPlainText, int odsInstanceId)
         {
             Scoped<AdminAppDbContext>(database =>
             {
@@ -246,7 +249,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
                     new SecretConfiguration
                     {
                         EncryptedData = jsonConfigurationPlainText,
-                        OdsInstanceRegistrationId = odsInstanceRegistrationId,
+                        OdsInstanceId = odsInstanceId,
                         IsEncrypted = false
                     });
 
@@ -254,19 +257,27 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
             });
         }
 
-        private OdsInstanceRegistration CreateOdsInstanceRegistration(string instanceName)
+        private OdsInstance CreateOdsInstance(string instanceName)
         {
-            OdsInstanceRegistration createdOdsInstanceRegistration = null;
-            Scoped<AdminAppDbContext>(database =>
+            OdsInstance createdOdsInstance = null;
+            Scoped<IUsersContext>(database =>
             {
-                database.OdsInstanceRegistrations.Add(new OdsInstanceRegistration {Name = instanceName, DatabaseName = instanceName});
-                database.SaveChanges();
+                var dbContext = (SqlServerUsersContext)database;
+                dbContext.OdsInstances.Add(new OdsInstance {
+                    Name = instanceName,
+                    InstanceType = "OdsInstance",
+                    Status = "Active",
+                    IsExtended = false,
+                    Version = "1.0",
+                    ConnectionString = "Connection String"
+                });
+                dbContext.SaveChanges();
 
-                createdOdsInstanceRegistration =
-                    database.OdsInstanceRegistrations.FirstOrDefault(x => x.Name == instanceName);
+                createdOdsInstance =
+                    dbContext.OdsInstances.FirstOrDefault(x => x.Name == instanceName);
             });
 
-            return createdOdsInstanceRegistration;
+            return createdOdsInstance;
         }
 
         private void ClearSecretConfigurationCache()
@@ -278,7 +289,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
             }
         }
 
-        private static SecretConfiguration GetSecretConfigurationRecord(int odsInstanceRegistrationId)
-            => Query(db => db.SecretConfigurations.Single(x => x.OdsInstanceRegistrationId == odsInstanceRegistrationId));
+        private static SecretConfiguration GetSecretConfigurationRecord(int odsInstanceId)
+            => Query(db => db.SecretConfigurations.Single(x => x.OdsInstanceId == odsInstanceId));
     }
 }

@@ -21,21 +21,21 @@ namespace EdFi.Ods.AdminApp.Management.User
         {
             RemoveExistingUserRoles(userModel.UserId);
 
-            RemoveExistingUserOdsInstanceRegistrations(userModel.UserId);
+            RemoveExistingUserOdsInstances(userModel.UserId);
 
             _identity.Users.Remove(_identity.Users.Single(x => x.Id == userModel.UserId));
 
             _identity.SaveChanges();
         }
 
-        private void RemoveExistingUserOdsInstanceRegistrations(string userId)
+        private void RemoveExistingUserOdsInstances(string userId)
         {
-            var existingUserOdsInstanceRegistrations =
-                _identity.UserOdsInstanceRegistrations.Where(x => x.UserId == userId);
+            var existingUserOdsInstances =
+                _identity.UserOdsInstances.Where(x => x.UserId == userId);
 
-            if (existingUserOdsInstanceRegistrations.Any())
+            if (existingUserOdsInstances.Any())
             {
-                _identity.UserOdsInstanceRegistrations.RemoveRange(existingUserOdsInstanceRegistrations);
+                _identity.UserOdsInstances.RemoveRange(existingUserOdsInstances);
             }
 
             _identity.SaveChanges();

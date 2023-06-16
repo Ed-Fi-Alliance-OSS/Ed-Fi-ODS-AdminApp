@@ -30,20 +30,20 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         private readonly EditUserCommand _editUserCommand;
         private readonly DeleteUserCommand _deleteUserCommand;
         private readonly GetAdminAppUserByIdQuery _getAdminAppUserByIdQuery;
-        private readonly EditOdsInstanceRegistrationForUserCommand _editOdsInstanceRegistrationForUserCommand;
+        private readonly EditOdsInstanceForUserCommand _editOdsInstanceForUserCommand;
         private readonly EditUserRoleCommand _editUserRoleCommand;
         private readonly GetRoleForUserQuery _getRoleForUserQuery;
-        private readonly IGetOdsInstanceRegistrationsQuery _getOdsInstanceRegistrationsQuery;
+        private readonly IGetOdsInstancesQuery _getOdsInstancesQuery;
         private readonly ITabDisplayService _tabDisplayService;
 
         public UserController(AddUserCommand addUserCommand
             , EditUserCommand editUserCommand
             , DeleteUserCommand deleteUserCommand
             , GetAdminAppUserByIdQuery getAdminAppUserByIdQuery
-            , EditOdsInstanceRegistrationForUserCommand editOdsInstanceRegistrationForUserCommand
+            , EditOdsInstanceForUserCommand editOdsInstanceForUserCommand
             , EditUserRoleCommand editUserRoleCommand
             , GetRoleForUserQuery getRoleForUserQuery
-            , IGetOdsInstanceRegistrationsQuery getOdsInstanceRegistrationsQuery
+            , IGetOdsInstancesQuery getOdsInstancesQuery
             , ITabDisplayService tabDisplayService
             , SignInManager<AdminAppUser> signInManager
             , UserManager<AdminAppUser> userManager
@@ -53,10 +53,10 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _editUserCommand = editUserCommand;
             _deleteUserCommand = deleteUserCommand;
             _getAdminAppUserByIdQuery = getAdminAppUserByIdQuery;
-            _editOdsInstanceRegistrationForUserCommand = editOdsInstanceRegistrationForUserCommand;
+            _editOdsInstanceForUserCommand = editOdsInstanceForUserCommand;
             _editUserRoleCommand = editUserRoleCommand;
             _getRoleForUserQuery = getRoleForUserQuery;
-            _getOdsInstanceRegistrationsQuery = getOdsInstanceRegistrationsQuery;
+            _getOdsInstancesQuery = getOdsInstancesQuery;
             _tabDisplayService = tabDisplayService;            
 
             SignInManager = signInManager;
