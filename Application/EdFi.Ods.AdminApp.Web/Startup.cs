@@ -383,29 +383,6 @@ namespace EdFi.Ods.AdminApp.Web
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-                if (!env.IsProduction())
-                {
-                    endpoints.MapPost(
-                        "/development-product-registration-sink", async context =>
-                        {
-                            using var reader = new StreamReader(context.Request.Body);
-
-                            var body = await reader.ReadToEndAsync();
-
-                            var logger = LogManager.GetLogger(typeof(Startup));
-                            logger.Debug($"Development Product Registration Sink Received Message: {Environment.NewLine}{body}");
-
-                            var model = JsonConvert.DeserializeObject<ProductRegistrationModel>(body);
-
-                            context.Response.StatusCode = (int)HttpStatusCode.OK;
-
-                            await context.Response.WriteAsync(
-                                "Development Product Registration Sink received registration " +
-                                $"notification with ProductRegistrationId {model.ProductRegistrationId}. " +
-                                "This notification will NOT be reported to the Production registration endpoint.");
-                        });
-                }
-
                 endpoints.MapHealthChecks("/health");
             });
         }
