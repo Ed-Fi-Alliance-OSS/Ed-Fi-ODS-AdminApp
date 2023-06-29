@@ -7,7 +7,7 @@ import { AdminAppPage } from "./adminAppPage";
 
 export class FirstTimeSetupPage extends AdminAppPage {
     continueBtn = "a#finish-setup-link";
-    edfiODS = "text=EdFi ODS";
+    edfiODS = "#ods-instances > table > tbody > tr:nth-child(1) > th > a";
     odsInstances = "text=Ods Instances";
 
     path(): string {
