@@ -22,5 +22,6 @@ namespace EdFi.Ods.AdminApp.Management.Helpers
         public string Log4NetConfigPath { get; set; }
         public string EncryptionKey { get; set; }
         public string ProductRegistrationUrl { get; set; }
+
     }
 }
