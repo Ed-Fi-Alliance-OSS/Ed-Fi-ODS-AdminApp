@@ -1,0 +1,1363 @@
+{
+  "$schema": "http://json.schemastore.org/sarif-1.0.0",
+  "version": "1.0.0",
+  "runs": [
+    {
+      "tool": {
+        "name": "Compilador de Microsoft (R) Visual C#",
+        "version": "4.7.0.0",
+        "fileVersion": "4.7.0-3.23366.1 (dad7898a)",
+        "semanticVersion": "4.7.0",
+        "language": "es-MX"
+      },
+      "results": [
+        {
+          "ruleId": "CA1050",
+          "level": "note",
+          "message": "Declarar tipos en espacios de nombres",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/SetUpFixture.cs",
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 14,
+                  "endLine": 10,
+                  "endColumn": 26
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1050",
+          "level": "note",
+          "message": "Declarar tipos en espacios de nombres",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/ClaimSetEditor/GetResourceClaims53Query.cs",
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 14,
+                  "endLine": 7,
+                  "endColumn": 38
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA2211",
+          "level": "note",
+          "message": "Los campos no constantes no deben ser visibles",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/Database/Queries/Ods/OdsDataTestBase.cs",
+                "region": {
+                  "startLine": 543,
+                  "startColumn": 30,
+                  "endLine": 543,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA2211",
+          "level": "note",
+          "message": "Los campos no constantes no deben ser visibles",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/Database/Queries/Ods/OdsDataTestBase.cs",
+                "region": {
+                  "startLine": 23,
+                  "startColumn": 52,
+                  "endLine": 23,
+                  "endColumn": 74
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"Transaction\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/AdminAppDataTestBase.cs",
+                "region": {
+                  "startLine": 66,
+                  "startColumn": 24,
+                  "endLine": 66,
+                  "endColumn": 35
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"ConnectionString\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/AdminAppDataTestBase.cs",
+                "region": {
+                  "startLine": 32,
+                  "startColumn": 24,
+                  "endLine": 32,
+                  "endColumn": 40
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1829",
+          "level": "note",
+          "message": "Use la propiedad \"Count\" en lugar de Enumerable.Count().",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/ClaimSetEditor/UpdateResourcesOnClaimSetCommandV6ServiceTests.cs",
+                "region": {
+                  "startLine": 47,
+                  "startColumn": 13,
+                  "endLine": 47,
+                  "endColumn": 51
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1,
+            "customProperties": {
+              "PropertyNameKey": "Count"
+            }
+          }
+        },
+        {
+          "ruleId": "S2699",
+          "level": "warning",
+          "message": "Add at least one assertion to this test case.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/Configuration/Configuration/ApplicationConfigurationServiceTests.cs",
+                "region": {
+                  "startLine": 43,
+                  "startColumn": 21,
+                  "endLine": 43,
+                  "endColumn": 81
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "S2699",
+          "level": "warning",
+          "message": "Add at least one assertion to this test case.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/Configuration/Claims/CloudOdsClaimSetConfiguratorTester.cs",
+                "region": {
+                  "startLine": 109,
+                  "startColumn": 21,
+                  "endLine": 109,
+                  "endColumn": 58
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1829",
+          "level": "note",
+          "message": "Use la propiedad \"Count\" en lugar de Enumerable.Count().",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/ClaimSetEditor/UpdateResourcesOnClaimSetCommandV53ServiceTests.cs",
+                "region": {
+                  "startLine": 43,
+                  "startColumn": 13,
+                  "endLine": 43,
+                  "endColumn": 51
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1,
+            "customProperties": {
+              "PropertyNameKey": "Count"
+            }
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"AddSecretConfiguration\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/Configuration/Configuration/OdsSecretConfigurationProviderTests.cs",
+                "region": {
+                  "startLine": 244,
+                  "startColumn": 22,
+                  "endLine": 244,
+                  "endColumn": 44
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"CreateOdsInstance\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/Configuration/Configuration/OdsSecretConfigurationProviderTests.cs",
+                "region": {
+                  "startLine": 260,
+                  "startColumn": 29,
+                  "endLine": 260,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"EnsureZeroSecretConfigurations\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/Configuration/Configuration/OdsSecretConfigurationProviderTests.cs",
+                "region": {
+                  "startLine": 233,
+                  "startColumn": 22,
+                  "endLine": 233,
+                  "endColumn": 52
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"CreateProgram\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/Database/Queries/Ods/OdsDataTestBase.cs",
+                "region": {
+                  "startLine": 85,
+                  "startColumn": 21,
+                  "endLine": 85,
+                  "endColumn": 34
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"SetupOverridesForResourceCreateAction\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/ClaimSetEditor/ResetToDefaultAuthStrategyCommandV6ServiceTests.cs",
+                "region": {
+                  "startLine": 204,
+                  "startColumn": 22,
+                  "endLine": 204,
+                  "endColumn": 59
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"EnrollStudentInProgram\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/Database/Queries/Ods/OdsDataTestBase.cs",
+                "region": {
+                  "startLine": 101,
+                  "startColumn": 21,
+                  "endLine": 101,
+                  "endColumn": 43
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"SetStudentRace\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/Database/Queries/Ods/OdsDataTestBase.cs",
+                "region": {
+                  "startLine": 189,
+                  "startColumn": 21,
+                  "endLine": 189,
+                  "endColumn": 35
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"SetSchoolCategoryDescriptor\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/Database/Queries/Ods/OdsDataTestBase.cs",
+                "region": {
+                  "startLine": 255,
+                  "startColumn": 21,
+                  "endLine": 255,
+                  "endColumn": 48
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"GetClaimSet\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/Database/Queries/GetClaimSetNamesQueryTests.cs",
+                "region": {
+                  "startLine": 96,
+                  "startColumn": 26,
+                  "endLine": 96,
+                  "endColumn": 37
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"GetNewDescriptorId\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/Database/Queries/Ods/OdsDataTestBase.cs",
+                "region": {
+                  "startLine": 433,
+                  "startColumn": 20,
+                  "endLine": 433,
+                  "endColumn": 38
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"Run\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/Infrastructure/CloudOdsApiConnectionInformationProviderTests/WhenGettingApiCredentials.cs",
+                "region": {
+                  "startLine": 34,
+                  "startColumn": 47,
+                  "endLine": 34,
+                  "endColumn": 50
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"SetupOverridesForResourceCreateAction\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/ClaimSetEditor/ResetToDefaultAuthStrategyCommandV53ServiceTests.cs",
+                "region": {
+                  "startLine": 201,
+                  "startColumn": 22,
+                  "endLine": 201,
+                  "endColumn": 59
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"ShouldNotCreateUserWithNoProviderKey\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/User/OpenIdConnectLoginServiceTests.cs",
+                "region": {
+                  "startLine": 133,
+                  "startColumn": 27,
+                  "endLine": 133,
+                  "endColumn": 63
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"ShouldNotCreateIfUserHasNoEmail\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/User/OpenIdConnectLoginServiceTests.cs",
+                "region": {
+                  "startLine": 139,
+                  "startColumn": 27,
+                  "endLine": 139,
+                  "endColumn": 58
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"ShouldNotCreateIfProviderIsNotSet\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/User/OpenIdConnectLoginServiceTests.cs",
+                "region": {
+                  "startLine": 145,
+                  "startColumn": 27,
+                  "endLine": 145,
+                  "endColumn": 60
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"CreateProfile\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/Database/Queries/GetProfilesQueryTests.cs",
+                "region": {
+                  "startLine": 41,
+                  "startColumn": 25,
+                  "endLine": 41,
+                  "endColumn": 38
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"Transaction\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/PlatformUsersContextTestBase.cs",
+                "region": {
+                  "startLine": 60,
+                  "startColumn": 24,
+                  "endLine": 60,
+                  "endColumn": 35
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"ConnectionString\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/PlatformUsersContextTestBase.cs",
+                "region": {
+                  "startLine": 31,
+                  "startColumn": 26,
+                  "endLine": 31,
+                  "endColumn": 42
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"UniqueNameList\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/SecurityDataTestBase.cs",
+                "region": {
+                  "startLine": 205,
+                  "startColumn": 30,
+                  "endLine": 205,
+                  "endColumn": 44
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"Mapper\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/SecurityData53TestBase.cs",
+                "region": {
+                  "startLine": 289,
+                  "startColumn": 25,
+                  "endLine": 289,
+                  "endColumn": 31
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"Mapper\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/SecurityDataTestBase.cs",
+                "region": {
+                  "startLine": 315,
+                  "startColumn": 25,
+                  "endLine": 315,
+                  "endColumn": 31
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "S2699",
+          "level": "warning",
+          "message": "Add at least one assertion to this test case.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/User/EditOdsInstanceRegistrationForUserCommandTests.cs",
+                "region": {
+                  "startLine": 26,
+                  "startColumn": 21,
+                  "endLine": 26,
+                  "endColumn": 49
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "S2699",
+          "level": "warning",
+          "message": "Add at least one assertion to this test case.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/User/EditOdsInstanceRegistrationForUserCommandTests.cs",
+                "region": {
+                  "startLine": 57,
+                  "startColumn": 21,
+                  "endLine": 57,
+                  "endColumn": 52
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1825",
+          "level": "note",
+          "message": "Evite las asignaciones de matriz de longitud cero innecesarias.  Use Array.Empty<string>() en su lugar.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/Testing.cs",
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 61,
+                  "endLine": 16,
+                  "endColumn": 77
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1829",
+          "level": "note",
+          "message": "Use la propiedad \"Length\" en lugar de Enumerable.Count().",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/ClaimSetEditor/ClaimSetFileImportCommandTests.cs",
+                "region": {
+                  "startLine": 92,
+                  "startColumn": 13,
+                  "endLine": 92,
+                  "endColumn": 34
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1,
+            "customProperties": {
+              "PropertyNameKey": "Length"
+            }
+          }
+        },
+        {
+          "ruleId": "CA1829",
+          "level": "note",
+          "message": "Use la propiedad \"Count\" en lugar de Enumerable.Count().",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/Controllers/EducationOrganizationsControllerTests.cs",
+                "region": {
+                  "startLine": 604,
+                  "startColumn": 13,
+                  "endLine": 604,
+                  "endColumn": 55
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1,
+            "customProperties": {
+              "PropertyNameKey": "Count"
+            }
+          }
+        },
+        {
+          "ruleId": "CA1826",
+          "level": "note",
+          "message": "No utilice métodos Enumerable en colecciones indexables. Use la colección directamente.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/Controllers/EducationOrganizationsControllerTests.cs",
+                "region": {
+                  "startLine": 604,
+                  "startColumn": 13,
+                  "endLine": 604,
+                  "endColumn": 55
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1,
+            "customProperties": {
+              "method": "Count"
+            }
+          }
+        },
+        {
+          "ruleId": "CA1829",
+          "level": "note",
+          "message": "Use la propiedad \"Count\" en lugar de Enumerable.Count().",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/Controllers/EducationOrganizationsControllerTests.cs",
+                "region": {
+                  "startLine": 684,
+                  "startColumn": 13,
+                  "endLine": 684,
+                  "endColumn": 58
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1,
+            "customProperties": {
+              "PropertyNameKey": "Count"
+            }
+          }
+        },
+        {
+          "ruleId": "CA1826",
+          "level": "note",
+          "message": "No utilice métodos Enumerable en colecciones indexables. Use la colección directamente.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/Controllers/EducationOrganizationsControllerTests.cs",
+                "region": {
+                  "startLine": 684,
+                  "startColumn": 13,
+                  "endLine": 684,
+                  "endColumn": 58
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1,
+            "customProperties": {
+              "method": "Count"
+            }
+          }
+        },
+        {
+          "ruleId": "CA1829",
+          "level": "note",
+          "message": "Use la propiedad \"Length\" en lugar de Enumerable.Count().",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/ClaimSetEditor/ClaimSetFileImportCommandTests.cs",
+                "region": {
+                  "startLine": 194,
+                  "startColumn": 13,
+                  "endLine": 194,
+                  "endColumn": 34
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1,
+            "customProperties": {
+              "PropertyNameKey": "Length"
+            }
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"ClaimSetByIdQuery\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/ClaimSetEditor/DeleteClaimSetCommandV6ServiceTests.cs",
+                "region": {
+                  "startLine": 187,
+                  "startColumn": 38,
+                  "endLine": 187,
+                  "endColumn": 55
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1829",
+          "level": "note",
+          "message": "Use la propiedad \"Count\" en lugar de Enumerable.Count().",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/ClaimSetEditor/EditClaimSetCommandV53ServiceTests.cs",
+                "region": {
+                  "startLine": 136,
+                  "startColumn": 46,
+                  "endLine": 136,
+                  "endColumn": 70
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1,
+            "customProperties": {
+              "PropertyNameKey": "Count"
+            }
+          }
+        },
+        {
+          "ruleId": "CA1829",
+          "level": "note",
+          "message": "Use la propiedad \"Count\" en lugar de Enumerable.Count().",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/ClaimSetEditor/EditClaimSetCommandV6ServiceTests.cs",
+                "region": {
+                  "startLine": 135,
+                  "startColumn": 46,
+                  "endLine": 135,
+                  "endColumn": 70
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1,
+            "customProperties": {
+              "PropertyNameKey": "Count"
+            }
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"SetupVendorApplicationsForClaimSet\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/ClaimSetEditor/EditClaimSetCommandV53ServiceTests.cs",
+                "region": {
+                  "startLine": 112,
+                  "startColumn": 22,
+                  "endLine": 112,
+                  "endColumn": 56
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"AssertApplicationsForClaimSet\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/ClaimSetEditor/EditClaimSetCommandV53ServiceTests.cs",
+                "region": {
+                  "startLine": 129,
+                  "startColumn": 22,
+                  "endLine": 129,
+                  "endColumn": 51
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"AllClaimSetsQuery\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/ClaimSetEditor/EditClaimSetCommandV53ServiceTests.cs",
+                "region": {
+                  "startLine": 213,
+                  "startColumn": 39,
+                  "endLine": 213,
+                  "endColumn": 56
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"ClaimSetByIdQuery\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/ClaimSetEditor/EditClaimSetCommandV53ServiceTests.cs",
+                "region": {
+                  "startLine": 210,
+                  "startColumn": 38,
+                  "endLine": 210,
+                  "endColumn": 55
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"ClaimSetByIdQuery\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/ClaimSetEditor/DeleteClaimSetCommandV53ServiceTests.cs",
+                "region": {
+                  "startLine": 190,
+                  "startColumn": 38,
+                  "endLine": 190,
+                  "endColumn": 55
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1829",
+          "level": "note",
+          "message": "Use la propiedad \"Length\" en lugar de Enumerable.Count().",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/ClaimSetEditor/ClaimSetFileImportCommandTests.cs",
+                "region": {
+                  "startLine": 326,
+                  "startColumn": 13,
+                  "endLine": 326,
+                  "endColumn": 34
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1,
+            "customProperties": {
+              "PropertyNameKey": "Length"
+            }
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"Command\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/ClaimSetEditor/ClaimSetFileImportCommandTests.cs",
+                "region": {
+                  "startLine": 520,
+                  "startColumn": 43,
+                  "endLine": 520,
+                  "endColumn": 50
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"MatchActions\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/ClaimSetEditor/ClaimSetFileImportCommandTests.cs",
+                "region": {
+                  "startLine": 367,
+                  "startColumn": 22,
+                  "endLine": 367,
+                  "endColumn": 34
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"SetupVendorApplicationsForClaimSet\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/ClaimSetEditor/EditClaimSetCommandV6ServiceTests.cs",
+                "region": {
+                  "startLine": 111,
+                  "startColumn": 22,
+                  "endLine": 111,
+                  "endColumn": 56
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"AllClaimSetsQuery\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/ClaimSetEditor/EditClaimSetCommandV6ServiceTests.cs",
+                "region": {
+                  "startLine": 212,
+                  "startColumn": 39,
+                  "endLine": 212,
+                  "endColumn": 56
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"ClaimSetByIdQuery\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/ClaimSetEditor/EditClaimSetCommandV6ServiceTests.cs",
+                "region": {
+                  "startLine": 209,
+                  "startColumn": 38,
+                  "endLine": 209,
+                  "endColumn": 55
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "El miembro \"AssertApplicationsForClaimSet\" no tiene acceso a los datos de la instancia y se puede marcar como static.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/ClaimSetEditor/EditClaimSetCommandV6ServiceTests.cs",
+                "region": {
+                  "startLine": 128,
+                  "startColumn": 22,
+                  "endLine": 128,
+                  "endColumn": 51
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1829",
+          "level": "note",
+          "message": "Use la propiedad \"Count\" en lugar de Enumerable.Count().",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/Controllers/EducationOrganizationsControllerTests.cs",
+                "region": {
+                  "startLine": 759,
+                  "startColumn": 13,
+                  "endLine": 759,
+                  "endColumn": 58
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1,
+            "customProperties": {
+              "PropertyNameKey": "Count"
+            }
+          }
+        },
+        {
+          "ruleId": "CA1826",
+          "level": "note",
+          "message": "No utilice métodos Enumerable en colecciones indexables. Use la colección directamente.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Git/Ed-Fi-ODS-AdminApp/Application/EdFi.Ods.AdminApp.Management.Tests/Controllers/EducationOrganizationsControllerTests.cs",
+                "region": {
+                  "startLine": 759,
+                  "startColumn": 13,
+                  "endLine": 759,
+                  "endColumn": 58
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1,
+            "customProperties": {
+              "method": "Count"
+            }
+          }
+        }
+      ],
+      "rules": {
+        "CA1050": {
+          "id": "CA1050",
+          "shortDescription": "Declarar tipos en espacios de nombres",
+          "fullDescription": "Los tipos se declaran en los espacios de nombres para evitar conflictos de nombre y como forma de organizar los tipos relacionados en una jerarquía de objetos.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1050",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": true,
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1822": {
+          "id": "CA1822",
+          "shortDescription": "Marcar miembros como static",
+          "fullDescription": "Los miembros que no tienen acceso a datos de instancia o que llaman a métodos de instancia se pueden marcar como static. Después de marcar los métodos como static, el compilador emitirá los sitios de llamada no virtuales para estos miembros. Esto puede proporcionar una mejora apreciable del rendimiento del código sensible al rendimiento.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1822",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1825": {
+          "id": "CA1825",
+          "shortDescription": "Evite las asignaciones de matriz de longitud cero",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1825",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1826": {
+          "id": "CA1826",
+          "shortDescription": "No usar métodos Enumerable en las colecciones indexables",
+          "fullDescription": "Esta colección es directamente indexable. Pasar por LINQ en este caso genera asignaciones y trabajo de CPU innecesarios.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1826",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1829": {
+          "id": "CA1829",
+          "shortDescription": "Usar la propiedad Length/Count en lugar de Count() cuando esté disponible",
+          "fullDescription": "Enumerable.Count() posiblemente enumera la secuencia, mientras que una propiedad Length/Count es un acceso directo.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1829",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA2211": {
+          "id": "CA2211",
+          "shortDescription": "Los campos no constantes no deben ser visibles",
+          "fullDescription": "Los campos estáticos que no son constantes ni de solo lectura no son seguros para los subprocesos. El acceso a campos de este tipo se debe controlar atentamente y requiere técnicas de programación avanzadas para sincronizar el acceso al objeto de clase.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2211",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "S2699": {
+          "id": "S2699",
+          "shortDescription": "Tests should include assertions",
+          "fullDescription": "The rule targets test methods that lack an assertion and consist solely of an action and, optionally, a setup.",
+          "defaultLevel": "warning",
+          "helpUri": "https://rules.sonarsource.com/csharp/RSPEC-2699",
+          "properties": {
+            "category": "Blocker Code Smell",
+            "isEnabledByDefault": true,
+            "tags": [
+              "C#",
+              "TestSourceScope",
+              "SonarWay"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

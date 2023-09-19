@@ -57,7 +57,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                         <th scope="col">Create</th>
                         <th scope="col">Update</th>
                         <th scope="col">Delete</th>
-                        <th scope="col"></th>
+                        <th scope="col">Read Changes</th>
                         <th scope="col"></th>
                     </tr>
                     </thead>
@@ -75,6 +75,9 @@ See the LICENSE and NOTICES files in the project root for more information.
 
                          var authStrategyOverridesForDelete = Model.ResourceClaim.AuthStrategyOverridesForCRUD.Delete();
                          var defaultAuthStrategyForDelete = Model.ResourceClaim.DefaultAuthStrategiesForCRUD.Delete();
+
+						 var authStrategyOverridesForReadChanges = Model.ResourceClaim.AuthStrategyOverridesForCRUD.ReadChanges();
+						 var defaultAuthStrategyForReadChanges = Model.ResourceClaim.DefaultAuthStrategiesForCRUD.ReadChanges();
 
                         <tr class="parent-resource-claim">
                             <td class="icon-cell"></td>
@@ -183,6 +186,32 @@ See the LICENSE and NOTICES files in the project root for more information.
                                     }
                                 }
                             </td>
+								<td class="readchanges-action-cell" data-existing-action='@Model.ResourceClaim.ReadChanges'>
+									@if (authStrategyOverridesForReadChanges != null)
+									{
+										<span data-is-inherited="@authStrategyOverridesForReadChanges.IsInheritedFromParent" data-default-strategy='@defaultAuthStrategyForReadChanges.DisplayName'>@authStrategyOverridesForReadChanges.DisplayName</span>
+										if (authStrategyOverridesForReadChanges.IsInheritedFromParent)
+										{
+											<span class="overridden-strategy inherited-override">(Overridden)</span>
+										}
+										else
+										{
+											<span class="overridden-strategy">(Overridden)</span>
+										}
+									}
+									else if (defaultAuthStrategyForReadChanges != null)
+									{
+										<span data-is-inherited="@defaultAuthStrategyForReadChanges.IsInheritedFromParent" data-default-strategy='@defaultAuthStrategyForReadChanges.DisplayName'>@defaultAuthStrategyForReadChanges.DisplayName</span>
+										if (defaultAuthStrategyForReadChanges.IsInheritedFromParent)
+										{
+											<span class="default-strategy inherited-strategy">(Default)</span>
+										}
+										else
+										{
+											<span class="default-strategy">(Default)</span>
+										}
+									}
+								</td>
                             <td>
                                 <a class="override-auth"> <span class="fa fa-pencil action-icons"></span></a>
                             </td>

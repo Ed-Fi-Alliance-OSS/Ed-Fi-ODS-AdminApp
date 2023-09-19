@@ -1,4 +1,4 @@
-﻿@*
+@*
 SPDX-License-Identifier: Apache-2.0
 Licensed to the Ed-Fi Alliance under one or more agreements.
 The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
@@ -54,6 +54,7 @@ else
                 <th scope="col">Create</th>
                 <th scope="col">Update</th>
                 <th scope="col">Delete</th>
+				<th scope="col">Read Changes</th>
             </tr>
         </thead>
         <tbody>
@@ -77,6 +78,9 @@ else
                     <td>
                         @Html.CheckBoxSquare(resourceClaim.Delete, "delete")
                     </td>
+					<td>
+						@Html.CheckBoxSquare(resourceClaim.ReadChanges, "readchanges")
+					</td>
                 </tr>
 
                 foreach (var childResourceClaim in resourceClaim.Children)
@@ -98,6 +102,9 @@ else
                         <td>
                             @Html.CheckBoxSquare(childResourceClaim.Delete, "delete")
                         </td>
+						<td>
+							@Html.CheckBoxSquare(childResourceClaim.ReadChanges, "readchanges")
+						</td>
                     </tr>
                 }
             }

@@ -20,7 +20,7 @@ var buildResourceTableRow = function buildResourceTableRow(resourceName, resourc
         iconCell = '  <td class="icon-cell"><a class="claims-toggle"><span class="fa fa-chevron-down caret-custom"></span></a></td>';
     }
 
-    var $tableRow = $([rowString, iconCell, resourceCell, '  <td class="read-action-cell"><label><input type="checkbox" class="hide read-checkbox"><i class="fa fa-fw fa-check-square"></i></label></td>', '  <td class="create-action-cell"><label><input type="checkbox" class="hide create-checkbox"><i class="fa fa-fw fa-check-square"></i></label></td>', '  <td class="update-action-cell"><label><input type="checkbox" class="hide update-checkbox"><i class="fa fa-fw fa-check-square"></i></label></td>', '  <td class="delete-action-cell"><label><input type="checkbox" class="hide delete-checkbox"><i class="fa fa-fw fa-check-square"></i></label></td>', '<td class="edit-resource-button">'.concat(editCell, "</td>"), '  <td><a class="override-auth-strategy" hidden> <span class="fa fa-info-circle action-icons"></span></a></td>', '  <td><a class="delete-resource"> <span class="fa fa-trash-o action-icons"></span></a></td>', "</tr>"].join("\n"));
+    var $tableRow = $([rowString, iconCell, resourceCell, '  <td class="read-action-cell"><label><input type="checkbox" class="hide read-checkbox"><i class="fa fa-fw fa-check-square"></i></label></td>', '  <td class="create-action-cell"><label><input type="checkbox" class="hide create-checkbox"><i class="fa fa-fw fa-check-square"></i></label></td>', '  <td class="update-action-cell"><label><input type="checkbox" class="hide update-checkbox"><i class="fa fa-fw fa-check-square"></i></label></td>', '  <td class="delete-action-cell"><label><input type="checkbox" class="hide delete-checkbox"><i class="fa fa-fw fa-check-square"></i></label></td>', '  <td class="readchanges-action-cell"><label><input type="checkbox" class="hide readchanges-checkbox"><i class="fa fa-fw fa-check-square"></i></label></td>' ,'<td class="edit-resource-button">'.concat(editCell, "</td>"), '  <td><a class="override-auth-strategy" hidden> <span class="fa fa-info-circle action-icons"></span></a></td>', '  <td><a class="delete-resource"> <span class="fa fa-trash-o action-icons"></span></a></td>', "</tr>"].join("\n"));
     $tableRow.find(".edit-resource-check").click(saveEditedResource);
     $tableRow.find(".delete-resource").click(deleteResource);
     $tableRow.find(".claims-toggle").click(claimsToggle);
@@ -62,6 +62,7 @@ var editResource = function editResource(e) {
     updateCheckbox(row, "read");
     updateCheckbox(row, "update");
     updateCheckbox(row, "delete");
+    updateCheckbox(row, "readchanges");
     disableForEdit(row);
     row.find("a.edit-resource").replaceWith('<a class="edit-resource-check"> <span class="fa fa-check action-icons"></span></a>');
     row.find(".edit-resource-check").click(saveEditedResource);
@@ -86,7 +87,7 @@ var disableForEdit = function(editRow) {
 
     enableCellsForRow(editRow,
         [
-            "read-action-cell", "create-action-cell", "update-action-cell", "delete-action-cell",
+            "read-action-cell", "create-action-cell", "update-action-cell", "delete-action-cell", "readchanges-action-cell", 
             "edit-resource-button", "resource-label"
         ]);
 
@@ -199,7 +200,8 @@ var saveEditedResource = function saveEditedResource() {
         "read": row.find("input:checkbox.read-checkbox")[0].checked,
         "create": row.find("input:checkbox.create-checkbox")[0].checked,
         "update": row.find("input:checkbox.update-checkbox")[0].checked,
-        "delete": row.find("input:checkbox.delete-checkbox")[0].checked
+        "delete": row.find("input:checkbox.delete-checkbox")[0].checked,
+        "readchanges": row.find("input:checkbox.readchanges-checkbox")[0].checked
     };
     var url = editResourceUrl;
     var postData = {

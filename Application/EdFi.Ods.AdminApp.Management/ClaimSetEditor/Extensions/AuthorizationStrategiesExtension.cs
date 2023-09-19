@@ -29,6 +29,11 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor.Extensions
             return authorizationStrategies[3];
         }
 
+        public static AuthorizationStrategy ReadChanges(this AuthorizationStrategy[] authorizationStrategies)
+        {
+            return authorizationStrategies[4];
+        }
+
         public static AuthorizationStrategy[] AddAuthorizationStrategyOverrides(this AuthorizationStrategy[] authorizationStrategies,
             string actionName, AuthorizationStrategy strategy)
         {
@@ -40,6 +45,8 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor.Extensions
                 authorizationStrategies[2] = strategy;
             else if (actionName == Action.Delete.Value)
                 authorizationStrategies[3] = strategy;
+            else if (actionName == Action.ReadChanges.Value)
+                authorizationStrategies[4] = strategy;
 
             return authorizationStrategies;
         }

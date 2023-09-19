@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: Apache-2.0
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
@@ -55,11 +55,13 @@ var updateRowAfterEdit = function (row, resourceUpdateUrl) {
             var createCell = row.find(".create-action-cell");
             var updateCell = row.find(".update-action-cell");
             var deleteCell = row.find(".delete-action-cell");
+            var readChangesCell = row.find(".readchanges-action-cell");
             var editCell = row.find("a.edit-resource-check");
             updateCellAfterEdit(readCell, defaultStrategies[1], authStrategyOverrides[1]);
             updateCellAfterEdit(createCell, defaultStrategies[0], authStrategyOverrides[0]);
             updateCellAfterEdit(updateCell, defaultStrategies[2], authStrategyOverrides[2]);
             updateCellAfterEdit(deleteCell, defaultStrategies[3], authStrategyOverrides[3]);
+            updateCellAfterEdit(readChangesCell, defaultStrategies[4], authStrategyOverrides[4]);
             if (editCell != null) {
                 row.find("a.edit-resource-check").replaceWith('<a class="override-auth"> <span class="fa fa-pencil action-icons"></span></a>');
                 row.find(".override-auth").click(overrideAuth);
@@ -107,17 +109,20 @@ var overrideStrategies = function () {
     var createDropdown = row.find(".create-action-cell select");
     var updateDropdown = row.find(".update-action-cell select");
     var deleteDropdown = row.find(".delete-action-cell select");
+    var readChangesDropdown = row.find(".readchanges-action-cell select");
     var isReadSelectedOptionDefault = readDropdown.find('option:selected').text().trim().includes('(Default Strategy)');
     var isCreateSelectedOptionDefault = createDropdown.find('option:selected').text().trim().includes('(Default Strategy)');
     var isUpdateSelectedOptionDefault = updateDropdown.find('option:selected').text().trim().includes('(Default Strategy)');
     var isDeleteSelectedOptionDefault = deleteDropdown.find('option:selected').text().trim().includes('(Default Strategy)');
+    var isReadChangesSelectedOptionDefault = readChangesDropdown.find('option:selected').text().trim().includes('(Default Strategy)');
     var postData = {
         'ClaimSetId': claimSetId,
         'ResourceClaimId': resourceId,
         'AuthorizationStrategyForCreate': isCreateSelectedOptionDefault ? 0 : createDropdown.val(),
         'AuthorizationStrategyForRead': isReadSelectedOptionDefault ? 0 : readDropdown.val(),
         'AuthorizationStrategyForUpdate': isUpdateSelectedOptionDefault ? 0 : updateDropdown.val(),
-        'AuthorizationStrategyForDelete': isDeleteSelectedOptionDefault ? 0 : deleteDropdown.val()
+        'AuthorizationStrategyForDelete': isDeleteSelectedOptionDefault ? 0 : deleteDropdown.val(),
+        'AuthorizationStrategyForReadChanges': isReadChangesSelectedOptionDefault ? 0 : readChangesDropdown.val()
     };
     showSpinner(true);
     $.ajax({
@@ -149,6 +154,7 @@ var resetStrategiesToDefault = function () {
     var createCell = row.find(".create-action-cell");
     var updateCell = row.find(".update-action-cell");
     var deleteCell = row.find(".delete-action-cell");
+    var readChangesCell = row.find(".readchanges-action-cell");
     var postData = {
         'ClaimSetId': claimSetId,
         'ResourceClaimId': resourceId
@@ -156,7 +162,8 @@ var resetStrategiesToDefault = function () {
     if (!(readCell.find("span:nth-child(2)").hasClass("default-strategy") &&
         createCell.find("span:nth-child(2)").hasClass("default-strategy") &&
         updateCell.find("span:nth-child(2)").hasClass("default-strategy") &&
-        deleteCell.find("span:nth-child(2)").hasClass("default-strategy"))) {
+        deleteCell.find("span:nth-child(2)").hasClass("default-strategy") &&
+        readChangesCell.find("span:nth-child(2)").hasClass("default-strategy"))) {
         showSpinner(true);
         $.ajax({
             type: "POST",
@@ -186,6 +193,7 @@ var overrideAuth = function(e) {
     updateCell(row, "read");
     updateCell(row, "update");
     updateCell(row, "delete");
+    updateCell(row, "readchanges");
     row.find("a.override-auth").replaceWith('<a class="edit-resource-check"> <span class="fa fa-check action-icons"></span></a>');
     $(".edit-resource-check").click(overrideStrategies);
 };

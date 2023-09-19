@@ -79,6 +79,10 @@ public class OverrideDefaultAuthorizationStrategyV53Service
             {
                 claimSetResourceClaim.AuthorizationStrategyOverride = null;
             }
+            else if (claimSetResourceClaim.Action.ActionName == Action.ReadChanges.Value && model.AuthorizationStrategyForReadChanges == 0)
+            {
+                claimSetResourceClaim.AuthorizationStrategyOverride = null;
+            }
         }
 
         return claimSetResourceClaims;
@@ -143,6 +147,19 @@ public class OverrideDefaultAuthorizationStrategyV53Service
                 else if (!parentResourceClaims.Any())
                 {
                     claimSetResourceClaim.AuthorizationStrategyOverride = authorizationStrategiesDictionary[model.AuthorizationStrategyForDelete];
+                }
+            }
+            else if (claimSetResourceClaim.Action.ActionName == Action.ReadChanges.Value && model.AuthorizationStrategyForReadChanges != 0)
+            {
+                if (parentResourceClaims.Any() && parentResourceClaims.SingleOrDefault(x =>
+                        x.Action.ActionName == Action.ReadChanges.Value && x.AuthorizationStrategyOverride != null &&
+                        x.AuthorizationStrategyOverride.AuthorizationStrategyId == model.AuthorizationStrategyForReadChanges) == null)
+                {
+                    claimSetResourceClaim.AuthorizationStrategyOverride = authorizationStrategiesDictionary[model.AuthorizationStrategyForReadChanges];
+                }
+                else if (!parentResourceClaims.Any())
+                {
+                    claimSetResourceClaim.AuthorizationStrategyOverride = authorizationStrategiesDictionary[model.AuthorizationStrategyForReadChanges];
                 }
             }
         }

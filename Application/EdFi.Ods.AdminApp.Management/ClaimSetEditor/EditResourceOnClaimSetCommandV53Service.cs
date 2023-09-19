@@ -64,6 +64,10 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
                 {
                     recordsToRemove.Add(claimSetResourceClaim);
                 }
+                else if (claimSetResourceClaim.Action.ActionName == Action.ReadChanges.Value && !modelResourceClaim.ReadChanges)
+                {
+                    recordsToRemove.Add(claimSetResourceClaim);
+                }
             }
 
             if (recordsToRemove.Any())
@@ -115,6 +119,16 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
                 recordsToAdd.Add(new ClaimSetResourceClaim
                 {
                     Action = actionsFromDb.Single(x => x.ActionName == Action.Delete.Value),
+                    ClaimSet = claimSetToEdit,
+                    ResourceClaim = resourceClaimFromDb
+                });
+            }
+
+            if (modelResourceClaim.ReadChanges && claimSetResourceClaimsToEdit.All(x => x.Action.ActionName != Action.ReadChanges.Value))
+            {
+                recordsToAdd.Add(new ClaimSetResourceClaim
+                {
+                    Action = actionsFromDb.Single(x => x.ActionName == Action.ReadChanges.Value),
                     ClaimSet = claimSetToEdit,
                     ResourceClaim = resourceClaimFromDb
                 });
