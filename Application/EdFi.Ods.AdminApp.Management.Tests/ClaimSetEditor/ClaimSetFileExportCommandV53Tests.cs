@@ -100,6 +100,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                 testResource.Read.ShouldBe(resourceClaim.Read);
                 testResource.Update.ShouldBe(resourceClaim.Update);
                 testResource.Delete.ShouldBe(resourceClaim.Delete);
+                testResource.ReadChanges.ShouldBe(resourceClaim.ReadChanges);
                 if (resourceClaim.Children.Count > 0)
                 {
                     var children = resourceObject.GetValue("Children").Select(child => child.ToObject<JObject>()).ToList();
