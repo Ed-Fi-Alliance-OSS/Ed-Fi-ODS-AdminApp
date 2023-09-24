@@ -1,5 +1,0 @@
-﻿C:\Git\Ed-Fi-ODS-AdminApp\Application\EdFi.Ods.AdminApp.Management.OnPrem\CompleteOnPremFirstTimeSetupCommand.cs
-C:\Git\Ed-Fi-ODS-AdminApp\Application\EdFi.Ods.AdminApp.Management.OnPrem\GetOnPremOdsApiWebsiteSettingsQuery.cs
-C:\Git\Ed-Fi-ODS-AdminApp\Application\EdFi.Ods.AdminApp.Management.OnPrem\GetOnPremOdsInstanceQuery.cs
-C:\Git\Ed-Fi-ODS-AdminApp\Application\EdFi.Ods.AdminApp.Management.OnPrem\OnPremFirstTimeSetupService.cs
-C:\Git\Ed-Fi-ODS-AdminApp\Application\EdFi.Ods.AdminApp.Management.OnPrem\UpdateOnPremOdsApiWebsiteSettingsCommand.cs

@@ -1,1 +1,0 @@
-C:\Git\Ed-Fi-ODS-AdminApp\Application\.sonarqube\out\2
