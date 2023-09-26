@@ -131,7 +131,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                             ""Create"": true,
                             ""Update"": false,
                             ""Delete"": false,
-                            ""ReadChanges"": false,
+                            ""ReadChanges"": true,
                             ""AuthStrategyOverridesForCRUD"": [
                                   {
                                     ""AuthStrategyId"": {0},
@@ -211,7 +211,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             testResources.Count().ShouldBe(3);
 
             var testResource1 = testResources[0];
-            MatchActions(testResource1, "TestParentResourceClaim8789783213", new bool[] { true, true, false, false, false });
+            MatchActions(testResource1, "TestParentResourceClaim8789783213", new bool[] { true, true, false, false, true });
 
             testResource1.AuthStrategyOverridesForCRUD.ShouldNotBeNull();
             testResource1.AuthStrategyOverridesForCRUD.Length.ShouldBe(5);
@@ -225,6 +225,11 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             authStrategyOverrideForRead.ShouldNotBeNull();
             authStrategyOverrideForRead.AuthStrategyId.ShouldBe(authStrategy2Id);
             authStrategyOverrideForRead.AuthStrategyName.ShouldBe(authStrategy2Name);
+
+            var authStrategyOverrideForReadChanges = testResource1.AuthStrategyOverridesForCRUD.ReadChanges();
+            authStrategyOverrideForReadChanges.ShouldNotBeNull();
+            authStrategyOverrideForReadChanges.AuthStrategyId.ShouldBe(authStrategy3Id);
+            authStrategyOverrideForReadChanges.AuthStrategyName.ShouldBe(authStrategy3Name);
 
             var testResource2 = testResources[1];
             MatchActions(testResource2, "TestParentResourceClaim0989", new bool[] { false, true, false, false, true });
@@ -259,7 +264,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                             ""Create"": true,
                             ""Update"": false,
                             ""Delete"": false,
-                            ""ReadChanges"": false,
+                            ""ReadChanges"": true,
                             ""AuthStrategyOverridesForCRUD"": [
                                   {
                                     ""AuthStrategyId"": {0},
@@ -382,7 +387,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             testResources.Count().ShouldBe(1);
 
             var testResource1 = testResources[0];
-            MatchActions(testResource1, "TestParentResourceClaim0981", new bool[] { true, true, false, false, false });
+            MatchActions(testResource1, "TestParentResourceClaim0981", new bool[] { true, true, false, false, true });
 
             testResource1.Children.Count.ShouldBe(1);
             var childResource = testResource1.Children[0];
@@ -400,6 +405,11 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             parentAuthStrategyOverrideForRead.ShouldNotBeNull();
             parentAuthStrategyOverrideForRead.AuthStrategyId.ShouldBe(authStrategy2Id);
             parentAuthStrategyOverrideForRead.AuthStrategyName.ShouldBe(authStrategy2Name);
+
+            var parentAuthStrategyOverrideForReadChanges = testResource1.AuthStrategyOverridesForCRUD.ReadChanges();
+            parentAuthStrategyOverrideForReadChanges.ShouldNotBeNull();
+            parentAuthStrategyOverrideForReadChanges.AuthStrategyId.ShouldBe(authStrategy5Id);
+            parentAuthStrategyOverrideForReadChanges.AuthStrategyName.ShouldBe(authStrategy5Name);
 
             var childAuthStrategyOverrideForCreate = childResource.AuthStrategyOverridesForCRUD.Create();
             childAuthStrategyOverrideForCreate.ShouldNotBeNull();
@@ -419,11 +429,17 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             childAuthStrategyOverrideForUpdate.AuthStrategyName.ShouldBe(authStrategy3Name);
             childAuthStrategyOverrideForUpdate.IsInheritedFromParent.ShouldBeFalse();
 
+            var childAuthStrategyOverrideForDelete = childResource.AuthStrategyOverridesForCRUD.Delete();
+            childAuthStrategyOverrideForDelete.ShouldNotBeNull();
+            childAuthStrategyOverrideForDelete.AuthStrategyId.ShouldBe(authStrategy4Id);
+            childAuthStrategyOverrideForDelete.AuthStrategyName.ShouldBe(authStrategy4Name);
+            childAuthStrategyOverrideForDelete.IsInheritedFromParent.ShouldBeFalse();
+
             var childAuthStrategyOverrideForReadChanges = childResource.AuthStrategyOverridesForCRUD.ReadChanges();
             childAuthStrategyOverrideForReadChanges.ShouldNotBeNull();
             childAuthStrategyOverrideForReadChanges.AuthStrategyId.ShouldBe(authStrategy5Id);
             childAuthStrategyOverrideForReadChanges.AuthStrategyName.ShouldBe(authStrategy5Name);
-            childAuthStrategyOverrideForReadChanges.IsInheritedFromParent.ShouldBeFalse();
+            childAuthStrategyOverrideForReadChanges.IsInheritedFromParent.ShouldBeTrue();
         }
 
         private void MatchActions(ResourceClaim dbResource, string expectedResourceName, bool[] expectedCrudArray)
