@@ -202,7 +202,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
                 }
                 else
                 {
-                    var actions = new AuthorizationStrategy[]{null, null, null, null, null};
+                    var actions = new AuthorizationStrategy[]{null, null, null, null};
                     resultDictionary[resourceClaim.ResourceClaim.ResourceClaimId] = actions.AddAuthorizationStrategyOverrides(resourceClaim.Action.ActionName, authStrategy);
                 }
             }
