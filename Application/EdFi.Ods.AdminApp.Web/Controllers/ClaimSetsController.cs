@@ -99,8 +99,8 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                 GlobalSettingsTabEnumerations = _tabDisplayService.GetGlobalSettingsTabDisplay(
                     GlobalSettingsTabEnumeration.ClaimSets)
             };
-
-           return View(model);
+            ViewBag.OdsVersion = 6;
+            return View(model);
         }
 
         public ActionResult AuthStrategyModal(int claimSetId, int resourceClaimId)
@@ -110,8 +110,11 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                 AuthStrategies = GetSelectListForAuthStrategies(),
                 ResourceClaim = _getResourcesByClaimSetIdQuery.SingleResource(claimSetId, resourceClaimId)
             };
-
-            return PartialView("_AuthStrategiesModal", model);
+            ViewBag.OdsVersion = 6;
+            if (ViewBag.OdsVersion >= 6)
+                return PartialView("_AuthStrategiesModal_v6_1", model);
+            else
+                return PartialView("_AuthStrategiesModal_v5_3", model);
         }
 
         public string GetUpdatedResourceClaim(int claimSetId, int resourceClaimId)
@@ -179,7 +182,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                 EditClaimSetModel = GetEditClaimSetModel(claimSetId),
                 GlobalSettingsTabEnumerations = _tabDisplayService.GetGlobalSettingsTabDisplay(GlobalSettingsTabEnumeration.ClaimSets)
             };
-  
+            ViewBag.OdsVersion = 6;
             return View(model);
         }
 

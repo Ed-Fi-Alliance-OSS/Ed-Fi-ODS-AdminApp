@@ -9,7 +9,8 @@
 @model EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets.ClaimSetModel
 
 @{
-    ViewBag.Title = "Claim Set Details";
+	ViewBag.Title = "Claim Set Details";
+	int? odsVersion = ViewBag.OdsVersion as int?;
 }
 
 @{ await Html.RenderPartialAsync("_SettingsGlobalHeader", Model.GlobalSettingsTabEnumerations); }
@@ -18,8 +19,15 @@
     <div class="col-lg-10">
         <div class="tab-content">
             <div class="tab-pane active col-lg-10" id="claim-set-tab">
-                @{ await Html.RenderPartialAsync("_ClaimSetDetails", Model.ClaimSetDetailsModel); }
-            </div>
+				@if(odsVersion >= 6)
+				{
+					await Html.RenderPartialAsync("_ClaimSetDetails_v6_1", Model.ClaimSetDetailsModel);
+				}
+				else
+				{
+					await Html.RenderPartialAsync("_ClaimSetDetails_v5_3", Model.ClaimSetDetailsModel);
+				}
+			</div>
         </div>
     </div>
 </div>
