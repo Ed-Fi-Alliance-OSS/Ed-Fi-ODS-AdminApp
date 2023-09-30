@@ -332,7 +332,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         {
             var securityModel = _resolver.DetermineSecurityModel();
             if (securityModel >= EdFiOdsSecurityModelCompatibility.Six)
-                return false;
+                return true;
             return false;
         }
     }
