@@ -45,6 +45,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         private readonly ClaimSetFileExportCommand _claimSetFileExportCommand;
         private readonly OverrideDefaultAuthorizationStrategyCommand _overrideDefaultAuthorizationStrategyCommand;
         private readonly ResetToDefaultAuthStrategyCommand _resetToDefaultAuthStrategyCommand;
+        private readonly IOdsSecurityModelVersionResolver _resolver;
 
         public ClaimSetsController(IGetClaimSetByIdQuery getClaimSetByIdQuery
             , IGetApplicationsByClaimSetIdQuery getApplicationsByClaimSetIdQuery
@@ -63,7 +64,8 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             , ClaimSetFileExportCommand claimSetFileExportCommand
             , ClaimSetFileImportCommand claimSetFileImportCommand
             , OverrideDefaultAuthorizationStrategyCommand overrideDefaultAuthorizationStrategyCommand
-            , ResetToDefaultAuthStrategyCommand resetToDefaultAuthStrategyCommand)
+            , ResetToDefaultAuthStrategyCommand resetToDefaultAuthStrategyCommand
+            , IOdsSecurityModelVersionResolver resolver)
         {
             _getClaimSetByIdQuery = getClaimSetByIdQuery;
             _getApplicationsByClaimSetIdQuery = getApplicationsByClaimSetIdQuery;
@@ -84,6 +86,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _claimSetFileImportCommand = claimSetFileImportCommand;
             _overrideDefaultAuthorizationStrategyCommand = overrideDefaultAuthorizationStrategyCommand;
             _resetToDefaultAuthStrategyCommand = resetToDefaultAuthStrategyCommand;
+            _resolver = resolver;
         }
 
         public ActionResult ClaimSetDetails(int claimSetId)
@@ -99,7 +102,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                 GlobalSettingsTabEnumerations = _tabDisplayService.GetGlobalSettingsTabDisplay(
                     GlobalSettingsTabEnumeration.ClaimSets)
             };
-            ViewBag.OdsVersion = 6;
+            ViewBag.OdsVersionIsGreaterThanSix = this.IsOdsVersionGreaterThanSix();
             return View(model);
         }
 
@@ -110,8 +113,8 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                 AuthStrategies = GetSelectListForAuthStrategies(),
                 ResourceClaim = _getResourcesByClaimSetIdQuery.SingleResource(claimSetId, resourceClaimId)
             };
-            ViewBag.OdsVersion = 6;
-            if (ViewBag.OdsVersion >= 6)
+            ViewBag.OdsVersionIsGreaterThanSix = this.IsOdsVersionGreaterThanSix();
+            if (ViewBag.OdsVersionIsGreaterThanSix)
                 return PartialView("_AuthStrategiesModal_v6_1", model);
             else
                 return PartialView("_AuthStrategiesModal_v5_3", model);
@@ -171,7 +174,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             var claimSetId = _addClaimSetCommand.Execute(model);
 
             var editClaimSetModel = GetEditClaimSetModel(claimSetId);
-
+            ViewBag.OdsVersionIsGreaterThanSix = this.IsOdsVersionGreaterThanSix();
             return PartialView("_EditClaimSet",editClaimSetModel);
         }
 
@@ -182,7 +185,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                 EditClaimSetModel = GetEditClaimSetModel(claimSetId),
                 GlobalSettingsTabEnumerations = _tabDisplayService.GetGlobalSettingsTabDisplay(GlobalSettingsTabEnumeration.ClaimSets)
             };
-            ViewBag.OdsVersion = 6;
+            ViewBag.OdsVersionIsGreaterThanSix = this.IsOdsVersionGreaterThanSix();
             return View(model);
         }
 
@@ -323,6 +326,14 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                 ExportPreviewString = SharingModel.SerializeFromSharingModel(exports)
             };
             return PartialView("_ExportClaimSetPreview", exportClaimSetModel);
+        }
+
+        private Boolean IsOdsVersionGreaterThanSix()
+        {
+            var securityModel = _resolver.DetermineSecurityModel();
+            if (securityModel >= EdFiOdsSecurityModelCompatibility.Six)
+                return false;
+            return false;
         }
     }
 }

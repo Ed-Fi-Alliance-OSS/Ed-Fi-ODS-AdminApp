@@ -61,7 +61,9 @@ var updateRowAfterEdit = function (row, resourceUpdateUrl) {
             updateCellAfterEdit(createCell, defaultStrategies[0], authStrategyOverrides[0]);
             updateCellAfterEdit(updateCell, defaultStrategies[2], authStrategyOverrides[2]);
             updateCellAfterEdit(deleteCell, defaultStrategies[3], authStrategyOverrides[3]);
-            updateCellAfterEdit(readChangesCell, defaultStrategies[4], authStrategyOverrides[4]);
+            if (readChangesCell != null) { 
+                updateCellAfterEdit(readChangesCell, defaultStrategies[4], authStrategyOverrides[4]);
+            }
             if (editCell != null) {
                 row.find("a.edit-resource-check").replaceWith('<a class="override-auth"> <span class="fa fa-pencil action-icons"></span></a>');
                 row.find(".override-auth").click(overrideAuth);
@@ -114,15 +116,27 @@ var overrideStrategies = function () {
     var isCreateSelectedOptionDefault = createDropdown.find('option:selected').text().trim().includes('(Default Strategy)');
     var isUpdateSelectedOptionDefault = updateDropdown.find('option:selected').text().trim().includes('(Default Strategy)');
     var isDeleteSelectedOptionDefault = deleteDropdown.find('option:selected').text().trim().includes('(Default Strategy)');
-    var isReadChangesSelectedOptionDefault = readChangesDropdown.find('option:selected').text().trim().includes('(Default Strategy)');
-    var postData = {
-        'ClaimSetId': claimSetId,
-        'ResourceClaimId': resourceId,
-        'AuthorizationStrategyForCreate': isCreateSelectedOptionDefault ? 0 : createDropdown.val(),
-        'AuthorizationStrategyForRead': isReadSelectedOptionDefault ? 0 : readDropdown.val(),
-        'AuthorizationStrategyForUpdate': isUpdateSelectedOptionDefault ? 0 : updateDropdown.val(),
-        'AuthorizationStrategyForDelete': isDeleteSelectedOptionDefault ? 0 : deleteDropdown.val(),
-        'AuthorizationStrategyForReadChanges': isReadChangesSelectedOptionDefault ? 0 : readChangesDropdown.val()
+    if (readChangesDropdown != null) {
+        var isReadChangesSelectedOptionDefault = readChangesDropdown.find('option:selected').text().trim().includes('(Default Strategy)');
+        var postData = {
+            'ClaimSetId': claimSetId,
+            'ResourceClaimId': resourceId,
+            'AuthorizationStrategyForCreate': isCreateSelectedOptionDefault ? 0 : createDropdown.val(),
+            'AuthorizationStrategyForRead': isReadSelectedOptionDefault ? 0 : readDropdown.val(),
+            'AuthorizationStrategyForUpdate': isUpdateSelectedOptionDefault ? 0 : updateDropdown.val(),
+            'AuthorizationStrategyForDelete': isDeleteSelectedOptionDefault ? 0 : deleteDropdown.val(),
+            'AuthorizationStrategyForReadChanges': isReadChangesSelectedOptionDefault ? 0 : readChangesDropdown.val()
+        }
+    }
+    else {
+        var postData = {
+            'ClaimSetId': claimSetId,
+            'ResourceClaimId': resourceId,
+            'AuthorizationStrategyForCreate': isCreateSelectedOptionDefault ? 0 : createDropdown.val(),
+            'AuthorizationStrategyForRead': isReadSelectedOptionDefault ? 0 : readDropdown.val(),
+            'AuthorizationStrategyForUpdate': isUpdateSelectedOptionDefault ? 0 : updateDropdown.val(),
+            'AuthorizationStrategyForDelete': isDeleteSelectedOptionDefault ? 0 : deleteDropdown.val()
+        }
     };
     showSpinner(true);
     $.ajax({
@@ -163,7 +177,7 @@ var resetStrategiesToDefault = function () {
         createCell.find("span:nth-child(2)").hasClass("default-strategy") &&
         updateCell.find("span:nth-child(2)").hasClass("default-strategy") &&
         deleteCell.find("span:nth-child(2)").hasClass("default-strategy") &&
-        readChangesCell.find("span:nth-child(2)").hasClass("default-strategy"))) {
+        (!readChangesCell || readChangesCell.find("span:nth-child(2)").hasClass("default-strategy")))) {
         showSpinner(true);
         $.ajax({
             type: "POST",
@@ -193,7 +207,10 @@ var overrideAuth = function(e) {
     updateCell(row, "read");
     updateCell(row, "update");
     updateCell(row, "delete");
-    updateCell(row, "readchanges");
+    var readChangesCell = document.getElementsByClassName("readchanges-action-cell");
+    if (readChangesCell.length > 0) {
+        updateCell(row, "readchanges");
+    }
     row.find("a.override-auth").replaceWith('<a class="edit-resource-check"> <span class="fa fa-check action-icons"></span></a>');
     $(".edit-resource-check").click(overrideStrategies);
 };

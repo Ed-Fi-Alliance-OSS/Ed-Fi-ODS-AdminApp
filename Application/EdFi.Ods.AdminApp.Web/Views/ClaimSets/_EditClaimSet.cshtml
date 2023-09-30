@@ -10,7 +10,7 @@ See the LICENSE and NOTICES files in the project root for more information.
 @model EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets.EditClaimSetModel
 
 @{
-	int odsVersion = ViewBag.OdsVersion;
+	bool odsVersionIsGreaterThanSix = ViewBag.OdsVersionIsGreaterThanSix;
 }
 
 <h3>Edit Claim Set</h3>
@@ -55,7 +55,7 @@ else
 <br />
 
 <div id="resource-editor-tab">
-   @if (odsVersion >= 6)
+	@if (odsVersionIsGreaterThanSix)
    {
 		{
 			await Html.RenderPartialAsync("_ResourceEditor_v6_1", new ClaimSetResourcesModel()
