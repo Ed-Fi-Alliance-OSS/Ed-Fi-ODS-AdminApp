@@ -102,7 +102,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                 GlobalSettingsTabEnumerations = _tabDisplayService.GetGlobalSettingsTabDisplay(
                     GlobalSettingsTabEnumeration.ClaimSets)
             };
-            ViewBag.OdsVersionIsGreaterThanSix = this.IsOdsVersionGreaterThanSix();
+            ViewBag.OdsVersionIsGreaterThanSix = IsOdsVersionGreaterThanSix();
             return View(model);
         }
 
@@ -113,8 +113,8 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                 AuthStrategies = GetSelectListForAuthStrategies(),
                 ResourceClaim = _getResourcesByClaimSetIdQuery.SingleResource(claimSetId, resourceClaimId)
             };
-            ViewBag.OdsVersionIsGreaterThanSix = this.IsOdsVersionGreaterThanSix();
-            if (ViewBag.OdsVersionIsGreaterThanSix)
+            
+            if (IsOdsVersionGreaterThanSix())
                 return PartialView("_AuthStrategiesModal_v6_1", model);
             else
                 return PartialView("_AuthStrategiesModal_v5_3", model);
@@ -174,7 +174,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             var claimSetId = _addClaimSetCommand.Execute(model);
 
             var editClaimSetModel = GetEditClaimSetModel(claimSetId);
-            ViewBag.OdsVersionIsGreaterThanSix = this.IsOdsVersionGreaterThanSix();
+            ViewBag.OdsVersionIsGreaterThanSix = IsOdsVersionGreaterThanSix();
             return PartialView("_EditClaimSet",editClaimSetModel);
         }
 
@@ -185,7 +185,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                 EditClaimSetModel = GetEditClaimSetModel(claimSetId),
                 GlobalSettingsTabEnumerations = _tabDisplayService.GetGlobalSettingsTabDisplay(GlobalSettingsTabEnumeration.ClaimSets)
             };
-            ViewBag.OdsVersionIsGreaterThanSix = this.IsOdsVersionGreaterThanSix();
+            ViewBag.OdsVersionIsGreaterThanSix = IsOdsVersionGreaterThanSix();
             return View(model);
         }
 
@@ -328,7 +328,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             return PartialView("_ExportClaimSetPreview", exportClaimSetModel);
         }
 
-        private Boolean IsOdsVersionGreaterThanSix()
+        private bool IsOdsVersionGreaterThanSix()
         {
             var securityModel = _resolver.DetermineSecurityModel();
             if (securityModel >= EdFiOdsSecurityModelCompatibility.Six)
