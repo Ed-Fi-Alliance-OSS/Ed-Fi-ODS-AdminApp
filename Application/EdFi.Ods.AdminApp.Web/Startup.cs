@@ -44,6 +44,7 @@ using System.Security.Claims;
 using System.Linq;
 using EdFi.Admin.DataAccess.DbConfigurations;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace EdFi.Ods.AdminApp.Web
 {
@@ -132,6 +133,11 @@ namespace EdFi.Ods.AdminApp.Web
             services.AddSignalR();
 
             services.AddHttpClient();
+
+            services.Configure<FormOptions>(options =>
+            {
+                options.ValueCountLimit = int.MaxValue;
+            });
 
             var appSettings = new AppSettings();
             Configuration.GetSection("AppSettings").Bind(appSettings);
