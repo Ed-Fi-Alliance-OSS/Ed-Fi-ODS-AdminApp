@@ -4,11 +4,11 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 const ACTIONS = {
-    create: 0,
-    read: 1,
-    update: 2,
-    delete: 3,
-    readchanges: 4
+    create: 0,
+    read: 1,
+    update: 2,
+    delete: 3,
+    readchanges: 4
 }
 var updateCell = function (row, action) {
     var resourceId = $("#resource-claim-auth").data("resource-id");
@@ -19,19 +19,19 @@ var updateCell = function (row, action) {
     var selectedValues = [];
     if (actionCell.data("existing-action") === "True") {
         var dropdownId = "resource-auth-dropdown-".concat(resourceId, "-", action);
-        if (odsVersion === 6) {
-            dropdown = $("<select multiple class='auth-multiple-dropdown' id='".concat(dropdownId, "'></select>"));
+        if (odsVersion === 6) {
+            dropdown = $("<select multiple class='auth-multiple-dropdown' id='".concat(dropdownId, "'></select>"));
         }
-        else {
-            dropdown = $("<select class='auth-dropdown auth-dropdown-v5' id='id='".concat(dropdownId, "'></select>"));
+        else {
+            dropdown = $("<select class='auth-dropdown auth-dropdown-v5' id='id='".concat(dropdownId, "'></select>"));
         }
         $(authStrategiesOptions).each(function () {
             var selected = isSelected(action, Number(this.Value));
-            if (defaultText === "" && selected) {
+            if (defaultText === "" && selected) {
                 defaultText = this.Text;
-                selectedValues.push(this.Value);
-            } else if (selected) {
-                selectedValues.push(this.Value);
+                selectedValues.push(this.Value);
+            } else if (selected) {
+                selectedValues.push(this.Value);
             }
             if (isDefaultAuthStrategy(action, Number(this.Value))) {
                 if (actionCellLabel.data('is-inherited') === "True") {
@@ -46,8 +46,8 @@ var updateCell = function (row, action) {
         actionCell.html('');
         actionCell.html(dropdown);
         if (odsVersion === 6) {
-            if (selectedValues.length > 1) {
-                defaultText = "Items selected: " + selectedValues.length;
+            if (selectedValues.length > 1) {
+                defaultText = "Items selected: " + selectedValues.length;
             }
             $("#".concat(dropdownId)).CreateMultiCheckBox({ width: '330px', height: '200px', defaultText: defaultText });
         }
@@ -71,11 +71,11 @@ var isSelected = function (action, authStrategyId) {
     if (authStrategyId === 0)
         return false;
 
-    if (authStrategiesOverrides[index] == null) {
-        result = isDefaultAuthStrategy(action, authStrategyId);
+    if (authStrategiesOverrides[index] == null) {
+        result = isDefaultAuthStrategy(action, authStrategyId);
     }
-    else {
-        result = authStrategiesOverrides[index].AuthorizationStrategies.filter(a => a.AuthStrategyId === authStrategyId).length > 0;
+    else {
+        result = authStrategiesOverrides[index].AuthorizationStrategies.filter(a => a.AuthStrategyId === authStrategyId).length > 0;
     }
     return result;
 };
@@ -136,8 +136,8 @@ var updateCellAfterEdit = function (cell, defaultStrategy, authStrategyOverride)
                 cell.append('<span class="overridden-strategy inherited-override">(Overridden)</span>');
             } else {
                 cell.append('<span class="overridden-strategy">(Overridden)</span>');
-            }
-            cell.append("<br />");
+            }
+            cell.append("<br />");
         });
         
     } else {
@@ -148,8 +148,8 @@ var updateCellAfterEdit = function (cell, defaultStrategy, authStrategyOverride)
                     cell.append('<span class="default-strategy inherited-strategy">(Default)</span>');
                 } else {
                     cell.append('<span class="default-strategy">(Default)</span>');
-                }
-                cell.append("<br />");
+                }
+                cell.append("<br />");
             });
         }
     }

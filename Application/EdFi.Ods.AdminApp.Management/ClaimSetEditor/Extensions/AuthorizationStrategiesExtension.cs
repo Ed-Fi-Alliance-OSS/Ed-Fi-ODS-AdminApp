@@ -34,6 +34,11 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor.Extensions
             return authorizationStrategies.Length > 4 ? authorizationStrategies[4] : null;
         }
 
+        public static AuthorizationStrategy ReadChanges(this AuthorizationStrategy[] authorizationStrategies)
+        {
+            return authorizationStrategies[4];
+        }
+
         public static AuthorizationStrategy[] AddAuthorizationStrategyOverrides(this AuthorizationStrategy[] authorizationStrategies,
             string actionName, AuthorizationStrategy strategy)
         {
