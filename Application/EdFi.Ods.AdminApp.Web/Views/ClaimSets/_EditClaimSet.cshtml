@@ -9,6 +9,10 @@ See the LICENSE and NOTICES files in the project root for more information.
 @using EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets
 @model EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets.EditClaimSetModel
 
+@{
+	bool odsVersionIsGreaterThanSix = ViewBag.OdsVersionIsGreaterThanSix;
+}
+
 <h3>Edit Claim Set</h3>
 @using (Html.BeginForm("EditClaimSet", "ClaimSets", FormMethod.Post, new { @id = "edit-claim-set-form" }))
 {
@@ -51,13 +55,30 @@ else
 <br />
 
 <div id="resource-editor-tab">
-   @{await Html.RenderPartialAsync("_ResourceEditor", new ClaimSetResourcesModel()
-    {
-        AllResourceClaims = Model.AllResourceClaims,
-        ResourceClaims = Model.ResourceClaims,
-        ClaimSetId = Model.ClaimSetId,
-        ClaimSetName = Model.ClaimSetName
-    });}
+	@if (odsVersionIsGreaterThanSix)
+   {
+		{
+			await Html.RenderPartialAsync("_ResourceEditor_v6_1", new ClaimSetResourcesModel()
+					{
+						AllResourceClaims = Model.AllResourceClaims,
+						ResourceClaims = Model.ResourceClaims,
+						ClaimSetId = Model.ClaimSetId,
+						ClaimSetName = Model.ClaimSetName
+					});
+		}
+	}
+	else
+	{
+		{
+			await Html.RenderPartialAsync("_ResourceEditor_v5_3", new ClaimSetResourcesModel()
+					{
+						AllResourceClaims = Model.AllResourceClaims,
+						ResourceClaims = Model.ResourceClaims,
+						ClaimSetId = Model.ClaimSetId,
+						ClaimSetName = Model.ClaimSetName
+					});
+		}
+	}
 </div>
 <div class="padding-top-5">
     @Html.ActionLink("Back", "ClaimSets", "GlobalSettings", null, new { @class = "btn btn-primary cta" })

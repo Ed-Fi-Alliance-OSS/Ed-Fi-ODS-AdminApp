@@ -119,7 +119,6 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
                     ResourceClaim = resourceClaimFromDb
                 });
             }
-
             if (recordsToAdd.Any())
             {
                 _context.ClaimSetResourceClaims.AddRange(recordsToAdd);

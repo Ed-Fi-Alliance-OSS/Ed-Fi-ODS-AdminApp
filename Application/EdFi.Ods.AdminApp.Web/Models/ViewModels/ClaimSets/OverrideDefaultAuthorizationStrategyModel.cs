@@ -16,6 +16,7 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets
         public int AuthorizationStrategyForRead { get; set; }
         public int AuthorizationStrategyForUpdate { get; set; }
         public int AuthorizationStrategyForDelete { get; set; }
+        public int AuthorizationStrategyForReadChanges { get; set; }
     }
 
     public class OverrideDefaultAuthorizationStrategyModelValidator : AbstractValidator<OverrideDefaultAuthorizationStrategyModel>

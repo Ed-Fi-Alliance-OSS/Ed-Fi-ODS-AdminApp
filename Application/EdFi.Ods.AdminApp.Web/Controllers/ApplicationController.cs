@@ -208,7 +208,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                 ApplicationName = application.ApplicationName,
                 ClaimSetName = application.ClaimSetName,
                 ClaimSetNames = GetClaimSetNames(),
-                EducationOrganizationIds = application.ApplicationEducationOrganizations.Select(x => x.EducationOrganizationId),
+                EducationOrganizationIds = (IEnumerable<int>)application.ApplicationEducationOrganizations.Select(x => x.EducationOrganizationId),
                 LocalEducationAgencies = leas,
                 PostSecondaryInstitutions = psis,
                 Schools = schools,

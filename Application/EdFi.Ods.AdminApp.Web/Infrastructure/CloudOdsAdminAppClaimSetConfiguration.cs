@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: Apache-2.0
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
@@ -21,19 +21,19 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure
                 new CloudOdsEntityClaim
                 {
                     EntityName = "educationOrganizations",
-                    Actions = new[] { Create, Read, Update, Delete },
+                    Actions = new[] { Create, Read, Update, Delete, ReadChanges },
                     AuthorizationStrategy = NoFurtherAuthorizationRequired
                 },
                 new CloudOdsEntityClaim
                 {
                     EntityName = "systemDescriptors",
-                    Actions = new[] { Create, Read, Update, Delete },
+                    Actions = new[] { Create, Read, Update, Delete, ReadChanges },
                     AuthorizationStrategy = NoFurtherAuthorizationRequired
                 },
                 new CloudOdsEntityClaim
                 {
                     EntityName = "managedDescriptors",
-                    Actions = new[] { Create, Read, Update, Delete },
+                    Actions = new[] { Create, Read, Update, Delete, ReadChanges },
                     AuthorizationStrategy = NoFurtherAuthorizationRequired
                 },
                 new CloudOdsEntityClaim
