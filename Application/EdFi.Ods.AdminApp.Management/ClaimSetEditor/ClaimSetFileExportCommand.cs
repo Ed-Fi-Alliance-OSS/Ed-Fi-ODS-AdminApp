@@ -13,12 +13,15 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
     {
         private readonly IGetClaimSetByIdQuery _getClaimSetByIdQuery;
         private readonly IGetResourcesByClaimSetIdQuery _getResourcesByClaimSetIdQuery;
+        private readonly IOdsSecurityModelVersionResolver _odsSecurityModelVersionResolver;
 
         public ClaimSetFileExportCommand(IGetClaimSetByIdQuery getClaimSetByIdQuery,
-            IGetResourcesByClaimSetIdQuery getResourcesByClaimSetIdQuery)
+            IGetResourcesByClaimSetIdQuery getResourcesByClaimSetIdQuery,
+            IOdsSecurityModelVersionResolver odsSecurityModelVersionResolver)
         {
             _getClaimSetByIdQuery = getClaimSetByIdQuery;
             _getResourcesByClaimSetIdQuery = getResourcesByClaimSetIdQuery;
+            _odsSecurityModelVersionResolver = odsSecurityModelVersionResolver;
         }
 
         public SharingModel Execute(IClaimSetFileExportModel model)
@@ -41,6 +44,16 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
             if (!selectedIds.Any())
                 return new List<SharingClaimSet>();
             var sharingClaimSets = new List<SharingClaimSet>();
+            var securityModel = _odsSecurityModelVersionResolver.DetermineSecurityModel();
+            var propertiesToRemove = new List<string>
+            {
+                 "ParentId",
+                 "Id"
+            };
+            if (securityModel == EdFiOdsSecurityModelCompatibility.ThreeThroughFive)
+            {
+                propertiesToRemove.Add("ReadChanges");
+            }
             foreach (var claimSetId in selectedIds)
             {
                 var sharingClaimSet = new SharingClaimSet();
@@ -52,11 +65,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
                     resources.Select(x =>
                     {
                         var jsonObject = JObject.FromObject(x);
-                        jsonObject = JsonObjectManipulation.RemoveProperties(jsonObject, new List<string>
-                        {
-                            "ParentId",
-                            "Id"
-                        });
+                        jsonObject = JsonObjectManipulation.RemoveProperties(jsonObject, propertiesToRemove);
                         return jsonObject;
                     }).ToList();
                 sharingClaimSets.Add(sharingClaimSet);

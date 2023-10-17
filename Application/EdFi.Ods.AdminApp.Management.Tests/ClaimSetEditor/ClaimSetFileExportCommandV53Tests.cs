@@ -67,7 +67,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             var getClaimSetByIdQuery = new GetClaimSetByIdQuery(new StubOdsSecurityModelVersionResolver.V3_5(),
                 new GetClaimSetByIdQueryV53Service(securityContext), null);
             SharingModel sharingModel = null;
-            var command = new ClaimSetFileExportCommand(getClaimSetByIdQuery, ResourcesByClaimSetIdQuery(securityContext));
+            var command = new ClaimSetFileExportCommand(getClaimSetByIdQuery, ResourcesByClaimSetIdQuery(securityContext),
+                new StubOdsSecurityModelVersionResolver.V3_5());
             sharingModel = command.Execute(exportModel);
 
             var resourcesForClaimSet1 = ResourceClaimsForClaimSet(testClaimSet1.ClaimSetId).ToArray();
