@@ -67,8 +67,8 @@ See the LICENSE and NOTICES files in the project root for more information.
 						var authStrategyOverridesForCRUD = Model.ResourceClaim.AuthStrategyOverridesForCRUD[0].AuthorizationStrategies.ToArray();
 						var defaultAuthStrategiesForCRUD = Model.ResourceClaim.DefaultAuthStrategiesForCRUD[0].AuthorizationStrategies.ToArray();
 
-						var authStrategyOverridesForRead = authStrategyOverridesForCRUD.Read(1);
-						var defaultAuthStrategyForRead = defaultAuthStrategiesForCRUD.Read(1);
+						var authStrategyOverridesForRead = authStrategyOverridesForCRUD.Read();
+						var defaultAuthStrategyForRead = defaultAuthStrategiesForCRUD.Read();
 
 						var authStrategyOverridesForCreate = authStrategyOverridesForCRUD.Create();
 						var defaultAuthStrategyForCreate = defaultAuthStrategiesForCRUD.Create();
