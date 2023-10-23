@@ -104,15 +104,15 @@ public class OverrideDefaultAuthorizationStrategyV6Service
 
         void RemoveClaimSetResourceClaimActionAuthorizationStrategyOverrides(ClaimSetResourceClaimAction claimSetResourceClaimAction)
         {
-            var existingAuthOverride =
-                _context.ClaimSetResourceClaimActionAuthorizationStrategyOverrides.FirstOrDefault(
+            var existingAuthOverrides =
+                _context.ClaimSetResourceClaimActionAuthorizationStrategyOverrides.Where(
                     x => x.ClaimSetResourceClaimActionId ==
                          claimSetResourceClaimAction.ClaimSetResourceClaimActionId);
 
-            if (existingAuthOverride != null)
+            if (existingAuthOverrides != null)
             {
-                _context.ClaimSetResourceClaimActionAuthorizationStrategyOverrides.Remove(
-                    existingAuthOverride);
+                _context.ClaimSetResourceClaimActionAuthorizationStrategyOverrides.RemoveRange(
+                    existingAuthOverrides);
             }
         }
 
