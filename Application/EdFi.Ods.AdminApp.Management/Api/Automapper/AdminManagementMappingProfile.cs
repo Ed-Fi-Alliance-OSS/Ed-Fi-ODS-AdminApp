@@ -10,6 +10,7 @@ using LocalEducationAgency = EdFi.Ods.AdminApp.Management.Api.Models.LocalEducat
 using School = EdFi.Ods.AdminApp.Management.Api.Models.School;
 using EdFi.Ods.AdminApp.Management.Api.DomainModels;
 using EdFi.Ods.AdminApp.Management.Api.Models;
+using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
 
 namespace EdFi.Ods.AdminApp.Management.Api.Automapper
 {
@@ -171,6 +172,9 @@ namespace EdFi.Ods.AdminApp.Management.Api.Automapper
                 .ForMember(dst => dst.AuthStrategyName, opt => opt.MapFrom(src => src.AuthorizationStrategyName))
                 .ForMember(dst => dst.AuthStrategyId, opt => opt.MapFrom(src => src.AuthorizationStrategyId))
                 .ForMember(dst => dst.IsInheritedFromParent, opt => opt.Ignore());
+
+            CreateMap<List<Security.DataAccess.Models.AuthorizationStrategy>, ClaimSetEditor.ClaimSetResourceClaimActionAuthStrategies>()
+                .ForMember(dst => dst.AuthorizationStrategies, opt => opt.MapFrom(src => src));
 
             List<EdFiEducationOrganizationAddress> AddressResolver(EducationOrganization source,
                 ResolutionContext context)

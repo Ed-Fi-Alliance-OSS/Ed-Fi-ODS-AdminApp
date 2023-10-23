@@ -64,17 +64,20 @@ See the LICENSE and NOTICES files in the project root for more information.
                     <tbody>
                     @if (Model.ResourceClaim != null)
                     {
-                         var authStrategyOverridesForRead = Model.ResourceClaim.AuthStrategyOverridesForCRUD.Read();
-                         var defaultAuthStrategyForRead = Model.ResourceClaim.DefaultAuthStrategiesForCRUD.Read();
+						var authStrategyOverridesForCRUD = Model.ResourceClaim.AuthStrategyOverridesForCRUD[0].AuthorizationStrategies.ToArray();
+						var defaultAuthStrategiesForCRUD = Model.ResourceClaim.DefaultAuthStrategiesForCRUD[0].AuthorizationStrategies.ToArray();
 
-                         var authStrategyOverridesForCreate = Model.ResourceClaim.AuthStrategyOverridesForCRUD.Create();
-                         var defaultAuthStrategyForCreate = Model.ResourceClaim.DefaultAuthStrategiesForCRUD.Create();
+						var authStrategyOverridesForRead = authStrategyOverridesForCRUD.Read(1);
+						var defaultAuthStrategyForRead = defaultAuthStrategiesForCRUD.Read(1);
 
-                         var authStrategyOverridesForUpdate = Model.ResourceClaim.AuthStrategyOverridesForCRUD.Update();
-                         var defaultAuthStrategyForUpdate = Model.ResourceClaim.DefaultAuthStrategiesForCRUD.Update();
+						var authStrategyOverridesForCreate = authStrategyOverridesForCRUD.Create();
+						var defaultAuthStrategyForCreate = defaultAuthStrategiesForCRUD.Create();
 
-                         var authStrategyOverridesForDelete = Model.ResourceClaim.AuthStrategyOverridesForCRUD.Delete();
-                         var defaultAuthStrategyForDelete = Model.ResourceClaim.DefaultAuthStrategiesForCRUD.Delete();
+						var authStrategyOverridesForUpdate = authStrategyOverridesForCRUD.Update();
+						var defaultAuthStrategyForUpdate = defaultAuthStrategiesForCRUD.Update();
+
+						var authStrategyOverridesForDelete = authStrategyOverridesForCRUD.Delete();
+						var defaultAuthStrategyForDelete = defaultAuthStrategiesForCRUD.Delete();
 
                         <tr class="parent-resource-claim">
                             <td class="icon-cell"></td>

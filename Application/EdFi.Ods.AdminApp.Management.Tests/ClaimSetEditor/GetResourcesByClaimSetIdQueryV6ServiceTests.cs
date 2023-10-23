@@ -70,6 +70,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                 result.Read.ShouldBe(false);
                 result.Update.ShouldBe(false);
                 result.Delete.ShouldBe(false);
+                result.ReadChanges.ShouldBe(false);
             }
         }
 
@@ -132,7 +133,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             var testAuthStrategies = SetupResourcesWithDefaultAuthorizationStrategies(appAuthorizationStrategies, testResourceClaims.ToList());
 
             var results = ResourceClaimsForClaimSet(testClaimSet.ClaimSetId).ToArray();
-            results.Select(x => x.DefaultAuthStrategiesForCRUD[0].AuthStrategyName).ShouldBe(testAuthStrategies.Select(x => x.AuthorizationStrategies.Single()
+            results.Select(x => x.DefaultAuthStrategiesForCRUD[0].AuthorizationStrategies[0].AuthStrategyName).ShouldBe(testAuthStrategies.Select(x => x.AuthorizationStrategies.Single()
                             .AuthorizationStrategy.AuthorizationStrategyName), true);
 
         }
@@ -173,7 +174,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             result.Read.ShouldBe(false);
             result.Update.ShouldBe(false);
             result.Delete.ShouldBe(false);
-            result.DefaultAuthStrategiesForCRUD[0].AuthStrategyName.ShouldBe(testAuthStrategy.DisplayName);
+            result.ReadChanges.ShouldBe(false);
+            result.DefaultAuthStrategiesForCRUD[0].AuthorizationStrategies[0].AuthStrategyName.ShouldBe(testAuthStrategy.DisplayName);
 
         }
 
@@ -208,7 +210,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             var testAuthStrategiesForParents =
                 testAuthStrategies.Where(x => x.ResourceClaim.ParentResourceClaim == null);
 
-            results.Select(x => x.DefaultAuthStrategiesForCRUD[0].AuthStrategyName).ShouldBe(testAuthStrategiesForParents.Select(x =>
+            results.Select(x => x.DefaultAuthStrategiesForCRUD[0].AuthorizationStrategies[0].AuthStrategyName).ShouldBe(testAuthStrategiesForParents.Select(x =>
             x.AuthorizationStrategies.Single().AuthorizationStrategy.AuthorizationStrategyName), true);
 
             foreach (var testParentResourceClaim in testParentResourceClaimsForId)
@@ -217,7 +219,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                 var testAuthStrategiesForChildren =
                     testAuthStrategies.Where(x =>
                         x.ResourceClaim.ParentResourceClaimId == testParentResourceClaim.ResourceClaimId);
-                parentResult.Children.Select(x => x.DefaultAuthStrategiesForCRUD[0].AuthStrategyName).ShouldBe(testAuthStrategiesForChildren.Select(x => x.AuthorizationStrategies.Single()
+                parentResult.Children.Select(x => x.DefaultAuthStrategiesForCRUD[0].AuthorizationStrategies[0].AuthStrategyName).ShouldBe(testAuthStrategiesForChildren.Select(x => x.AuthorizationStrategies.Single()
                 .AuthorizationStrategy.AuthorizationStrategyName), true);
             }
         }

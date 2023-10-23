@@ -312,7 +312,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
             return resourceClaimWithDefaultAuthStrategies;
         }
 
-        private IMapper Mapper() => new MapperConfiguration(cfg => cfg.AddProfile<AdminManagementMappingProfile>()).CreateMapper();
+        protected static IMapper Mapper() => new MapperConfiguration(cfg => cfg.AddProfile<AdminManagementMappingProfile>()).CreateMapper();
 
         protected List<ClaimSetEditorTypes.ResourceClaim> ResourceClaimsForClaimSet(int securityContextClaimSetId)
         {

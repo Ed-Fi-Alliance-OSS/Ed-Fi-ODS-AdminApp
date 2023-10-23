@@ -10,7 +10,7 @@ var updateCell = function(row, action) {
     var authStrategyLabel = actionCell.find("span:nth-child(2)");
     var dropdown = '';
     if (actionCell.data("existing-action") === "True") {
-        dropdown = $("<select class='auth-dropdown' id='resource-auth-dropdown-".concat(resourceId, "-", action, "'></select>"));
+        dropdown = $("<select multiple class='auth-dropdown' id='resource-auth-dropdown-".concat(resourceId, "-", action, "'></select>"));
         $(authStrategiesOptions).each(function () {
             if (this.Text === actionCellLabel.data('default-strategy')) {
                 if (actionCellLabel.data('is-inherited') === "True") {
