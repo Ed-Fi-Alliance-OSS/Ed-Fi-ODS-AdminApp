@@ -1229,6 +1229,10 @@ input[type="checkbox"]:checked + label > .fa-check-square:before {
     text-align: left;
 }
 
+.padding-row{
+    padding: 10px;
+}
+
 @media (min-width: 768px) {
     .container-fluid > .navbar-collapse, .container-fluid > .navbar-header, .container > .navbar-collapse, .container > .navbar-header {
         margin-left: 17px;

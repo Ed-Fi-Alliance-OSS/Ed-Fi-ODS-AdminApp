@@ -2,30 +2,31 @@
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
-
-var updateCell = function(row, action) {
+var updateCell = function (row, action) {
     var resourceId = row.find(".resource-label").data("resource-id");
     var actionCell = row.find("td.".concat(action, "-action-cell"));
     var actionCellLabel = actionCell.find("span:first-child");
     var authStrategyLabel = actionCell.find("span:nth-child(2)");
+    var authStrategiesOverride = actionCell.find(".auth-strategy-name").map(function () { return this.innerHTML });
     var dropdown = '';
     if (actionCell.data("existing-action") === "True") {
-        dropdown = $("<select multiple class='auth-dropdown' id='resource-auth-dropdown-".concat(resourceId, "-", action, "'></select>"));
-        $(authStrategiesOptions).each(function () {
+        var dropdownId = "resource-auth-dropdown-".concat(resourceId, "-", action);
+        dropdown = $("<select multiple='multiple' class='auth-dropdown' id='".concat(dropdownId, "'></select>"));
+        $(authStrategiesOptions).each(function (authStrategy) {
+            var selected = $.inArray(this.Text, authStrategiesOverride) > -1;
             if (this.Text === actionCellLabel.data('default-strategy')) {
                 if (actionCellLabel.data('is-inherited') === "True") {
-                    dropdown.append($("<option></option>").val(this.Value).html(this.Text.concat("(Default Strategy)")).attr("disabled", this.Disabled).attr("data-default-is-inherited", true));
+                    dropdown.append($("<option></option>").val(this.Value).html(this.Text.concat("(Default Strategy)")).attr("disabled", this.Disabled).attr("data-default-is-inherited", true).attr("selected", selected));
                 } else {
-                    dropdown.append($("<option></option>").val(this.Value).html(this.Text.concat("(Default Strategy)")).attr("disabled", this.Disabled));
+                    dropdown.append($("<option></option>").val(this.Value).html(this.Text.concat("(Default Strategy)")).attr("disabled", this.Disabled).attr("selected", selected));
                 }
             } else {
-                dropdown.append($("<option></option>").val(this.Value).html(this.Text).attr("disabled", this.Disabled));
+                dropdown.append($("<option></option>").val(this.Value).html(this.Text).attr("disabled", this.Disabled).attr("selected", selected));
             }
         });
-        var selectedValue = dropdown.find('option:contains('.concat(actionCellLabel.text(), ')'))[0].value;
-        dropdown.val(selectedValue);
         actionCellLabel.html(dropdown);
         authStrategyLabel.html('');
+        $("#".concat(dropdownId)).multiselect();
     }
 };
 
