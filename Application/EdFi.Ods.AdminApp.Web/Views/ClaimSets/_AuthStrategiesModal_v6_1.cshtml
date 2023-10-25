@@ -48,19 +48,20 @@ See the LICENSE and NOTICES files in the project root for more information.
 
 
                         var authStrategiesOverridesForCreate = authStrategyOverridesForCRUD.Create() != null ? authStrategyOverridesForCRUD[0].AuthorizationStrategies : null;
-                        var defaultAuthStrategyForCreate = defaultAuthStrategiesForCRUDCreate != null ? defaultAuthStrategiesForCRUDCreate[0] : null;
+                        var defaultAuthStrategiesForCreate = defaultAuthStrategiesForCRUDCreate != null ? defaultAuthStrategiesForCRUDCreate : null;
 
                         var authStrategiesOverridesForRead = authStrategyOverridesForCRUD.Read() != null ? authStrategyOverridesForCRUD[1].AuthorizationStrategies : null;
-                        var defaultAuthStrategyForRead = defaultAuthStrategiesForCRUDRead != null ? defaultAuthStrategiesForCRUDRead[0] : null;
+                        var defaultAuthStrategiesForRead = defaultAuthStrategiesForCRUDRead != null ? defaultAuthStrategiesForCRUDRead : null;
 
                         var authStrategiesOverridesForUpdate = authStrategyOverridesForCRUD.Update() != null ? authStrategyOverridesForCRUD[2].AuthorizationStrategies : null;
-                        var defaultAuthStrategyForUpdate = defaultAuthStrategiesForCRUDUpdate != null ? defaultAuthStrategiesForCRUDUpdate[0] : null;
+                        var defaultAuthStrategiesForUpdate = defaultAuthStrategiesForCRUDUpdate != null ? defaultAuthStrategiesForCRUDUpdate : null;
 
                         var authStrategiesOverridesForDelete = authStrategyOverridesForCRUD.Delete() != null ? authStrategyOverridesForCRUD[3].AuthorizationStrategies : null;
-                        var defaultAuthStrategyForDelete = defaultAuthStrategiesForCRUDDelete != null ? defaultAuthStrategiesForCRUDDelete[0] : null;
+                        var defaultAuthStrategiesForDelete = defaultAuthStrategiesForCRUDDelete != null ? defaultAuthStrategiesForCRUDDelete : null;
 
                         var authStrategiesOverridesForReadChanges = authStrategyOverridesForCRUD.ReadChanges() != null ? authStrategyOverridesForCRUD[4].AuthorizationStrategies : null;
-                        var defaultAuthStrategyForReadChanges = defaultAuthStrategiesForCRUDReadChanges != null ? defaultAuthStrategiesForCRUDReadChanges[0] : null;
+                        var defaultAuthStrategiesForReadChanges = defaultAuthStrategiesForCRUDReadChanges != null ? defaultAuthStrategiesForCRUDReadChanges : null;
+
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <div class="row">
@@ -93,7 +94,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                                             {
                                                 @foreach (var authStrategyOverridesForRead in authStrategiesOverridesForRead)
                                                 {
-                                                    <span class="auth-strategy-name" data-is-inherited="@authStrategyOverridesForRead.IsInheritedFromParent" data-default-strategy='@defaultAuthStrategyForRead.DisplayName'>@authStrategyOverridesForRead.DisplayName</span>
+                                                    <span class="auth-strategy-name" data-is-inherited="@authStrategyOverridesForRead.IsInheritedFromParent">@authStrategyOverridesForRead.DisplayName</span>
                                                     if (authStrategyOverridesForRead.IsInheritedFromParent)
                                                     {
                                                         <span class="overridden-strategy inherited-override">(Overridden)</span>
@@ -105,16 +106,19 @@ See the LICENSE and NOTICES files in the project root for more information.
                                                     <br />
                                                 }
                                             }
-                                            else if (defaultAuthStrategyForRead != null)
+                                            else if (defaultAuthStrategiesForRead != null)
                                             {
-                                                <span class="auth-strategy-name" data-is-inherited="@defaultAuthStrategyForRead.IsInheritedFromParent" data-default-strategy='@defaultAuthStrategyForRead.DisplayName'>@defaultAuthStrategyForRead.DisplayName</span>
-                                                if (defaultAuthStrategyForRead.IsInheritedFromParent)
+                                                @foreach (var defaultAuthStrategyForRead in defaultAuthStrategiesForRead)
                                                 {
-                                                    <span class="default-strategy inherited-strategy">(Default)</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="default-strategy">(Default)</span>
+                                                    <span class="auth-strategy-name" data-is-inherited="@defaultAuthStrategyForRead.IsInheritedFromParent">@defaultAuthStrategyForRead.DisplayName</span>
+                                                    if (defaultAuthStrategyForRead.IsInheritedFromParent)
+                                                    {
+                                                        <span class="default-strategy inherited-strategy">(Default)</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="default-strategy">(Default)</span>
+                                                    }
                                                 }
                                             }
                                         </td>
@@ -123,7 +127,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                                             {
                                                 @foreach (var authStrategyOverridesForCreate in authStrategiesOverridesForCreate)
                                                 {
-                                                    <span class="auth-strategy-name" data-is-inherited="@authStrategyOverridesForCreate.IsInheritedFromParent" data-default-strategy='@defaultAuthStrategyForCreate.DisplayName'>@authStrategyOverridesForCreate.DisplayName</span>
+                                                    <span class="auth-strategy-name" data-is-inherited="@authStrategyOverridesForCreate.IsInheritedFromParent">@authStrategyOverridesForCreate.DisplayName</span>
                                                     if (authStrategyOverridesForCreate.IsInheritedFromParent)
                                                     {
                                                         <span class="overridden-strategy inherited-override">(Overridden)</span>
@@ -136,16 +140,19 @@ See the LICENSE and NOTICES files in the project root for more information.
                                                 }
 
                                             }
-                                            else if (defaultAuthStrategyForCreate != null)
+                                            else if (defaultAuthStrategiesForCreate != null)
                                             {
-                                                <span class="auth-strategy-name" data-is-inherited="@defaultAuthStrategyForCreate.IsInheritedFromParent" data-default-strategy='@defaultAuthStrategyForCreate.DisplayName'>@defaultAuthStrategyForCreate.DisplayName</span>
-                                                if (defaultAuthStrategyForCreate.IsInheritedFromParent)
+                                                foreach (var defaultAuthStrategyForCreate in defaultAuthStrategiesForCreate)
                                                 {
-                                                    <span class="default-strategy inherited-strategy">(Default)</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="default-strategy">(Default)</span>
+                                                    <span class="auth-strategy-name" data-is-inherited="@defaultAuthStrategyForCreate.IsInheritedFromParent" data-default-strategy='@defaultAuthStrategyForCreate.DisplayName'>@defaultAuthStrategyForCreate.DisplayName</span>
+                                                    if (defaultAuthStrategyForCreate.IsInheritedFromParent)
+                                                    {
+                                                        <span class="default-strategy inherited-strategy">(Default)</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="default-strategy">(Default)</span>
+                                                    }
                                                 }
                                             }
                                         </td>
@@ -154,7 +161,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                                             {
                                                 @foreach (var authStrategyOverridesForUpdate in authStrategiesOverridesForUpdate)
                                                 {
-                                                    <span class="auth-strategy-name" data-is-inherited="@authStrategyOverridesForUpdate.IsInheritedFromParent" data-default-strategy='@defaultAuthStrategyForUpdate.DisplayName'>@authStrategyOverridesForUpdate.DisplayName</span>
+                                                    <span class="auth-strategy-name" data-is-inherited="@authStrategyOverridesForUpdate.IsInheritedFromParent">@authStrategyOverridesForUpdate.DisplayName</span>
                                                     if (authStrategyOverridesForUpdate.IsInheritedFromParent)
                                                     {
                                                         <span class="overridden-strategy inherited-override">(Overridden)</span>
@@ -166,16 +173,19 @@ See the LICENSE and NOTICES files in the project root for more information.
                                                     <br />
                                                 }
                                             }
-                                            else if (defaultAuthStrategyForUpdate != null)
+                                            else if (defaultAuthStrategiesForUpdate != null)
                                             {
-                                                <span class="auth-strategy-name" data-is-inherited="@defaultAuthStrategyForUpdate.IsInheritedFromParent" data-default-strategy='@defaultAuthStrategyForUpdate.DisplayName'>@defaultAuthStrategyForUpdate.DisplayName</span>
-                                                if (defaultAuthStrategyForUpdate.IsInheritedFromParent)
+                                                foreach (var defaultAuthStrategyForUpdate in defaultAuthStrategiesForUpdate)
                                                 {
-                                                    <span class="default-strategy inherited-strategy">(Default)</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="default-strategy">(Default)</span>
+                                                    <span class="auth-strategy-name" data-is-inherited="@defaultAuthStrategyForUpdate.IsInheritedFromParent" data-default-strategy='@defaultAuthStrategyForUpdate.DisplayName'>@defaultAuthStrategyForUpdate.DisplayName</span>
+                                                    if (defaultAuthStrategyForUpdate.IsInheritedFromParent)
+                                                    {
+                                                        <span class="default-strategy inherited-strategy">(Default)</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="default-strategy">(Default)</span>
+                                                    }
                                                 }
                                             }
                                         </td>
@@ -184,7 +194,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                                             {
                                                 @foreach (var authStrategyOverridesForDelete in authStrategiesOverridesForDelete)
                                                 {
-                                                    <span class="auth-strategy-name" data-is-inherited="@authStrategyOverridesForDelete.IsInheritedFromParent" data-default-strategy='@defaultAuthStrategyForDelete.DisplayName'>@authStrategyOverridesForDelete.DisplayName</span>
+                                                    <span class="auth-strategy-name" data-is-inherited="@authStrategyOverridesForDelete.IsInheritedFromParent">@authStrategyOverridesForDelete.DisplayName</span>
                                                     if (authStrategyOverridesForDelete.IsInheritedFromParent)
                                                     {
                                                         <span class="overridden-strategy inherited-override">(Overridden)</span>
@@ -196,16 +206,19 @@ See the LICENSE and NOTICES files in the project root for more information.
                                                     <br />
                                                 }
                                             }
-                                            else if (defaultAuthStrategyForDelete != null)
+                                            else if (defaultAuthStrategiesForDelete != null)
                                             {
-                                                <span class="auth-strategy-name" data-is-inherited="@defaultAuthStrategyForDelete.IsInheritedFromParent" data-default-strategy='@defaultAuthStrategyForDelete.DisplayName'>@defaultAuthStrategyForDelete.DisplayName</span>
-                                                if (defaultAuthStrategyForDelete.IsInheritedFromParent)
+                                                foreach (var defaultAuthStrategyForDelete in defaultAuthStrategiesForDelete)
                                                 {
-                                                    <span class="default-strategy inherited-strategy">(Default)</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="default-strategy">(Default)</span>
+                                                    <span class="auth-strategy-name" data-is-inherited="@defaultAuthStrategyForDelete.IsInheritedFromParent" data-default-strategy='@defaultAuthStrategyForDelete.DisplayName'>@defaultAuthStrategyForDelete.DisplayName</span>
+                                                    if (defaultAuthStrategyForDelete.IsInheritedFromParent)
+                                                    {
+                                                        <span class="default-strategy inherited-strategy">(Default)</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="default-strategy">(Default)</span>
+                                                    }
                                                 }
                                             }
                                         </td>
@@ -214,7 +227,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                                             {
                                                 @foreach (var authStrategyOverridesForReadChanges in authStrategiesOverridesForReadChanges)
                                                 {
-                                                    <span class="auth-strategy-name" data-is-inherited="@authStrategyOverridesForReadChanges.IsInheritedFromParent" data-default-strategy='@defaultAuthStrategyForReadChanges.DisplayName'>@authStrategyOverridesForReadChanges.DisplayName</span>
+                                                    <span class="auth-strategy-name" data-is-inherited="@authStrategyOverridesForReadChanges.IsInheritedFromParent">@authStrategyOverridesForReadChanges.DisplayName</span>
                                                     if (authStrategyOverridesForReadChanges.IsInheritedFromParent)
                                                     {
                                                         <span class="overridden-strategy inherited-override">(Overridden)</span>
@@ -226,16 +239,19 @@ See the LICENSE and NOTICES files in the project root for more information.
                                                     <br />
                                                 }
                                             }
-                                            else if (defaultAuthStrategyForReadChanges != null)
+                                            else if (defaultAuthStrategiesForReadChanges != null)
                                             {
-                                                <span data-is-inherited="@defaultAuthStrategyForReadChanges.IsInheritedFromParent" data-default-strategy='@defaultAuthStrategyForReadChanges.DisplayName'>@defaultAuthStrategyForReadChanges.DisplayName</span>
-                                                if (defaultAuthStrategyForReadChanges.IsInheritedFromParent)
+                                                foreach (var defaultAuthStrategyForReadChanges in defaultAuthStrategiesForReadChanges)
                                                 {
-                                                    <span class="default-strategy inherited-strategy">(Default)</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="default-strategy">(Default)</span>
+                                                    <span data-is-inherited="@defaultAuthStrategyForReadChanges.IsInheritedFromParent" data-default-strategy='@defaultAuthStrategyForReadChanges.DisplayName'>@defaultAuthStrategyForReadChanges.DisplayName</span>
+                                                    if (defaultAuthStrategyForReadChanges.IsInheritedFromParent)
+                                                    {
+                                                        <span class="default-strategy inherited-strategy">(Default)</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="default-strategy">(Default)</span>
+                                                    }
                                                 }
                                             }
                                         </td>
@@ -262,5 +278,16 @@ See the LICENSE and NOTICES files in the project root for more information.
         {
         StringEscapeHandling = StringEscapeHandling.EscapeHtml
         })));
+    
+    var defaultAuthStrategies = @{
+        if (Model.ResourceClaim != null && Model.ResourceClaim.DefaultAuthStrategiesForCRUD != null)
+        {
+            @(Html.Raw(JsonConvert.SerializeObject(Model.ResourceClaim.DefaultAuthStrategiesForCRUD, new JsonSerializerSettings
+                {
+                    StringEscapeHandling = StringEscapeHandling.EscapeHtml
+                })))
+        }
+        else{ @(Html.Raw("[]")) }
+    };
 </script>
 <script type="text/javascript" src="~/Scripts/auth-editor.js"></script>
