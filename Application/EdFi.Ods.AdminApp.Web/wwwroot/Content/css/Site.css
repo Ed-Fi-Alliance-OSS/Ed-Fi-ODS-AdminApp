@@ -1164,6 +1164,11 @@ input[type="radio"] {
     width: 100px;
 }
 
+.auth-multiple-dropdown {
+    width: 175px;
+    overflow: auto;
+}
+
 #auth-table {
     width: 100%;
     table-layout: fixed;

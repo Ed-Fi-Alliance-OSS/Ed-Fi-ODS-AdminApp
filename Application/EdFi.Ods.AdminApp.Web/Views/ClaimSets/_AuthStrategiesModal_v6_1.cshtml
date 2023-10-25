@@ -18,23 +18,20 @@ See the LICENSE and NOTICES files in the project root for more information.
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" style="text-align: center;">Override Authorization Strategy</h4>
-                <div>
-                    <h6>Editor Legend</h6>
-                    <div class="row">
+                <div class="row padding-row text-center">
+                    <div class="col-md-6">
                         <span class="default-strategy">(Default)</span><span class="margin-left-10">Not inherited from parent</span>
-                    </div>
-                    <div class="row">
+                        <br />
                         <span class="default-strategy inherited-strategy">(Default)</span><span class="margin-left-10">Inherited from parent</span>
                     </div>
-                    <div class="row">
+                    <div class="col-md-6">
                         <span class="overridden-strategy">(Overridden)</span><span class="margin-left-10">Overridden</span>
-                    </div>
-                    <div class="row">
+                        <br />
                         <span class="overridden-strategy inherited-override">(Overridden)</span><span class="margin-left-10">Overridden by parent</span>
                     </div>
                 </div>
             </div>
-            <div class="modal-body center-block text-center">
+            <div class="modal-body">
                 <div class="row padding-row">
                     <div id="auth-modal-spinner" class="text-center hidden">
                         <div><i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i></div>
@@ -65,8 +62,19 @@ See the LICENSE and NOTICES files in the project root for more information.
                         var authStrategiesOverridesForReadChanges = authStrategyOverridesForCRUD.ReadChanges() != null ? authStrategyOverridesForCRUD[4].AuthorizationStrategies : null;
                         var defaultAuthStrategyForReadChanges = defaultAuthStrategiesForCRUDReadChanges != null ? defaultAuthStrategiesForCRUDReadChanges[0] : null;
                         <div class="panel panel-default">
-                            <!-- Default panel contents -->
-                            <div class="panel-heading">Resource: @Model.ResourceClaim.Name </div>
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        Resource: <span id="resource-claim-name">@Model.ResourceClaim.Name</span>
+                                    </div>
+                                    <div class="pull-right">
+                                        <a class="override-auth"> <span class="fa fa-pencil action-icons"></span></a>
+                                        &nbsp;
+                                        <a class="reset-auth"> <span class="fa fa-undo action-icons"></span></a>
+                                        &nbsp;
+                                    </div>
+                                </div>
+                            </div>
 
                             <table class="table" id="auth-table">
                                 <thead>
@@ -76,11 +84,10 @@ See the LICENSE and NOTICES files in the project root for more information.
                                         <th>Update</th>
                                         <th>Delete</th>
                                         <th>Read Changes</th>
-                                        <th style="width:9%"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="parent-resource-claim">
+                                    <tr id="resource-claim-auth" data-resource-id='@Model.ResourceClaim.Id' class="resource-label">
                                         <td class="read-action-cell" data-existing-action='@Model.ResourceClaim.Read'>
                                             @if (authStrategiesOverridesForRead != null)
                                             {
@@ -95,6 +102,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                                                     {
                                                         <span class="overridden-strategy">(Overridden)</span>
                                                     }
+                                                    <br />
                                                 }
                                             }
                                             else if (defaultAuthStrategyForRead != null)
@@ -124,6 +132,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                                                     {
                                                         <span class="overridden-strategy">(Overridden)</span>
                                                     }
+                                                    <br />
                                                 }
 
                                             }
@@ -154,6 +163,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                                                     {
                                                         <span class="overridden-strategy">(Overridden)</span>
                                                     }
+                                                    <br />
                                                 }
                                             }
                                             else if (defaultAuthStrategyForUpdate != null)
@@ -183,6 +193,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                                                     {
                                                         <span class="overridden-strategy">(Overridden)</span>
                                                     }
+                                                    <br />
                                                 }
                                             }
                                             else if (defaultAuthStrategyForDelete != null)
@@ -212,6 +223,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                                                     {
                                                         <span class="overridden-strategy">(Overridden)</span>
                                                     }
+                                                    <br />
                                                 }
                                             }
                                             else if (defaultAuthStrategyForReadChanges != null)
@@ -227,11 +239,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                                                 }
                                             }
                                         </td>
-                                        <td data-resource-id='@Model.ResourceClaim.Id' class="resource-label">
-                                            <a class="override-auth"> <span class="fa fa-pencil action-icons"></span></a>
-                                            &nbsp;
-                                            <a class="reset-auth"> <span class="fa fa-undo action-icons"></span></a>
-                                        </td>
+                                        
                                     </tr>
                                 </tbody>
                             </table>

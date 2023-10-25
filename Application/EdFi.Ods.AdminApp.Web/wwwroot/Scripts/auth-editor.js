@@ -3,16 +3,15 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 var updateCell = function (row, action) {
-    var resourceId = row.find(".resource-label").data("resource-id");
+    var resourceId = $("#resource-claim-auth").data("resource-id");
     var actionCell = row.find("td.".concat(action, "-action-cell"));
     var actionCellLabel = actionCell.find("span:first-child");
-    var authStrategyLabel = actionCell.find("span:nth-child(2)");
     var authStrategiesOverride = actionCell.find(".auth-strategy-name").map(function () { return this.innerHTML });
     var dropdown = '';
     if (actionCell.data("existing-action") === "True") {
         var dropdownId = "resource-auth-dropdown-".concat(resourceId, "-", action);
-        dropdown = $("<select multiple='multiple' class='auth-dropdown' id='".concat(dropdownId, "'></select>"));
-        $(authStrategiesOptions).each(function (authStrategy) {
+        dropdown = $("<select multiple class='auth-multiple-dropdown' id='".concat(dropdownId, "'></select>"));
+        $(authStrategiesOptions).each(function () {
             var selected = $.inArray(this.Text, authStrategiesOverride) > -1;
             if (this.Text === actionCellLabel.data('default-strategy')) {
                 if (actionCellLabel.data('is-inherited') === "True") {
@@ -24,9 +23,8 @@ var updateCell = function (row, action) {
                 dropdown.append($("<option></option>").val(this.Value).html(this.Text).attr("disabled", this.Disabled).attr("selected", selected));
             }
         });
-        actionCellLabel.html(dropdown);
-        authStrategyLabel.html('');
-        $("#".concat(dropdownId)).multiselect();
+        actionCell.html('');
+        actionCell.html(dropdown);
     }
 };
 
@@ -103,11 +101,10 @@ var updateCellAfterEdit = function (cell, defaultStrategy, authStrategyOverride)
 }
 
 var overrideStrategies = function () {
-    var row = $(this).closest("tr");
+    var row = $("#resource-claim-auth").closest("tr");
     var claimSetId = parseInt($("#ClaimSetId").val());
-    var resourceEl = row.find(".resource-label");
-    var resourceId = resourceEl.data("resource-id");
-    var resourceName = resourceEl.text();
+    var resourceId = $("#resource-claim-auth").data("resource-id");
+    var resourceName = $("#resource-claim-name").text();
     var readDropdown = row.find(".read-action-cell select");
     var createDropdown = row.find(".create-action-cell select");
     var updateDropdown = row.find(".update-action-cell select");
@@ -160,7 +157,7 @@ var overrideStrategies = function () {
 };
 
 var resetStrategiesToDefault = function () {
-    var row = $(this).closest("tr");
+    var row = $("#resource-claim-auth").closest("tr");
     var claimSetId = parseInt($("#ClaimSetId").val());
     var resourceEl = row.find(".resource-label");
     var resourceId = resourceEl.data("resource-id");
@@ -202,7 +199,7 @@ var resetStrategiesToDefault = function () {
 
 var overrideAuth = function(e) {
     e.preventDefault();
-    var row = $(this).closest("tr");
+    var row = $("#resource-claim-auth").closest("tr");
     row.attr("data-state", "edited");
     updateCell(row, "create");
     updateCell(row, "read");
@@ -212,7 +209,7 @@ var overrideAuth = function(e) {
     if (readChangesCell.length > 0) {
         updateCell(row, "readchanges");
     }
-    row.find("a.override-auth").replaceWith('<a class="edit-resource-check"> <span class="fa fa-check action-icons"></span></a>');
+    $("a.override-auth").replaceWith('<a class="edit-resource-check"> <span class="fa fa-check action-icons"></span></a>');
     $(".edit-resource-check").click(overrideStrategies);
 };
 $(function () {
