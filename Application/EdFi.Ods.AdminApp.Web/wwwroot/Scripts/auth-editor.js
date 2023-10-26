@@ -2,6 +2,7 @@
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
+
 const ACTIONS = {
     create: 0,
     read: 1,
@@ -81,7 +82,7 @@ var updateRowAfterEdit = function (row, resourceUpdateUrl) {
                 updateCellAfterEdit(readChangesCell, defaultStrategies[4], authStrategyOverrides[4]);
             }
             if (editCell != null) {
-                $("a.override-auth").replaceWith('<a class="override-auth"> <span class="fa fa-pencil action-icons"></span></a>');
+                editCell.replaceWith('<a class="override-auth"> <span class="fa fa-pencil action-icons"></span></a>');
                 $(".override-auth").click(overrideAuth);
             }
             showSpinner(false);
@@ -93,7 +94,7 @@ var updateRowAfterEdit = function (row, resourceUpdateUrl) {
 };
 
 var updateCellAfterEdit = function (cell, defaultStrategy, authStrategyOverride) {
-    var strategyName = cell.find("span:first-child");
+    cell.html("");
     if (authStrategyOverride != null) {
         $.each(authStrategyOverride.AuthorizationStrategies, function (key, authStrategy) {
             cell.append(`<span class="auth-strategy-name" data-is-inherited="${authStrategy.IsInheritedFromParent}">${authStrategy.DisplayName}</span>`);
@@ -107,14 +108,15 @@ var updateCellAfterEdit = function (cell, defaultStrategy, authStrategyOverride)
         
     } else {
         if (defaultStrategy != null) {
-            strategyName.html(defaultStrategy.DisplayName);
-            if (defaultStrategy.IsInheritedFromParent) {
-                cell.find("span:nth-child(2)")
-                    .replaceWith('<span class="default-strategy inherited-strategy">(Default)</span>');
-            } else {
-                cell.find("span:nth-child(2)")
-                    .replaceWith('<span class="default-strategy">(Default)</span>');
-            }
+            $.each(defaultStrategy.AuthorizationStrategies, function (key, authStrategy) {
+                cell.append(`<span class="auth-strategy-name" data-is-inherited="${authStrategy.IsInheritedFromParent}" data-default-strategy="${authStrategy.DisplayName}">${authStrategy.DisplayName}</span>`);
+                if (authStrategy.IsInheritedFromParent) {
+                    cell.append('<span class="default-strategy inherited-strategy">(Default)</span>');
+                } else {
+                    cell.append('<span class="default-strategy">(Default)</span>');
+                }
+                cell.append("<br />");
+            });
         }
     }
 }
