@@ -18,7 +18,7 @@ See the LICENSE and NOTICES files in the project root for more information.
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" style="text-align: center;">Override Authorization Strategy</h4>
-                <div class="row padding-row text-center">
+                <div class="row padding-15 text-center">
                     <div class="col-md-6">
                         <span class="default-strategy">(Default)</span><span class="margin-left-10">Not inherited from parent</span>
                         <br />
@@ -32,7 +32,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                 </div>
             </div>
             <div class="modal-body">
-                <div class="row padding-row">
+                <div class="row padding-15">
                     <div id="auth-modal-spinner" class="text-center hidden">
                         <div><i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i></div>
                     </div>
@@ -119,6 +119,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                                                     {
                                                         <span class="default-strategy">(Default)</span>
                                                     }
+                                                    <br />
                                                 }
                                             }
                                         </td>
@@ -153,6 +154,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                                                     {
                                                         <span class="default-strategy">(Default)</span>
                                                     }
+                                                    <br />
                                                 }
                                             }
                                         </td>
@@ -186,6 +188,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                                                     {
                                                         <span class="default-strategy">(Default)</span>
                                                     }
+                                                    <br />
                                                 }
                                             }
                                         </td>
@@ -219,6 +222,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                                                     {
                                                         <span class="default-strategy">(Default)</span>
                                                     }
+                                                    <br />
                                                 }
                                             }
                                         </td>
@@ -252,6 +256,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                                                     {
                                                         <span class="default-strategy">(Default)</span>
                                                     }
+                                                    <br />
                                                 }
                                             }
                                         </td>
@@ -290,4 +295,4 @@ See the LICENSE and NOTICES files in the project root for more information.
         else{ @(Html.Raw("[]")) }
     };
 </script>
-<script type="text/javascript" src="~/Scripts/auth-editor.js"></script>
+<script type="text/javascript" src="~/bundles/authstrategy.min.js" asp-append-version="true"></script>

@@ -26,6 +26,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                     <th scope="col" id="read-changes-header-id">Read Changes</th>
                     <th scope="col"></th>
                     <th scope="col"></th>
+                    <th scope="col"></th>
                 </tr>
             </thead>
             <tbody id="resource-claim-table-body">
@@ -102,7 +103,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                         <td class="child-dropdown">
                             @Html.DropDownList("ChildResourceClaimsDropDown", new SelectList(Enumerable.Empty<SelectListItem>()), new {@id= $"child-resource-dropdown-{resourceClaim.Id}"})
                         </td>
-                        <td colspan="7">
+                        <td colspan="8">
                             @Html.Button("Add Child Resource").Attr("type", "button").AddClass("add-child-resource-button").Attr("data-parent-id", $"{@resourceClaim.Id}")
                         </td>
                     </tr>
@@ -123,6 +124,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                     <th scope="col">Update</th>
                     <th scope="col">Delete</th>
 					<th scope="col" id="read-changes-header-id">Read Changes</th>
+                    <th scope="col"></th>
                     <th scope="col"></th>
                     <th scope="col"></th>
                 </tr>
