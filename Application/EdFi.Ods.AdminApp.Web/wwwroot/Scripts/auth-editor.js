@@ -22,15 +22,15 @@ var updateCell = function (row, action) {
             dropdown = $("<select multiple class='auth-multiple-dropdown' id='".concat(dropdownId, "'></select>"));
         }
         else {
-            dropdown = $("<select class='auth-dropdown' id='id='".concat(dropdownId, "'></select>"));
+            dropdown = $("<select class='auth-dropdown auth-dropdown-v5' id='id='".concat(dropdownId, "'></select>"));
         }
         $(authStrategiesOptions).each(function () {
             var selected = $.inArray(this.Text, authStrategiesOverride) > -1;
             if (isDefaultAuthStrategy(action, Number(this.Value))) {
                 if (actionCellLabel.data('is-inherited') === "True") {
-                    dropdown.append($("<option></option>").val(this.Value).html(this.Text.concat("(Default Strategy)")).attr("disabled", this.Disabled).attr("data-default-is-inherited", true).attr("selected", selected));
+                    dropdown.append($("<option></option>").val(this.Value).html(this.Text.concat(" (Default Strategy)")).attr("disabled", this.Disabled).attr("data-default-is-inherited", true).attr("selected", selected));
                 } else {
-                    dropdown.append($("<option></option>").val(this.Value).html(this.Text.concat("(Default Strategy)")).attr("disabled", this.Disabled).attr("selected", selected));
+                    dropdown.append($("<option></option>").val(this.Value).html(this.Text.concat(" (Default Strategy)")).attr("disabled", this.Disabled).attr("selected", selected));
                 }
             } else {
                 dropdown.append($("<option></option>").val(this.Value).html(this.Text).attr("disabled", this.Disabled).attr("selected", selected));

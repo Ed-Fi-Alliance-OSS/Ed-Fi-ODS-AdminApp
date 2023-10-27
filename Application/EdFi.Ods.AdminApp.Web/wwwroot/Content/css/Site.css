@@ -1164,6 +1164,10 @@ input[type="radio"] {
     width: 100px;
 }
 
+.auth-dropdown-v5 {
+    width: 210px;
+}
+
 .auth-multiple-dropdown {
     width: 175px;
     overflow: auto;
