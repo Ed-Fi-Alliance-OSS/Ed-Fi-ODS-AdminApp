@@ -18,7 +18,12 @@ var updateCell = function (row, action) {
     var dropdown = '';
     if (actionCell.data("existing-action") === "True") {
         var dropdownId = "resource-auth-dropdown-".concat(resourceId, "-", action);
-        dropdown = $("<select multiple class='auth-multiple-dropdown' id='".concat(dropdownId, "'></select>"));
+        if (odsVersion === 6) {
+            dropdown = $("<select multiple class='auth-multiple-dropdown' id='".concat(dropdownId, "'></select>"));
+        }
+        else {
+            dropdown = $("<select class='auth-dropdown' id='id='".concat(dropdownId, "'></select>"));
+        }
         $(authStrategiesOptions).each(function () {
             var selected = $.inArray(this.Text, authStrategiesOverride) > -1;
             if (isDefaultAuthStrategy(action, Number(this.Value))) {
@@ -97,7 +102,7 @@ var updateCellAfterEdit = function (cell, defaultStrategy, authStrategyOverride)
     cell.html("");
     if (authStrategyOverride != null) {
         $.each(authStrategyOverride.AuthorizationStrategies, function (key, authStrategy) {
-            cell.append(`<span class="auth-strategy-name" data-is-inherited="${authStrategy.IsInheritedFromParent}">${authStrategy.DisplayName}</span>`);
+            cell.append(`<span class="auth-strategy-name" data-is-inherited="${authStrategy.IsInheritedFromParent}">${authStrategy.DisplayName}</span>  `);
             if (authStrategy.IsInheritedFromParent) {
                 cell.append('<span class="overridden-strategy inherited-override">(Overridden)</span>');
             } else {
@@ -109,7 +114,7 @@ var updateCellAfterEdit = function (cell, defaultStrategy, authStrategyOverride)
     } else {
         if (defaultStrategy != null) {
             $.each(defaultStrategy.AuthorizationStrategies, function (key, authStrategy) {
-                cell.append(`<span class="auth-strategy-name" data-is-inherited="${authStrategy.IsInheritedFromParent}" data-default-strategy="${authStrategy.DisplayName}">${authStrategy.DisplayName}</span>`);
+                cell.append(`<span class="auth-strategy-name" data-is-inherited="${authStrategy.IsInheritedFromParent}" data-default-strategy="${authStrategy.DisplayName}">${authStrategy.DisplayName}</span>  `);
                 if (authStrategy.IsInheritedFromParent) {
                     cell.append('<span class="default-strategy inherited-strategy">(Default)</span>');
                 } else {
