@@ -12,7 +12,9 @@ on:
     - cron: "0 5 * * 1"
   workflow_dispatch:
   pull_request:
-    branches: [main]
+    branches:
+      - main
+      - *-hotfix
     paths:
       - "Application/**/*.cs"
       - "Application/EdFi.Ods.AdminApp.E2E.Tests"
