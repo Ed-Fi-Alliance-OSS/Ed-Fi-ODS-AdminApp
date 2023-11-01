@@ -157,18 +157,22 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
                             defaultStrategies = defaultAuthStrategiesForParents.SingleOrDefault(x =>
                                        x.ResourceClaim.ResourceClaimId == resourceClaim.ParentResourceClaimId &&
                                        x.Action.ActionName == action.Value)?.AuthorizationStrategies.Select(x => x.AuthorizationStrategy);
-                            var mappedStrategies = defaultStrategies!.Select(x =>
-                            {
-                                var value = _mapper.Map<AuthorizationStrategy>(x);
-                                if (value != null)
-                                    value.IsInheritedFromParent = true;
-                                return value;
-                            });
 
-                            actions.Add(new ClaimSetResourceClaimActionAuthStrategies()
+                            if (defaultStrategies != null)
                             {
-                                AuthorizationStrategies = mappedStrategies.ToArray()
-                            });
+                                var mappedStrategies = defaultStrategies.Select(x =>
+                                {
+                                    var value = _mapper.Map<AuthorizationStrategy>(x);
+                                    if (value != null)
+                                        value.IsInheritedFromParent = true;
+                                    return value;
+                                });
+
+                                actions.Add(new ClaimSetResourceClaimActionAuthStrategies()
+                                {
+                                    AuthorizationStrategies = mappedStrategies.ToArray()
+                                });
+                            }
                         }
                         else
                         {

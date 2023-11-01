@@ -53,6 +53,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                 copiedClaimSet.ClaimSetName.ShouldBe(newClaimSet.Object.Name);
                 copiedClaimSet.ForApplicationUseOnly.ShouldBe(false);
                 copiedClaimSet.IsEdfiPreset.ShouldBe(false);
+                
 
                 var results = ResourceClaimsForClaimSet(copiedClaimSet.ClaimSetId).ToList();
 
