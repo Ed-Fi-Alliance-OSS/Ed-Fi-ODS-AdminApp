@@ -168,7 +168,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
             {
                 Name = odsInstanceName,
                 InstanceType = "Ods",
-                ConnectionString = "Data Source=.\\;Initial Catalog=EdFi_Ods;Integrated Security=True;Encrypt=False"
+                Status = "OK",
+                Version = "1.0.0"
             };
 
             Save(vendor, user, profile, odsInstance);

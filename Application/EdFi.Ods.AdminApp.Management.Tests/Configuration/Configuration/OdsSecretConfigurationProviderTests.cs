@@ -266,7 +266,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Configuration.Configuration
                 dbContext.OdsInstances.Add(new OdsInstance {
                     Name = instanceName,
                     InstanceType = "OdsInstance",
-                    ConnectionString = "Connection String"
+                    Status = "OK",
+                    Version = "1.0.0"
                 });
                 dbContext.SaveChanges();
 

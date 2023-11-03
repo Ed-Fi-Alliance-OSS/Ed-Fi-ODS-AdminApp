@@ -34,8 +34,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Instance
                 {
                     Name = useGuidName ? $"Ods{Guid.NewGuid():N}_{index:D4}" : $"Ods_{index:D4}",
                     InstanceType = "OdsInstance",
-                    ConnectionString= "Data Source=.\\;Initial Catalog=EdFi_Ods;Integrated Security=True;Encrypt=False"
-
+                    Status = "OK",
+                    Version = "1.0.0"
                 })
                 .ToList();
 
