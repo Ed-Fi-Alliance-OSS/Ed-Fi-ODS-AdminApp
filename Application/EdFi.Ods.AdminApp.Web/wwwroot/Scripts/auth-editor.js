@@ -8,13 +8,12 @@ const ACTIONS = {
     read: 1,
     update: 2,
     delete: 3,
-    readChanges: 4
+    readchanges: 4
 }
 var updateCell = function (row, action) {
     var resourceId = $("#resource-claim-auth").data("resource-id");
     var actionCell = row.find("td.".concat(action, "-action-cell"));
     var actionCellLabel = actionCell.find("span:first-child");
-    var authStrategiesOverride = actionCell.find(".auth-strategy-name").map(function () { return this.innerHTML });
     var dropdown = '';
     if (actionCell.data("existing-action") === "True") {
         var dropdownId = "resource-auth-dropdown-".concat(resourceId, "-", action);
@@ -25,7 +24,7 @@ var updateCell = function (row, action) {
             dropdown = $("<select class='auth-dropdown auth-dropdown-v5' id='id='".concat(dropdownId, "'></select>"));
         }
         $(authStrategiesOptions).each(function () {
-            var selected = $.inArray(this.Text, authStrategiesOverride) > -1;
+            var selected = isSelected(action, Number(this.Value));
             if (isDefaultAuthStrategy(action, Number(this.Value))) {
                 if (actionCellLabel.data('is-inherited') === "True") {
                     dropdown.append($("<option></option>").val(this.Value).html(this.Text.concat(" (Default Strategy)")).attr("disabled", this.Disabled).attr("data-default-is-inherited", true).attr("selected", selected));
@@ -51,6 +50,21 @@ var isDefaultAuthStrategy = function (action, authStrategyId) {
     return result.length > 0;
 }
 
+var isSelected = function (action, authStrategyId) {
+    const index = ACTIONS[action];
+    var result = false;
+    if (authStrategyId === 0)
+        return false;
+
+    if (authStrategiesOverrides[index] == null) {
+        result = isDefaultAuthStrategy(action, authStrategyId);
+    }
+    else {
+        result = authStrategiesOverrides[index].AuthorizationStrategies.filter(a => a.AuthStrategyId === authStrategyId).length > 0;
+    }
+    return result;
+};
+
 var getUpdateResourceUrl = function (resourceId, claimSetId) {
     return "".concat(getUpdatedResourceUrl, "?claimSetId=").concat(claimSetId, "&resourceClaimId=").concat(resourceId);
 };
@@ -71,20 +85,20 @@ var updateRowAfterEdit = function (row, resourceUpdateUrl) {
         dataType: "json",
         url: resourceUpdateUrl,
         success: function success(updatedResource) {
-            var defaultStrategies = updatedResource.DefaultAuthStrategiesForCRUD;
-            var authStrategyOverrides = updatedResource.AuthStrategyOverridesForCRUD;
+            defaultAuthStrategies = updatedResource.DefaultAuthStrategiesForCRUD;
+            authStrategiesOverrides = updatedResource.AuthStrategyOverridesForCRUD;
             var readCell = row.find(".read-action-cell");
             var createCell = row.find(".create-action-cell");
             var updateCell = row.find(".update-action-cell");
             var deleteCell = row.find(".delete-action-cell");
             var readChangesCell = row.find(".readchanges-action-cell");
             var editCell = $("a.edit-resource-check");
-            updateCellAfterEdit(readCell, defaultStrategies[1], authStrategyOverrides[1]);
-            updateCellAfterEdit(createCell, defaultStrategies[0], authStrategyOverrides[0]);
-            updateCellAfterEdit(updateCell, defaultStrategies[2], authStrategyOverrides[2]);
-            updateCellAfterEdit(deleteCell, defaultStrategies[3], authStrategyOverrides[3]);
+            updateCellAfterEdit(readCell, defaultAuthStrategies[1], authStrategiesOverrides[1]);
+            updateCellAfterEdit(createCell, defaultAuthStrategies[0], authStrategiesOverrides[0]);
+            updateCellAfterEdit(updateCell, defaultAuthStrategies[2], authStrategiesOverrides[2]);
+            updateCellAfterEdit(deleteCell, defaultAuthStrategies[3], authStrategiesOverrides[3]);
             if (readChangesCell != null) { 
-                updateCellAfterEdit(readChangesCell, defaultStrategies[4], authStrategyOverrides[4]);
+                updateCellAfterEdit(readChangesCell, defaultAuthStrategies[4], authStrategiesOverrides[4]);
             }
             if (editCell != null) {
                 editCell.replaceWith('<a class="override-auth"> <span class="fa fa-pencil action-icons"></span></a>');

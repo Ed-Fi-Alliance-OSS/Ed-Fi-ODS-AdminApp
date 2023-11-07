@@ -257,5 +257,18 @@ See the LICENSE and NOTICES files in the project root for more information.
             @(Html.Raw("[]"))
         }
     };
+    var authStrategiesOverrides = @{
+        if (Model.ResourceClaim != null && Model.ResourceClaim.AuthStrategyOverridesForCRUD != null)
+        {
+            @(Html.Raw(JsonConvert.SerializeObject(Model.ResourceClaim.AuthStrategyOverridesForCRUD, new JsonSerializerSettings
+        {
+            StringEscapeHandling = StringEscapeHandling.EscapeHtml
+        })))
+        }
+        else
+        {
+            @(Html.Raw("[]"))
+        }
+    };
 </script>
 <script type="text/javascript" src="~/bundles/authstrategy.min.js" asp-append-version="true"></script>
