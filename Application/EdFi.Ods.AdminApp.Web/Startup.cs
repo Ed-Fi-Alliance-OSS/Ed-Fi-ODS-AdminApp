@@ -115,7 +115,9 @@ namespace EdFi.Ods.AdminApp.Web
 
                     pipeline.AddCssBundle("/bundles/bootstrap-multiselect.min.css", minifyCssSettings, "/content/css/bootstrap-multiselect.css");
                     pipeline.AddCssBundle("/bundles/site.min.css", minifyCssSettings, "/content/css/Site.css");
+                    pipeline.AddCssBundle("/bundles/jquery-multiselect.min.css", minifyCssSettings, "/content/css/jquery-multiselect.css");
                     pipeline.AddJavaScriptBundle("/bundles/bootstrap-multiselect.min.js", minifyJsSettings, "/Scripts/bootstrap-multiselect.js");
+                    pipeline.AddJavaScriptBundle("/bundles/jquery-multiselect.min.js", minifyJsSettings, "/Scripts/jquery-multiselect.js");
                     pipeline.AddJavaScriptBundle("/bundles/modernizr.min.js", minifyJsSettings, "/Scripts/modernizr-2.8.3.js");
                     pipeline.AddJavaScriptBundle("/bundles/site.min.js", minifyJsSettings, "/Scripts/site.js", "/Scripts/site-form-handlers.js", "/Scripts/signalr-progress.js");
                     pipeline.AddJavaScriptBundle("/bundles/claimset.min.js", minifyJsSettings, "/Scripts/resource-editor.js");
