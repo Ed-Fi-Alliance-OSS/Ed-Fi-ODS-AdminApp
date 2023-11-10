@@ -27,16 +27,19 @@ var updateCell = function (row, action) {
             var selected = isSelected(action, Number(this.Value));
             if (isDefaultAuthStrategy(action, Number(this.Value))) {
                 if (actionCellLabel.data('is-inherited') === "True") {
-                    dropdown.append($("<option></option>").val(this.Value).html(this.Text.concat(" (Default Strategy)")).attr("disabled", this.Disabled).attr("data-default-is-inherited", true).attr("selected", selected));
+                    dropdown.append($("<option></option>").val(this.Value).html(this.Text.concat(" (Default Strategy)")).attr("title", this.Text.concat(" (Default Strategy)")).attr("disabled", this.Disabled).attr("data-default-is-inherited", true).attr("selected", selected));
                 } else {
-                    dropdown.append($("<option></option>").val(this.Value).html(this.Text.concat(" (Default Strategy)")).attr("disabled", this.Disabled).attr("selected", selected));
+                    dropdown.append($("<option></option>").val(this.Value).html(this.Text.concat(" (Default Strategy)")).attr("title", this.Text.concat(" (Default Strategy)")).attr("disabled", this.Disabled).attr("selected", selected));
                 }
             } else {
-                dropdown.append($("<option></option>").val(this.Value).html(this.Text).attr("disabled", this.Disabled).attr("selected", selected));
+                dropdown.append($("<option></option>").val(this.Value).html(this.Text).attr("title", this.Text).attr("disabled", this.Disabled).attr("selected", selected));
             }
         });
         actionCell.html('');
         actionCell.html(dropdown);
+        if (odsVersion === 6)
+            $("#".concat(dropdownId)).CreateMultiCheckBox({ width: '330px', height: '200px' });
+
     }
 };
 

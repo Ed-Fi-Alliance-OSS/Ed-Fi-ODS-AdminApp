@@ -128,9 +128,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
 
         private string GetSelectListForAuthStrategies()
         {
-            var selectList = new List<SelectListItem>{
-                new SelectListItem{ Text="Please select a value", Value = "0" , Disabled = true, Selected = true},
-            };
+            var selectList = new List<SelectListItem>{};
             var authorizationStrategies = _getAuthStrategiesByApplicationNameQuery.Execute(CloudOdsAdminApp.SecurityContextApplicationName);
             selectList.AddRange(new SelectList(authorizationStrategies.Select(x => new SelectListItem()
             {
