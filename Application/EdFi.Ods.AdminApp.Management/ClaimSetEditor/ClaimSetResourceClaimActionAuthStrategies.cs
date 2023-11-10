@@ -9,10 +9,10 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor;
 
 public interface IClaimSetResourceClaimActionAuthStrategies
 {
-    IList<AuthorizationStrategy?> AuthorizationStrategies { get; }
+    IList<AuthorizationStrategy> AuthorizationStrategies { get; }
 }
 
 public class ClaimSetResourceClaimActionAuthStrategies : IClaimSetResourceClaimActionAuthStrategies
 {
-    public IList<AuthorizationStrategy?> AuthorizationStrategies { get; set; } = new List<AuthorizationStrategy?>();
+    public IList<AuthorizationStrategy> AuthorizationStrategies { get; set; } = new List<AuthorizationStrategy?>();
 }
