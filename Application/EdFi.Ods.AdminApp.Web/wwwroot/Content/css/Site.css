@@ -1164,6 +1164,15 @@ input[type="radio"] {
     width: 100px;
 }
 
+.auth-dropdown-v5 {
+    width: 210px;
+}
+
+.auth-multiple-dropdown {
+    width: 175px;
+    overflow: auto;
+}
+
 #auth-table {
     width: 100%;
     table-layout: fixed;
@@ -1176,7 +1185,7 @@ input[type="radio"] {
 }
 
 #auth-strategies-modal .modal-dialog {
-    width: 1000px;
+    width: 1200px;
 }
 
 .default-strategy {
@@ -1227,6 +1236,10 @@ input[type="checkbox"]:checked + label > .fa-check-square:before {
     overflow: hidden;
     word-break: break-word;
     text-align: left;
+}
+
+.padding-row{
+    padding: 10px;
 }
 
 @media (min-width: 768px) {

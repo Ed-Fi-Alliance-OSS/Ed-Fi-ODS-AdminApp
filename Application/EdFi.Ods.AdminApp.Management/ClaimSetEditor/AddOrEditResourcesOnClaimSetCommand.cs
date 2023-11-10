@@ -3,6 +3,7 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using EdFi.Ods.AdminApp.Management.ClaimSetEditor.Extensions;
@@ -35,21 +36,23 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
                 childResources.AddRange(resourceClaims);
             resources.AddRange(childResources);
             var currentResources = resources.Select(r =>
+            {
+                var resource = allResources.FirstOrDefault(dr => (dr.Name ?? string.Empty).Equals(r.Name, StringComparison.Ordinal));
+                if (resource != null)
                 {
-                    var resource = allResources.FirstOrDefault(dr => dr.Name.Equals(r.Name));
-                    if (resource != null)
-                    {
-                        resource.Create = r.Create;
-                        resource.Read = r.Read;
-                        resource.Update = r.Update;
-                        resource.Delete = r.Delete;
-                        resource.ReadChanges = r.ReadChanges;
-                        resource.AuthStrategyOverridesForCRUD = r.AuthStrategyOverridesForCRUD;
-                    }
-                    return resource;
-                }).ToList();
-            currentResources.RemoveAll(x => x == null);
-            foreach (var resource in currentResources)
+                    resource.Create = r.Create;
+                    resource.Read = r.Read;
+                    resource.Update = r.Update;
+                    resource.Delete = r.Delete;
+                    resource.ReadChanges = r.ReadChanges;
+                    resource.AuthStrategyOverridesForCRUD = r.AuthStrategyOverridesForCRUD;
+                }
+                return resource;
+            }).ToList();
+
+            currentResources.RemoveAll(x => x is null);
+
+            foreach (var resource in currentResources.Where(x => x is not null))
             {
                 var editResourceModel = new EditResourceOnClaimSetModel
                 {
@@ -59,7 +62,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
 
                 _editResourceOnClaimSetCommand.Execute(editResourceModel);
 
-                if (resource.AuthStrategyOverridesForCRUD != null && resource.AuthStrategyOverridesForCRUD.Any())
+                if (resource!.AuthStrategyOverridesForCRUD != null && resource.AuthStrategyOverridesForCRUD.Any())
                 {
                     var overrideAuthStrategyModel = new OverrideAuthorizationStrategyModel
                     {
@@ -75,9 +78,13 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
                 }
             }
 
-            static int AuthStrategyOverrideForAction(AuthorizationStrategy authorizationStrategy)
+            static int[] AuthStrategyOverrideForAction(ClaimSetResourceClaimActionAuthStrategies claimSetResourceClaimActionAuthStrategies)
             {
-                return authorizationStrategy != null ? authorizationStrategy.AuthStrategyId : 0;
+                if (claimSetResourceClaimActionAuthStrategies != null && claimSetResourceClaimActionAuthStrategies.AuthorizationStrategies != null)
+                {
+                    return claimSetResourceClaimActionAuthStrategies.AuthorizationStrategies.Where(p => p is not null).Select(p => p!.AuthStrategyId).ToArray();
+                }
+                return Array.Empty<int>();
             }
         }
 
@@ -110,10 +117,11 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
     {
         public int ClaimSetId { get; set; }
         public int ResourceClaimId { get; set; }
-        public int AuthorizationStrategyForCreate { get; set; }
-        public int AuthorizationStrategyForRead { get; set; }
-        public int AuthorizationStrategyForUpdate { get; set; }
-        public int AuthorizationStrategyForDelete { get; set; }
-        public int AuthorizationStrategyForReadChanges { get; set; }
+        public int[] AuthorizationStrategyForCreate { get; set; }
+        public int[] AuthorizationStrategyForRead { get; set; }
+        public int[] AuthorizationStrategyForUpdate { get; set; }
+        public int[] AuthorizationStrategyForDelete { get; set; }
+        public int[] AuthorizationStrategyForReadChanges { get; set; }
+
     }
 }

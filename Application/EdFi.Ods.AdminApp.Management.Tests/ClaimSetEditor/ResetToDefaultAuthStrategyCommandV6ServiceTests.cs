@@ -65,7 +65,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             var resultResourceClaimAfterOverride = SingleResourceClaimForClaimSet(testClaimSet.ClaimSetId, testResourceToEdit.ResourceClaimId);
 
             resultResourceClaimAfterOverride.AuthStrategyOverridesForCRUD[0].ShouldNotBeNull();
-            resultResourceClaimAfterOverride.AuthStrategyOverridesForCRUD[0].AuthStrategyName.ShouldBe("TestAuthStrategy4");
+            resultResourceClaimAfterOverride.AuthStrategyOverridesForCRUD[0].AuthorizationStrategies[0].AuthStrategyName.ShouldBe("TestAuthStrategy4");
 
             resultResourceClaimAfterOverride.AuthStrategyOverridesForCRUD[1].ShouldBeNull();
             resultResourceClaimAfterOverride.AuthStrategyOverridesForCRUD[2].ShouldBeNull();
@@ -77,7 +77,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                 ClaimSetId = testClaimSet.ClaimSetId
             };
 
-            var command = new ResetToDefaultAuthStrategyCommand(new StubOdsSecurityModelVersionResolver.V6(), 
+            var command = new ResetToDefaultAuthStrategyCommand(new StubOdsSecurityModelVersionResolver.V6(),
                     null, new ResetToDefaultAuthStrategyCommandV6Service(securityContext));
             command.Execute(resetModel);
 
@@ -133,7 +133,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             resultParentResource = SingleResourceClaimForClaimSet(testClaimSet.ClaimSetId, testParentResource.ResourceClaimId);
             var resultResourceClaimAfterOverride = resultParentResource.Children.Single(x => x.Id == testChildResourceToEdit.ResourceClaimId);
             resultResourceClaimAfterOverride.AuthStrategyOverridesForCRUD[0].ShouldNotBeNull();
-            resultResourceClaimAfterOverride.AuthStrategyOverridesForCRUD[0].AuthStrategyName.ShouldBe("TestAuthStrategy4");
+            resultResourceClaimAfterOverride.AuthStrategyOverridesForCRUD[0].AuthorizationStrategies[0].AuthStrategyName.ShouldBe("TestAuthStrategy4");
 
             resultResourceClaimAfterOverride.AuthStrategyOverridesForCRUD[1].ShouldBeNull();
             resultResourceClaimAfterOverride.AuthStrategyOverridesForCRUD[2].ShouldBeNull();
@@ -207,10 +207,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             {
                 ResourceClaimId = resourceClaimId,
                 ClaimSetId = claimSetId,
-                AuthorizationStrategyForCreate = authorizationStrategyId,
-                AuthorizationStrategyForRead = 0,
-                AuthorizationStrategyForUpdate = 0,
-                AuthorizationStrategyForDelete = 0
+                AuthorizationStrategyForCreate = new int[1] { authorizationStrategyId },
+                AuthorizationStrategyForRead = new int[1] { 0 },
+                AuthorizationStrategyForUpdate = new int[1] { 0 },
+                AuthorizationStrategyForDelete = new int[1] { 0 }
             };
             var command = new OverrideDefaultAuthorizationStrategyCommand(new StubOdsSecurityModelVersionResolver.V6(), null,
                 new OverrideDefaultAuthorizationStrategyV6Service(securityContext));

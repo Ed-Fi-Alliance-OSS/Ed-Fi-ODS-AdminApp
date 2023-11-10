@@ -119,66 +119,74 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             SetupResourceClaims(testApplication, new List<string> { "TestParentResourceClaim8789783213", "TestParentResourceClaim0989", "TestParentResourceClaim3009" }, UniqueNameList("Child", 1));
 
             var testJSON = @"{
-                ""title"": ""testfile"",
-                ""template"": {
-                    ""claimSets"": [
-                      {
-                        ""name"": ""Test Claimset"",
-                        ""resourceClaims"": [
-                          {
-                            ""Name"": ""TestParentResourceClaim8789783213"",
-                            ""Read"": true,
-                            ""Create"": true,
-                            ""Update"": false,
-                            ""Delete"": false,
-                            ""ReadChanges"": true,
-                            ""AuthStrategyOverridesForCRUD"": [
-                                  {
-                                    ""AuthStrategyId"": {0},
-                                    ""AuthStrategyName"": ""{1}"",
-                                    ""DisplayName"": ""{1}"",
-                                    ""IsInheritedFromParent"": false
-                                  },
-                                  {
-                                    ""AuthStrategyId"": {2},
-                                    ""AuthStrategyName"": ""{3}"",
-                                    ""DisplayName"": ""{3}"",
-                                    ""IsInheritedFromParent"": false
-                                  },
-                                  null,
-                                  null,
-                                  {
-                                    ""AuthStrategyId"": {4},
-                                    ""AuthStrategyName"": ""{5}"",
-                                    ""DisplayName"": ""{5}"",
-                                    ""IsInheritedFromParent"": false
-                                  },
-                                ],
-                             ""Children"": []
-                          },
-                          {
-                            ""Name"": ""TestParentResourceClaim0989"",
-                            ""Read"": true,
-                            ""Create"": false,
-                            ""Update"": false,
-                            ""Delete"": false,
-                            ""ReadChanges"": true,
-                            ""Children"": []
-                          },
-                          {
-                            ""Name"": ""TestParentResourceClaim3009"",
-                            ""Read"": true,
-                            ""Create"": true,
-                            ""Update"": true,
-                            ""Delete"": true,
-                            ""ReadChanges"": true,
-                            ""Children"": []
-                          }
-                        ]
-                      }
-                    ]
-                }
-            }";
+    ""title"": ""testfile"",
+    ""template"": {
+        ""claimSets"": [
+          {
+            ""name"": ""Test Claimset"",
+            ""resourceClaims"": [
+              {
+                ""Name"": ""TestParentResourceClaim8789783213"",
+                ""Read"": true,
+                ""Create"": true,
+                ""Update"": false,
+                ""Delete"": false,
+                ""ReadChanges"": true,
+                ""AuthStrategyOverridesForCRUD"": [
+                    {
+                    ""authorizationStrategies"": [{
+                        ""AuthStrategyId"": {0},
+                        ""AuthStrategyName"": ""{1}"",
+                        ""DisplayName"": ""{1}"",
+                        ""IsInheritedFromParent"": false
+                    }]
+                    },
+                    {
+                    ""authorizationStrategies"": [{
+                        ""AuthStrategyId"": {2},
+                        ""AuthStrategyName"": ""{3}"",
+                        ""DisplayName"": ""{3}"",
+                        ""IsInheritedFromParent"": false
+                    }]
+                    },
+                    null,
+                    null,
+                    {
+                    ""authorizationStrategies"": [{
+                        ""AuthStrategyId"": {4},
+                        ""AuthStrategyName"": ""{5}"",
+                        ""DisplayName"": ""{5}"",
+                        ""IsInheritedFromParent"": false
+                    }]
+                    }
+                ],
+                ""Children"": []
+              },
+              {
+                ""Name"": ""TestParentResourceClaim0989"",
+                ""Read"": true,
+                ""Create"": false,
+                ""Update"": false,
+                ""Delete"": false,
+                ""ReadChanges"": true,
+                ""Children"": []
+              },
+              {
+                ""Name"": ""TestParentResourceClaim3009"",
+                ""Read"": true,
+                ""Create"": true,
+                ""Update"": true,
+                ""Delete"": true,
+                ""ReadChanges"": true,
+                ""Children"": []
+              }
+            ]
+          }
+        ]
+    }
+}";
+
+
             var authStrategy1Id = appAuthorizationStrategies[0].AuthorizationStrategyId;
             var authStrategy1Name = appAuthorizationStrategies[0].AuthorizationStrategyName.ToString();
 
@@ -218,18 +226,18 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
             var authStrategyOverrideForCreate = testResource1.AuthStrategyOverridesForCRUD.Create();
             authStrategyOverrideForCreate.ShouldNotBeNull();
-            authStrategyOverrideForCreate.AuthStrategyId.ShouldBe(authStrategy1Id);
-            authStrategyOverrideForCreate.AuthStrategyName.ShouldBe(authStrategy1Name);
+            authStrategyOverrideForCreate.AuthorizationStrategies[0].AuthStrategyId.ShouldBe(authStrategy1Id);
+            authStrategyOverrideForCreate.AuthorizationStrategies[0].AuthStrategyName.ShouldBe(authStrategy1Name);
 
             var authStrategyOverrideForRead = testResource1.AuthStrategyOverridesForCRUD.Read();
             authStrategyOverrideForRead.ShouldNotBeNull();
-            authStrategyOverrideForRead.AuthStrategyId.ShouldBe(authStrategy2Id);
-            authStrategyOverrideForRead.AuthStrategyName.ShouldBe(authStrategy2Name);
+            authStrategyOverrideForRead.AuthorizationStrategies[0].AuthStrategyId.ShouldBe(authStrategy2Id);
+            authStrategyOverrideForRead.AuthorizationStrategies[0].AuthStrategyName.ShouldBe(authStrategy2Name);
 
             var authStrategyOverrideForReadChanges = testResource1.AuthStrategyOverridesForCRUD.ReadChanges();
             authStrategyOverrideForReadChanges.ShouldNotBeNull();
-            authStrategyOverrideForReadChanges.AuthStrategyId.ShouldBe(authStrategy3Id);
-            authStrategyOverrideForReadChanges.AuthStrategyName.ShouldBe(authStrategy3Name);
+            authStrategyOverrideForReadChanges.AuthorizationStrategies[0].AuthStrategyId.ShouldBe(authStrategy3Id);
+            authStrategyOverrideForReadChanges.AuthorizationStrategies[0].AuthStrategyName.ShouldBe(authStrategy3Name);
 
             var testResource2 = testResources[1];
             MatchActions(testResource2, "TestParentResourceClaim0989", new bool[] { false, true, false, false, true });
@@ -267,34 +275,44 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                             ""ReadChanges"": true,
                             ""AuthStrategyOverridesForCRUD"": [
                                   {
+                                  ""authorizationStrategies"": [{
                                     ""AuthStrategyId"": {0},
                                     ""AuthStrategyName"": ""{1}"",
                                     ""DisplayName"": ""{1}"",
                                     ""IsInheritedFromParent"": false
+                                  }]
                                   },
                                   {
+                                  ""authorizationStrategies"": [{
                                     ""AuthStrategyId"": {2},
                                     ""AuthStrategyName"": ""{3}"",
                                     ""DisplayName"": ""{3}"",
                                     ""IsInheritedFromParent"": false
+                                  }]
                                   },
                                   {
+                                  ""authorizationStrategies"": [{
                                     ""AuthStrategyId"": {4},
                                     ""AuthStrategyName"": ""{5}"",
                                     ""DisplayName"": ""{5}"",
                                     ""IsInheritedFromParent"": false
+                                  }]
                                   },
                                   {
+                                  ""authorizationStrategies"": [{
                                     ""AuthStrategyId"": {6},
                                     ""AuthStrategyName"": ""{7}"",
                                     ""DisplayName"": ""{7}"",
                                     ""IsInheritedFromParent"": false
+                                  }]
                                   },
                                   {
+                                  ""authorizationStrategies"": [{
                                     ""AuthStrategyId"": {8},
                                     ""AuthStrategyName"": ""{9}"",
                                     ""DisplayName"": ""{9}"",
                                     ""IsInheritedFromParent"": false
+                                  }]
                                   },
                                 ],
                              ""Children"": [
@@ -307,34 +325,44 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                                         ""ReadChanges"": true,
                                         ""AuthStrategyOverridesForCRUD"": [
                                           {
+                                          ""authorizationStrategies"": [{
                                             ""AuthStrategyId"": {0},
                                             ""AuthStrategyName"": ""{1}"",
                                             ""DisplayName"": ""{1}"",
                                             ""IsInheritedFromParent"": true
+                                          }]
                                           },
                                           {
+                                          ""authorizationStrategies"": [{
                                             ""AuthStrategyId"": {2},
                                             ""AuthStrategyName"": ""{3}"",
                                             ""DisplayName"": ""{3}"",
                                             ""IsInheritedFromParent"": true
+                                          }]
                                           },
                                           {
+                                          ""authorizationStrategies"": [{
                                             ""AuthStrategyId"": {4},
                                             ""AuthStrategyName"": ""{5}"",
                                             ""DisplayName"": ""{5}"",
                                             ""IsInheritedFromParent"": true
+                                          }]
                                           },
                                           {
+                                          ""authorizationStrategies"": [{
                                             ""AuthStrategyId"": {6},
                                             ""AuthStrategyName"": ""{7}"",
                                             ""DisplayName"": ""{7}"",
                                             ""IsInheritedFromParent"": true
+                                          }]
                                           },
                                           {
+                                          ""authorizationStrategies"": [{
                                             ""AuthStrategyId"": {8},
                                             ""AuthStrategyName"": ""{9}"",
                                             ""DisplayName"": ""{9}"",
                                             ""IsInheritedFromParent"": true
+                                          }]
                                           }
                                         ]
                                     }
@@ -398,48 +426,48 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
             var parentAuthStrategyOverrideForCreate = testResource1.AuthStrategyOverridesForCRUD.Create();
             parentAuthStrategyOverrideForCreate.ShouldNotBeNull();
-            parentAuthStrategyOverrideForCreate.AuthStrategyId.ShouldBe(authStrategy1Id);
-            parentAuthStrategyOverrideForCreate.AuthStrategyName.ShouldBe(authStrategy1Name);
+            parentAuthStrategyOverrideForCreate.AuthorizationStrategies[0].AuthStrategyId.ShouldBe(authStrategy1Id);
+            parentAuthStrategyOverrideForCreate.AuthorizationStrategies[0].AuthStrategyName.ShouldBe(authStrategy1Name);
 
             var parentAuthStrategyOverrideForRead = testResource1.AuthStrategyOverridesForCRUD.Read();
             parentAuthStrategyOverrideForRead.ShouldNotBeNull();
-            parentAuthStrategyOverrideForRead.AuthStrategyId.ShouldBe(authStrategy2Id);
-            parentAuthStrategyOverrideForRead.AuthStrategyName.ShouldBe(authStrategy2Name);
+            parentAuthStrategyOverrideForRead.AuthorizationStrategies[0].AuthStrategyId.ShouldBe(authStrategy2Id);
+            parentAuthStrategyOverrideForRead.AuthorizationStrategies[0].AuthStrategyName.ShouldBe(authStrategy2Name);
 
             var parentAuthStrategyOverrideForReadChanges = testResource1.AuthStrategyOverridesForCRUD.ReadChanges();
             parentAuthStrategyOverrideForReadChanges.ShouldNotBeNull();
-            parentAuthStrategyOverrideForReadChanges.AuthStrategyId.ShouldBe(authStrategy5Id);
-            parentAuthStrategyOverrideForReadChanges.AuthStrategyName.ShouldBe(authStrategy5Name);
+            parentAuthStrategyOverrideForReadChanges.AuthorizationStrategies[0].AuthStrategyId.ShouldBe(authStrategy5Id);
+            parentAuthStrategyOverrideForReadChanges.AuthorizationStrategies[0].AuthStrategyName.ShouldBe(authStrategy5Name);
 
             var childAuthStrategyOverrideForCreate = childResource.AuthStrategyOverridesForCRUD.Create();
             childAuthStrategyOverrideForCreate.ShouldNotBeNull();
-            childAuthStrategyOverrideForCreate.AuthStrategyId.ShouldBe(authStrategy1Id);
-            childAuthStrategyOverrideForCreate.AuthStrategyName.ShouldBe(authStrategy1Name);
-            childAuthStrategyOverrideForCreate.IsInheritedFromParent.ShouldBeTrue();
+            childAuthStrategyOverrideForCreate.AuthorizationStrategies[0].AuthStrategyId.ShouldBe(authStrategy1Id);
+            childAuthStrategyOverrideForCreate.AuthorizationStrategies[0].AuthStrategyName.ShouldBe(authStrategy1Name);
+            childAuthStrategyOverrideForCreate.AuthorizationStrategies[0].IsInheritedFromParent.ShouldBeTrue();
 
             var childAuthStrategyOverrideForRead = childResource.AuthStrategyOverridesForCRUD.Read();
             childAuthStrategyOverrideForRead.ShouldNotBeNull();
-            childAuthStrategyOverrideForRead.AuthStrategyId.ShouldBe(authStrategy2Id);
-            childAuthStrategyOverrideForRead.AuthStrategyName.ShouldBe(authStrategy2Name);
-            childAuthStrategyOverrideForRead.IsInheritedFromParent.ShouldBeTrue();
+            childAuthStrategyOverrideForRead.AuthorizationStrategies[0].AuthStrategyId.ShouldBe(authStrategy2Id);
+            childAuthStrategyOverrideForRead.AuthorizationStrategies[0].AuthStrategyName.ShouldBe(authStrategy2Name);
+            childAuthStrategyOverrideForRead.AuthorizationStrategies[0].IsInheritedFromParent.ShouldBeTrue();
 
             var childAuthStrategyOverrideForUpdate = childResource.AuthStrategyOverridesForCRUD.Update();
             childAuthStrategyOverrideForUpdate.ShouldNotBeNull();
-            childAuthStrategyOverrideForUpdate.AuthStrategyId.ShouldBe(authStrategy3Id);
-            childAuthStrategyOverrideForUpdate.AuthStrategyName.ShouldBe(authStrategy3Name);
-            childAuthStrategyOverrideForUpdate.IsInheritedFromParent.ShouldBeFalse();
+            childAuthStrategyOverrideForUpdate.AuthorizationStrategies[0].AuthStrategyId.ShouldBe(authStrategy3Id);
+            childAuthStrategyOverrideForUpdate.AuthorizationStrategies[0].AuthStrategyName.ShouldBe(authStrategy3Name);
+            childAuthStrategyOverrideForUpdate.AuthorizationStrategies[0].IsInheritedFromParent.ShouldBeFalse();
 
             var childAuthStrategyOverrideForDelete = childResource.AuthStrategyOverridesForCRUD.Delete();
             childAuthStrategyOverrideForDelete.ShouldNotBeNull();
-            childAuthStrategyOverrideForDelete.AuthStrategyId.ShouldBe(authStrategy4Id);
-            childAuthStrategyOverrideForDelete.AuthStrategyName.ShouldBe(authStrategy4Name);
-            childAuthStrategyOverrideForDelete.IsInheritedFromParent.ShouldBeFalse();
+            childAuthStrategyOverrideForDelete.AuthorizationStrategies[0].AuthStrategyId.ShouldBe(authStrategy4Id);
+            childAuthStrategyOverrideForDelete.AuthorizationStrategies[0].AuthStrategyName.ShouldBe(authStrategy4Name);
+            childAuthStrategyOverrideForDelete.AuthorizationStrategies[0].IsInheritedFromParent.ShouldBeFalse();
 
             var childAuthStrategyOverrideForReadChanges = childResource.AuthStrategyOverridesForCRUD.ReadChanges();
             childAuthStrategyOverrideForReadChanges.ShouldNotBeNull();
-            childAuthStrategyOverrideForReadChanges.AuthStrategyId.ShouldBe(authStrategy5Id);
-            childAuthStrategyOverrideForReadChanges.AuthStrategyName.ShouldBe(authStrategy5Name);
-            childAuthStrategyOverrideForReadChanges.IsInheritedFromParent.ShouldBeTrue();
+            childAuthStrategyOverrideForReadChanges.AuthorizationStrategies[0].AuthStrategyId.ShouldBe(authStrategy5Id);
+            childAuthStrategyOverrideForReadChanges.AuthorizationStrategies[0].AuthStrategyName.ShouldBe(authStrategy5Name);
+            childAuthStrategyOverrideForReadChanges.AuthorizationStrategies[0].IsInheritedFromParent.ShouldBeTrue();
         }
 
         private void MatchActions(ResourceClaim dbResource, string expectedResourceName, bool[] expectedCrudArray)
@@ -610,8 +638,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
 
             var addOrEditCommand = new AddOrEditResourcesOnClaimSetCommand(editResourceCommand, query, overrideAuth);
 
-           return new ClaimSetFileImportCommand(new AddClaimSetCommand(new StubOdsSecurityModelVersionResolver.V6(),
-                null, new AddClaimSetCommandV6Service(securityContext)), addOrEditCommand);
+            return new ClaimSetFileImportCommand(new AddClaimSetCommand(new StubOdsSecurityModelVersionResolver.V6(),
+                 null, new AddClaimSetCommandV6Service(securityContext)), addOrEditCommand);
         }
     }
 }

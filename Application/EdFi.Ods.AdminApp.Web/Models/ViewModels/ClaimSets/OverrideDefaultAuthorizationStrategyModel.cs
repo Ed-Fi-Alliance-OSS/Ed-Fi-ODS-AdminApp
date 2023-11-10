@@ -12,11 +12,11 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets
     {
         public int ClaimSetId { get; set; }
         public int ResourceClaimId { get; set; }
-        public int AuthorizationStrategyForCreate { get; set; }
-        public int AuthorizationStrategyForRead { get; set; }
-        public int AuthorizationStrategyForUpdate { get; set; }
-        public int AuthorizationStrategyForDelete { get; set; }
-        public int AuthorizationStrategyForReadChanges { get; set; }
+        public int[] AuthorizationStrategyForCreate { get; set; }
+        public int[] AuthorizationStrategyForRead { get; set; }
+        public int[] AuthorizationStrategyForUpdate { get; set; }
+        public int[] AuthorizationStrategyForDelete { get; set; }
+        public int[] AuthorizationStrategyForReadChanges { get; set; }
     }
 
     public class OverrideDefaultAuthorizationStrategyModelValidator : AbstractValidator<OverrideDefaultAuthorizationStrategyModel>

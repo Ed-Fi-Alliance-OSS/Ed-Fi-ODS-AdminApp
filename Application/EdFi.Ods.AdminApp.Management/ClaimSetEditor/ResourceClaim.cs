@@ -3,6 +3,7 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
+using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
@@ -21,8 +22,8 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
         public bool ReadChanges { get; set; }
         [JsonIgnore]
         public bool IsParent { get; set; }
-        public AuthorizationStrategy[] DefaultAuthStrategiesForCRUD { get; set; }
-        public AuthorizationStrategy[] AuthStrategyOverridesForCRUD { get; set; }
+        public ClaimSetResourceClaimActionAuthStrategies[] DefaultAuthStrategiesForCRUD { get; set; } = Array.Empty<ClaimSetResourceClaimActionAuthStrategies>();
+        public ClaimSetResourceClaimActionAuthStrategies[] AuthStrategyOverridesForCRUD { get; set; } = Array.Empty<ClaimSetResourceClaimActionAuthStrategies>();
         public List<ResourceClaim> Children { get; set; }
 
         public ResourceClaim()

@@ -3,30 +3,81 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
-var updateCell = function(row, action) {
-    var resourceId = row.find(".resource-label").data("resource-id");
+const ACTIONS = {
+    create: 0,
+    read: 1,
+    update: 2,
+    delete: 3,
+    readchanges: 4
+}
+var updateCell = function (row, action) {
+    var resourceId = $("#resource-claim-auth").data("resource-id");
     var actionCell = row.find("td.".concat(action, "-action-cell"));
     var actionCellLabel = actionCell.find("span:first-child");
-    var authStrategyLabel = actionCell.find("span:nth-child(2)");
     var dropdown = '';
+    var defaultText = '';
+    var selectedValues = [];
     if (actionCell.data("existing-action") === "True") {
-        dropdown = $("<select class='auth-dropdown' id='resource-auth-dropdown-".concat(resourceId, "-", action, "'></select>"));
+        var dropdownId = "resource-auth-dropdown-".concat(resourceId, "-", action);
+        if (odsVersion === 6) {
+            dropdown = $("<select multiple class='auth-multiple-dropdown' id='".concat(dropdownId, "'></select>"));
+        }
+        else {
+            dropdown = $("<select class='auth-dropdown auth-dropdown-v5' id='id='".concat(dropdownId, "'></select>"));
+        }
         $(authStrategiesOptions).each(function () {
-            if (this.Text === actionCellLabel.data('default-strategy')) {
+            var selected = isSelected(action, Number(this.Value));
+            if (defaultText === "" && selected) {
+                defaultText = this.Text;
+                selectedValues.push(this.Value);
+            } else if (selected) {
+                selectedValues.push(this.Value);
+            }
+            if (isDefaultAuthStrategy(action, Number(this.Value))) {
                 if (actionCellLabel.data('is-inherited') === "True") {
-                    dropdown.append($("<option></option>").val(this.Value).html(this.Text.concat("(Default Strategy)")).attr("disabled", this.Disabled).attr("data-default-is-inherited", true));
+                    dropdown.append($("<option></option>").val(this.Value).html(this.Text.concat(" (Default Strategy)")).attr("title", this.Text.concat(" (Default Strategy)")).attr("disabled", this.Disabled).attr("data-default-is-inherited", true).attr("selected", selected));
                 } else {
-                    dropdown.append($("<option></option>").val(this.Value).html(this.Text.concat("(Default Strategy)")).attr("disabled", this.Disabled));
+                    dropdown.append($("<option></option>").val(this.Value).html(this.Text.concat(" (Default Strategy)")).attr("title", this.Text.concat(" (Default Strategy)")).attr("disabled", this.Disabled).attr("selected", selected));
                 }
             } else {
-                dropdown.append($("<option></option>").val(this.Value).html(this.Text).attr("disabled", this.Disabled));
+                dropdown.append($("<option></option>").val(this.Value).html(this.Text).attr("title", this.Text).attr("disabled", this.Disabled).attr("selected", selected));
             }
         });
-        var selectedValue = dropdown.find('option:contains('.concat(actionCellLabel.text(), ')'))[0].value;
-        dropdown.val(selectedValue);
-        actionCellLabel.html(dropdown);
-        authStrategyLabel.html('');
+        actionCell.html('');
+        actionCell.html(dropdown);
+        if (odsVersion === 6) {
+            if (selectedValues.length > 1) {
+                defaultText = "Items selected: " + selectedValues.length;
+            }
+            $("#".concat(dropdownId)).CreateMultiCheckBox({ width: '330px', height: '200px', defaultText: defaultText });
+        }
+
     }
+};
+
+var isDefaultAuthStrategy = function (action, authStrategyId) {
+    
+    const index = ACTIONS[action];
+    if (authStrategyId === 0)
+        return false;
+    var result = defaultAuthStrategies[index].AuthorizationStrategies.filter(a => a.AuthStrategyId === authStrategyId);
+
+    return result.length > 0;
+}
+
+var isSelected = function (action, authStrategyId) {
+    const index = ACTIONS[action];
+    var result = false;
+    if (authStrategyId === 0)
+        return false;
+
+    if (authStrategiesOverrides[index] == null) {
+        result = isDefaultAuthStrategy(action, authStrategyId);
+    }
+    else {
+        result = authStrategiesOverrides[index].AuthorizationStrategies.filter(a => a.AuthStrategyId === authStrategyId).length > 0;
+    }
+    return result;
 };
 
 var getUpdateResourceUrl = function (resourceId, claimSetId) {
@@ -49,24 +100,24 @@ var updateRowAfterEdit = function (row, resourceUpdateUrl) {
         dataType: "json",
         url: resourceUpdateUrl,
         success: function success(updatedResource) {
-            var defaultStrategies = updatedResource.DefaultAuthStrategiesForCRUD;
-            var authStrategyOverrides = updatedResource.AuthStrategyOverridesForCRUD;
+            defaultAuthStrategies = updatedResource.DefaultAuthStrategiesForCRUD;
+            authStrategiesOverrides = updatedResource.AuthStrategyOverridesForCRUD;
             var readCell = row.find(".read-action-cell");
             var createCell = row.find(".create-action-cell");
             var updateCell = row.find(".update-action-cell");
             var deleteCell = row.find(".delete-action-cell");
             var readChangesCell = row.find(".readchanges-action-cell");
-            var editCell = row.find("a.edit-resource-check");
-            updateCellAfterEdit(readCell, defaultStrategies[1], authStrategyOverrides[1]);
-            updateCellAfterEdit(createCell, defaultStrategies[0], authStrategyOverrides[0]);
-            updateCellAfterEdit(updateCell, defaultStrategies[2], authStrategyOverrides[2]);
-            updateCellAfterEdit(deleteCell, defaultStrategies[3], authStrategyOverrides[3]);
+            var editCell = $("a.edit-resource-check");
+            updateCellAfterEdit(readCell, defaultAuthStrategies[1], authStrategiesOverrides[1]);
+            updateCellAfterEdit(createCell, defaultAuthStrategies[0], authStrategiesOverrides[0]);
+            updateCellAfterEdit(updateCell, defaultAuthStrategies[2], authStrategiesOverrides[2]);
+            updateCellAfterEdit(deleteCell, defaultAuthStrategies[3], authStrategiesOverrides[3]);
             if (readChangesCell != null) { 
-                updateCellAfterEdit(readChangesCell, defaultStrategies[4], authStrategyOverrides[4]);
+                updateCellAfterEdit(readChangesCell, defaultAuthStrategies[4], authStrategiesOverrides[4]);
             }
             if (editCell != null) {
-                row.find("a.edit-resource-check").replaceWith('<a class="override-auth"> <span class="fa fa-pencil action-icons"></span></a>');
-                row.find(".override-auth").click(overrideAuth);
+                editCell.replaceWith('<a class="override-auth"> <span class="fa fa-pencil action-icons"></span></a>');
+                $(".override-auth").click(overrideAuth);
             }
             showSpinner(false);
         },
@@ -77,36 +128,38 @@ var updateRowAfterEdit = function (row, resourceUpdateUrl) {
 };
 
 var updateCellAfterEdit = function (cell, defaultStrategy, authStrategyOverride) {
-    var strategyName = cell.find("span:first-child");
+    cell.html("");
     if (authStrategyOverride != null) {
-        strategyName.html(authStrategyOverride.DisplayName);
-        if (authStrategyOverride.IsInheritedFromParent) {
-            cell.find("span:nth-child(2)")
-                .replaceWith('<span class="overridden-strategy inherited-override">(Overridden)</span>');
-        } else {
-            cell.find("span:nth-child(2)")
-                .replaceWith('<span class="overridden-strategy">(Overridden)</span>');
-        }
+        $.each(authStrategyOverride.AuthorizationStrategies, function (key, authStrategy) {
+            cell.append(`<span class="auth-strategy-name" data-is-inherited="${authStrategy.IsInheritedFromParent}">${authStrategy.DisplayName}</span>  `);
+            if (authStrategy.IsInheritedFromParent) {
+                cell.append('<span class="overridden-strategy inherited-override">(Overridden)</span>');
+            } else {
+                cell.append('<span class="overridden-strategy">(Overridden)</span>');
+            }
+            cell.append("<br />");
+        });
+        
     } else {
         if (defaultStrategy != null) {
-            strategyName.html(defaultStrategy.DisplayName);
-            if (defaultStrategy.IsInheritedFromParent) {
-                cell.find("span:nth-child(2)")
-                    .replaceWith('<span class="default-strategy inherited-strategy">(Default)</span>');
-            } else {
-                cell.find("span:nth-child(2)")
-                    .replaceWith('<span class="default-strategy">(Default)</span>');
-            }
+            $.each(defaultStrategy.AuthorizationStrategies, function (key, authStrategy) {
+                cell.append(`<span class="auth-strategy-name" data-is-inherited="${authStrategy.IsInheritedFromParent}" data-default-strategy="${authStrategy.DisplayName}">${authStrategy.DisplayName}</span>  `);
+                if (authStrategy.IsInheritedFromParent) {
+                    cell.append('<span class="default-strategy inherited-strategy">(Default)</span>');
+                } else {
+                    cell.append('<span class="default-strategy">(Default)</span>');
+                }
+                cell.append("<br />");
+            });
         }
     }
 }
 
 var overrideStrategies = function () {
-    var row = $(this).closest("tr");
+    var row = $("#resource-claim-auth").closest("tr");
     var claimSetId = parseInt($("#ClaimSetId").val());
-    var resourceEl = row.find(".resource-label");
-    var resourceId = resourceEl.data("resource-id");
-    var resourceName = resourceEl.text();
+    var resourceId = $("#resource-claim-auth").data("resource-id");
+    var resourceName = $("#resource-claim-name").text();
     var readDropdown = row.find(".read-action-cell select");
     var createDropdown = row.find(".create-action-cell select");
     var updateDropdown = row.find(".update-action-cell select");
@@ -159,11 +212,10 @@ var overrideStrategies = function () {
 };
 
 var resetStrategiesToDefault = function () {
-    var row = $(this).closest("tr");
+    var row = $("#resource-claim-auth").closest("tr");
     var claimSetId = parseInt($("#ClaimSetId").val());
-    var resourceEl = row.find(".resource-label");
-    var resourceId = resourceEl.data("resource-id");
-    var resourceName = resourceEl.text();
+    var resourceId = $("#resource-claim-auth").data("resource-id");
+    var resourceName = $("#resource-claim-name").text();
     var readCell = row.find(".read-action-cell");
     var createCell = row.find(".create-action-cell");
     var updateCell = row.find(".update-action-cell");
@@ -201,7 +253,7 @@ var resetStrategiesToDefault = function () {
 
 var overrideAuth = function(e) {
     e.preventDefault();
-    var row = $(this).closest("tr");
+    var row = $("#resource-claim-auth").closest("tr");
     row.attr("data-state", "edited");
     updateCell(row, "create");
     updateCell(row, "read");
@@ -211,7 +263,7 @@ var overrideAuth = function(e) {
     if (readChangesCell.length > 0) {
         updateCell(row, "readchanges");
     }
-    row.find("a.override-auth").replaceWith('<a class="edit-resource-check"> <span class="fa fa-check action-icons"></span></a>');
+    $("a.override-auth").replaceWith('<a class="edit-resource-check"> <span class="fa fa-check action-icons"></span></a>');
     $(".edit-resource-check").click(overrideStrategies);
 };
 $(function () {

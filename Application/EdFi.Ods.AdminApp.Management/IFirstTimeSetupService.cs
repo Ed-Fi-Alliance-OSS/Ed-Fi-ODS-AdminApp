@@ -77,26 +77,9 @@ namespace EdFi.Ods.AdminApp.Management
             result.Application.ApiClients.Add(apiWithCredentials.ApiClient);
             result.ProductionKeyAndSecret = apiWithCredentials.ApiCredentials;
 
-            AssociateOdsInstanceAndApiClient(odsInstanceName, apiWithCredentials.ApiClient);
-
             UsersContext.Applications.Add(result.Application);
 
             return result;
-        }
-
-        private void AssociateOdsInstanceAndApiClient(string odsInstanceName, ApiClient apiClient)
-        {
-            var existingInstance = UsersContext.OdsInstances.SingleOrDefault(x => x.Name == odsInstanceName);
-
-            if (existingInstance != null)
-            {
-                var apiClientOdsInstance = new ApiClientOdsInstance
-                {
-                     OdsInstance = existingInstance,
-                     ApiClient = apiClient
-                };
-                UsersContext.ApiClientOdsInstances.Add(apiClientOdsInstance);
-            }
         }
 
         private OdsInstance GetOdsInstance(string odsInstanceName)
