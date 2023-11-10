@@ -15,6 +15,8 @@ var updateCell = function (row, action) {
     var actionCell = row.find("td.".concat(action, "-action-cell"));
     var actionCellLabel = actionCell.find("span:first-child");
     var dropdown = '';
+    var defaultText = '';
+    var selectedValues = [];
     if (actionCell.data("existing-action") === "True") {
         var dropdownId = "resource-auth-dropdown-".concat(resourceId, "-", action);
         if (odsVersion === 6) {
@@ -25,6 +27,12 @@ var updateCell = function (row, action) {
         }
         $(authStrategiesOptions).each(function () {
             var selected = isSelected(action, Number(this.Value));
+            if (defaultText === "" && selected) {
+                defaultText = this.Text;
+                selectedValues.push(this.Value);
+            } else if (selected) {
+                selectedValues.push(this.Value);
+            }
             if (isDefaultAuthStrategy(action, Number(this.Value))) {
                 if (actionCellLabel.data('is-inherited') === "True") {
                     dropdown.append($("<option></option>").val(this.Value).html(this.Text.concat(" (Default Strategy)")).attr("title", this.Text.concat(" (Default Strategy)")).attr("disabled", this.Disabled).attr("data-default-is-inherited", true).attr("selected", selected));
@@ -37,8 +45,12 @@ var updateCell = function (row, action) {
         });
         actionCell.html('');
         actionCell.html(dropdown);
-        if (odsVersion === 6)
-            $("#".concat(dropdownId)).CreateMultiCheckBox({ width: '330px', height: '200px' });
+        if (odsVersion === 6) {
+            if (selectedValues.length > 1) {
+                defaultText = "Items selected: " + selectedValues.length;
+            }
+            $("#".concat(dropdownId)).CreateMultiCheckBox({ width: '330px', height: '200px', defaultText: defaultText });
+        }
 
     }
 };
