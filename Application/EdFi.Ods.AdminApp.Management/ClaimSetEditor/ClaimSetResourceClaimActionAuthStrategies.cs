@@ -14,5 +14,5 @@ public interface IClaimSetResourceClaimActionAuthStrategies
 
 public class ClaimSetResourceClaimActionAuthStrategies : IClaimSetResourceClaimActionAuthStrategies
 {
-    public IList<AuthorizationStrategy> AuthorizationStrategies { get; set; } = new List<AuthorizationStrategy?>();
+    public IList<AuthorizationStrategy> AuthorizationStrategies { get; set; } = new List<AuthorizationStrategy>();
 }

@@ -78,7 +78,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
                 }
             }
 
-            static int[] AuthStrategyOverrideForAction(ClaimSetResourceClaimActionAuthStrategies? claimSetResourceClaimActionAuthStrategies)
+            static int[] AuthStrategyOverrideForAction(ClaimSetResourceClaimActionAuthStrategies claimSetResourceClaimActionAuthStrategies)
             {
                 if (claimSetResourceClaimActionAuthStrategies != null && claimSetResourceClaimActionAuthStrategies.AuthorizationStrategies != null)
                 {
@@ -110,18 +110,18 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
     public class EditResourceOnClaimSetModel : IEditResourceOnClaimSetModel
     {
         public int ClaimSetId { get; set; }
-        public ResourceClaim? ResourceClaim { get; set; }
+        public ResourceClaim ResourceClaim { get; set; }
     }
 
     public class OverrideAuthorizationStrategyModel : IOverrideDefaultAuthorizationStrategyModel
     {
         public int ClaimSetId { get; set; }
         public int ResourceClaimId { get; set; }
-        public int[]? AuthorizationStrategyForCreate { get; set; }
-        public int[]? AuthorizationStrategyForRead { get; set; }
-        public int[]? AuthorizationStrategyForUpdate { get; set; }
-        public int[]? AuthorizationStrategyForDelete { get; set; }
-        public int[]? AuthorizationStrategyForReadChanges { get; set; }
+        public int[] AuthorizationStrategyForCreate { get; set; }
+        public int[] AuthorizationStrategyForRead { get; set; }
+        public int[] AuthorizationStrategyForUpdate { get; set; }
+        public int[] AuthorizationStrategyForDelete { get; set; }
+        public int[] AuthorizationStrategyForReadChanges { get; set; }
 
     }
 }

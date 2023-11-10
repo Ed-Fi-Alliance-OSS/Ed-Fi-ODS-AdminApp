@@ -7,33 +7,33 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor.Extensions
 {
     public static class ClaimSetResourceClaimActionAuthStrategiesExtension
     {
-        public static ClaimSetResourceClaimActionAuthStrategies? Create(this ClaimSetResourceClaimActionAuthStrategies?[] claimSetResourceClaimActionAuthStrategies)
+        public static ClaimSetResourceClaimActionAuthStrategies Create(this ClaimSetResourceClaimActionAuthStrategies[] claimSetResourceClaimActionAuthStrategies)
         {
             return claimSetResourceClaimActionAuthStrategies.Length > 0 ? claimSetResourceClaimActionAuthStrategies[0] : null;
         }
 
-        public static ClaimSetResourceClaimActionAuthStrategies? Read(this ClaimSetResourceClaimActionAuthStrategies?[] claimSetResourceClaimActionAuthStrategies)
+        public static ClaimSetResourceClaimActionAuthStrategies Read(this ClaimSetResourceClaimActionAuthStrategies[] claimSetResourceClaimActionAuthStrategies)
         {
             return claimSetResourceClaimActionAuthStrategies.Length > 1 ? claimSetResourceClaimActionAuthStrategies[1] : null;
         }
 
-        public static ClaimSetResourceClaimActionAuthStrategies? Update(this ClaimSetResourceClaimActionAuthStrategies?[] claimSetResourceClaimActionAuthStrategies)
+        public static ClaimSetResourceClaimActionAuthStrategies Update(this ClaimSetResourceClaimActionAuthStrategies[] claimSetResourceClaimActionAuthStrategies)
         {
             return claimSetResourceClaimActionAuthStrategies.Length > 2 ? claimSetResourceClaimActionAuthStrategies[2] : null;
         }
 
-        public static ClaimSetResourceClaimActionAuthStrategies? Delete(this ClaimSetResourceClaimActionAuthStrategies?[] claimSetResourceClaimActionAuthStrategies)
+        public static ClaimSetResourceClaimActionAuthStrategies Delete(this ClaimSetResourceClaimActionAuthStrategies[] claimSetResourceClaimActionAuthStrategies)
         {
             return claimSetResourceClaimActionAuthStrategies.Length > 3 ? claimSetResourceClaimActionAuthStrategies[3] : null;
         }
 
-        public static ClaimSetResourceClaimActionAuthStrategies? ReadChanges(this ClaimSetResourceClaimActionAuthStrategies?[] claimSetResourceClaimActionAuthStrategies)
+        public static ClaimSetResourceClaimActionAuthStrategies ReadChanges(this ClaimSetResourceClaimActionAuthStrategies[] claimSetResourceClaimActionAuthStrategies)
         {
             return claimSetResourceClaimActionAuthStrategies.Length > 4 ? claimSetResourceClaimActionAuthStrategies[4] : null;
         }
 
-        public static ClaimSetResourceClaimActionAuthStrategies?[] AddAuthorizationStrategyOverrides(this ClaimSetResourceClaimActionAuthStrategies?[] claimSetResourceClaimActionAuthStrategies,
-            string actionName, AuthorizationStrategy? strategy)
+        public static ClaimSetResourceClaimActionAuthStrategies[] AddAuthorizationStrategyOverrides(this ClaimSetResourceClaimActionAuthStrategies[] claimSetResourceClaimActionAuthStrategies,
+            string actionName, AuthorizationStrategy strategy)
         {
             if (strategy != null)
             {

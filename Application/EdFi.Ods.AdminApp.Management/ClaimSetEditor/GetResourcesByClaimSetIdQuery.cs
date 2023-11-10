@@ -45,7 +45,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
             return parentResources;
         }
 
-        public ResourceClaim? SingleResource(int claimSetId, int resourceClaimId)
+        public ResourceClaim SingleResource(int claimSetId, int resourceClaimId)
         {
             var parentResources = AllResources(claimSetId).ToList();
             var parentResourceClaim = parentResources
@@ -64,6 +64,6 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
     public interface IGetResourcesByClaimSetIdQuery
     {
         IList<ResourceClaim> AllResources(int securityContextClaimSetId);
-        ResourceClaim? SingleResource(int claimSetId, int resourceClaimId);
+        ResourceClaim SingleResource(int claimSetId, int resourceClaimId);
     }
 }
