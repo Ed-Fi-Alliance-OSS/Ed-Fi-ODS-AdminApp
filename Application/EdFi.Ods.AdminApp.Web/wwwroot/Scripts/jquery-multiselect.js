@@ -7,24 +7,8 @@ $(document).ready(function () {
         detail.show();
     });
 
-    $(document).on("click", ".MultiCheckBoxDetailHeader input", function (e) {
-        e.stopPropagation();
-        var hc = $(this).prop("checked");
-        $(this).closest(".MultiCheckBoxDetail").find(".MultiCheckBoxDetailBody input").prop("checked", hc);
-        $(this).closest(".MultiCheckBoxDetail").next().UpdateSelect();
-    });
-
-    $(document).on("click", ".MultiCheckBoxDetailHeader", function (e) {
-        var inp = $(this).find("input");
-        var chk = inp.prop("checked");
-        inp.prop("checked", !chk);
-        $(this).closest(".MultiCheckBoxDetail").find(".MultiCheckBoxDetailBody input").prop("checked", !chk);
-        $(this).closest(".MultiCheckBoxDetail").next().UpdateSelect();
-    });
-
     $(document).on("click", ".MultiCheckBoxDetail .cont input", function (e) {
         e.stopPropagation();
-        //$(this).closest(".MultiCheckBoxDetail").prev().find(".selected-text")
         $(this).closest(".MultiCheckBoxDetail").next().UpdateSelect();
         
         var val = ($(".MultiCheckBoxDetailBody input:checked").length == $(".MultiCheckBoxDetailBody input").length)
@@ -37,7 +21,6 @@ $(document).ready(function () {
         inp.prop("checked", !chk);
 
         var multiCheckBoxDetail = $(this).closest(".MultiCheckBoxDetail");
-        //$(this).closest(".MultiCheckBoxDetail").prev().find(".selected-text")
         multiCheckBoxDetail.next().UpdateSelect();
 
         var val = ($(".MultiCheckBoxDetailBody input:checked").length == $(".MultiCheckBoxDetailBody input").length)
