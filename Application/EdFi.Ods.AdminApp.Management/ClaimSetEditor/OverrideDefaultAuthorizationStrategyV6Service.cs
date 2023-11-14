@@ -178,7 +178,7 @@ public class OverrideDefaultAuthorizationStrategyV6Service
             var authStrategyOverride = new ClaimSetResourceClaimActionAuthorizationStrategyOverrides()
             { AuthorizationStrategy = authorizationStrategiesDictionary[authStrategyId] };
 
-            if (parentResourceClaims.Any() && parentResourceClaims.SingleOrDefault(
+            if (parentResourceClaims.Any() && parentResourceClaims.Where(
                     x =>
                         x.Action.ActionName == actionName && x.AuthorizationStrategyOverrides != null &&
                         x.AuthorizationStrategyOverrides.Any() &&
