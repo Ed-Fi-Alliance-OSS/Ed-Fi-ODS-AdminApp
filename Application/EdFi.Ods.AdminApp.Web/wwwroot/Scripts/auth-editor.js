@@ -116,8 +116,8 @@ var updateRowAfterEdit = function (row, resourceUpdateUrl) {
                 updateCellAfterEdit(readChangesCell, defaultAuthStrategies[4], authStrategiesOverrides[4]);
             }
             if (editCell != null) {
-                editCell.replaceWith('<a class="override-auth"> <span class="fa fa-pencil action-icons"></span></a>');
-                $(".override-auth").click(overrideAuth);
+                $(".edit-resource-check").hide();
+                $(".override-auth").show();
             }
             showSpinner(false);
         },
@@ -263,10 +263,11 @@ var overrideAuth = function(e) {
     if (readChangesCell.length > 0) {
         updateCell(row, "readchanges");
     }
-    $("a.override-auth").replaceWith('<a class="edit-resource-check"> <span class="fa fa-check action-icons"></span></a>');
-    $(".edit-resource-check").click(overrideStrategies);
-};
+    $(".edit-resource-check").show();
+    $(".override-auth").hide();
+ };
 $(function () {
     $(".override-auth").click(overrideAuth);
     $(".reset-auth").click(resetStrategiesToDefault);
+    $(".edit-resource-check").click(overrideStrategies);
 });
