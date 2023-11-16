@@ -12,8 +12,8 @@ export class HomePage extends AdminAppPage {
         return `${this.url}/`;
     }
 
-    async hasODSInstancesOption(): Promise<boolean> {
-        return await this.hasText({ text: "ODS Instances" });
+    async hasSettingsOption(): Promise<boolean> {
+        return await this.hasText({ text: "Settings" });
     }
 
     async hasGlobalOption(): Promise<boolean> {

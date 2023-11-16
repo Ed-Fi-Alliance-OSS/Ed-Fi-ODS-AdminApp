@@ -16,15 +16,6 @@ sed -i -E "s/ENV ADMINAPP_DATABASE_VERSION=\"[0-9]+.[0-9]+.[0-9]+(-alpha\.+[0-9]
 
 sed -i -E "s/ENV VERSION=\"[0-9]+.[0-9]+.[0-9]+(-alpha\.+[0-9]+.[0-9]+)?\"/ENV VERSION=\"$WEB_VERSION\"/w changelog.txt" ods-docker/Web-Ods-AdminApp/Alpine/pgsql/Dockerfile
 
-# Fix for running the E2E tests against ODS API 7 - TODO: Will be removed once we move the docker configuration to AdminApp repo
-odsConnectionString=`jq -r '.ConnectionStrings.ProductionOds' ods-docker/Web-Ods-AdminApp/Alpine/pgsql/appsettings.template.json`
-find="EdFi_{0}"
-replace="EdFi_Ods"
-updatedConnectionString=${odsConnectionString//$find/$replace}
-
-tmp=$(mktemp)
-jq --arg variable "$updatedConnectionString" '.ConnectionStrings.ProductionOds = $variable' ods-docker/Web-Ods-AdminApp/Alpine/pgsql/appsettings.template.json > "$tmp" && mv "$tmp" ods-docker/Web-Ods-AdminApp/Alpine/pgsql/appsettings.template.json
-
 if [ -s changelog.txt ]; then
     echo "Files updated"
     exit 0
