@@ -3,29 +3,31 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
+using System;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Management.Database;
+using EdFi.Ods.AdminApp.Management.Database.Models;
+using EdFi.Ods.AdminApp.Management.ErrorHandling;
+using EdFi.Ods.AdminApp.Web.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
-using EdFi.Admin.DataAccess.Contexts;
-using EdFi.Admin.DataAccess.Models;
 
 namespace EdFi.Ods.AdminApp.Web.ActionFilters
 {
     public class InstanceContextFilter : ActionFilterAttribute, IAuthorizationFilter
     {
         private readonly InstanceContext _instanceContext;
-        private readonly IUsersContext _dbContext;
+        private readonly AdminAppDbContext _adminAppDbContext;
         private readonly AdminAppIdentityDbContext _adminAppIdentityDbContext;
 
-        public InstanceContextFilter(InstanceContext instanceContext, IUsersContext dbContext,
+        public InstanceContextFilter(InstanceContext instanceContext, AdminAppDbContext adminAppDbContext,
             AdminAppIdentityDbContext adminAppIdentityDbContext)
         {
             _instanceContext = instanceContext;
-            _dbContext = dbContext;
+            _adminAppDbContext = adminAppDbContext;
             _adminAppIdentityDbContext = adminAppIdentityDbContext;
         }
 
@@ -42,27 +44,27 @@ namespace EdFi.Ods.AdminApp.Web.ActionFilters
                 return;
             }
 
-            _instanceContext.Id = instance.OdsInstanceId;
+            _instanceContext.Id = instance.Id;
             _instanceContext.Name = instance.Name;
-            _instanceContext.Description = instance.Name;
+            _instanceContext.Description = instance.Description;
         }
 
-        private bool TryQueryInstanceRegistration(string userId, string unsafeInstanceId, out OdsInstance instance)
+        private bool TryQueryInstanceRegistration(string userId, string unsafeInstanceId, out OdsInstanceRegistration instanceRegistration)
         {
             if (int.TryParse(unsafeInstanceId, out var safeInstanceId))
             {
                 var isAuthorized = true;//IsUserAuthorizedForInstance(safeInstanceId, userId);
 
-                var instanceLookup = _dbContext.OdsInstances.Find(safeInstanceId);
+                var instanceLookup = _adminAppDbContext.OdsInstanceRegistrations.Find(safeInstanceId);
 
                 if (isAuthorized && instanceLookup != null)
                 {
-                    instance = instanceLookup;
+                    instanceRegistration = instanceLookup;
                     return true;
                 }
             }
 
-            instance = null;
+            instanceRegistration = null;
             return false;
         }
 
@@ -77,9 +79,9 @@ namespace EdFi.Ods.AdminApp.Web.ActionFilters
 
         private bool IsUserAuthorizedForInstance(int instanceId, string userId)
         {
-            return _adminAppIdentityDbContext.UserOdsInstances.Any(
+            return _adminAppIdentityDbContext.UserOdsInstanceRegistrations.Any(
                 x =>
-                    x.OdsInstanceId == instanceId
+                    x.OdsInstanceRegistrationId == instanceId
                     && x.UserId == userId);
         }
     }

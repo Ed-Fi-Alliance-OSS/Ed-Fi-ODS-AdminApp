@@ -10,66 +10,66 @@ using EdFi.Ods.AdminApp.Management.Database.Models;
 
 namespace EdFi.Ods.AdminApp.Management.User
 {
-    public class EditOdsInstanceForUserCommand
+    public class EditOdsInstanceRegistrationForUserCommand
     {
         private readonly AdminAppIdentityDbContext _identity;
 
-        public EditOdsInstanceForUserCommand(AdminAppIdentityDbContext identity)
+        public EditOdsInstanceRegistrationForUserCommand(AdminAppIdentityDbContext identity)
         {
             _identity = identity;
         }
 
-        public void Execute(IEditOdsInstanceForUserModel model)
+        public void Execute(IEditOdsInstanceRegistrationForUserModel model)
         {
-            var preexistingAssociations = _identity.UserOdsInstances.Where(x => x.UserId == model.UserId).ToList();
+            var preexistingAssociations = _identity.UserOdsInstanceRegistrations.Where(x => x.UserId == model.UserId).ToList();
 
-            var selectedOdsInstanceIds =
-                model.OdsInstances.Where(x => x.Selected).Select(x => x.OdsInstanceId).ToList();
+            var selectedOdsInstanceRegistrationIds =
+                model.OdsInstanceRegistrations.Where(x => x.Selected).Select(x => x.OdsInstanceRegistrationId).ToList();
 
-            var recordsToAdd = NewAssignments(model.UserId, selectedOdsInstanceIds, preexistingAssociations);
+            var recordsToAdd = NewAssignments(model.UserId, selectedOdsInstanceRegistrationIds, preexistingAssociations);
 
             if (recordsToAdd.Any())
-                _identity.UserOdsInstances.AddRange(recordsToAdd);
+                _identity.UserOdsInstanceRegistrations.AddRange(recordsToAdd);
 
-            var recordsToRemove = AssignmentsToRemove(selectedOdsInstanceIds, preexistingAssociations);
+            var recordsToRemove = AssignmentsToRemove(selectedOdsInstanceRegistrationIds, preexistingAssociations);
 
             if (recordsToRemove.Any())
-                _identity.UserOdsInstances.RemoveRange(recordsToRemove);
+                _identity.UserOdsInstanceRegistrations.RemoveRange(recordsToRemove);
 
             _identity.SaveChanges();
         }
 
-        private static List<UserOdsInstance> AssignmentsToRemove(List<int> requestedOdsInstanceIds, List<UserOdsInstance> preexistingAssociations)
+        private static List<UserOdsInstanceRegistration> AssignmentsToRemove(List<int> requestedOdsInstanceRegistrationIds, List<UserOdsInstanceRegistration> preexistingAssociations)
         {
             return preexistingAssociations
-                .Where(record => !requestedOdsInstanceIds.Contains(record.OdsInstanceId))
+                .Where(record => !requestedOdsInstanceRegistrationIds.Contains(record.OdsInstanceRegistrationId))
                 .ToList();
         }
 
-        private static List<UserOdsInstance> NewAssignments(string userId, List<int> requestedOdsInstanceIds, List<UserOdsInstance> preexistingAssociations)
+        private static List<UserOdsInstanceRegistration> NewAssignments(string userId, List<int> requestedOdsInstanceRegistrationIds, List<UserOdsInstanceRegistration> preexistingAssociations)
         {
-            var missingOdsInstanceIds =
-                requestedOdsInstanceIds.Except(
-                    preexistingAssociations.Select(x => x.OdsInstanceId));
+            var missingOdsInstanceRegistrationIds =
+                requestedOdsInstanceRegistrationIds.Except(
+                    preexistingAssociations.Select(x => x.OdsInstanceRegistrationId));
 
-            return missingOdsInstanceIds
-                .Select(x => new UserOdsInstance
+            return missingOdsInstanceRegistrationIds
+                .Select(x => new UserOdsInstanceRegistration
                 {
                     UserId = userId,
-                    OdsInstanceId = x
+                    OdsInstanceRegistrationId = x
                 }).ToList();
         }
     }
 
-    public interface IEditOdsInstanceForUserModel
+    public interface IEditOdsInstanceRegistrationForUserModel
     {
         string UserId  { get; }
-        List<OdsInstanceSelection> OdsInstances { get; }
+        List<OdsInstanceRegistrationSelection> OdsInstanceRegistrations { get; }
     }
 
-    public class OdsInstanceSelection
+    public class OdsInstanceRegistrationSelection
     {
-        public int OdsInstanceId { get; set; }
+        public int OdsInstanceRegistrationId { get; set; }
         public string Name { get; set; }
         public bool Selected { get; set; }
     }

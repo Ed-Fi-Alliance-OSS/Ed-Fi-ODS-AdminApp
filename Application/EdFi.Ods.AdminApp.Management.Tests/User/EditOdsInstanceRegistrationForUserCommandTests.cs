@@ -15,38 +15,37 @@ using Shouldly;
 using static EdFi.Ods.AdminApp.Management.Tests.Testing;
 using static EdFi.Ods.AdminApp.Management.Tests.User.UserTestSetup;
 using static EdFi.Ods.AdminApp.Management.Tests.Instance.InstanceTestSetup;
-using EdFi.Admin.DataAccess.Models;
 
 namespace EdFi.Ods.AdminApp.Management.Tests.User
 {
     [TestFixture]
-    public class EditOdsInstanceForUserCommandTests: AdminAppDataTestBase
+    public class EditOdsInstanceRegistrationForUserCommandTests: AdminAppDataTestBase
     {
         [Test]
-        public void ShouldAddOdsInstancesForUser()
+        public void ShouldAddOdsInstanceRegistrationsForUser()
         {
             var existingUser = SetupUsers(1).Single();
 
-            var alreadyAddedInstances = SetupOdsInstances(useGuidName:true).OrderBy(x => x.Name).ToList();
+            var alreadyAddedInstances = SetupOdsInstanceRegistrations().OrderBy(x => x.Name).ToList();
 
-            SetupUserWithOdsInstances(existingUser.Id, alreadyAddedInstances);
+            SetupUserWithOdsInstanceRegistrations(existingUser.Id, alreadyAddedInstances);
 
-            var newInstancesToAdd = SetupOdsInstances(useGuidName: true).OrderBy(x => x.Name).ToList();
+            var newInstancesToAdd = SetupOdsInstanceRegistrations().OrderBy(x => x.Name).ToList();
 
-            var updateModel = new EditOdsInstanceForUserModel
+            var updateModel = new EditOdsInstanceRegistrationForUserModel
             {
                 UserId = existingUser.Id,
-                OdsInstances = newInstancesToAdd.Select(x => new OdsInstanceSelection
+                OdsInstanceRegistrations = newInstancesToAdd.Select(x => new OdsInstanceRegistrationSelection
                 {
                     Name = x.Name,
-                    OdsInstanceId = x.OdsInstanceId,
+                    OdsInstanceRegistrationId = x.Id,
                     Selected = true
                 }).ToList()
             };
 
             Scoped<AdminAppIdentityDbContext>(identity =>
             {
-                var command = new EditOdsInstanceForUserCommand(identity);
+                var command = new EditOdsInstanceRegistrationForUserCommand(identity);
 
                 command.Execute(updateModel);
             });
@@ -54,32 +53,32 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
         }
 
         [Test]
-        public void ShouldRemoveOdsInstancesForUser()
+        public void ShouldRemoveOdsInstanceRegistrationsForUser()
         {
             var existingUser = SetupUsers(1).Single();
 
-            var alreadyAddedInstances = SetupOdsInstances(5).OrderBy(x => x.Name).ToList();
+            var alreadyAddedInstances = SetupOdsInstanceRegistrations(5).OrderBy(x => x.Name).ToList();
 
-            SetupUserWithOdsInstances(existingUser.Id, alreadyAddedInstances);
+            SetupUserWithOdsInstanceRegistrations(existingUser.Id, alreadyAddedInstances);
 
             // Select only the first 3 instances
 
             var instancesToKeep = alreadyAddedInstances.Take(3).ToList();            
 
-            var updateModel = new EditOdsInstanceForUserModel
+            var updateModel = new EditOdsInstanceRegistrationForUserModel
             {
                 UserId = existingUser.Id,
-                OdsInstances = instancesToKeep.Select(x => new OdsInstanceSelection
+                OdsInstanceRegistrations = instancesToKeep.Select(x => new OdsInstanceRegistrationSelection
                 {
                     Name = x.Name,
-                    OdsInstanceId = x.OdsInstanceId,
+                    OdsInstanceRegistrationId = x.Id,
                     Selected = true
                 }).ToList()
             };
 
             Scoped<AdminAppIdentityDbContext>(identity =>
             {
-                var command = new EditOdsInstanceForUserCommand(identity);
+                var command = new EditOdsInstanceRegistrationForUserCommand(identity);
 
                 command.Execute(updateModel);
             });
@@ -89,9 +88,9 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
         [Test]
         public void ShouldNotEditIfRequiredFieldsEmpty()
         {
-            var updateModel = new EditOdsInstanceForUserModel();
+            var updateModel = new EditOdsInstanceRegistrationForUserModel();
 
-            Scoped<EditOdsInstanceForUserModelValidator>(validator =>
+            Scoped<EditOdsInstanceRegistrationForUserModelValidator>(validator =>
             {
                 var validationResults = validator.Validate(updateModel);
                 validationResults.IsValid.ShouldBe(false);
@@ -114,25 +113,66 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
                 UserName = $"testuser{Guid.NewGuid():N}@test.com"
             };
 
-            var testInstances = SetupOdsInstances(5).OrderBy(x => x.Name).ToList();
+            var testInstances = SetupOdsInstanceRegistrations(5).OrderBy(x => x.Name).ToList();
 
-            var updateModel = new EditOdsInstanceForUserModel
+            var updateModel = new EditOdsInstanceRegistrationForUserModel
             {
                 UserId = testUserNotInSystem.Id,
-                OdsInstances = testInstances.Select(x => new OdsInstanceSelection
+                OdsInstanceRegistrations = testInstances.Select(x => new OdsInstanceRegistrationSelection
                 {
                     Name = x.Name,
-                    OdsInstanceId = x.OdsInstanceId,
+                    OdsInstanceRegistrationId = x.Id,
                     Selected = true
                 }).ToList()
             };
 
-            Scoped<EditOdsInstanceForUserModelValidator>(validator =>
+            Scoped<EditOdsInstanceRegistrationForUserModelValidator>(validator =>
             {
                 var validationResults = validator.Validate(updateModel);
                 validationResults.IsValid.ShouldBe(false);
                 validationResults.Errors.Select(x => x.ErrorMessage).ShouldContain("The user you are trying to edit does not exist in the database.");
             });
-        }       
+        }
+
+        [Test]
+        public void ShouldNotEditIfInstancesDoesNotExist()
+        {
+            var existingUser = SetupUsers(1).Single();
+
+            var testInstanceInSystem = SetupOdsInstanceRegistrations(1).Single();
+
+            var testInstanceNotInSystem = new OdsInstanceRegistration
+            {
+                Name = $"TestInstance{Guid.NewGuid():N}",
+                Description = "Test Description"
+            };
+
+            var updateModel = new EditOdsInstanceRegistrationForUserModel
+            {
+                UserId = existingUser.Id,
+                OdsInstanceRegistrations = new List<OdsInstanceRegistrationSelection>
+                {
+                    new OdsInstanceRegistrationSelection
+                    {
+                        Name = testInstanceInSystem.Name,
+                        OdsInstanceRegistrationId = testInstanceInSystem.Id,
+                        Selected = true
+                    },
+                    new OdsInstanceRegistrationSelection
+                    {
+                        Name = testInstanceNotInSystem.Name,
+                        OdsInstanceRegistrationId = testInstanceNotInSystem.Id,
+                        Selected = true
+                    }
+                }
+            };
+
+            Scoped<EditOdsInstanceRegistrationForUserModelValidator>(validator =>
+            {
+                var validationResults = validator.Validate(updateModel);
+                validationResults.IsValid.ShouldBe(false);
+                validationResults.Errors.Select(x => x.ErrorMessage).ShouldContain("A selected instance does not exist in the database.");
+            });
+        }
     }
 }

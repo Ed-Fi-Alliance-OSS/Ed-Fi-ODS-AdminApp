@@ -39,7 +39,7 @@ namespace EdFi.Ods.AdminApp.Management.Database.Ods
         {
             var connectionString = _connectionStringService.GetConnectionString();
 
-            var isPostgreSql = "PostgreSQL".Equals(_appSettings.Value.DatabaseEngine, StringComparison.InvariantCultureIgnoreCase);
+            var isPostgreSql = ApiConfigurationConstants.PostgreSQL.Equals(_appSettings.Value.DatabaseEngine, StringComparison.InvariantCultureIgnoreCase);
 
             if (isPostgreSql)
             {

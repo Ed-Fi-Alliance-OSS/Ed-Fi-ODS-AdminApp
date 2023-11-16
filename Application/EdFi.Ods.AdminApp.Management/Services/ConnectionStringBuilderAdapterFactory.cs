@@ -24,7 +24,7 @@ namespace EdFi.Ods.AdminApp.Management.Services
 
         public IDbConnectionStringBuilderAdapter Get()
         {
-            var isPostgreSql = "PostgreSQL".Equals(_appSettings.Value.DatabaseEngine,
+            var isPostgreSql = ApiConfigurationConstants.PostgreSQL.Equals(_appSettings.Value.DatabaseEngine,
             StringComparison.InvariantCultureIgnoreCase);
 
             if (isPostgreSql)

@@ -168,6 +168,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
             {
                 Name = odsInstanceName,
                 InstanceType = "Ods",
+                IsExtended = false,
                 Status = "OK",
                 Version = "1.0.0"
             };

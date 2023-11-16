@@ -30,10 +30,10 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         private readonly UserManager<AdminAppUser> _userManager;
         private readonly RegisterCommand _registerCommand;
         private readonly EditUserRoleCommand _editUserRoleCommand;
-        private readonly IGetOdsInstancesQuery _getOdsInstancesQuery;
+        private readonly IGetOdsInstanceRegistrationsQuery _getOdsInstanceRegistrationsQuery;
         private readonly AdminAppIdentityDbContext _identity;
         
-        public IdentityController(ApplicationConfigurationService applicationConfiguration, RegisterCommand registerCommand, EditUserRoleCommand editUserRoleCommand, IGetOdsInstancesQuery getOdsInstancesQuery,
+        public IdentityController(ApplicationConfigurationService applicationConfiguration, RegisterCommand registerCommand, EditUserRoleCommand editUserRoleCommand, IGetOdsInstanceRegistrationsQuery getOdsInstanceRegistrationsQuery,
             SignInManager<AdminAppUser> signInManager,
             UserManager<AdminAppUser> userManager,
             AdminAppIdentityDbContext identity)
@@ -41,7 +41,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _applicationConfiguration = applicationConfiguration;
             _registerCommand = registerCommand;
             _editUserRoleCommand = editUserRoleCommand;
-            _getOdsInstancesQuery = getOdsInstancesQuery;
+            _getOdsInstanceRegistrationsQuery = getOdsInstanceRegistrationsQuery;
             _signInManager = signInManager;
             _userManager = userManager;
             _identity = identity;

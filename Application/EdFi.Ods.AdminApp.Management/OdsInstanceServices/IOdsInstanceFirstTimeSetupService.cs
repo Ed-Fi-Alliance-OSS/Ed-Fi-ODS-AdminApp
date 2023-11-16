@@ -4,13 +4,13 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using System.Threading.Tasks;
-using EdFi.Admin.DataAccess.Models;
 using EdFi.Ods.AdminApp.Management.Configuration.Claims;
+using EdFi.Ods.AdminApp.Management.Database.Models;
 
 namespace EdFi.Ods.AdminApp.Management.OdsInstanceServices
 {
     public interface IOdsInstanceFirstTimeSetupService
     {
-        Task CompleteSetup(OdsInstance odsInstance, CloudOdsClaimSet claimSet);
+        Task CompleteSetup(OdsInstanceRegistration odsInstance, CloudOdsClaimSet claimSet);
     }
 }

@@ -34,13 +34,13 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
             var userToBeDeleted = existingUsers[0];
             var userNotToBeDeleted = existingUsers[1];
 
-            var testInstances = SetupOdsInstances(6).OrderBy(x => x.Name).ToList();
+            var testInstances = SetupOdsInstanceRegistrations(6).OrderBy(x => x.Name).ToList();
 
             var testInstancesAssignedToDeletedUser = testInstances.Take(3).ToList();
             var testInstancesAssignedToNotDeletedUser = testInstances.Skip(3).Take(3).ToList();
 
-            SetupUserWithOdsInstances(userToBeDeleted.Id, testInstancesAssignedToDeletedUser);
-            SetupUserWithOdsInstances(userNotToBeDeleted.Id, testInstancesAssignedToNotDeletedUser);
+            SetupUserWithOdsInstanceRegistrations(userToBeDeleted.Id, testInstancesAssignedToDeletedUser);
+            SetupUserWithOdsInstanceRegistrations(userNotToBeDeleted.Id, testInstancesAssignedToNotDeletedUser);
 
             var deleteModel = new DeleteUserModel
             {

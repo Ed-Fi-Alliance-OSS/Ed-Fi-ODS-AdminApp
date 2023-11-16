@@ -5,9 +5,9 @@
 
 using System.Threading.Tasks;
 using EdFi.Admin.DataAccess.Contexts;
-using EdFi.Admin.DataAccess.Models;
 using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
 using EdFi.Ods.AdminApp.Management.Configuration.Claims;
+using EdFi.Ods.AdminApp.Management.Database.Models;
 using EdFi.Ods.AdminApp.Management.OdsInstanceServices;
 using EdFi.Security.DataAccess.Contexts;
 using Action = System.Action;
@@ -22,6 +22,7 @@ namespace EdFi.Ods.AdminApp.Management.OnPrem
         private readonly IOdsInstanceFirstTimeSetupService _firstTimeSetupService;
         private readonly IAssessmentVendorAdjustment _assessmentVendorAdjustment;
         private readonly IClaimSetCheckService _claimSetCheckService;
+        private readonly IInferInstanceService _instanceService;
 
         public Action ExtraDatabaseInitializationAction { get; set; }
 
@@ -31,10 +32,12 @@ namespace EdFi.Ods.AdminApp.Management.OnPrem
             ICloudOdsClaimSetConfigurator cloudOdsClaimSetConfigurator,
             IOdsInstanceFirstTimeSetupService firstTimeSetupService,
             IAssessmentVendorAdjustment assessmentVendorAdjustment,
-            IClaimSetCheckService claimSetCheckService)
+            IClaimSetCheckService claimSetCheckService,
+            IInferInstanceService instanceService)
         {
             _assessmentVendorAdjustment = assessmentVendorAdjustment;
             _claimSetCheckService = claimSetCheckService;
+            _instanceService = instanceService;
             _usersContext = usersContext;
             _securityContext = securityContext;
             _cloudOdsClaimSetConfigurator = cloudOdsClaimSetConfigurator;
@@ -46,7 +49,15 @@ namespace EdFi.Ods.AdminApp.Management.OnPrem
             ExtraDatabaseInitializationAction?.Invoke();
             var restartRequired = false;
 
-            // TODO: ODS API 7 - dummy first time setup flow
+            // TODO: ODS API 7 specific implementation
+            var defaultOdsInstance = new OdsInstanceRegistration
+            {
+                Name = "EdFi ODS",
+                DatabaseName = _instanceService.DatabaseName(),
+                Description = "Default single ods instance"
+            };
+            await _firstTimeSetupService.CompleteSetup(defaultOdsInstance, claimSet);
+
 
             if (!_claimSetCheckService.RequiredClaimSetsExist())
             {
