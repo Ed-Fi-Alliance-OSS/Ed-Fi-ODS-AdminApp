@@ -11,13 +11,14 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 using EdFi.Ods.AdminApp.Management.Services;
 using Npgsql;
+using ApiMode = EdFi.Ods.AdminApp.Management.Instances.ApiMode;
 
 namespace EdFi.Ods.AdminApp.Management.Database.Ods
 {
     public interface IDatabaseConnectionProvider
     {
-        
-        IDbConnection CreateNewConnection();
+        IDbConnection CreateNewConnection(int odsInstanceNumericSuffix, ApiMode apiMode);
+        IDbConnection CreateNewConnection(string odsInstanceName, ApiMode apiMode);
     }
 
     public class DatabaseConnectionProvider : IDatabaseConnectionProvider
@@ -34,12 +35,16 @@ namespace EdFi.Ods.AdminApp.Management.Database.Ods
             _appSettings = appSettings;
         }
 
-       
-        public IDbConnection CreateNewConnection()
+        public IDbConnection CreateNewConnection(int odsInstanceNumericSuffix, ApiMode apiMode)
         {
-            var connectionString = _connectionStringService.GetConnectionString();
+            return CreateNewConnection(odsInstanceNumericSuffix.ToString(), apiMode);
+        }
 
-            var isPostgreSql = "PostgreSQL".Equals(_appSettings.Value.DatabaseEngine, StringComparison.InvariantCultureIgnoreCase);
+        public IDbConnection CreateNewConnection(string odsInstanceName, ApiMode apiMode)
+        {
+            var connectionString = _connectionStringService.GetConnectionString(odsInstanceName, apiMode);
+
+            var isPostgreSql = ApiConfigurationConstants.PostgreSQL.Equals(_appSettings.Value.DatabaseEngine, StringComparison.InvariantCultureIgnoreCase);
 
             if (isPostgreSql)
             {

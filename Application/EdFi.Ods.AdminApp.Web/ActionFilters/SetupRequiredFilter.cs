@@ -5,18 +5,26 @@
 
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Linq;
+using EdFi.Ods.AdminApp.Management;
+using EdFi.Ods.AdminApp.Management.Configuration.Application;
 using EdFi.Ods.AdminApp.Management.Database;
 using EdFi.Ods.AdminApp.Web.Controllers;
 using EdFi.Ods.AdminApp.Web.Helpers;
+using EdFi.Ods.AdminApp.Web.Infrastructure;
 
 namespace EdFi.Ods.AdminApp.Web.ActionFilters
 {
     public class SetupRequiredFilter : ActionFilterAttribute
     {
+        private readonly IGetOdsStatusQuery _getOdsStatusQuery;
         private readonly AdminAppDbContext _database;
 
-        public SetupRequiredFilter(AdminAppDbContext database)
+        public SetupRequiredFilter(IGetOdsStatusQuery getOdsStatusQuery
+            , AdminAppDbContext database
+            )
         {
+            _getOdsStatusQuery = getOdsStatusQuery;
+
             _database = database;
         }
 
@@ -44,6 +52,13 @@ namespace EdFi.Ods.AdminApp.Web.ActionFilters
 
                 return generalFirstTimeSetUpCompleted;
             }
+        }
+
+        private bool OdsInstanceFirstTimeSetupCompleted()
+        {
+            var defaultInstanceName = CloudOdsAdminAppSettings.Instance.OdsInstanceName;
+            var status = _getOdsStatusQuery.Execute(defaultInstanceName);
+            return status != null && status == CloudOdsStatus.Ok;
         }
     }
 }

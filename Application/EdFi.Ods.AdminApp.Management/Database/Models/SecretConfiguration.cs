@@ -8,7 +8,7 @@ namespace EdFi.Ods.AdminApp.Management.Database.Models
     public class SecretConfiguration : Entity
     {
         public string EncryptedData { get; set; }
-        public int? OdsInstanceId { get; set; }
+        public int? OdsInstanceRegistrationId { get; set; }
         public bool IsEncrypted { get; set; }
     }
 }

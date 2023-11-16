@@ -110,9 +110,12 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                 var vendorsApplicationsModel = _mapper.Map<List<VendorApplicationsModel>>(
                     vendors, opts => opts.WithEducationOrganizations(edOrgs));
 
-                foreach (var model in vendorsApplicationsModel)
+                if (CloudOdsAdminAppSettings.Instance.Mode.SupportsMultipleInstances)
                 {
-                    FilterInstanceSpecificApplications(model);
+                    foreach (var model in vendorsApplicationsModel)
+                    {
+                        FilterInstanceSpecificApplications(model);
+                    }
                 }
 
                 return vendorsApplicationsModel;
@@ -128,9 +131,9 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         public async Task<ActionResult> Add(int vendorId)
-        {            
-            var apiFacade = await _odsApiFacadeFactory.Create();
+        {
             var vendor = _getVendorByIdQuery.Execute(vendorId);
+            var apiFacade = await _odsApiFacadeFactory.Create();
             var psis = apiFacade.GetAllPostSecondaryInstitutions().ToList();
             var schools = apiFacade.GetAllSchools().ToList();
             var profiles = _mapper.Map<List<ProfileModel>>(_getProfilesQuery.Execute());
@@ -152,12 +155,14 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
+        //[AddTelemetry("Add Application")]
         public ActionResult Add(AddApplicationModel model)
         {
             var result = _addApplicationCommand.Execute(model);
 
             var apiUrl = CloudOdsApiConnectionInformationProvider.GetConnectionInformationForEnvironment(
-                new OdsApiCredential(result.Key, result.Secret)).ApiBaseUrl;
+                new OdsApiCredential(result.Key, result.Secret), _instanceContext.Name,
+                CloudOdsAdminAppSettings.Instance.Mode).ApiBaseUrl;
 
             return PartialView(
                 "_ApplicationKeyAndSecretContent", new ApplicationKeyModel
@@ -238,13 +243,15 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         }
 
         [HttpPost]
+        //[AddTelemetry("Regenerate Secret")]
         public ActionResult RegenerateSecret(RegenerateSecretModel model)
         {
             var regenerationResult = _regenerateApiClientSecretCommand.Execute(model.ApplicationId);
             var application = regenerationResult.Application;
 
             var apiUrl = CloudOdsApiConnectionInformationProvider.GetConnectionInformationForEnvironment(
-                new OdsApiCredential(regenerationResult.Key, regenerationResult.Secret)).ApiBaseUrl;
+                new OdsApiCredential(regenerationResult.Key, regenerationResult.Secret),
+                _instanceContext.Name, CloudOdsAdminAppSettings.Instance.Mode).ApiBaseUrl;
 
             return PartialView("_ApplicationKeyAndSecretContent", new ApplicationKeyModel
             {

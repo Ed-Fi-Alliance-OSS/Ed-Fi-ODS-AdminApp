@@ -9,7 +9,7 @@ namespace EdFi.Ods.AdminApp.Management
     {
         public OdsApiCredential ProductionApiKeyAndSecret { get; set; }
 
-        public OdsAdminAppApiCredentials GetOdsAdminAppApiCredentials() => new()
+        public OdsAdminAppApiCredentials GetOdsAdminAppApiCredentials() => new OdsAdminAppApiCredentials
         {
             ProductionApiCredential = ProductionApiKeyAndSecret
         };

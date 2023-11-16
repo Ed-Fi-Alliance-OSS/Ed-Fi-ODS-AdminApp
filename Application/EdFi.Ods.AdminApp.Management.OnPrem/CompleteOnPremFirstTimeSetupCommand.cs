@@ -5,9 +5,10 @@
 
 using System.Threading.Tasks;
 using EdFi.Admin.DataAccess.Contexts;
-using EdFi.Admin.DataAccess.Models;
 using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
 using EdFi.Ods.AdminApp.Management.Configuration.Claims;
+using EdFi.Ods.AdminApp.Management.Database.Models;
+using EdFi.Ods.AdminApp.Management.Instances;
 using EdFi.Ods.AdminApp.Management.OdsInstanceServices;
 using EdFi.Security.DataAccess.Contexts;
 using Action = System.Action;
@@ -22,6 +23,7 @@ namespace EdFi.Ods.AdminApp.Management.OnPrem
         private readonly IOdsInstanceFirstTimeSetupService _firstTimeSetupService;
         private readonly IAssessmentVendorAdjustment _assessmentVendorAdjustment;
         private readonly IClaimSetCheckService _claimSetCheckService;
+        private readonly IInferInstanceService _instanceService;
 
         public Action ExtraDatabaseInitializationAction { get; set; }
 
@@ -31,22 +33,33 @@ namespace EdFi.Ods.AdminApp.Management.OnPrem
             ICloudOdsClaimSetConfigurator cloudOdsClaimSetConfigurator,
             IOdsInstanceFirstTimeSetupService firstTimeSetupService,
             IAssessmentVendorAdjustment assessmentVendorAdjustment,
-            IClaimSetCheckService claimSetCheckService)
+            IClaimSetCheckService claimSetCheckService,
+            IInferInstanceService instanceService)
         {
             _assessmentVendorAdjustment = assessmentVendorAdjustment;
             _claimSetCheckService = claimSetCheckService;
+            _instanceService = instanceService;
             _usersContext = usersContext;
             _securityContext = securityContext;
             _cloudOdsClaimSetConfigurator = cloudOdsClaimSetConfigurator;
             _firstTimeSetupService = firstTimeSetupService;
         }
 
-        public async Task<bool> Execute(CloudOdsClaimSet claimSet)
+        public async Task<bool> Execute(string odsInstanceName, CloudOdsClaimSet claimSet, ApiMode apiMode)
         {
             ExtraDatabaseInitializationAction?.Invoke();
             var restartRequired = false;
 
-            // TODO: ODS API 7 - dummy first time setup flow
+            if (apiMode.SupportsSingleInstance)
+            {
+                var defaultOdsInstance = new OdsInstanceRegistration
+                {
+                    Name = odsInstanceName,
+                    DatabaseName = _instanceService.DatabaseName(0, apiMode),
+                    Description = "Default single ods instance"
+                };
+                await _firstTimeSetupService.CompleteSetup(defaultOdsInstance, claimSet, apiMode);
+            }
 
             if (!_claimSetCheckService.RequiredClaimSetsExist())
             {

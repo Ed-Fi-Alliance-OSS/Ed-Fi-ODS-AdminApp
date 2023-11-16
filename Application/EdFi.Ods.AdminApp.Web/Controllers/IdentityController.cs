@@ -4,6 +4,7 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -15,6 +16,7 @@ using EdFi.Ods.AdminApp.Management.Identity;
 using EdFi.Ods.AdminApp.Management.Instances;
 using EdFi.Ods.AdminApp.Management.User;
 using EdFi.Ods.AdminApp.Web.ActionFilters;
+using EdFi.Ods.AdminApp.Web.Infrastructure;
 using EdFi.Ods.AdminApp.Web.Models.ViewModels.Identity;
 using EdFi.Ods.AdminApp.Web.Models.ViewModels.User;
 using Microsoft.AspNetCore.Authentication;
@@ -30,10 +32,10 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         private readonly UserManager<AdminAppUser> _userManager;
         private readonly RegisterCommand _registerCommand;
         private readonly EditUserRoleCommand _editUserRoleCommand;
-        private readonly IGetOdsInstancesQuery _getOdsInstancesQuery;
+        private readonly IGetOdsInstanceRegistrationsQuery _getOdsInstanceRegistrationsQuery;
         private readonly AdminAppIdentityDbContext _identity;
         
-        public IdentityController(ApplicationConfigurationService applicationConfiguration, RegisterCommand registerCommand, EditUserRoleCommand editUserRoleCommand, IGetOdsInstancesQuery getOdsInstancesQuery,
+        public IdentityController(ApplicationConfigurationService applicationConfiguration, RegisterCommand registerCommand, EditUserRoleCommand editUserRoleCommand, IGetOdsInstanceRegistrationsQuery getOdsInstanceRegistrationsQuery,
             SignInManager<AdminAppUser> signInManager,
             UserManager<AdminAppUser> userManager,
             AdminAppIdentityDbContext identity)
@@ -41,7 +43,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _applicationConfiguration = applicationConfiguration;
             _registerCommand = registerCommand;
             _editUserRoleCommand = editUserRoleCommand;
-            _getOdsInstancesQuery = getOdsInstancesQuery;
+            _getOdsInstanceRegistrationsQuery = getOdsInstanceRegistrationsQuery;
             _signInManager = signInManager;
             _userManager = userManager;
             _identity = identity;
@@ -124,6 +126,9 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                     });
                     await _signInManager.SignInAsync(adminAppUser, isPersistent: false);
 
+                    if (ZeroOdsInstanceRegistrations())
+                        return RedirectToAction("RegisterOdsInstance", "OdsInstances");
+
                     return RedirectToAction("Index", "Home");
                 }
 
@@ -161,6 +166,9 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
 
                 TempData["PasswordChanged"] = true;
 
+                if (ZeroOdsInstanceRegistrations())
+                    return RedirectToAction("RegisterOdsInstance", "OdsInstances");
+
                 return RedirectToAction("ChangePassword");
             }
 
@@ -183,10 +191,19 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
 
         private ActionResult RedirectToLocal(string returnUrl)
         {
+            if (ZeroOdsInstanceRegistrations())
+                return RedirectToAction("RegisterOdsInstance", "OdsInstances");
+
             if (Url.IsLocalUrl(returnUrl))
                 return Redirect(returnUrl);
 
             return RedirectToAction("Index", "Home");
+        }
+
+        private bool ZeroOdsInstanceRegistrations()
+        {
+            return CloudOdsAdminAppSettings.Instance.Mode.SupportsMultipleInstances &&
+                   !_getOdsInstanceRegistrationsQuery.Execute().Any();
         }
     }
 }

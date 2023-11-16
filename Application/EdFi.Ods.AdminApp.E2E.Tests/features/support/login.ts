@@ -65,7 +65,7 @@ When("user enters {string} for Log in", async (scenario: string) => {
 Then("login is successful", async () => {
     if (models.homePage.isOnPage) {
         ok(await models.homePage.hasGlobalOption(), "Global option not found");
-        ok(await models.homePage.hasODSInstancesOption(), "ODS Instances option not found");
+        ok(await models.homePage.hasSettingsOption(), "Settings option not found");
     } else if (models.firstTimeSetupPage.isOnPage) {
         ok(await models.firstTimeSetupPage.hasTitle(), "Page Title not found");
     } else {

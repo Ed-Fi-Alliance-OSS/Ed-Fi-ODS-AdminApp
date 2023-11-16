@@ -281,12 +281,11 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
 
             var requiredApiDataExist = (await _odsApiFacadeFactory.Create()).DoesApiDataExist();
 
-            // TODO:ODS 7 specific implemnentation
             var model = new LocalEducationAgencyViewModel
             {
                 Schools = schools,
                 LocalEducationAgencies = localEducationAgencies,
-                ShouldAllowMultipleDistricts = true,
+                ShouldAllowMultipleDistricts = CloudOdsAdminAppSettings.Instance.Mode != ApiMode.DistrictSpecific,
                 AddSchoolModel = new AddSchoolModel
                 {
                     GradeLevelOptions = api.GetAllGradeLevels(),
@@ -300,6 +299,11 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                     RequiredApiDataExist = requiredApiDataExist
                 }
             };
+
+            if (CloudOdsAdminAppSettings.Instance.Mode == ApiMode.DistrictSpecific)
+            {
+                model.AddLocalEducationAgencyModel.LocalEducationAgencyId = OdsInstanceIdentityHelper.GetIdentityValue(_instanceContext.Name);
+            }
 
             return PartialView("_LocalEducationAgencies", model);
         }
