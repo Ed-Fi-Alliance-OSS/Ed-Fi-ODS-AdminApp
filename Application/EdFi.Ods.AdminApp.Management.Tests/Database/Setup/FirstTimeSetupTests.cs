@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EdFi.Admin.DataAccess.Contexts;
 using EdFi.Admin.DataAccess.Models;
+using EdFi.Ods.AdminApp.Management.Instances;
 using EdFi.Common.Security;
 using EdFi.Ods.AdminApp.Management.OnPrem;
 using Moq;
@@ -25,7 +26,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Setup
             var odsInstances = new List<OdsInstance>();
             var service = GetFirstTimeSetupService(odsInstances);
 
-            await service.CreateAdminAppInAdminDatabase("Test Claim Set", "Test Instance", "0.0");
+            await service.CreateAdminAppInAdminDatabase("Test Claim Set", "Test Instance", "0.0", ApiMode.SharedInstance);
 
             odsInstances.Count.ShouldBe(1);
         }
@@ -37,10 +38,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Setup
 
             var service = GetFirstTimeSetupService(odsInstances);
 
-            await service.CreateAdminAppInAdminDatabase("Test Claim Set", "Test Instance", "0.0");
+            await service.CreateAdminAppInAdminDatabase("Test Claim Set", "Test Instance", "0.0", ApiMode.SharedInstance);
             odsInstances.Count.ShouldBe(1);
 
-            await service.CreateAdminAppInAdminDatabase("Test Claim Set", "Test Instance", "0.0");
+            await service.CreateAdminAppInAdminDatabase("Test Claim Set", "Test Instance", "0.0", ApiMode.SharedInstance);
             odsInstances.Count.ShouldBe(1);
         }
 
@@ -52,11 +53,27 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Setup
 
             var service = GetFirstTimeSetupService(odsInstances, applications);
 
-            await service.CreateAdminAppInAdminDatabase("Test Claim Set", "Test Instance_2019", "0.0");
+            await service.CreateAdminAppInAdminDatabase("Test Claim Set", "Test Instance_2019", "0.0",
+                ApiMode.YearSpecific);
             odsInstances.Count.ShouldBe(1);
             applications.Count.ShouldBe(1);
             applications.FirstOrDefault()?.ApplicationEducationOrganizations.Count.ShouldBe(0);
-        }     
+        }
+
+        [Test]
+        public async Task ShouldRegisterInstanceWithApplicationEdOrgAssociationOnDistrictSpecificMode()
+        {
+            var odsInstances = new List<OdsInstance>();
+            var applications = new List<Application>();
+
+            var service = GetFirstTimeSetupService(odsInstances, applications);
+
+            await service.CreateAdminAppInAdminDatabase("Test Claim Set", "Test Instance_255901", "0.0",
+                ApiMode.DistrictSpecific);
+            odsInstances.Count.ShouldBe(1);
+            applications.Count.ShouldBe(1);
+            applications.FirstOrDefault()?.ApplicationEducationOrganizations.Count.ShouldBe(1);
+        }
 
         private static OnPremFirstTimeSetupService GetFirstTimeSetupService(List<OdsInstance> instances, List<Application> applications = null)
         {

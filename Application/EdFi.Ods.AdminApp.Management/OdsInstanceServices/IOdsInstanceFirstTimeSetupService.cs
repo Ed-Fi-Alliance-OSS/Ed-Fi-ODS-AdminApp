@@ -6,11 +6,12 @@
 using System.Threading.Tasks;
 using EdFi.Ods.AdminApp.Management.Configuration.Claims;
 using EdFi.Ods.AdminApp.Management.Database.Models;
+using EdFi.Ods.AdminApp.Management.Instances;
 
 namespace EdFi.Ods.AdminApp.Management.OdsInstanceServices
 {
     public interface IOdsInstanceFirstTimeSetupService
     {
-        Task CompleteSetup(OdsInstanceRegistration odsInstance, CloudOdsClaimSet claimSet);
+        Task CompleteSetup(OdsInstanceRegistration odsInstance, CloudOdsClaimSet claimSet, ApiMode apiMode);
     }
 }

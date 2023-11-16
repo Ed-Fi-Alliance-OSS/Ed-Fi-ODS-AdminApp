@@ -9,6 +9,7 @@ using EdFi.Ods.AdminApp.Management.Configuration.Claims;
 using EdFi.Ods.AdminApp.Management.Database;
 using EdFi.Ods.AdminApp.Management.Database.Models;
 using EdFi.Ods.AdminApp.Management.Helpers;
+using EdFi.Ods.AdminApp.Management.Instances;
 using Microsoft.Extensions.Options;
 
 namespace EdFi.Ods.AdminApp.Management.OdsInstanceServices
@@ -34,20 +35,21 @@ namespace EdFi.Ods.AdminApp.Management.OdsInstanceServices
             _appSettings = appSettings.Value;
         }
 
-        public async Task CompleteSetup(OdsInstanceRegistration odsInstanceRegistration, CloudOdsClaimSet claimSet)
+        public async Task CompleteSetup(OdsInstanceRegistration odsInstanceRegistration, CloudOdsClaimSet claimSet,
+            ApiMode apiMode)
         {
             await AddOdsInstanceRegistration(odsInstanceRegistration);
-            await CreateAndSaveApiKeyAndSecret(odsInstanceRegistration, claimSet);
+            await CreateAndSaveApiKeyAndSecret(odsInstanceRegistration, claimSet, apiMode);
             _firstTimeSetupService.EnsureAdminDatabaseInitialized();
             await _usersContext.SaveChangesAsync();
         }
 
-        private async Task CreateAndSaveApiKeyAndSecret(OdsInstanceRegistration odsInstanceRegistration, CloudOdsClaimSet claimSet)
+        private async Task CreateAndSaveApiKeyAndSecret(OdsInstanceRegistration odsInstanceRegistration, CloudOdsClaimSet claimSet, ApiMode mode)
         {
             var secretConfiguration = new OdsSecretConfiguration();
 
             var applicationCreateResult = await _firstTimeSetupService.CreateAdminAppInAdminDatabase(claimSet.ClaimSetName, odsInstanceRegistration.Name,
-                    _appSettings.AwsCurrentVersion);
+                    _appSettings.AwsCurrentVersion, mode);
 
             secretConfiguration.ProductionApiKeyAndSecret = applicationCreateResult.ProductionKeyAndSecret;
          

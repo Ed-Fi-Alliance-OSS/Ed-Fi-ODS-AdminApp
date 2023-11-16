@@ -32,7 +32,12 @@ See the LICENSE and NOTICES files in the project root for more information.
                 </button>
                 @if (Model.VendorListModel.Vendors.Any())
                 {
-                    var applicationsUrl = Url.Action("DefineApplications", "GlobalSettings");                    
+                    var applicationsUrl = Url.Action("Index", "Application");
+
+                    if (CloudOdsAdminAppSettings.Instance.Mode.SupportsMultipleInstances)
+                    {
+                        applicationsUrl = Url.Action("DefineApplications", "GlobalSettings");
+                    }
 
                     <a class="btn btn-primary cta" href="@applicationsUrl">Define Applications</a>
                 }

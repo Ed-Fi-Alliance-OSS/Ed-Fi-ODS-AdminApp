@@ -33,6 +33,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         private readonly EditOdsInstanceRegistrationForUserCommand _editOdsInstanceRegistrationForUserCommand;
         private readonly EditUserRoleCommand _editUserRoleCommand;
         private readonly GetRoleForUserQuery _getRoleForUserQuery;
+        private readonly IGetOdsInstanceRegistrationsByUserIdQuery _getOdsInstanceRegistrationsByUserIdQuery;
         private readonly IGetOdsInstanceRegistrationsQuery _getOdsInstanceRegistrationsQuery;
         private readonly ITabDisplayService _tabDisplayService;
 
@@ -43,6 +44,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             , EditOdsInstanceRegistrationForUserCommand editOdsInstanceRegistrationForUserCommand
             , EditUserRoleCommand editUserRoleCommand
             , GetRoleForUserQuery getRoleForUserQuery
+            , IGetOdsInstanceRegistrationsByUserIdQuery getOdsInstanceRegistrationsByUserIdQuery
             , IGetOdsInstanceRegistrationsQuery getOdsInstanceRegistrationsQuery
             , ITabDisplayService tabDisplayService
             , SignInManager<AdminAppUser> signInManager
@@ -56,6 +58,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _editOdsInstanceRegistrationForUserCommand = editOdsInstanceRegistrationForUserCommand;
             _editUserRoleCommand = editUserRoleCommand;
             _getRoleForUserQuery = getRoleForUserQuery;
+            _getOdsInstanceRegistrationsByUserIdQuery = getOdsInstanceRegistrationsByUserIdQuery;
             _getOdsInstanceRegistrationsQuery = getOdsInstanceRegistrationsQuery;
             _tabDisplayService = tabDisplayService;            
 
@@ -137,6 +140,42 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             }
 
             return RedirectToActionJson<GlobalSettingsController>(x => x.Users(), "User updated successfully.");
+        }
+
+        public ActionResult EditOdsInstanceRegistrationsForUser(string userId)
+        {
+            var existingUser = _getAdminAppUserByIdQuery.Execute(userId);
+
+            var odsInstanceRegistrations = _getOdsInstanceRegistrationsQuery.Execute().Select(x => new OdsInstanceRegistrationSelection
+            {
+                Name = x.Name,
+                OdsInstanceRegistrationId = x.Id,
+                Selected = false
+            }).ToList();
+            var userOdsInstanceRegistrationIds = _getOdsInstanceRegistrationsByUserIdQuery.Execute(userId).Select(x => x.Id);
+            odsInstanceRegistrations.Where(x => userOdsInstanceRegistrationIds.Contains(x.OdsInstanceRegistrationId)).ForEach(x => x.Selected = true);
+            return View("EditOdsInstanceRegistrationsForUser", new EditOdsInstanceRegistrationForUserModel
+            {
+                UserId = userId,
+                Email = existingUser.Email,
+                OdsInstanceRegistrations = odsInstanceRegistrations,
+                GlobalSettingsTabEnumerations = GetGlobalSettingsTabsWithUsersSelected()
+            });
+        }
+
+        [HttpPost]
+        public ActionResult EditOdsInstanceRegistrationsForUser(EditOdsInstanceRegistrationForUserModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model.UserId);
+            }
+
+            _editOdsInstanceRegistrationForUserCommand.Execute(model);
+
+            SuccessToastMessage("Assignments successfully updated.");
+
+            return RedirectToAction("Users", "GlobalSettings");
         }
 
         public ActionResult EditUserRole(string userId)

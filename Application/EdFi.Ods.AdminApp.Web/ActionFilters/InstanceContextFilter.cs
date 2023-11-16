@@ -35,13 +35,31 @@ namespace EdFi.Ods.AdminApp.Web.ActionFilters
         {
             if (SkipFilter(filterContext.ActionDescriptor as ControllerActionDescriptor)) return;
 
-            var unsafeInstanceId = filterContext.HttpContext.Request.Cookies["Instance"];
-            var userId = filterContext.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (!TryQueryInstanceRegistration(userId, unsafeInstanceId, out var instance))
+            OdsInstanceRegistration instance;
+            if (CloudOdsAdminAppSettings.Instance.Mode.SupportsSingleInstance)
             {
-                filterContext.Result = new RedirectResult("~/OdsInstances");
-                return;
+                instance = GetQueryInstanceRegistration();
+
+                if (instance == null)
+                {
+                    var errorMessage = "Invalid configuration:" +
+                       " A previous version of Admin App was already setup and this version cannot continue to function." +
+                       " See the Known Issues documentation page to rerun Admin App setup in this mode," +
+                       " or switch back to using the previous mode.";
+
+                    throw new AdminAppException(errorMessage) { AllowFeedback = false };
+                }
+            }
+            else
+            {
+                var unsafeInstanceId = filterContext.HttpContext.Request.Cookies["Instance"];
+                var userId = filterContext.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (!TryQueryInstanceRegistration(userId, unsafeInstanceId, out instance))
+                {
+                    filterContext.Result = new RedirectResult("~/OdsInstances");
+                    return;
+                }
             }
 
             _instanceContext.Id = instance.Id;
@@ -49,11 +67,19 @@ namespace EdFi.Ods.AdminApp.Web.ActionFilters
             _instanceContext.Description = instance.Description;
         }
 
+        private OdsInstanceRegistration GetQueryInstanceRegistration()
+        {
+            var singleInstanceLookup = _adminAppDbContext.OdsInstanceRegistrations.FirstOrDefault(x =>
+                x.Name == CloudOdsAdminAppSettings.Instance.OdsInstanceName);
+
+            return singleInstanceLookup;
+        }
+
         private bool TryQueryInstanceRegistration(string userId, string unsafeInstanceId, out OdsInstanceRegistration instanceRegistration)
         {
             if (int.TryParse(unsafeInstanceId, out var safeInstanceId))
             {
-                var isAuthorized = true;//IsUserAuthorizedForInstance(safeInstanceId, userId);
+                var isAuthorized = IsUserAuthorizedForInstance(safeInstanceId, userId);
 
                 var instanceLookup = _adminAppDbContext.OdsInstanceRegistrations.Find(safeInstanceId);
 

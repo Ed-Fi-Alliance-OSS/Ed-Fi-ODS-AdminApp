@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+﻿// SPDX-License-Identifier: Apache-2.0
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
@@ -14,6 +14,6 @@ namespace EdFi.Ods.AdminApp.Management
     {
         Action ExtraDatabaseInitializationAction { get; set; }
 
-        Task<bool> Execute(CloudOdsClaimSet claimSet);
+        Task<bool> Execute(string odsInstanceName, CloudOdsClaimSet claimSet, ApiMode mode);
     }
 }

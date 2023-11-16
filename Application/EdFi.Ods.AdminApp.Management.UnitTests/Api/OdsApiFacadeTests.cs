@@ -41,7 +41,7 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Api
             _profile = new AdminManagementMappingProfile();
             _configuration = new MapperConfiguration(cfg => cfg.AddProfile(_profile));
             _mapper = _configuration.CreateMapper();
-            _connectionInformation = new OdsApiConnectionInformation()
+            _connectionInformation = new OdsApiConnectionInformation ("Ods Instance", ApiMode.Sandbox)
             {
                 ApiServerUrl = "http://server"
             };

@@ -16,6 +16,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
 {
     public class SchoolYearTests : OdsDataTestBase
     {
+        private const string InstanceName = CloudOdsDatabaseNames.ProductionOds;
+        private static readonly ApiMode ApiMode = ApiMode.SharedInstance;
 
         [Test]
         public void ShouldGetOrderedSchoolYearTypes()
@@ -99,7 +101,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
             GetCurrentSchoolYear().ShouldBe(null);
 
             // Create an ambiguous, meaningless selection of multiple years.
-            using (var connection = TestConnectionProvider.CreateNewConnection())
+            using (var connection = TestConnectionProvider.CreateNewConnection(InstanceName, ApiMode))
                 connection.Execute(@"UPDATE edfi.SchoolYearType SET CurrentSchoolYear='true'");
 
             // Rather than throwing, the user should experience this as no valid selection.
@@ -112,14 +114,14 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
 
         private static SchoolYearType GetCurrentSchoolYear()
             => new GetCurrentSchoolYearQuery(TestConnectionProvider)
-                .Execute();
+                .Execute(InstanceName, ApiMode);
 
         private static IReadOnlyList<SchoolYearType> GetSchoolYears()
             => new GetSchoolYearsQuery(TestConnectionProvider)
-                .Execute();
+                .Execute(InstanceName, ApiMode);
 
         private static void SetSchoolYear(short schoolYear)
             => new SetCurrentSchoolYearCommand(TestConnectionProvider)
-                .Execute(schoolYear);
+                .Execute(InstanceName, ApiMode, schoolYear);
     }
 }

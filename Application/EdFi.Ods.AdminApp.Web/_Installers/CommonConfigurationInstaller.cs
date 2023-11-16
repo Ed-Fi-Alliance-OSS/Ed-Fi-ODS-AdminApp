@@ -68,6 +68,9 @@ namespace EdFi.Ods.AdminApp.Web._Installers
             services.AddSingleton(TokenCache.DefaultShared);
 
             services.AddScoped<AdminAppUserContext>();
+
+            services.AddTransient<ICloudOdsAdminAppSettingsApiModeProvider, CloudOdsAdminAppSettingsApiModeProvider>();
+
             services.AddTransient<IOdsApiConnectionInformationProvider, CloudOdsApiConnectionInformationProvider>();
 
             services.AddSingleton<ISecureHasher, Pbkdf2HmacSha1SecureHasher>();

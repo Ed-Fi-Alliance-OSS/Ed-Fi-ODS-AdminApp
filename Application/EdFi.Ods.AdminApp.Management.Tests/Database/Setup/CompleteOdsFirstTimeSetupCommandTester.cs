@@ -34,7 +34,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Setup
             var sqlConnectionBuilder =
                 new SqlConnectionStringBuilder(connectionString) { InitialCatalog = "Ed-Fi_Ods" };
             using var connection = new SqlConnection(sqlConnectionBuilder.ConnectionString);
-            _connectionProvider.Setup(x => x.CreateNewConnection()).Returns(connection);
+            _connectionProvider.Setup(x => x.CreateNewConnection(0, ApiMode.SharedInstance)).Returns(connection);
         }
 
 
@@ -90,7 +90,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Setup
                 mockClaimSetCheckService.Object,
                 mockInferInstanceService.Object);
 
-            await command.Execute(GetClaimSet());
+            await command.Execute(GetOdsName(), GetClaimSet(), ApiMode.SharedInstance);
 
             mockClaimSetConfigurator.Verify(x => x.ApplyConfiguration(It.Is<CloudOdsClaimSet>(c => c.ClaimSetName == CloudOdsAdminApp.InternalAdminAppClaimSet && c.ApplicationName == CloudOdsAdminApp.ApplicationName)), Times.Once);
         }
