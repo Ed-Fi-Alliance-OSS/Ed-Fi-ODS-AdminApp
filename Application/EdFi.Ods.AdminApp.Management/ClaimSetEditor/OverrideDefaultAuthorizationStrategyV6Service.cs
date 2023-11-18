@@ -185,6 +185,15 @@ public class OverrideDefaultAuthorizationStrategyV6Service
             {
                 claimSetResourceClaimAction.AuthorizationStrategyOverrides.Add(authStrategyOverride);
             }
+            else if (parentResourceClaims.Any(
+                    x =>
+                        x.Action.ActionName != actionName)
+                && !claimSetResourceClaimAction.AuthorizationStrategyOverrides.Any(
+                    p =>
+                        p.AuthorizationStrategyId == authStrategyId))
+            {
+                claimSetResourceClaimAction.AuthorizationStrategyOverrides.Add(authStrategyOverride);
+            }
             else if (!parentResourceClaims.Any())
             {
                 claimSetResourceClaimAction.AuthorizationStrategyOverrides.Add(authStrategyOverride);
