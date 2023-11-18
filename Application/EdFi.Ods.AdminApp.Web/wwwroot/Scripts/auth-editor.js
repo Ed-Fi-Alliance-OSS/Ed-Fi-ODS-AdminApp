@@ -49,6 +49,9 @@ var updateCell = function (row, action) {
             if (selectedValues.length > 1) {
                 defaultText = "Items selected: " + selectedValues.length;
             }
+            else if (defaultText == '') {
+                defaultText = "Please select values"
+            }
             $("#".concat(dropdownId)).CreateMultiCheckBox({ width: '330px', height: '200px', defaultText: defaultText });
         }
 
@@ -58,7 +61,7 @@ var updateCell = function (row, action) {
 var isDefaultAuthStrategy = function (action, authStrategyId) {
     
     const index = ACTIONS[action];
-    if (authStrategyId === 0)
+    if (authStrategyId === 0 || defaultAuthStrategies[index] === undefined)
         return false;
     var result = defaultAuthStrategies[index].AuthorizationStrategies.filter(a => a.AuthStrategyId === authStrategyId);
 
