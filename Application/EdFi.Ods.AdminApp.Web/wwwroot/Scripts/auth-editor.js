@@ -52,7 +52,7 @@ var updateCell = function (row, action) {
             else if (defaultText == '') {
                 defaultText = "Please select values"
             }
-            $("#".concat(dropdownId)).CreateMultiCheckBox({ width: '330px', height: '200px', defaultText: defaultText });
+            $("#".concat(dropdownId)).CreateMultiCheckBox({ width: '370px', height: '200px', defaultText: defaultText });
         }
 
     }

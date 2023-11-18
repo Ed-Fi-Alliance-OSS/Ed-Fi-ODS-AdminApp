@@ -10,7 +10,7 @@
         font-size: 15px;
         float: right;
         font-weight: bolder;
-        margin-top: -7px;
+        margin-top: -25px;
         height: 10px;
         width: 14px;
         color: #787878;
@@ -65,3 +65,10 @@
         left: 24px;
         color: #fff;
     }
+
+.selected-text {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
