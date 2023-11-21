@@ -209,10 +209,10 @@ var overrideStrategies = function () {
         valuesForReadChanges = isReadChangesSelectedOptionDefault ? -1 : getValuesFromDropDown('readchanges', readChangesDropdown.val());
     }
     else {
-        valuesForCreate = isCreateSelectedOptionDefault ? 0 : getValuesFromDropDown('create', createDropdown.val());
-        valuesForRead = isReadSelectedOptionDefault ? 0 : getValuesFromDropDown('read', readDropdown.val());
-        valuesForUpdate = isUpdateSelectedOptionDefault ? 0 : getValuesFromDropDown('update', updateDropdown.val());
-        valuesForDelete = isDeleteSelectedOptionDefault ? 0 : getValuesFromDropDown('delete', deleteDropdown.val());
+        valuesForCreate = isCreateSelectedOptionDefault ? 0 : createDropdown.val();
+        valuesForRead = isReadSelectedOptionDefault ? 0 : readDropdown.val();
+        valuesForUpdate = isUpdateSelectedOptionDefault ? 0 : updateDropdown.val();
+        valuesForDelete = isDeleteSelectedOptionDefault ? 0 : deleteDropdown.val();
     }
 
     var postData = {
