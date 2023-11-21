@@ -107,7 +107,7 @@ public class OverrideDefaultAuthorizationStrategyV6Service
             var existingAuthOverrides =
                 _context.ClaimSetResourceClaimActionAuthorizationStrategyOverrides.Where(
                     x => x.ClaimSetResourceClaimActionId ==
-                         claimSetResourceClaimAction.ClaimSetResourceClaimActionId);
+                         claimSetResourceClaimAction.ClaimSetResourceClaimActionId).ToList();
 
             if (existingAuthOverrides != null)
             {
@@ -178,12 +178,10 @@ public class OverrideDefaultAuthorizationStrategyV6Service
             var authStrategyOverride = new ClaimSetResourceClaimActionAuthorizationStrategyOverrides()
             { AuthorizationStrategy = authorizationStrategiesDictionary[authStrategyId] };
 
-            if (parentResourceClaims.Any() && parentResourceClaims.SingleOrDefault(
+            if (parentResourceClaims.FirstOrDefault(
                     x =>
-                        x.Action.ActionName == actionName && x.AuthorizationStrategyOverrides != null &&
-                        x.AuthorizationStrategyOverrides.Any() &&
-                        x.AuthorizationStrategyOverrides.SingleOrDefault()?.AuthorizationStrategyId ==
-                        authStrategyId) == null)
+                        x.Action.ActionName == actionName &&
+                        x.AuthorizationStrategyOverrides.Any(y => y.AuthorizationStrategyId == authStrategyId)) == null)
             {
                 claimSetResourceClaimAction.AuthorizationStrategyOverrides.Add(authStrategyOverride);
             }

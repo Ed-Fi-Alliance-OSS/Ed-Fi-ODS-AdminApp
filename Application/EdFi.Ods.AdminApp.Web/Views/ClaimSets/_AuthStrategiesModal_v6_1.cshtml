@@ -40,11 +40,11 @@ See the LICENSE and NOTICES files in the project root for more information.
                     {
                         var authStrategyOverridesForCRUD = Model.ResourceClaim.AuthStrategyOverridesForCRUD;
 
-                        var defaultAuthStrategiesForCRUDCreate = Model.ResourceClaim.DefaultAuthStrategiesForCRUD[0]?.AuthorizationStrategies?.ToArray();
-                        var defaultAuthStrategiesForCRUDRead = Model.ResourceClaim.DefaultAuthStrategiesForCRUD[1]?.AuthorizationStrategies?.ToArray();
-                        var defaultAuthStrategiesForCRUDUpdate = Model.ResourceClaim.DefaultAuthStrategiesForCRUD[2]?.AuthorizationStrategies?.ToArray();
-                        var defaultAuthStrategiesForCRUDDelete = Model.ResourceClaim.DefaultAuthStrategiesForCRUD[3]?.AuthorizationStrategies?.ToArray();
-                        var defaultAuthStrategiesForCRUDReadChanges = Model.ResourceClaim.DefaultAuthStrategiesForCRUD[4]?.AuthorizationStrategies?.ToArray();
+                        var defaultAuthStrategiesForCRUDCreate = Model.ResourceClaim.DefaultAuthStrategiesForCRUD.Length > 0 ? Model.ResourceClaim.DefaultAuthStrategiesForCRUD?[0]?.AuthorizationStrategies?.ToArray() : null;
+                        var defaultAuthStrategiesForCRUDRead = Model.ResourceClaim.DefaultAuthStrategiesForCRUD.Length > 1 ? Model.ResourceClaim.DefaultAuthStrategiesForCRUD?[1]?.AuthorizationStrategies?.ToArray() : null;
+                        var defaultAuthStrategiesForCRUDUpdate = Model.ResourceClaim.DefaultAuthStrategiesForCRUD.Length > 2 ? Model.ResourceClaim.DefaultAuthStrategiesForCRUD?[2]?.AuthorizationStrategies?.ToArray() : null;
+                        var defaultAuthStrategiesForCRUDDelete = Model.ResourceClaim.DefaultAuthStrategiesForCRUD.Length > 3 ? Model.ResourceClaim.DefaultAuthStrategiesForCRUD?[3]?.AuthorizationStrategies?.ToArray() : null;
+                        var defaultAuthStrategiesForCRUDReadChanges = Model.ResourceClaim.DefaultAuthStrategiesForCRUD.Length > 4 ? Model.ResourceClaim.DefaultAuthStrategiesForCRUD?[4]?.AuthorizationStrategies?.ToArray() : null;
 
 
                         var authStrategiesOverridesForCreate = authStrategyOverridesForCRUD.Create() != null ? authStrategyOverridesForCRUD[0].AuthorizationStrategies : null;
@@ -69,6 +69,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                                         Resource: <span id="resource-claim-name">@Model.ResourceClaim.Name</span>
                                     </div>
                                     <div class="pull-right">
+                                        <a class="edit-resource-check" style="display:none"> <span class="fa fa-check action-icons"></span></a>
                                         <a class="override-auth"> <span class="fa fa-pencil action-icons"></span></a>
                                         &nbsp;
                                         <a class="reset-auth"> <span class="fa fa-undo action-icons"></span></a>

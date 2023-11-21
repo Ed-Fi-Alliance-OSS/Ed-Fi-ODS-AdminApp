@@ -185,10 +185,11 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                 AuthorizationStrategyForDelete = new int[] { appAuthorizationStrategies.Single(x => x.AuthorizationStrategyName == "TestAuthStrategy2").AuthorizationStrategyId }
             };
 
-            var getResourcesByClaimSetIdQuery = new GetResourcesByClaimSetIdQuery(new StubOdsSecurityModelVersionResolver.V3_5(),
+            var version = new StubOdsSecurityModelVersionResolver.V3_5();
+            var getResourcesByClaimSetIdQuery = new GetResourcesByClaimSetIdQuery(version,
                     new GetResourcesByClaimSetIdQueryV53Service(securityContext, _mapper), null);
 
-            var validator = new OverrideDefaultAuthorizationStrategyModelValidator(getResourcesByClaimSetIdQuery);
+            var validator = new OverrideDefaultAuthorizationStrategyModelValidator(getResourcesByClaimSetIdQuery, version);
             var validationResults = validator.Validate(invalidOverrideModel);
             validationResults.IsValid.ShouldBe(false);
             validationResults.Errors.Single().ErrorMessage.ShouldBe("No actions for this claimset and resource exist in the system");

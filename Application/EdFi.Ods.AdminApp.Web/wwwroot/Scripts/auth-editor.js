@@ -10,6 +10,8 @@ const ACTIONS = {
     delete: 3,
     readchanges: 4
 }
+
+const defaultTextDropDownList = "Please select values";
 var updateCell = function (row, action) {
     var resourceId = $("#resource-claim-auth").data("resource-id");
     var actionCell = row.find("td.".concat(action, "-action-cell"));
@@ -35,12 +37,12 @@ var updateCell = function (row, action) {
             }
             if (isDefaultAuthStrategy(action, Number(this.Value))) {
                 if (actionCellLabel.data('is-inherited') === "True") {
-                    dropdown.append($("<option></option>").val(this.Value).html(this.Text.concat(" (Default Strategy)")).attr("title", this.Text.concat(" (Default Strategy)")).attr("disabled", this.Disabled).attr("data-default-is-inherited", true).attr("selected", selected));
+                    dropdown.append($("<option></option>").val(this.Value).html(this.Text.concat(" (Default Strategy)")).attr("title", this.Text.concat(" (Default Strategy)")).attr("disabled", this.Disabled).attr("data-default-is-inherited", true).attr("selected", selected).attr("data-default-auth", true));
                 } else {
-                    dropdown.append($("<option></option>").val(this.Value).html(this.Text.concat(" (Default Strategy)")).attr("title", this.Text.concat(" (Default Strategy)")).attr("disabled", this.Disabled).attr("selected", selected));
+                    dropdown.append($("<option></option>").val(this.Value).html(this.Text.concat(" (Default Strategy)")).attr("title", this.Text.concat(" (Default Strategy)")).attr("disabled", this.Disabled).attr("selected", selected).attr("data-default-auth", true));
                 }
             } else {
-                dropdown.append($("<option></option>").val(this.Value).html(this.Text).attr("title", this.Text).attr("disabled", this.Disabled).attr("selected", selected));
+                dropdown.append($("<option></option>").val(this.Value).html(this.Text).attr("title", this.Text).attr("disabled", this.Disabled).attr("selected", selected).attr("data-default-auth", false));
             }
         });
         actionCell.html('');
@@ -49,7 +51,10 @@ var updateCell = function (row, action) {
             if (selectedValues.length > 1) {
                 defaultText = "Items selected: " + selectedValues.length;
             }
-            $("#".concat(dropdownId)).CreateMultiCheckBox({ width: '330px', height: '200px', defaultText: defaultText });
+            else if (defaultText == '') {
+                defaultText = defaultTextDropDownList
+            }
+            $("#".concat(dropdownId)).CreateMultiCheckBox({ width: '380px', height: '200px', defaultText: defaultText });
         }
 
     }
@@ -58,7 +63,7 @@ var updateCell = function (row, action) {
 var isDefaultAuthStrategy = function (action, authStrategyId) {
     
     const index = ACTIONS[action];
-    if (authStrategyId === 0)
+    if (authStrategyId === 0 || defaultAuthStrategies[index] === undefined)
         return false;
     var result = defaultAuthStrategies[index].AuthorizationStrategies.filter(a => a.AuthStrategyId === authStrategyId);
 
@@ -76,6 +81,19 @@ var isSelected = function (action, authStrategyId) {
     }
     else {
         result = authStrategiesOverrides[index].AuthorizationStrategies.filter(a => a.AuthStrategyId === authStrategyId).length > 0;
+    }
+    return result;
+};
+
+var getValuesFromDropDown = function (action, values) {
+    var result = [];
+    $.each(values, function (index, value) {
+        if (!isDefaultAuthStrategy(action, Number(value))) {
+            result.push(value);
+        }
+    });
+    if (result.length === 0) {
+        result = 0;
     }
     return result;
 };
@@ -116,8 +134,8 @@ var updateRowAfterEdit = function (row, resourceUpdateUrl) {
                 updateCellAfterEdit(readChangesCell, defaultAuthStrategies[4], authStrategiesOverrides[4]);
             }
             if (editCell != null) {
-                editCell.replaceWith('<a class="override-auth"> <span class="fa fa-pencil action-icons"></span></a>');
-                $(".override-auth").click(overrideAuth);
+                $(".edit-resource-check").hide();
+                $(".override-auth").show();
             }
             showSpinner(false);
         },
@@ -165,32 +183,50 @@ var overrideStrategies = function () {
     var updateDropdown = row.find(".update-action-cell select");
     var deleteDropdown = row.find(".delete-action-cell select");
     var readChangesDropdown = row.find(".readchanges-action-cell select");
+
     var isReadSelectedOptionDefault = readDropdown.find('option:selected').text().trim().includes('(Default Strategy)');
     var isCreateSelectedOptionDefault = createDropdown.find('option:selected').text().trim().includes('(Default Strategy)');
     var isUpdateSelectedOptionDefault = updateDropdown.find('option:selected').text().trim().includes('(Default Strategy)');
     var isDeleteSelectedOptionDefault = deleteDropdown.find('option:selected').text().trim().includes('(Default Strategy)');
-    if (readChangesDropdown != null) {
-        var isReadChangesSelectedOptionDefault = readChangesDropdown.find('option:selected').text().trim().includes('(Default Strategy)');
-        var postData = {
-            'ClaimSetId': claimSetId,
-            'ResourceClaimId': resourceId,
-            'AuthorizationStrategyForCreate': isCreateSelectedOptionDefault ? 0 : createDropdown.val(),
-            'AuthorizationStrategyForRead': isReadSelectedOptionDefault ? 0 : readDropdown.val(),
-            'AuthorizationStrategyForUpdate': isUpdateSelectedOptionDefault ? 0 : updateDropdown.val(),
-            'AuthorizationStrategyForDelete': isDeleteSelectedOptionDefault ? 0 : deleteDropdown.val(),
-            'AuthorizationStrategyForReadChanges': isReadChangesSelectedOptionDefault ? 0 : readChangesDropdown.val()
-        }
+
+    var valuesForCreate = [];
+    var valuesForRead = [];
+    var valuesForUpdate = [];
+    var valuesForDelete = [];
+    var valuesForReadChanges = [];
+
+    if (odsVersion === 6) {
+        isReadSelectedOptionDefault = row.find('.read-action-cell > div.MultiCheckBox > span.selected-text').text().includes(defaultTextDropDownList);
+        isCreateSelectedOptionDefault = row.find('.create-action-cell > div.MultiCheckBox > span.selected-text').text().trim().includes(defaultTextDropDownList);
+        isUpdateSelectedOptionDefault = row.find('.update-action-cell > div.MultiCheckBox > span.selected-text').text().trim().includes(defaultTextDropDownList);
+        isDeleteSelectedOptionDefault = row.find('.delete-action-cell > div.MultiCheckBox > span.selected-text').text().trim().includes(defaultTextDropDownList);
+        isReadChangesSelectedOptionDefault = row.find('.readchanges-action-cell > div.MultiCheckBox > span.selected-text').text().trim().includes(defaultTextDropDownList);
+
+        valuesForCreate = isCreateSelectedOptionDefault ? -1 : getValuesFromDropDown('create', createDropdown.val());
+        valuesForRead = isReadSelectedOptionDefault ? -1 : getValuesFromDropDown('read', readDropdown.val());
+        valuesForUpdate = isUpdateSelectedOptionDefault ? -1 : getValuesFromDropDown('update', updateDropdown.val());
+        valuesForDelete = isDeleteSelectedOptionDefault ? -1 : getValuesFromDropDown('delete', deleteDropdown.val());
+        valuesForReadChanges = isReadChangesSelectedOptionDefault ? -1 : getValuesFromDropDown('readchanges', readChangesDropdown.val());
     }
     else {
-        var postData = {
-            'ClaimSetId': claimSetId,
-            'ResourceClaimId': resourceId,
-            'AuthorizationStrategyForCreate': isCreateSelectedOptionDefault ? 0 : createDropdown.val(),
-            'AuthorizationStrategyForRead': isReadSelectedOptionDefault ? 0 : readDropdown.val(),
-            'AuthorizationStrategyForUpdate': isUpdateSelectedOptionDefault ? 0 : updateDropdown.val(),
-            'AuthorizationStrategyForDelete': isDeleteSelectedOptionDefault ? 0 : deleteDropdown.val()
-        }
+        valuesForCreate = isCreateSelectedOptionDefault ? 0 : getValuesFromDropDown('create', createDropdown.val());
+        valuesForRead = isReadSelectedOptionDefault ? 0 : getValuesFromDropDown('read', readDropdown.val());
+        valuesForUpdate = isUpdateSelectedOptionDefault ? 0 : getValuesFromDropDown('update', updateDropdown.val());
+        valuesForDelete = isDeleteSelectedOptionDefault ? 0 : getValuesFromDropDown('delete', deleteDropdown.val());
+    }
+
+    var postData = {
+        'ClaimSetId': claimSetId,
+        'ResourceClaimId': resourceId,
+        'AuthorizationStrategyForCreate': valuesForCreate,
+        'AuthorizationStrategyForRead': valuesForRead,
+        'AuthorizationStrategyForUpdate': valuesForUpdate,
+        'AuthorizationStrategyForDelete': valuesForDelete
     };
+
+    if(odsVersion === 6) 
+        postData['AuthorizationStrategyForReadChanges'] = valuesForReadChanges;
+
     showSpinner(true);
     $.ajax({
         type: "POST",
@@ -206,7 +242,28 @@ var overrideStrategies = function () {
         error: function error(data) {
             document.body.scrollTop = document.documentElement.scrollTop = 0;
             showSpinner(false);
-            ClaimSetToastrMessage("There was an error in overriding strategies on ".concat(resourceName).concat(data.responseText));
+            var message = data.responseText;
+            if (data.status === 400) {
+                message = '';
+                var model = JSON.parse(data.responseText)
+                if (model.AuthorizationStrategyForCreate.Errors[0]) {
+                    message += ` ${model.AuthorizationStrategyForCreate.Errors[0].ErrorMessage} `
+                }
+                if (model.AuthorizationStrategyForRead.Errors[0]) {
+                    message += ` ${model.AuthorizationStrategyForRead.Errors[0].ErrorMessage} `
+                }
+                if (model.AuthorizationStrategyForUpdate.Errors[0]) {
+                    message += ` ${model.AuthorizationStrategyForUpdate.Errors[0].ErrorMessage} `
+                }
+                if (model.AuthorizationStrategyForDelete.Errors[0]) {
+                    message += ` ${model.AuthorizationStrategyForDelete.Errors[0].ErrorMessage} `
+                }
+                if (model.AuthorizationStrategyForReadChanges.Errors[0]) {
+                    message += ` ${model.AuthorizationStrategyForReadChanges.Errors[0].ErrorMessage} `
+                }
+            }
+            ClaimSetToastrMessage("There was an error in overriding strategies on ".concat(resourceName).concat(message == '' ? data.responseText : message));
+            
         }
     });
 };
@@ -263,10 +320,11 @@ var overrideAuth = function(e) {
     if (readChangesCell.length > 0) {
         updateCell(row, "readchanges");
     }
-    $("a.override-auth").replaceWith('<a class="edit-resource-check"> <span class="fa fa-check action-icons"></span></a>');
-    $(".edit-resource-check").click(overrideStrategies);
-};
+    $(".edit-resource-check").show();
+    $(".override-auth").hide();
+ };
 $(function () {
     $(".override-auth").click(overrideAuth);
     $(".reset-auth").click(resetStrategiesToDefault);
+    $(".edit-resource-check").click(overrideStrategies);
 });

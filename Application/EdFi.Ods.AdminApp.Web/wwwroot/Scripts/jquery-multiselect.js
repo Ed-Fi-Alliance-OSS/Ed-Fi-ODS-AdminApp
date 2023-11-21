@@ -10,9 +10,20 @@ $(document).ready(function () {
     $(document).on("click", ".MultiCheckBoxDetail .cont input", function (e) {
         e.stopPropagation();
         $(this).closest(".MultiCheckBoxDetail").next().UpdateSelect();
-        
-        var val = ($(".MultiCheckBoxDetailBody input:checked").length == $(".MultiCheckBoxDetailBody input").length)
-        $(".MultiCheckBoxDetailHeader input").prop("checked", val);
+
+        if (!$(this).data("default-auth") && $(this).prop("checked")) {
+            $(this).closest(".MultiCheckBoxDetail").find(".MultiCheckBoxDetailBody input.default-auth").prop("checked", '');
+            $(this).closest(".MultiCheckBoxDetail").next().UpdateSelect();
+        }
+        else if ($(this).data("default-auth") && $(this).prop("checked")) {
+            $(this).closest(".MultiCheckBoxDetail").find(".MultiCheckBoxDetailBody input.standard").prop("checked", '');
+            $(this).closest(".MultiCheckBoxDetail").find(".MultiCheckBoxDetailBody input.default-auth").prop("checked", 'checked');
+            $(this).closest(".MultiCheckBoxDetail").next().UpdateSelect();
+        }
+        else if ($(this).data("default-auth") && !$(this).prop("checked")) {
+            $(this).closest(".MultiCheckBoxDetail").find(".MultiCheckBoxDetailBody input.default-auth").prop("checked", '');
+            $(this).closest(".MultiCheckBoxDetail").next().UpdateSelect();
+        }
     });
 
     $(document).on("click", ".MultiCheckBoxDetail .cont", function (e) {
@@ -23,8 +34,19 @@ $(document).ready(function () {
         var multiCheckBoxDetail = $(this).closest(".MultiCheckBoxDetail");
         multiCheckBoxDetail.next().UpdateSelect();
 
-        var val = ($(".MultiCheckBoxDetailBody input:checked").length == $(".MultiCheckBoxDetailBody input").length)
-        $(".MultiCheckBoxDetailHeader input").prop("checked", val);
+        if (!inp.data("default-auth") && inp.prop("checked")) {
+            inp.closest(".MultiCheckBoxDetail").find(".MultiCheckBoxDetailBody input.default-auth").prop("checked", '');
+            inp.closest(".MultiCheckBoxDetail").next().UpdateSelect();
+        }
+        else if (inp.data("default-auth") && inp.prop("checked")) {
+            inp.closest(".MultiCheckBoxDetail").find(".MultiCheckBoxDetailBody input.standard").prop("checked", '');
+            inp.closest(".MultiCheckBoxDetail").find(".MultiCheckBoxDetailBody input.default-auth").prop("checked", 'checked');
+            inp.closest(".MultiCheckBoxDetail").next().UpdateSelect();
+        }
+        else if ((inp.data("default-auth") && !inp.prop("checked"))) {
+            inp.closest(".MultiCheckBoxDetail").find(".MultiCheckBoxDetailBody input.default-auth").prop("checked", '');
+            inp.closest(".MultiCheckBoxDetail").next().UpdateSelect();
+        }
     });
 
     $(document).mouseup(function (e) {
@@ -45,10 +67,10 @@ jQuery.fn.extend({
         localOption.mainWidth = (options != null && options.mainWidth != null && options.mainWidth != undefined) ? options.mainWidth : defaultMultiCheckBoxOption.mainWidth;
         localOption.defaultText = (options != null && options.defaultText != null && options.defaultText != undefined) ? options.defaultText : defaultMultiCheckBoxOption.defaultText;
         localOption.height = (options != null && options.height != null && options.height != undefined) ? options.height : defaultMultiCheckBoxOption.height;
-
+        var widthSelectedText = localOption.mainWidth.split("px")[0] - 30;
         this.hide();
         this.attr("multiple", "multiple");
-        var divSel = $("<div class='MultiCheckBox'><span class='selected-text'>" + localOption.defaultText + "</span><span class='k-icon k-i-arrow-60-down'><svg aria-hidden='true' focusable='false' data-prefix='fas' data-icon='sort-down' role='img' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512' class='svg-inline--fa fa-sort-down fa-w-10 fa-2x'><path fill='currentColor' d='M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41z' class=''></path></svg></span></div>").insertBefore(this);
+        var divSel = $("<div class='MultiCheckBox'><span class='selected-text' style='width:" + (widthSelectedText) + "px'>" + localOption.defaultText + "</span><span class='k-icon k-i-arrow-60-down'><svg aria-hidden='true' focusable='false' data-prefix='fas' data-icon='sort-down' role='img' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512' class='svg-inline--fa fa-sort-down fa-w-10 fa-2x'><path fill='currentColor' d='M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41z' class=''></path></svg></span></div>").insertBefore(this);
         divSel.css({ "width": localOption.mainWidth });
 
         var detail = $("<div class='MultiCheckBoxDetail'><div class='MultiCheckBoxDetailBody'></div></div>").insertAfter(divSel);
@@ -59,6 +81,7 @@ jQuery.fn.extend({
             var val = $(this).attr("value");
             var selected = $(this).attr("selected");
             var disabled = $(this).attr("disabled");
+            var default_auth = $(this).data("default-auth")
 
             if (val == undefined)
                 val = '';
@@ -69,11 +92,14 @@ jQuery.fn.extend({
             if (disabled == undefined)
                 disabled = '';
 
+            if (default_auth == undefined)
+                default_auth = '';
+
             if (disabled) {
-                multiCheckBoxDetailBody.append(`<div class='cont'><input type='checkbox' class='mulinput' value='${val}' ${(selected ? "checked" : "")} ${(disabled ? "disabled='disabled'" : "")} text='${$(this).text() }' /> ${ $(this).text() } </div>`);
+                multiCheckBoxDetailBody.append(`<div class='cont'><input type='checkbox' class='mulinput ${(default_auth ? "default-auth" : "standard")}' value='${val}' ${(selected ? "checked" : "")} ${(disabled ? "disabled='disabled'" : "")} text='${ $(this).text() }' data-default-auth=${ default_auth } /> ${ $(this).text() } </div>`);
             }
             else {
-                multiCheckBoxDetailBody.append(`<div class='cont'><input type='checkbox' class='mulinput' value='${val}' ${(selected ? "checked" : "")}  text='${$(this).text()}' /> ${$(this).text()} </div>`);
+                multiCheckBoxDetailBody.append(`<div class='cont'><input type='checkbox' class='mulinput ${(default_auth ? "default-auth" : "standard")}' value='${val}' ${(selected ? "checked" : "")}  text='${$(this).text()}' data-default-auth=${default_auth } /> ${$(this).text()} </div>`);
             }
         });
 
@@ -81,17 +107,26 @@ jQuery.fn.extend({
     },
     UpdateSelect: function (selectedTextSpan) {
         var arr = [];
+        var arrDef = [];
         var text = "";
         var selectedTextSpan = this.prev().prev().find(".selected-text");
         this.prev().find(".mulinput:checked").each(function () {
-            arr.push($(this).val());
+            if (!$(this).data('default-auth')) {
+                arr.push($(this).val());
+            }
+            else {
+                arrDef.push($(this).val());
+            }
             text = $(this).attr("text");
         });
-        if (arr.length == 0) {
+        if (arr.length == 0 && arrDef.length == 0) {
             selectedTextSpan.text("Please select values");
 
         } else if (arr.length > 1) {
             selectedTextSpan.text("Items selected: " + arr.length);
+        }
+        else if (arrDef.length > 1) {
+            selectedTextSpan.text("Items selected: " + arrDef.length);
         }
         else {
             selectedTextSpan.text(text);
