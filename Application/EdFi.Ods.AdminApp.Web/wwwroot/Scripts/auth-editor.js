@@ -87,12 +87,20 @@ var isSelected = function (action, authStrategyId) {
 
 var getValuesFromDropDown = function (action, values) {
     var result = [];
-    $.each(values, function (index, value) {
-        if (!isDefaultAuthStrategy(action, Number(value))) {
-            result.push(value);
+    if (Array.isArray(values)) {
+        $.each(values, function (index, value) {
+            if (!isDefaultAuthStrategy(action, Number(value))) {
+                result.push(value);
+            }
+        });
+        if (result.length === 0) {
+            result = 0;
         }
-    });
-    if (result.length === 0) {
+    }
+    else if (!isNaN(values)) {
+        result = Number(values);
+    }
+    else {
         result = 0;
     }
     return result;
@@ -209,10 +217,10 @@ var overrideStrategies = function () {
         valuesForReadChanges = isReadChangesSelectedOptionDefault ? -1 : getValuesFromDropDown('readchanges', readChangesDropdown.val());
     }
     else {
-        valuesForCreate = isCreateSelectedOptionDefault ? 0 : createDropdown.val();
-        valuesForRead = isReadSelectedOptionDefault ? 0 : readDropdown.val();
-        valuesForUpdate = isUpdateSelectedOptionDefault ? 0 : updateDropdown.val();
-        valuesForDelete = isDeleteSelectedOptionDefault ? 0 : deleteDropdown.val();
+        valuesForCreate = isCreateSelectedOptionDefault ? 0 : getValuesFromDropDown('create', createDropdown.val());
+        valuesForRead = isReadSelectedOptionDefault ? 0 : getValuesFromDropDown('read', readDropdown.val());
+        valuesForUpdate = isUpdateSelectedOptionDefault ? 0 : getValuesFromDropDown('update', updateDropdown.val());
+        valuesForDelete = isDeleteSelectedOptionDefault ? 0 : getValuesFromDropDown('delete', deleteDropdown.val());
     }
 
     var postData = {

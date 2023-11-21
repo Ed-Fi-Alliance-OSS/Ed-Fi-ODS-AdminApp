@@ -51,10 +51,7 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets
         private bool HasValidValuesForAction(int[] authorizationStrategiesIds)
         {
             bool hasValidValues = false;
-            if (authorizationStrategiesIds == null)
-                hasValidValues = true;
-            else
-                hasValidValues = !authorizationStrategiesIds.Any(p => p == -1);
+            hasValidValues = !authorizationStrategiesIds.Any(p => p == -1);
             return hasValidValues;
         }
     }
