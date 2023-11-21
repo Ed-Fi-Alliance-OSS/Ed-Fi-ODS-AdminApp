@@ -87,12 +87,20 @@ var isSelected = function (action, authStrategyId) {
 
 var getValuesFromDropDown = function (action, values) {
     var result = [];
-    $.each(values, function (index, value) {
-        if (!isDefaultAuthStrategy(action, Number(value))) {
-            result.push(value);
+    if (Array.isArray(values)) {
+        $.each(values, function (index, value) {
+            if (!isDefaultAuthStrategy(action, Number(value))) {
+                result.push(value);
+            }
+        });
+        if (result.length === 0) {
+            result = 0;
         }
-    });
-    if (result.length === 0) {
+    }
+    else if (!isNaN(values)) {
+        result = Number(values);
+    }
+    else {
         result = 0;
     }
     return result;
