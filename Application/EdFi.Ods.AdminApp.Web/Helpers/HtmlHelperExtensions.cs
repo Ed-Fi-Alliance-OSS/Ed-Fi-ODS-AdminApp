@@ -529,7 +529,7 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
                 .GetOrSet("informationVersion",
                     () => Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion);
 
-            return !string.IsNullOrEmpty(informationVersion) ? new HtmlString($"<span>Admin App Version: {informationVersion}</span>") : new HtmlString("");
+            return !string.IsNullOrEmpty(informationVersion) ? new HtmlString($"<span>Admin App Version: {informationVersion.Split('+')[0]}</span>") : new HtmlString("");
         }
 
         public static HtmlTag CheckBoxSquare<T>(this IHtmlHelper<T> helper, bool expression, string action) where T : class

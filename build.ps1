@@ -155,7 +155,7 @@ function SetAdminAppAssemblyInfo {
         <Product>Ed-Fi ODS Admin App</Product>
         <Authors>$maintainers</Authors>
         <Company>$maintainers</Company>
-        <Copyright>Copyright © 2016 Ed-Fi Alliance</Copyright>
+        <Copyright>Copyright © 2023 Ed-Fi Alliance</Copyright>
         <VersionPrefix>$assembly_version</VersionPrefix>
         <VersionSuffix></VersionSuffix>
     </PropertyGroup>
