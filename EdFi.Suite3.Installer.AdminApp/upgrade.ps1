@@ -19,7 +19,7 @@ $adminAppSource = "$packageSource/AdminApp"
 
 $p = @{
     ToolsPath = "C:/temp/tools"
-    PackageVersion = '3.1.1.0'
+    PackageVersion = '3.1.3.0'
     PackageSource = $adminAppSource
 }
 
