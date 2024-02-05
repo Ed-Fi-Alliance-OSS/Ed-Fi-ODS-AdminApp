@@ -74,7 +74,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _inferExtensionDetails = inferExtensionDetails;
         }
 
-        
+
         public async Task<ActionResult> Index()
         {
             var apiUrl = (await _apiConnectionInformationProvider.GetConnectionInformationForEnvironment())
@@ -194,8 +194,8 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             var application = _getApplicationByIdQuery.Execute(applicationId);
             var apiFacade = await _odsApiFacadeFactory.Create();
             var psis = apiFacade.GetAllPostSecondaryInstitutions().ToList();
-            var leas = apiFacade.GetAllLocalEducationAgencies().ToList();
             var schools = apiFacade.GetAllSchools().ToList();
+            var leas = apiFacade.GetAllLocalEducationAgencies().ToList();
             var profiles = _mapper.Map<List<ProfileModel>>(_getProfilesQuery.Execute());
 
             var educationOrganizationIds =
