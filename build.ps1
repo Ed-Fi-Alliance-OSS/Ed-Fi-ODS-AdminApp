@@ -133,7 +133,7 @@ $appCommonPackageVersion = "3.1.0"
 Import-Module -Name "$PSScriptRoot/eng/build-helpers.psm1" -Force
 Import-Module -Name "$PSScriptRoot/eng/package-manager.psm1" -Force
 Import-Module -Name "$PSScriptRoot/eng/database-manager.psm1" -Force
-function Clean {
+function DotNetClean {
     Invoke-Execute { dotnet clean $solutionRoot -c $Configuration --nologo -v minimal }
 }
 function InitializeNuGet {
@@ -320,7 +320,7 @@ function PushPackage {
 }
 
 function Invoke-Build {
-    Invoke-Step { Clean }
+    Invoke-Step { DotNetClean }
     Invoke-Step { Restore }
     Invoke-Step { Compile }
 }
@@ -353,7 +353,7 @@ function Invoke-Run {
 }
 
 function Invoke-Clean {
-    Invoke-Step { Clean }
+    Invoke-Step { DotNetClean }
 }
 
 function Invoke-UnitTestSuite {
