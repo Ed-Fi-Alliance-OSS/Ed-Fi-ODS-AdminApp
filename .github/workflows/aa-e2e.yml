@@ -8,8 +8,6 @@ name: Admin App E2E Tests
 on:
   push:
     branches: [main]
-  schedule:
-    - cron: "0 5 * * 1"
   workflow_dispatch:
   pull_request:
     branches:
