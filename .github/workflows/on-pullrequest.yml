@@ -16,6 +16,7 @@ on:
       # - "**/*.ps1"
       # - "**/*.psm1"
       - "**/*.cs"
+      - "**/*.cshtml"
       - "**/*.csproj"
       - ".github/**/*.yml"
   workflow_dispatch:
