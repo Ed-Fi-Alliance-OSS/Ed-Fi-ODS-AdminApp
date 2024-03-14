@@ -11,8 +11,8 @@ on:
 
 env:
   ARTIFACTS_API_KEY: ${{ secrets.AZURE_ARTIFACTS_PERSONAL_ACCESS_TOKEN }}
-  ARTIFACTS_FEED_URL: ${{ secrets.AZURE_ARTIFACTS_FEED_URL }}
-  VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: '{"endpointCredentials": [{"endpoint": "${{ secrets.AZURE_ARTIFACTS_FEED_URL }}","password": "${{ secrets.AZURE_ARTIFACTS_PERSONAL_ACCESS_TOKEN }}"}]}'
+  ARTIFACTS_FEED_URL: ${{ vars.AZURE_ARTIFACTS_FEED_URL }}
+  VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: '{"endpointCredentials": [{"endpoint": "${{ vars.AZURE_ARTIFACTS_FEED_URL }}","password": "${{ secrets.AZURE_ARTIFACTS_PERSONAL_ACCESS_TOKEN }}"}]}'
   MANIFEST_FILE: "_manifest/spdx_2.2/manifest.spdx.json"
   PACKAGE_NAME: "AdminApp.Web"
   IMAGE_NAME: ${{ vars.IMAGE_NAME }}
@@ -239,6 +239,7 @@ jobs:
         run: |
           $artifact = (Get-ChildItem -Path $_ -Name -Include *.nupkg)
           $arguments = @{
+            EdFiNuGetFeed = "${{ env.ARTIFACTS_FEED_URL }}"
             NuGetApiKey = "${{ env.ARTIFACTS_API_KEY }}"
           }
 
@@ -260,10 +261,10 @@ jobs:
       - name: Prepare Tags
         id: prepare-tags
         run: |
-          REF="${{ env.REF }}" 
+          REF="${{ env.REF }}"
           if [[ $REF =~ "Pre-Release" ]]
           then
-             # Remove Pre-Release prefix 
+             # Remove Pre-Release prefix
              PREFIX="Pre-Release-"
              PACKAGEVERSION=${REF#"$PREFIX"}
           else
@@ -285,7 +286,7 @@ jobs:
           SEMVERSION=${PACKAGEVERSION:1}  # strip off the leading 'v'
           echo "AATAGS=$AATAGS" >> $GITHUB_OUTPUT
           echo "AASQLTAGS=$AASQLTAGS" >> $GITHUB_OUTPUT
-          echo "VERSION=$SEMVERSION" >> $GITHUB_OUTPUT          
+          echo "VERSION=$SEMVERSION" >> $GITHUB_OUTPUT
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@4b4e9c3e2d4531116a6f8ba8e71fc6e2cb6e6c8c  # v2.5.0
 
