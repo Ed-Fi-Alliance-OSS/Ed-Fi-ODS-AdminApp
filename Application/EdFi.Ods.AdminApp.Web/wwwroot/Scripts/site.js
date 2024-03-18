@@ -523,3 +523,4 @@ function AddIssueCollectorTriggerForAjaxErrors() {
             });
     });
 };
+
