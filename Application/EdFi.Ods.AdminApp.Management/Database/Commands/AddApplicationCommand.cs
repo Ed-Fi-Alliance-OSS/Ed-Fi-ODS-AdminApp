@@ -9,7 +9,6 @@ using System.Linq;
 using EdFi.Admin.DataAccess.Contexts;
 using EdFi.Admin.DataAccess.Models;
 using VendorUser = EdFi.Admin.DataAccess.Models.User;
-
 namespace EdFi.Ods.AdminApp.Management.Database.Commands
 {
     public interface IAddApplicationCommand
@@ -39,12 +38,7 @@ namespace EdFi.Ods.AdminApp.Management.Database.Commands
             var odsInstance = _usersContext.OdsInstances.FirstOrDefault(x =>
                 x.Name.Equals(_instanceContext.Name, StringComparison.InvariantCultureIgnoreCase));
 
-            var user = new VendorUser
-            {
-                Email = "",
-                FullName = applicationModel.ApplicationName,
-                Vendor = vendor
-            };
+            var user = vendor.Users.FirstOrDefault();
 
             var apiClient = new ApiClient(true)
             {
@@ -108,3 +102,4 @@ namespace EdFi.Ods.AdminApp.Management.Database.Commands
         public string Secret { get; set; }
     }
 }
+
