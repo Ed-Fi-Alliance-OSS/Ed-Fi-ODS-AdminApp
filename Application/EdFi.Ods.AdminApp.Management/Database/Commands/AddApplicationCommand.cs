@@ -102,3 +102,4 @@ namespace EdFi.Ods.AdminApp.Management.Database.Commands
         public string Secret { get; set; }
     }
 }
+
