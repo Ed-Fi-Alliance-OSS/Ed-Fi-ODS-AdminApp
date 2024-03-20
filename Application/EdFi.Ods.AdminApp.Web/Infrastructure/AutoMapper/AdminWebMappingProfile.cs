@@ -54,12 +54,18 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure.AutoMapper
             CreateMap<AddLocalEducationAgencyModel, LocalEducationAgency>()
                 .ForMember(dst => dst.Id, opt => opt.Ignore())
                 .ForMember(dst => dst.EducationOrganizationId, opt => opt.MapFrom(src => src.LocalEducationAgencyId))
+                .ForMember(dst => dst.StreetNumberName, opt => opt.MapFrom(src => src.StreetNumberName.Trim()))
+                .ForMember(dst => dst.City, opt => opt.MapFrom(src => src.City.Trim()))
+                .ForMember(dst => dst.ZipCode, opt => opt.MapFrom(src => src.ZipCode.Trim()))
                 .ForMember(dst => dst.EducationOrganizationCategory, opt => opt.MapFrom(src => EducationOrganizationTypes.Instance.LocalEducationAgency));
 
             CreateMap<AddPostSecondaryInstitutionModel, PostSecondaryInstitution>()
                 .ForMember(dst => dst.Id, opt => opt.Ignore())
                 .ForMember(dst => dst.EducationOrganizationId, opt => opt.MapFrom(src => src.PostSecondaryInstitutionId))
                 .ForMember(dst => dst.EducationOrganizationCategory, opt => opt.MapFrom(src => EducationOrganizationTypes.Instance.PostSecondaryInstitution))
+                .ForMember(dst => dst.StreetNumberName, opt => opt.MapFrom(src => src.StreetNumberName.Trim()))
+                .ForMember(dst => dst.City, opt => opt.MapFrom(src => src.City.Trim()))
+                .ForMember(dst => dst.ZipCode, opt => opt.MapFrom(src => src.ZipCode.Trim()))
                 .ForMember(dst => dst.LocalEducationAgencyId, opt => opt.Ignore());
 
             CreateMap<AddSchoolModel, School>()
@@ -79,16 +85,22 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure.AutoMapper
 
             CreateMap<EditLocalEducationAgencyModel, LocalEducationAgency>()
                 .ForMember(dst => dst.EducationOrganizationId, opt => opt.MapFrom(src => src.LocalEducationAgencyId))
+                .ForMember(dst => dst.StreetNumberName, opt => opt.MapFrom(src => src.StreetNumberName.Trim()))
+                .ForMember(dst => dst.City, opt => opt.MapFrom(src => src.City.Trim()))
+                .ForMember(dst => dst.ZipCode, opt => opt.MapFrom(src => src.ZipCode.Trim()))
                 .ForMember(dst => dst.EducationOrganizationCategory, opt => opt.MapFrom(src => EducationOrganizationTypes.Instance.LocalEducationAgency));
 
             CreateMap<PostSecondaryInstitution, EditPostSecondaryInstitutionModel>()
                 .ForMember(dst => dst.PostSecondaryInstitutionLevelOptions, opt => opt.Ignore())
-                .ForMember(dst => dst.AdministrativeFundingControlOptions, opt => opt.Ignore())
+                .ForMember(dst => dst.AdministrativeFundingControlOptions, opt => opt.Ignore())                
                 .ForMember(dst => dst.StateOptions, opt => opt.Ignore());
 
             CreateMap<EditPostSecondaryInstitutionModel, PostSecondaryInstitution>()
                 .ForMember(dst => dst.EducationOrganizationId, opt => opt.MapFrom(src => src.PostSecondaryInstitutionId))
                 .ForMember(dst => dst.EducationOrganizationCategory, opt => opt.MapFrom(src => EducationOrganizationTypes.Instance.PostSecondaryInstitution))
+                .ForMember(dst => dst.StreetNumberName, opt => opt.MapFrom(src => src.StreetNumberName.Trim()))
+                .ForMember(dst => dst.City, opt => opt.MapFrom(src => src.City.Trim()))
+                .ForMember(dst => dst.ZipCode, opt => opt.MapFrom(src => src.ZipCode.Trim()))
                 .ForMember(dst => dst.LocalEducationAgencyId, opt => opt.Ignore());
 
             CreateMap<School, EditSchoolModel>()
