@@ -30,6 +30,7 @@ jobs:
         with:
           repository: Ed-Fi-Alliance-OSS/Ed-Fi-ODS-Docker
           path: ods-docker
+          ref: main-6x
       - name: Copy files to Docker repo
         run: |
           cp -r ./main/eng/test-certs/ssl ./ods-docker
@@ -41,7 +42,7 @@ jobs:
           chmod +x ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/set-versions.sh
           ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/set-versions.sh
       - name: Run ODS
-        run: docker-compose -f ./ods-docker/Compose/pgsql/compose-aa-build.yml --env-file ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/.automation.env up -d
+        run: docker-compose -f ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/compose-aa-build.yml --env-file ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/.automation.env up -d
       - name: Verify ODS Health
         run: |
           chmod +x ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/inspect.sh
@@ -49,7 +50,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3.6.0
         with:
-          node-version: "14"
+          node-version: "18"
       - name: Install dependencies
         run: npm ci
         working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
@@ -68,6 +69,7 @@ jobs:
           mkdir docker-logs
           docker logs ed-fi-db-admin > docker-logs/ed-fi-db-admin.log
           docker logs ed-fi-ods-adminapp > docker-logs/ed-fi-adminapp.log
+          docker logs ed-fi-ods-api > docker-logs/ed-fi-ods-api.log
       - name: Upload Docker logs
         if: failure()
         uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
