@@ -49,9 +49,5 @@
     <Content Update="appsettings.SqlServer-YearSpecific.json" CopyToPublishDirectory="Never" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Hubs\" />
-  </ItemGroup>
-
 
 </Project>
