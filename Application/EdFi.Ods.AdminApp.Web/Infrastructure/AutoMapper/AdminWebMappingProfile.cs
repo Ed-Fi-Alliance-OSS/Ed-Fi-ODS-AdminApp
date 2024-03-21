@@ -70,12 +70,18 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure.AutoMapper
 
             CreateMap<AddSchoolModel, School>()
                 .ForMember(dst => dst.Id, opt => opt.Ignore())
+                .ForMember(dst => dst.StreetNumberName, opt => opt.MapFrom(src => src.StreetNumberName.Trim()))
+                .ForMember(dst => dst.City, opt => opt.MapFrom(src => src.City.Trim()))
+                .ForMember(dst => dst.ZipCode, opt => opt.MapFrom(src => src.ZipCode.Trim()))
                 .ForMember(dst => dst.EducationOrganizationId, opt => opt.MapFrom(src => src.SchoolId))
                 .ForMember(dst => dst.EducationOrganizationCategory, opt => opt.MapFrom(src => EducationOrganizationTypes.Instance.SchoolType));
 
             CreateMap<AddPsiSchoolModel, PsiSchool>()
                 .ForMember(dst => dst.Id, opt => opt.Ignore())
                 .ForMember(dst => dst.EducationOrganizationId, opt => opt.MapFrom(src => src.SchoolId))
+                .ForMember(dst => dst.StreetNumberName, opt => opt.MapFrom(src => src.StreetNumberName.Trim()))
+                .ForMember(dst => dst.City, opt => opt.MapFrom(src => src.City.Trim()))
+                .ForMember(dst => dst.ZipCode, opt => opt.MapFrom(src => src.ZipCode.Trim()))
                 .ForMember(dst => dst.EducationOrganizationCategory, opt => opt.MapFrom(src => EducationOrganizationTypes.Instance.SchoolType))
                 .ForMember(dst => dst.ImprovingSchool, opt => opt.Ignore());
 
@@ -110,6 +116,9 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure.AutoMapper
 
             CreateMap<EditSchoolModel, School>()
                 .ForMember(dst => dst.EducationOrganizationId, opt => opt.MapFrom(src => src.SchoolId))
+                .ForMember(dst => dst.StreetNumberName, opt => opt.MapFrom(src => src.StreetNumberName.Trim()))
+                .ForMember(dst => dst.City, opt => opt.MapFrom(src => src.City.Trim()))
+                .ForMember(dst => dst.ZipCode, opt => opt.MapFrom(src => src.ZipCode.Trim()))
                 .ForMember(dst => dst.EducationOrganizationCategory, opt => opt.MapFrom(src => EducationOrganizationTypes.Instance.SchoolType));
 
             CreateMap<PsiSchool, EditPsiSchoolModel>()
@@ -121,6 +130,9 @@ namespace EdFi.Ods.AdminApp.Web.Infrastructure.AutoMapper
 
             CreateMap<EditPsiSchoolModel, PsiSchool>()
                 .ForMember(dst => dst.EducationOrganizationId, opt => opt.MapFrom(src => src.SchoolId))
+                .ForMember(dst => dst.StreetNumberName, opt => opt.MapFrom(src => src.StreetNumberName.Trim()))
+                .ForMember(dst => dst.City, opt => opt.MapFrom(src => src.City.Trim()))
+                .ForMember(dst => dst.ZipCode, opt => opt.MapFrom(src => src.ZipCode.Trim()))
                 .ForMember(dst => dst.EducationOrganizationCategory, opt => opt.MapFrom(src => EducationOrganizationTypes.Instance.SchoolType))
                 .ForMember(dst => dst.ImprovingSchool, opt => opt.Ignore())
                 .ForMember(dst => dst.LocalEducationAgencyId, opt => opt.Ignore());
