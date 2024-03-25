@@ -20,7 +20,7 @@ services:
 
   db-admin:
     build:
-      context: ../../DB-Admin/Alpine/pgsql
+      context: ../../../../ods-docker/DB-Admin/Alpine/pgsql
       dockerfile: Dockerfile
     environment:
       POSTGRES_USER: "${POSTGRES_USER}"
@@ -43,7 +43,7 @@ services:
     restart: always
     hostname: nginx
     volumes:
-      - ../../ssl:/ssl/
+      - ../../../eng/test-certs/ssl:/ssl/
     depends_on:
       - api
       - adminapp
@@ -70,8 +70,8 @@ services:
 
   adminapp:
     build:
-      context: ../../Web-Ods-AdminApp/Alpine/pgsql
-      dockerfile: Dockerfile
+      context: ../../../Docker
+      dockerfile: pgsql.Dockerfile
     environment:
       POSTGRES_USER: "${POSTGRES_USER}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
@@ -87,7 +87,7 @@ services:
     volumes:
       - ${LOGS_FOLDER}:/app/logs
       - adminapp-bulk-hashcache:/app/BulkUploadHashCache
-      - ../../ssl:/ssl/
+      - ../../../eng/test-certs/ssl:/ssl/
     depends_on:
       - pb-ods
       - pb-admin
