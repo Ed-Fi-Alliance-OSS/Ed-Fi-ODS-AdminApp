@@ -2,12 +2,14 @@
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
+extern alias SecurityCompatiblity53;
 
 using AutoMapper;
 using System.Collections.Generic;
 using System.Linq;
 using LocalEducationAgency = EdFi.Ods.AdminApp.Management.Api.Models.LocalEducationAgency;
 using School = EdFi.Ods.AdminApp.Management.Api.Models.School;
+using SecurityCompatibility53Models = SecurityCompatiblity53::EdFi.SecurityCompatiblity53.DataAccess.Models;
 using EdFi.Ods.AdminApp.Management.Api.DomainModels;
 using EdFi.Ods.AdminApp.Management.Api.Models;
 using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
@@ -163,7 +165,7 @@ namespace EdFi.Ods.AdminApp.Management.Api.Automapper
                 .ForCtorParam("administrativeFundingControlDescriptor", opt => opt.MapFrom(src => src.AdministrativeFundingControl))
                 .ForCtorParam("nameOfInstitution", opt => opt.MapFrom(src => src.Name));
 
-            CreateMap<SecurityCompatiblity53.DataAccess.Models.AuthorizationStrategy, ClaimSetEditor.AuthorizationStrategy>()
+            CreateMap<SecurityCompatibility53Models.AuthorizationStrategy, ClaimSetEditor.AuthorizationStrategy>()
               .ForMember(dst => dst.AuthStrategyName, opt => opt.MapFrom(src => src.AuthorizationStrategyName))
               .ForMember(dst => dst.AuthStrategyId, opt => opt.MapFrom(src => src.AuthorizationStrategyId))
               .ForMember(dst => dst.IsInheritedFromParent, opt => opt.Ignore());

@@ -1,20 +1,22 @@
-﻿// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: Apache-2.0
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using System.Collections.Generic;
-using System.Data.Entity.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Query;
+using System;
 
 namespace EdFi.Ods.AdminApp.Management.Tests
 {
     //Classes to assist with mocking a DBSet -- see https://msdn.microsoft.com/en-us/library/dn314429.aspx
 
-    internal class TestDbAsyncQueryProvider<TEntity> : IDbAsyncQueryProvider
+    internal class TestDbAsyncQueryProvider<TEntity> : IAsyncQueryProvider
     {
         private readonly IQueryProvider _inner;
 
@@ -52,9 +54,14 @@ namespace EdFi.Ods.AdminApp.Management.Tests
         {
             return Task.FromResult(Execute<TResult>(expression));
         }
+
+        TResult IAsyncQueryProvider.ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken)
+        {
+            return Execute<TResult>(expression);
+        }
     }
 
-    internal class TestDbAsyncEnumerable<T> : EnumerableQuery<T>, IDbAsyncEnumerable<T>, IQueryable<T>
+    internal class TestDbAsyncEnumerable<T> : EnumerableQuery<T>, IAsyncEnumerable<T>, IQueryable<T>
     {
         public TestDbAsyncEnumerable(IEnumerable<T> enumerable)
             : base(enumerable)
@@ -64,14 +71,19 @@ namespace EdFi.Ods.AdminApp.Management.Tests
             : base(expression)
         { }
 
-        public IDbAsyncEnumerator<T> GetAsyncEnumerator()
+        public IAsyncEnumerator<T> GetAsyncEnumerator()
         {
             return new TestDbAsyncEnumerator<T>(this.AsEnumerable().GetEnumerator());
         }
 
-        IDbAsyncEnumerator IDbAsyncEnumerable.GetAsyncEnumerator()
+        IAsyncEnumerator<T> IAsyncEnumerable<T>.GetAsyncEnumerator(CancellationToken cancellationToken)
         {
-            return GetAsyncEnumerator();
+            return GetAsyncEnumerator(cancellationToken);
+        }
+
+        public IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        {
+            return  GetAsyncEnumerator(cancellationToken);  //new TestDbAsyncEnumerator<T>(this.AsEnumerable().GetEnumerator());
         }
 
         IQueryProvider IQueryable.Provider
@@ -80,7 +92,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
         }
     }
 
-    internal class TestDbAsyncEnumerator<T> : IDbAsyncEnumerator<T>
+    internal class TestDbAsyncEnumerator<T> : IAsyncEnumerator<T>
     {
         private readonly IEnumerator<T> _inner;
 
@@ -99,14 +111,16 @@ namespace EdFi.Ods.AdminApp.Management.Tests
             return Task.FromResult(_inner.MoveNext());
         }
 
-        public T Current
+        ValueTask<bool> IAsyncEnumerator<T>.MoveNextAsync()
         {
-            get { return _inner.Current; }
+            throw new NotImplementedException();
         }
 
-        object IDbAsyncEnumerator.Current
+        ValueTask IAsyncDisposable.DisposeAsync()
         {
-            get { return Current; }
+            throw new NotImplementedException();
         }
+
+        public T Current => _inner.Current;
     }
 }

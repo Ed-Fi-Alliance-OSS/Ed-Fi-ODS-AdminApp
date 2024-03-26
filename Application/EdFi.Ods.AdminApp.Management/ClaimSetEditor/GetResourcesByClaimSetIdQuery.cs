@@ -49,7 +49,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
         {
             var parentResources = AllResources(claimSetId).ToList();
             var parentResourceClaim = parentResources
-                .SingleOrDefault(x => x.Id == resourceClaimId);
+                .AsEnumerable().FirstOrDefault(x => x.Id == resourceClaimId);
             var childResources = new List<ResourceClaim>();
             if (parentResourceClaim == null)
             {

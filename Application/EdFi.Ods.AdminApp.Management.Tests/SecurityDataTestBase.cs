@@ -8,8 +8,10 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using EdFi.Ods.AdminApp.Management.Api.Automapper;
+using EdFi.Ods.AdminApp.Management.Helpers;
 using EdFi.Security.DataAccess.Contexts;
 using EdFi.Security.DataAccess.Models;
+using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using Action = EdFi.Security.DataAccess.Models.Action;
 using ActionName = EdFi.Ods.AdminApp.Management.ClaimSetEditor.Action;
@@ -30,7 +32,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests
 
         protected override SqlServerSecurityContext CreateDbContext()
         {
-            return new SqlServerSecurityContext(ConnectionString);
+            var builder = new DbContextOptionsBuilder();
+            builder.UseSqlServer(ConnectionString);
+            DbContextOptions dbContextOptions = builder.Options;
+            return new SqlServerSecurityContext(dbContextOptions);
         }
 
         // This bool controls whether or not to run SecurityContext initialization
@@ -42,7 +47,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
         {
             if (SeedSecurityContextOnFixtureSetup)
             {
-                TestContext.Database.Initialize(true);
+                TestContext.Database.Migrate();
             }
         }
 
@@ -80,7 +85,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
                                   TestContext.Applications.Add(new Application
                                   {
                                       ApplicationName = "Ed-Fi ODS API"
-                                  });
+                                  }).Entity;
                 return application;
             }
 
@@ -91,7 +96,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
                              {
                                  ActionName = actionName,
                                  ActionUri = $"http://ed-fi.org/odsapi/actions/{actionName}"
-                             });
+                             }).Entity;
 
                 return action;
             }
@@ -108,7 +113,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
                                                     DisplayName = displayName,
                                                     AuthorizationStrategyName = authorizationStrategyName,
                                                     Application = application
-                                                });
+                                                }).Entity;
 
                 return authorizationStrategy;
             }
@@ -125,7 +130,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
                         ResourceName = resourceName,
                         ClaimName = $"http://ed-fi.org/ods/identity/claims/domains/{resourceName}",
                         ParentResourceClaim = null
-                    });
+                    }).Entity;
 
                 return resourceClaim;
             }

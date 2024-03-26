@@ -4,7 +4,7 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using System.Collections.Generic;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using EdFi.Security.DataAccess.Contexts;
 using EdFi.Security.DataAccess.Models;
@@ -26,7 +26,7 @@ public class OverrideDefaultAuthorizationStrategyV6Service
             .Include(x => x.ResourceClaim)
             .Include(x => x.Action)
             .Include(x => x.ClaimSet)
-            .Include(x => x.AuthorizationStrategyOverrides.Select(x => x.AuthorizationStrategy))
+            .Include(x => x.AuthorizationStrategyOverrides).ThenInclude(o => o.AuthorizationStrategy)
             .Where(
                 x => x.ResourceClaim.ResourceClaimId == model.ResourceClaimId &&
                      x.ClaimSet.ClaimSetId == model.ClaimSetId)
@@ -43,7 +43,7 @@ public class OverrideDefaultAuthorizationStrategyV6Service
                 .Include(x => x.ResourceClaim)
                 .Include(x => x.Action)
                 .Include(x => x.ClaimSet)
-                .Include(x => x.AuthorizationStrategyOverrides.Select(x => x.AuthorizationStrategy))
+                .Include(x => x.AuthorizationStrategyOverrides).ThenInclude(o => o.AuthorizationStrategy)
                 .Where(
                     x => x.ResourceClaim.ResourceClaimId == parentResourceClaimId &&
                          x.ClaimSet.ClaimSetId == model.ClaimSetId)

@@ -2,11 +2,12 @@
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
+extern alias SecurityCompatiblity53;
 
 using System;
 using System.Linq;
 using EdFi.Ods.AdminApp.Management.ErrorHandling;
-using EdFi.SecurityCompatiblity53.DataAccess.Contexts;
+using SecurityCompatiblity53::EdFi.SecurityCompatiblity53.DataAccess.Contexts;
 
 namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
 {
@@ -21,7 +22,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
 
         public void Execute(IDeleteClaimSetModel claimSet)
         {
-            var claimSetToDelete = _context.ClaimSets.Single(x => x.ClaimSetId == claimSet.Id);
+            var claimSetToDelete = _context.ClaimSets.AsEnumerable().First(x => x.ClaimSetId == claimSet.Id);
 
             if (CloudOdsAdminApp.DefaultClaimSets.Contains(claimSetToDelete.ClaimSetName) ||
                         CloudOdsAdminApp.SystemReservedClaimSets.Contains(claimSetToDelete.ClaimSetName))

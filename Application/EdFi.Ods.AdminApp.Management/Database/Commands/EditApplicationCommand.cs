@@ -6,7 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using EdFi.Admin.DataAccess.Contexts;
 using EdFi.Admin.DataAccess.Models;
@@ -37,7 +37,7 @@ namespace EdFi.Ods.AdminApp.Management.Database.Commands
                 .Include(a => a.ApplicationEducationOrganizations)
                 .Include(a => a.ApiClients)
                 .Include(a => a.Profiles)
-                .SingleOrDefault(a => a.ApplicationId == model.ApplicationId);
+                .AsEnumerable().FirstOrDefault(a => a.ApplicationId == model.ApplicationId);
 
             if (application == null)
             {
@@ -49,9 +49,15 @@ namespace EdFi.Ods.AdminApp.Management.Database.Commands
                 throw new Exception("This Application is required for proper system function and may not be modified");
             }
 
-            var newVendor = _context.Vendors.Single(v => v.VendorId == model.VendorId);
+            var newVendor = _context.Vendors
+                .Include(x => x.Applications)
+                .Include(x => x.Users)
+                .Include(x => x.VendorNamespacePrefixes)
+                .Single(v => v.VendorId == model.VendorId);
             var newProfile = model.ProfileId.HasValue
-                ? _context.Profiles.Single(p => p.ProfileId == model.ProfileId.Value)
+                ? _context.Profiles
+                    .Include(x => x.Applications)
+                    .Single(p => p.ProfileId == model.ProfileId.Value)
                 : null;
 
             var apiClient = application.ApiClients.Single();

@@ -1,14 +1,16 @@
-﻿// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: Apache-2.0
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
+//using System.Data.Entity;
+//using System.Data.Entity.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using Moq;
+using System.Threading;
 
 namespace EdFi.Ods.AdminApp.Management.Tests
 {
@@ -34,8 +36,9 @@ namespace EdFi.Ods.AdminApp.Management.Tests
         
         public static Mock<DbSet<T>> ConfigureDbSetWithData<T>(this Mock<DbSet<T>> mockSet, List<T> underlyingData) where T: class
         {
-            mockSet.As<IDbAsyncEnumerable<T>>()
-                .Setup(m => m.GetAsyncEnumerator())
+            CancellationToken _cancellationToken = new CancellationToken();
+            mockSet.As<IAsyncEnumerable<T>>()
+                .Setup(m => m.GetAsyncEnumerator(_cancellationToken))
                 .Returns(() => new TestDbAsyncEnumerator<T>(underlyingData.GetEnumerator()));
 
             mockSet.As<IQueryable<T>>()
