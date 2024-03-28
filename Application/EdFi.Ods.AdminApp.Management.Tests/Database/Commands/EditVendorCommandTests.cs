@@ -14,6 +14,7 @@ using EdFi.Admin.DataAccess.Models;
 using EdFi.Ods.AdminApp.Web.Helpers;
 using VendorUser = EdFi.Admin.DataAccess.Models.User;
 using static EdFi.Ods.AdminApp.Management.Tests.Testing;
+using Microsoft.EntityFrameworkCore;
 
 namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
 {
@@ -69,7 +70,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
 
             Transaction(usersContext =>
             {
-                var changedVendor = usersContext.Vendors.Single(v => v.VendorId == _vendorId);
+                var changedVendor = usersContext.Vendors
+                    .Include(x => x.Users)
+                    .Include(x => x.VendorNamespacePrefixes)
+                    .Single(v => v.VendorId == _vendorId);
                 changedVendor.VendorName.ShouldBe("new vendor name");
                 changedVendor.VendorNamespacePrefixes.First().NamespacePrefix.ShouldBe("new namespace prefix");
                 changedVendor.Users.First().FullName.ShouldBe("new contact name");
@@ -95,7 +99,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
 
             Transaction(usersContext =>
             {
-                var changedVendor = usersContext.Vendors.Single(v => v.VendorId == _vendorId);
+                var changedVendor = usersContext.Vendors
+                    .Include(x => x.Users)
+                    .Include(x => x.VendorNamespacePrefixes)
+                    .Single(v => v.VendorId == _vendorId);
                 changedVendor.VendorName.ShouldBe("new vendor name");
                 changedVendor.VendorNamespacePrefixes.ShouldBeEmpty();
                 changedVendor.Users.First().FullName.ShouldBe("new contact name");
@@ -121,7 +128,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
 
             Transaction(usersContext =>
             {
-                var changedVendor = usersContext.Vendors.Single(v => v.VendorId == _vendorWithNoNameSpaceId);
+                var changedVendor = usersContext.Vendors
+                    .Include(x => x.Users)
+                    .Include(x => x.VendorNamespacePrefixes)
+                    .Single(v => v.VendorId == _vendorWithNoNameSpaceId);
                 changedVendor.VendorName.ShouldBe("new vendor name");
                 changedVendor.VendorNamespacePrefixes.First().NamespacePrefix.ShouldBe("new namespace prefix");
                 changedVendor.Users.First().FullName.ShouldBe("new contact name");
@@ -135,7 +145,9 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
             var newVendorData = new Mock<IEditVendor>();
             Transaction(usersContext =>
             {
-                var originalVendor = usersContext.Vendors.Single(v => v.VendorId == _vendorId);
+                var originalVendor = usersContext.Vendors
+                    .Include(x => x.VendorNamespacePrefixes)
+                    .Single(v => v.VendorId == _vendorId);
                 originalVendor.VendorNamespacePrefixes.Single().NamespacePrefix.ShouldBe(OriginalVendorNamespacePrefix);
             });
             var newNamespacePrefixes = new List<string>
@@ -159,7 +171,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
 
             Transaction(usersContext =>
             {
-                var changedVendor = usersContext.Vendors.Single(v => v.VendorId == _vendorId);
+                var changedVendor = usersContext.Vendors
+                    .Include(x => x.Users)
+                    .Include(x => x.VendorNamespacePrefixes)
+                    .Single(v => v.VendorId == _vendorId);
                 changedVendor.VendorName.ShouldBe("new vendor name");
                 changedVendor.VendorNamespacePrefixes.Select(x => x.NamespacePrefix).ShouldBe(newNamespacePrefixes);
                 changedVendor.Users.First().FullName.ShouldBe("new contact name");
@@ -176,7 +191,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
             var newVendorData = new Mock<IEditVendor>();
             Transaction(usersContext =>
             {
-                var originalVendor = usersContext.Vendors.Single(v => v.VendorId == _vendorId);
+                var originalVendor = usersContext.Vendors
+                    .Include(x => x.Users)
+                    .Include(x => x.VendorNamespacePrefixes)
+                    .Single(v => v.VendorId == _vendorId);
                 originalVendor.VendorNamespacePrefixes.Single().NamespacePrefix.ShouldBe(OriginalVendorNamespacePrefix);
             });
 
@@ -194,7 +212,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
 
             Transaction(usersContext =>
             {
-                var changedVendor = usersContext.Vendors.Single(v => v.VendorId == _vendorId);
+                var changedVendor = usersContext.Vendors
+                    .Include(x => x.Users)
+                    .Include(x => x.VendorNamespacePrefixes)
+                    .Single(v => v.VendorId == _vendorId);
                 changedVendor.VendorName.ShouldBe("new vendor name");
                 changedVendor.VendorNamespacePrefixes.Select(x => x.NamespacePrefix).ToDelimiterSeparated().ShouldBe(expectedNamespacePrefixes);
                 changedVendor.Users.First().FullName.ShouldBe("new contact name");
@@ -209,7 +230,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
 
             Transaction(usersContext =>
             {
-                var originalVendor = usersContext.Vendors.Single(v => v.VendorId == _vendorId);
+                var originalVendor = usersContext.Vendors
+                    .Include(x => x.Users)
+                    .Include(x => x.VendorNamespacePrefixes)
+                    .Single(v => v.VendorId == _vendorId);
                 originalVendor.VendorNamespacePrefixes.Single().NamespacePrefix.ShouldBe(OriginalVendorNamespacePrefix);
             });
 
@@ -227,7 +251,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
 
             Transaction(usersContext =>
             {
-                var changedVendor = usersContext.Vendors.Single(v => v.VendorId == _vendorId);
+                var changedVendor = usersContext.Vendors
+                    .Include(x => x.Users)
+                    .Include(x => x.VendorNamespacePrefixes)
+                    .Single(v => v.VendorId == _vendorId);
                 changedVendor.VendorName.ShouldBe("new vendor name");
                 changedVendor.VendorNamespacePrefixes.ShouldBeEmpty();
                 changedVendor.Users.First().FullName.ShouldBe("new contact name");

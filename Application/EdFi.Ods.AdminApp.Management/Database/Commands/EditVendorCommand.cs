@@ -10,6 +10,7 @@ using EdFi.Admin.DataAccess.Contexts;
 using EdFi.Admin.DataAccess.Models;
 using EdFi.Ods.AdminApp.Management.Database.Queries;
 using EdFi.Ods.AdminApp.Management.ErrorHandling;
+using Microsoft.EntityFrameworkCore;
 using VendorUser = EdFi.Admin.DataAccess.Models.User;
 
 namespace EdFi.Ods.AdminApp.Management.Database.Commands
@@ -25,7 +26,11 @@ namespace EdFi.Ods.AdminApp.Management.Database.Commands
 
         public Vendor Execute(IEditVendor changedVendorData)
         {
-            var vendor = _context.Vendors.SingleOrDefault(v => v.VendorId == changedVendorData.VendorId);
+            var vendor = _context.Vendors
+                .Include(x => x.Applications)
+                .Include(x => x.Users)
+                .Include(x => x.VendorNamespacePrefixes)
+                .AsEnumerable().FirstOrDefault(v => v.VendorId == changedVendorData.VendorId);
             if(vendor == null)
             {
                 throw new NotFoundException<int>("vendor", changedVendorData.VendorId);

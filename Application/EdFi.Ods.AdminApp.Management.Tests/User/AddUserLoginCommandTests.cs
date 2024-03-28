@@ -39,7 +39,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
 
                 var identityUserId = await command.Execute(newUserLogin);
 
-                var addedUserLogin = context.UserLogins.SingleOrDefault(x => x.UserId == identityUserId);
+                var addedUserLogin = context.UserLogins.AsEnumerable().FirstOrDefault(x => x.UserId == identityUserId);
                 addedUserLogin.ShouldNotBeNull();
                 addedUserLogin.ProviderKey.ShouldBe(newUserLogin.ProviderKey);
                 addedUserLogin.LoginProvider.ShouldBe(newUserLogin.LoginProvider);
@@ -67,7 +67,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
 
                 var identityUserId = await command.Execute(newUserLogin);
 
-                var addedUserLogin = context.UserLogins.SingleOrDefault(x => x.UserId == identityUserId);
+                var addedUserLogin = context.UserLogins.AsEnumerable().FirstOrDefault(x => x.UserId == identityUserId);
                 addedUserLogin.ShouldNotBeNull();
                 addedUserLogin.ProviderKey.ShouldBe(newUserLogin.ProviderKey);
                 addedUserLogin.LoginProvider.ShouldBe(newUserLogin.LoginProvider);

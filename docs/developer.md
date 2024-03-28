@@ -19,7 +19,7 @@ For debugging on Azure, see [CloudODS Debugging](cloudods-debugging.md)
 
 ## Development Pre-Requisites
 
-* [.NET Core 6.0 SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
+* [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 * Either:
   * [Visual Studio 2022](https://visualstudio.microsoft.com/downloads), or
   * [Visual Studio 2022 Build
@@ -43,7 +43,7 @@ longer than 256 characters:
 
 The PowerShell script `build.ps1` in the root directory contains functions for
 running standard build operations at the command line . This script assumes that
-.NET 6.0 SDK or newer is installed. Other dependencies tools are downloaded
+.NET 8.0 SDK or newer is installed. Other dependencies tools are downloaded
 as needed (nuget, nunit).
 
 Available commands:

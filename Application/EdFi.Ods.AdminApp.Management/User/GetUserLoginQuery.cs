@@ -20,7 +20,7 @@ namespace EdFi.Ods.AdminApp.Management.User
 
         public IdentityUserLogin Execute(IGetUserLoginModel userLoginModel)
         {
-            var userLogin = _identity.UserLogins.SingleOrDefault(
+            var userLogin = _identity.UserLogins.AsEnumerable().FirstOrDefault(
                 x => x.LoginProvider == userLoginModel.LoginProvider &&
                      x.ProviderKey == userLoginModel.ProviderKey);
 

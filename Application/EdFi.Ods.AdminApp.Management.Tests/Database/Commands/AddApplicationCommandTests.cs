@@ -10,6 +10,7 @@ using EdFi.Admin.DataAccess.Contexts;
 using EdFi.Admin.DataAccess.Models;
 using EdFi.Ods.AdminApp.Management.Database.Commands;
 using EdFi.Ods.AdminApp.Web.Models.ViewModels.Application;
+using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using Shouldly;
 using static EdFi.Ods.AdminApp.Management.Tests.Testing;
@@ -123,7 +124,11 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
 
             Transaction(usersContext =>
             {
-                var persistedApplication = usersContext.Applications.Single(a => a.ApplicationId == result.ApplicationId);
+                var persistedApplication = usersContext.Applications
+                .Include(x => x.ApplicationEducationOrganizations)
+                .Include(x => x.Vendor)
+                .Include(x => x.ApiClients)
+                .Single(a => a.ApplicationId == result.ApplicationId);
 
                 persistedApplication.ClaimSetName.ShouldBe("FakeClaimSet");
                 persistedApplication.Profiles.Count.ShouldBe(0);
@@ -199,7 +204,13 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
 
             Transaction(usersContext =>
             {
-                var persistedApplication = usersContext.Applications.Single(a => a.ApplicationId == result.ApplicationId);
+                var persistedApplication = usersContext.Applications
+                    .Include(x => x.ApplicationEducationOrganizations)
+                    .Include(x => x.Vendor)
+                    .Include(x => x.ApiClients)
+                    .Include(x => x.Profiles)
+                    .Include(x => x.OdsInstance)
+                    .Single(a => a.ApplicationId == result.ApplicationId);
 
                 persistedApplication.ClaimSetName.ShouldBe("FakeClaimSet");
                 persistedApplication.Profiles.Count.ShouldBe(1);

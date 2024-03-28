@@ -2,14 +2,15 @@
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
+extern alias SecurityCompatiblity53;
 
 using System.Collections.Generic;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using EdFi.SecurityCompatiblity53.DataAccess.Contexts;
-using EdFi.SecurityCompatiblity53.DataAccess.Models;
+using SecurityCompatiblity53::EdFi.SecurityCompatiblity53.DataAccess.Contexts;
+using SecurityCompatiblity53::EdFi.SecurityCompatiblity53.DataAccess.Models;
 
-using SecurityClaimSet = EdFi.SecurityCompatiblity53.DataAccess.Models.ClaimSet;
+using SecurityClaimSet = SecurityCompatiblity53::EdFi.SecurityCompatiblity53.DataAccess.Models.ClaimSet;
 
 namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
 {
@@ -26,7 +27,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
         {
             var resourceClaimToEdit = model.ResourceClaim;
 
-            var claimSetToEdit = _context.ClaimSets.Single(x => x.ClaimSetId == model.ClaimSetId);
+            var claimSetToEdit = _context.ClaimSets.AsEnumerable().First(x => x.ClaimSetId == model.ClaimSetId);
 
             var claimSetResourceClaimsToEdit = _context.ClaimSetResourceClaims
                 .Include(x => x.ResourceClaim)
@@ -76,7 +77,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
         {
             var actionsFromDb = _context.Actions.ToList();
 
-            var resourceClaimFromDb = _context.ResourceClaims.Single(x => x.ResourceClaimId == modelResourceClaim.Id);
+            var resourceClaimFromDb = _context.ResourceClaims.AsEnumerable().First(x => x.ResourceClaimId == modelResourceClaim.Id);
 
             var recordsToAdd = new List<ClaimSetResourceClaim>();
 
@@ -84,7 +85,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
             {
                 recordsToAdd.Add(new ClaimSetResourceClaim
                 {
-                    Action = actionsFromDb.Single(x => x.ActionName == Action.Create.Value),
+                    Action = actionsFromDb.AsEnumerable().First(x => x.ActionName == Action.Create.Value),
                     ClaimSet = claimSetToEdit,
                     ResourceClaim = resourceClaimFromDb
                 });
@@ -94,7 +95,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
             {
                 recordsToAdd.Add(new ClaimSetResourceClaim
                 {
-                    Action = actionsFromDb.Single(x => x.ActionName == Action.Read.Value),
+                    Action = actionsFromDb.AsEnumerable().First(x => x.ActionName == Action.Read.Value),
                     ClaimSet = claimSetToEdit,
                     ResourceClaim = resourceClaimFromDb
                 });

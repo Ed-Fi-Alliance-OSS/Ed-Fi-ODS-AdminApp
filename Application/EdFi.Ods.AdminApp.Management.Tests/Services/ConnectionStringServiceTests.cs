@@ -14,7 +14,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Services
     {
         const string Template = "Data Source=.\\;Initial Catalog=EdFi_{0};Integrated Security=True";
         const string FixedTemplate = "Data Source=.\\;Initial Catalog=EdFi_Ods;Integrated Security=True";
-        const string TemplateWithServerNamePlaceholder = "Data Source={0};Initial Catalog=EdFi_{0};Integrated Security=True";       
+        const string TemplateWithServerNamePlaceholder = "Data Source={0};Initial Catalog=EdFi_{0};Integrated Security=True";
 
         [Test]
         public void SharedInstance()
@@ -96,7 +96,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Services
 
             GetConnectionString(TemplateWithServerNamePlaceholder, "EdFi_Ods_2010", ApiMode.YearSpecific)
                  .ShouldBe("Data Source=Ods_2010;Initial Catalog=EdFi_Ods_2010;Integrated Security=True");
-        }      
+        }
 
         [Test]
         public void DistrictSpecificWithDynamicServerName()
@@ -106,7 +106,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Services
 
             GetConnectionString(TemplateWithServerNamePlaceholder, "EdFi_Ods_2995002", ApiMode.DistrictSpecific)
                 .ShouldBe("Data Source=Ods_2995002;Initial Catalog=EdFi_Ods_2995002;Integrated Security=True");
-        }      
+        }
 
         private string GetConnectionString(string odsConnectionStringTemplate, string odsInstanceName, ApiMode apiMode)
         {
@@ -115,7 +115,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Services
             var service = new ConnectionStringService(GetConnectionStringsAccessor(odsConnectionStringTemplate), mockConnectionStringBuilderAdapterFactory.Object);
             return service.GetConnectionString(odsInstanceName, apiMode);
         }
-            
+
 
         private IOptions<ConnectionStrings> GetConnectionStringsAccessor(string productionOdsTemplate)
         {

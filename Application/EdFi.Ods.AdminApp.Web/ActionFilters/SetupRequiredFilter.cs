@@ -47,7 +47,7 @@ namespace EdFi.Ods.AdminApp.Web.ActionFilters
             {
                 var generalFirstTimeSetUpCompleted = _database
                                                          .ApplicationConfigurations
-                                                         .SingleOrDefault()?
+                                                         .AsEnumerable().FirstOrDefault()?
                                                          .FirstTimeSetUpCompleted ?? false;
 
                 return generalFirstTimeSetUpCompleted;

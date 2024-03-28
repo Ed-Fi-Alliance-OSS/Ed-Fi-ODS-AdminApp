@@ -5,6 +5,7 @@
 
 using System;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using EdFi.Admin.DataAccess.Contexts;
 using EdFi.Ods.AdminApp.Management.Database.Queries;
 using EdFi.Ods.AdminApp.Management.ErrorHandling;
@@ -24,7 +25,12 @@ namespace EdFi.Ods.AdminApp.Management.Database.Commands
 
         public void Execute(int id)
         {
-            var vendor = _context.Vendors.SingleOrDefault(v => v.VendorId == id);
+            var vendor = _context.Vendors
+                .Include(x => x.Applications)
+                .Include(x => x.Users)
+                .Include(x => x.VendorNamespacePrefixes)
+                .AsEnumerable()
+                .FirstOrDefault(v => v.VendorId == id);
 
             if (vendor == null)
             {

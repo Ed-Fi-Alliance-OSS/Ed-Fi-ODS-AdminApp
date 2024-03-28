@@ -134,7 +134,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
                 responseList.AddRange(pageItems);
 
                 offset += limit;
-                request.Parameters.Single(x => x.Name == "offset").Value = offset;
+                request.Parameters.AsEnumerable().First(x => x.Name == "offset").Value = offset;
             }
             while (pageItems.Count >= limit);
 
@@ -166,7 +166,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
                 responseList.AddRange(pageItems);
 
                 offset += limit;
-                request.Parameters.Single(x => x.Name == "offset").Value = offset;
+                request.Parameters.AsEnumerable().First(x => x.Name == "offset").Value = offset;
             }
             while (pageItems.Count >= limit);
 

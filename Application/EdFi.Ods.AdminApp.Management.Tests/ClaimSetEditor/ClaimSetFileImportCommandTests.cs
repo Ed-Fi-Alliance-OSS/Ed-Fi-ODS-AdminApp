@@ -85,7 +85,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             using var securityContext = TestContext;
             Command(securityContext).Execute(importSharingModel);
 
-            var testClaimSet = securityContext.ClaimSets.SingleOrDefault(x => x.ClaimSetName == "Test Claimset");
+            var testClaimSet = securityContext.ClaimSets.AsEnumerable().FirstOrDefault(x => x.ClaimSetName == "Test Claimset");
             testClaimSet.ShouldNotBeNull();
 
             var resourcesForClaimSet = ResourceClaimsForClaimSet(testClaimSet.ClaimSetId).ToList();
@@ -209,7 +209,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             using var securityContext = TestContext;
             Command(securityContext).Execute(importSharingModel);
 
-            var testClaimSet = securityContext.ClaimSets.SingleOrDefault(x => x.ClaimSetName == "Test Claimset");
+            var testClaimSet = securityContext.ClaimSets.AsEnumerable().FirstOrDefault(x => x.ClaimSetName == "Test Claimset");
             testClaimSet.ShouldNotBeNull();
 
             var resourcesForClaimSet = ResourceClaimsForClaimSet(testClaimSet.ClaimSetId).ToList();
@@ -405,7 +405,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             using var securityContext = TestContext;
             Command(securityContext).Execute(importSharingModel);
 
-            var testClaimSet = securityContext.ClaimSets.SingleOrDefault(x => x.ClaimSetName == "Test Claimset");
+            var testClaimSet = securityContext.ClaimSets.AsEnumerable().FirstOrDefault(x => x.ClaimSetName == "Test Claimset");
             testClaimSet.ShouldNotBeNull();
 
             var resourcesForClaimSet = ResourceClaimsForClaimSet(testClaimSet.ClaimSetId).ToList();

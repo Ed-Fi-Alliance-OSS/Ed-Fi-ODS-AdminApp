@@ -10,8 +10,8 @@ using EdFi.Ods.AdminApp.Web.Models.ViewModels.Application;
 using NUnit.Framework;
 using Shouldly;
 using System.Collections.Generic;
-using System.Data.Entity.Core.Metadata.Edm;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 using static EdFi.Ods.AdminApp.Management.Tests.Testing;
@@ -120,7 +120,11 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
 
             Transaction(usersContext =>
             {
-                var persistedApplication = usersContext.Applications.Single(a => a.ApplicationId == _application.ApplicationId);
+                var persistedApplication = usersContext.Applications
+                    .Include(x => x.ApiClients)
+                    .Include(x => x.ApplicationEducationOrganizations)
+                    .Include(x => x.Profiles)
+                    .Single(a => a.ApplicationId == _application.ApplicationId);
                 persistedApplication.ApplicationName.ShouldBe("Test Application");
                 persistedApplication.ClaimSetName.ShouldBe("FakeClaimSet");
                 persistedApplication.ApiClients.Count.ShouldBe(1);
@@ -155,7 +159,11 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
 
             Transaction(usersContext =>
             {
-                var persistedApplication = usersContext.Applications.Single(a => a.ApplicationId == _application.ApplicationId);
+                var persistedApplication = usersContext.Applications
+                    .Include(x => x.ApiClients)
+                    .Include(x => x.ApplicationEducationOrganizations)
+                    .Include(x => x.Profiles)
+                    .Single(a => a.ApplicationId == _application.ApplicationId);
                 persistedApplication.ApplicationName.ShouldBe("New Application Name");
                 persistedApplication.ClaimSetName.ShouldBe("DifferentFakeClaimSet");
                 persistedApplication.ApiClients.Count.ShouldBe(1);

@@ -53,7 +53,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
             Transaction(usersContext =>
             {
                 foreach (var entity in entities)
-                    ((SqlServerUsersContext) usersContext).Set(entity.GetType()).Add(entity);
+                    ((SqlServerUsersContext) usersContext).Add(entity);
             });
         }
 

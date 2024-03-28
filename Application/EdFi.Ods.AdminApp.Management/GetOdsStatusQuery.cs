@@ -3,7 +3,7 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
-using System.Data.Entity.Core;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
 using System.Linq;
 using EdFi.Admin.DataAccess.Contexts;
@@ -27,7 +27,7 @@ namespace EdFi.Ods.AdminApp.Management
 
             try
             {
-                instance = _usersContext.OdsInstances.SingleOrDefault(i => i.Name == instanceName);
+                instance = _usersContext.OdsInstances.AsEnumerable().FirstOrDefault(i => i.Name == instanceName);
             }
             catch (SqlException s)
             {
@@ -38,7 +38,7 @@ namespace EdFi.Ods.AdminApp.Management
                     throw;
                 }
             }
-            catch (EntityCommandExecutionException s)
+            catch (DbUpdateException s)
             {
                 //Similarly check for the corresponding exception from NpgSql
                 var inner = s.InnerException as PostgresException;

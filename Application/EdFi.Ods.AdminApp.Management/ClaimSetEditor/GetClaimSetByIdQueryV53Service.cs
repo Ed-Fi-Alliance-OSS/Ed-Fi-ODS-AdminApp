@@ -2,11 +2,12 @@
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
+extern alias SecurityCompatiblity53;
 
 using System.Linq;
 using System.Net;
 using EdFi.Ods.AdminApp.Management.ErrorHandling;
-using EdFi.SecurityCompatiblity53.DataAccess.Contexts;
+using SecurityCompatiblity53::EdFi.SecurityCompatiblity53.DataAccess.Contexts;
 
 namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
 {
@@ -22,7 +23,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
         public ClaimSet Execute(int claimSetId)
         {
             var securityContextClaimSet = _securityContext.ClaimSets
-                .SingleOrDefault(x => x.ClaimSetId == claimSetId);
+                .AsEnumerable().FirstOrDefault(x => x.ClaimSetId == claimSetId);
 
             if (securityContextClaimSet != null)
             {

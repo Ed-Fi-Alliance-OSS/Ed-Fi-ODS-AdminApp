@@ -3,9 +3,13 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
+using System;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using EdFi.Security.DataAccess.Contexts;
+using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using Polly;
 using Respawn;
 
 namespace EdFi.Ods.AdminApp.Management.Tests
@@ -35,7 +39,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
             }
         };
 
-        protected virtual string ConnectionString => TestContext.Database.Connection.ConnectionString;
+        protected virtual string ConnectionString => TestContext.Database.GetConnectionString();
 
         protected virtual void AdditionalFixtureSetup()
         {
@@ -47,7 +51,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests
         public virtual async Task FixtureSetup()
         {
             TestContext = CreateDbContext();
-
             if (CheckpointPolicy == CheckpointPolicyOptions.BeforeAnyTest)
             {
                 await _checkpoint.Reset(ConnectionString);
@@ -83,7 +86,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
         {
             foreach (var entity in entities)
             {
-                TestContext.Set(entity.GetType()).Add(entity);
+                TestContext.Add(entity);
             }
 
             TestContext.SaveChanges();

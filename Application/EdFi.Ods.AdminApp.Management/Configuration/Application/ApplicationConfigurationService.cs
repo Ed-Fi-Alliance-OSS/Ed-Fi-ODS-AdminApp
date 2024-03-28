@@ -29,7 +29,7 @@ namespace EdFi.Ods.AdminApp.Management.Configuration.Application
 
             return _database
                        .ApplicationConfigurations
-                       .SingleOrDefault()?
+                       .AsEnumerable().FirstOrDefault()?
                        .AllowUserRegistration ?? false;
         }
 

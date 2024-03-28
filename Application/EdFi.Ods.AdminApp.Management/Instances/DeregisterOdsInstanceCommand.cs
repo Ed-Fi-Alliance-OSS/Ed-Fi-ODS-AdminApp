@@ -6,6 +6,7 @@
 using System.Linq;
 using EdFi.Admin.DataAccess.Contexts;
 using EdFi.Ods.AdminApp.Management.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace EdFi.Ods.AdminApp.Management.Instances
 {
@@ -42,9 +43,16 @@ namespace EdFi.Ods.AdminApp.Management.Instances
             var applicationName = odsInstanceName.GetAdminApplicationName();
             var odsToken = odsInstanceName.ExtractNumericInstanceSuffix();
 
-            var application = _usersContext.Applications.SingleOrDefault(x => x.ApplicationName == applicationName);
+            var application = _usersContext.Applications
+                .Include(x => x.OdsInstance)
+                .Include(x => x.ApiClients)
+                .Include(x => x.ApplicationEducationOrganizations)
+                .AsEnumerable().FirstOrDefault(x => x.ApplicationName == applicationName);
 
-            var apiClient = _usersContext.Clients.SingleOrDefault(x => x.Application.ApplicationId == application.ApplicationId);
+            var apiClient = _usersContext.Clients
+                .Include(x => x.ApplicationEducationOrganizations)
+                .Include(x => x.ClientAccessTokens)
+                .AsEnumerable().FirstOrDefault(x => x.Application.ApplicationId == application.ApplicationId);
 
             if (apiClient != null)
             {
@@ -64,7 +72,7 @@ namespace EdFi.Ods.AdminApp.Management.Instances
                 if (application.ApplicationEducationOrganizations.Any())
                 {
                     var applicationEducationOrganization =
-                        _usersContext.ApplicationEducationOrganizations.SingleOrDefault(x =>
+                        _usersContext.ApplicationEducationOrganizations.AsEnumerable().FirstOrDefault(x =>
                             x.Application.ApplicationId == application.ApplicationId);
                     if (applicationEducationOrganization != null)
                         _usersContext.ApplicationEducationOrganizations.Remove(applicationEducationOrganization);

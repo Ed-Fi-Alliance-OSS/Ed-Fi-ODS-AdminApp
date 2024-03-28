@@ -29,7 +29,7 @@ namespace EdFi.Ods.AdminApp.Web.ActionFilters
         {
             var userId = filterContext.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var user = _identity.Users.SingleOrDefault(x => x.Id == userId);
+            var user = _identity.Users.AsEnumerable().FirstOrDefault(x => x.Id == userId);
             if (user == null)
             {
                 return;

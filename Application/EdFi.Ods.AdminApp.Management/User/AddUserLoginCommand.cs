@@ -39,7 +39,7 @@ namespace EdFi.Ods.AdminApp.Management.User
 
         private async Task<string> GetOrAddUser(IAddUserLoginModel userLoginModel)
         {
-            var user = _identity.Users.SingleOrDefault(u => u.UserName == userLoginModel.UserEmail);
+            var user = _identity.Users.AsEnumerable().FirstOrDefault(u => u.UserName == userLoginModel.UserEmail);
 
             if (user != null) { return user.Id; }
 

@@ -5,7 +5,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using EdFi.Admin.DataAccess.Contexts;
@@ -13,6 +12,7 @@ using EdFi.Admin.DataAccess.Models;
 using EdFi.Ods.AdminApp.Management.Helpers;
 using EdFi.Ods.AdminApp.Management.Instances;
 using EdFi.Common.Security;
+using Microsoft.EntityFrameworkCore;
 
 namespace EdFi.Ods.AdminApp.Management
 {
@@ -48,9 +48,8 @@ namespace EdFi.Ods.AdminApp.Management
         {
             var applicationName = odsInstanceName.GetAdminApplicationName();
 
-            var existingApplication = await UsersContext.Applications.SingleOrDefaultAsync(x =>
-                x.ApplicationName.Equals(applicationName,
-                    StringComparison.InvariantCultureIgnoreCase));
+            var existingApplication = await UsersContext?.Applications?
+                .SingleOrDefaultAsync(x => x != null && (x.ApplicationName.ToUpper() == applicationName.ToUpper()));
 
             if (existingApplication != null)
             {
@@ -103,7 +102,7 @@ namespace EdFi.Ods.AdminApp.Management
 
         private OdsInstance CreateOdsInstance(string odsInstanceName, string odsInstanceVersion)
         {
-            var existingInstance = UsersContext.OdsInstances.SingleOrDefault(x => x.Name == odsInstanceName);
+            var existingInstance = UsersContext.OdsInstances.AsEnumerable().FirstOrDefault(x => x.Name == odsInstanceName);
             if (existingInstance != null)
                 return existingInstance;
 
@@ -123,7 +122,7 @@ namespace EdFi.Ods.AdminApp.Management
 
         private Vendor CreateEdFiVendor()
         {
-            var existingVendor = UsersContext.Vendors.SingleOrDefault(x => x.VendorName.Equals(CloudOdsAdminApp.VendorName, StringComparison.InvariantCultureIgnoreCase));
+            var existingVendor = UsersContext.Vendors.AsEnumerable().FirstOrDefault(x => x.VendorName.ToUpper() == CloudOdsAdminApp.VendorName.ToUpper());
             if (existingVendor != null)
                 return existingVendor;
 

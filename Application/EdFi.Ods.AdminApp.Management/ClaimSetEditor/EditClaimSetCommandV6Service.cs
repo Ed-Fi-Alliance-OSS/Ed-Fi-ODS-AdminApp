@@ -24,7 +24,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
 
         public int Execute(IEditClaimSetModel claimSet)
         {
-            var existingClaimSet = _securityContext.ClaimSets.Single(x => x.ClaimSetId == claimSet.ClaimSetId);
+            var existingClaimSet = _securityContext.ClaimSets.AsEnumerable().First(x => x.ClaimSetId == claimSet.ClaimSetId);
 
             if (existingClaimSet.ForApplicationUseOnly || existingClaimSet.IsEdfiPreset ||
                     CloudOdsAdminApp.SystemReservedClaimSets.Contains(existingClaimSet.ClaimSetName))

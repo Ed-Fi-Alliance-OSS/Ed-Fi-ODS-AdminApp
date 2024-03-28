@@ -22,7 +22,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
         public ClaimSet Execute(int claimSetId)
         {
             var securityContextClaimSet = _securityContext.ClaimSets
-               .SingleOrDefault(x => x.ClaimSetId == claimSetId);
+               .AsEnumerable().FirstOrDefault(x => x.ClaimSetId == claimSetId);
 
             if (securityContextClaimSet != null)
             {

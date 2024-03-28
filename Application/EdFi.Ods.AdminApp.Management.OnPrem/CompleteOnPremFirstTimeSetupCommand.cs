@@ -3,6 +3,7 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
+using System.Threading;
 using System.Threading.Tasks;
 using EdFi.Admin.DataAccess.Contexts;
 using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
@@ -47,6 +48,7 @@ namespace EdFi.Ods.AdminApp.Management.OnPrem
 
         public async Task<bool> Execute(string odsInstanceName, CloudOdsClaimSet claimSet, ApiMode apiMode)
         {
+            CancellationToken _cancellationToken = new CancellationToken();
             ExtraDatabaseInitializationAction?.Invoke();
             var restartRequired = false;
 
@@ -69,8 +71,8 @@ namespace EdFi.Ods.AdminApp.Management.OnPrem
 
                 restartRequired = true;
             }
-            
-            await _usersContext.SaveChangesAsync();
+
+            await _usersContext.SaveChangesAsync(_cancellationToken);
             await _securityContext.SaveChangesAsync();
 
             return restartRequired;
