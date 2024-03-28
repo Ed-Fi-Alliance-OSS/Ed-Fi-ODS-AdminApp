@@ -41,6 +41,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests
                 .Setup(m => m.GetAsyncEnumerator(_cancellationToken))
                 .Returns(() => new TestDbAsyncEnumerator<T>(underlyingData.GetEnumerator()));
 
+            mockSet.As<IAsyncEnumerable<T>>()
+                .Setup(m => m.GetAsyncEnumerator(_cancellationToken))
+                .Returns(() => new TestDbAsyncEnumerator<T>(underlyingData.GetEnumerator()));
+
             mockSet.As<IQueryable<T>>()
                 .Setup(m => m.Provider)
                 .Returns(() => new TestDbAsyncQueryProvider<T>(underlyingData.AsQueryable().Provider));
@@ -48,11 +52,13 @@ namespace EdFi.Ods.AdminApp.Management.Tests
             mockSet.As<IQueryable<T>>().Setup(m => m.Expression).Returns(() => underlyingData.AsQueryable().Expression);
             mockSet.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(() => underlyingData.AsQueryable().ElementType);
             mockSet.As<IQueryable<T>>().Setup(m => m.GetEnumerator()).Returns(() => underlyingData.AsQueryable().GetEnumerator());
-
+                
             mockSet.Setup(m => m.Add(It.IsAny<T>())).Callback((T x) => underlyingData.Add(x));
             mockSet.Setup(m => m.AddRange(It.IsAny<IEnumerable<T>>())).Callback((IEnumerable<T> x) => underlyingData.AddRange(x));
             mockSet.Setup(m => m.Remove(It.IsAny<T>())).Callback((T x) => underlyingData.Remove(x));
             mockSet.Setup(m => m.RemoveRange(It.IsAny<IEnumerable<T>>())).Callback((IEnumerable<T> x) => underlyingData.RemoveAll(x.Contains));
+
+            
 
             return mockSet;
         }

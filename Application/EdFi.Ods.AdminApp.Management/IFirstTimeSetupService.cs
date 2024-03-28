@@ -48,11 +48,8 @@ namespace EdFi.Ods.AdminApp.Management
         {
             var applicationName = odsInstanceName.GetAdminApplicationName();
 
-            var existingApplication = UsersContext.Applications.AsEnumerable().FirstOrDefault(x =>
-                x.ApplicationName.ToUpper() == applicationName.ToUpper());
-            /*var existingApplication = await UsersContext.Applications.AsEnumerable().FirstOrDefaultAsync(x =>
-                x.ApplicationName.Equals(applicationName,
-                    StringComparison.InvariantCultureIgnoreCase));*/
+            var existingApplication = await UsersContext?.Applications?
+                .SingleOrDefaultAsync(x => x != null && (x.ApplicationName.ToUpper() == applicationName.ToUpper()));
 
             if (existingApplication != null)
             {

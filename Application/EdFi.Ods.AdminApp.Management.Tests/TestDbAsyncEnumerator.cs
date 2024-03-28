@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Query;
 using System;
+using EdFi.Common.Extensions;
 
 namespace EdFi.Ods.AdminApp.Management.Tests
 {
@@ -45,21 +46,23 @@ namespace EdFi.Ods.AdminApp.Management.Tests
             return _inner.Execute<TResult>(expression);
         }
 
-        public Task<object> ExecuteAsync(Expression expression, CancellationToken cancellationToken)
+        public TResult ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(Execute(expression));
-        }
+            var expectedResultType = typeof(TResult).GetGenericArguments()[0];
+            var executionResult = typeof(IQueryProvider)
+                                 .GetMethod(
+                                      name: nameof(IQueryProvider.Execute),
+                                      genericParameterCount: 1,
+                                      types: new[] { typeof(Expression) })
+                                 .MakeGenericMethod(expectedResultType)
+                                 .Invoke(this, new[] { expression });
 
-        public Task<TResult> ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken)
-        {
-            return Task.FromResult(Execute<TResult>(expression));
-        }
-
-        TResult IAsyncQueryProvider.ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken)
-        {
-            return Execute<TResult>(expression);
+            return (TResult)typeof(Task).GetMethod(nameof(Task.FromResult))
+                                        ?.MakeGenericMethod(expectedResultType)
+                                         .Invoke(null, new[] { executionResult });
         }
     }
+
 
     internal class TestDbAsyncEnumerable<T> : EnumerableQuery<T>, IAsyncEnumerable<T>, IQueryable<T>
     {
@@ -83,7 +86,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
 
         public IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
         {
-            return  GetAsyncEnumerator(cancellationToken);  //new TestDbAsyncEnumerator<T>(this.AsEnumerable().GetEnumerator());
+            return new TestDbAsyncEnumerator<T>(this.AsEnumerable().GetEnumerator());
         }
 
         IQueryProvider IQueryable.Provider
@@ -106,19 +109,22 @@ namespace EdFi.Ods.AdminApp.Management.Tests
             _inner.Dispose();
         }
 
-        public Task<bool> MoveNextAsync(CancellationToken cancellationToken)
+        public ValueTask<bool> MoveNextAsync()
         {
-            return Task.FromResult(_inner.MoveNext());
+            try
+            {
+                return new ValueTask<bool>(_inner.MoveNext());
+            }
+            catch (Exception ex)
+            {
+                return new ValueTask<bool>(Task.FromException<bool>(ex));
+            }
         }
 
-        ValueTask<bool> IAsyncEnumerator<T>.MoveNextAsync()
+        public ValueTask DisposeAsync()
         {
-            throw new NotImplementedException();
-        }
-
-        ValueTask IAsyncDisposable.DisposeAsync()
-        {
-            throw new NotImplementedException();
+            _inner.Dispose();
+            return new ValueTask(Task.CompletedTask);
         }
 
         public T Current => _inner.Current;
