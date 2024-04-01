@@ -4,7 +4,6 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 extern alias SecurityCompatiblity53;
 
-//using System.Data.Entity;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using SecurityCompatiblity53::EdFi.SecurityCompatiblity53.DataAccess.Contexts;
