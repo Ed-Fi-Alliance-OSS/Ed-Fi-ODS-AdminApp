@@ -152,7 +152,7 @@ namespace EdFi.Ods.AdminApp.Web._Installers
                 builder.UseSqlServer(connectionString);
             }
             else {
-                builder.UseNpgsql(connectionString);
+                builder.UseNpgsql(connectionString).UseLowerCaseNamingConvention(); ;
             }
             return builder.Options;
         }

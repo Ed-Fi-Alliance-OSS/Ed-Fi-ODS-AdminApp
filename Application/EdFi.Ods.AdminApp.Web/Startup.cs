@@ -325,7 +325,7 @@ namespace EdFi.Ods.AdminApp.Web
             if (IsSqlServer(databaseEngine))
                 options.UseSqlServer(connectionString);
             else
-                options.UseNpgsql(connectionString);
+                options.UseNpgsql(connectionString).UseLowerCaseNamingConvention();
         }
 
         private static bool IsSqlServer(string databaseEngine) => "SqlServer".Equals(databaseEngine, StringComparison.InvariantCultureIgnoreCase);
