@@ -45,13 +45,13 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
 
             Scoped<AdminAppIdentityDbContext>(context =>
             {
-                var addedUserLogin = context.UserLogins.SingleOrDefault(x => x.UserId == userId);
+                var addedUserLogin = context.UserLogins.AsEnumerable().FirstOrDefault(x => x.UserId == userId);
                 addedUserLogin.ShouldNotBeNull();
                 addedUserLogin.ProviderKey.ShouldBe(OidcUserId);
                 addedUserLogin.LoginProvider.ShouldBe(LoginProvider);
                 addedUserLogin.ProviderDisplayName.ShouldBe(ProviderDisplayName);
 
-                var role = context.UserRoles.SingleOrDefault(x => x.UserId == userId);
+                var role = context.UserRoles.AsEnumerable().FirstOrDefault(x => x.UserId == userId);
                 role.ShouldNotBeNull();
                 role.RoleId.ShouldBe(Role.SuperAdmin.Value.ToString());
             });
@@ -72,7 +72,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
 
                 var identityUserId = openIdConnectLoginService.GetIdentityUserIdForOpenIdConnectUser(OidcUserId, LoginProvider);
 
-                var user = identity.Users.SingleOrDefault(x => x.Id == identityUserId);
+                var user = identity.Users.AsEnumerable().FirstOrDefault(x => x.Id == identityUserId);
                 user.ShouldNotBeNull();
                 user.Email.ShouldBe(OidcUserEmail);
             });
@@ -84,7 +84,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
             var userId = await AddUserLogin(OidcUserId, OidcUserEmail, LoginProvider, ProviderDisplayName, new []{Role.Admin.OidcClaimValue});
             Scoped<AdminAppIdentityDbContext>(context =>
             {
-                context.UserRoles.SingleOrDefault(x => x.UserId == userId)?.RoleId.ShouldBe(Role.Admin.Value.ToString());
+                context.UserRoles.AsEnumerable().FirstOrDefault(x => x.UserId == userId)?.RoleId.ShouldBe(Role.Admin.Value.ToString());
             });
         }
 
@@ -95,7 +95,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
                 new []{Role.SuperAdmin.OidcClaimValue, Role.Admin.OidcClaimValue});
             Scoped<AdminAppIdentityDbContext>(context =>
             {
-                context.UserRoles.SingleOrDefault(x => x.UserId == userId)?.RoleId.ShouldBe(Role.SuperAdmin.Value.ToString());
+                context.UserRoles.AsEnumerable().FirstOrDefault(x => x.UserId == userId)?.RoleId.ShouldBe(Role.SuperAdmin.Value.ToString());
             });
         }
 
@@ -106,7 +106,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
                 new []{ Role.SuperAdmin.DisplayName});
             Scoped<AdminAppIdentityDbContext>(context =>
             {
-                context.UserRoles.SingleOrDefault(x => x.UserId == userId)?.RoleId.ShouldBe(Role.SuperAdmin.Value.ToString());
+                context.UserRoles.AsEnumerable().FirstOrDefault(x => x.UserId == userId)?.RoleId.ShouldBe(Role.SuperAdmin.Value.ToString());
             });
         }
 
@@ -116,7 +116,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
             var userId = await AddUserLogin(OidcUserId, OidcUserEmail, LoginProvider, ProviderDisplayName, Array.Empty<string>());
             Scoped<AdminAppIdentityDbContext>(context =>
             {
-                context.UserRoles.SingleOrDefault(x => x.UserId == userId).ShouldBeNull();
+                context.UserRoles.AsEnumerable().FirstOrDefault(x => x.UserId == userId).ShouldBeNull();
             });
         }
 
@@ -126,7 +126,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
             var userId = await AddUserLogin(OidcUserId, OidcUserEmail, LoginProvider, ProviderDisplayName, new[] {"Not an admin app role"});
             Scoped<AdminAppIdentityDbContext>(context =>
             {
-                context.UserRoles.SingleOrDefault(x => x.UserId == userId).ShouldBeNull();
+                context.UserRoles.AsEnumerable().FirstOrDefault(x => x.UserId == userId).ShouldBeNull();
             });
         }
 

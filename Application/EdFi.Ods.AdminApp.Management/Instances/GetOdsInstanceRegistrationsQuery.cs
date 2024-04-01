@@ -33,12 +33,12 @@ namespace EdFi.Ods.AdminApp.Management.Instances
 
         public OdsInstanceRegistration Execute(string odsInstanceRegistrationName)
         {
-            return _database.OdsInstanceRegistrations.SingleOrDefault(x => x.Name == odsInstanceRegistrationName);
+            return _database.OdsInstanceRegistrations.AsEnumerable().FirstOrDefault(x => x.Name == odsInstanceRegistrationName);
         }
 
         public OdsInstanceRegistration Execute(int odsInstanceId)
         {
-            return _database.OdsInstanceRegistrations.SingleOrDefault(x => x.Id == odsInstanceId);
+            return _database.OdsInstanceRegistrations.AsEnumerable().FirstOrDefault(x => x.Id == odsInstanceId);
         }
     }
 

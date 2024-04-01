@@ -1,10 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
-
   <ItemGroup>
     <Content Include="EdFi.Ods.AdminApp.Web.nuspec" CopyToPublishDirectory="Always" CopyToOutputDirectory="Never" />
     <Content Include="EdFi.Ods.AdminApp.Database.nuspec" CopyToPublishDirectory="Always" CopyToOutputDirectory="Never" />
@@ -13,32 +11,30 @@
     <Content Include="Artifacts\**" CopyToPublishDirectory="Always" CopyToOutputDirectory="Never" />
     <Content Include="Schema/**/*.*" CopyToPublishDirectory="Always" />
     <Content Include="uploads\placeholder.txt">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\EdFi.Ods.AdminApp.Management.OnPrem\EdFi.Ods.AdminApp.Management.OnPrem.csproj" />
-    <ProjectReference Include="..\EdFi.Ods.AdminApp.Management\EdFi.Ods.AdminApp.Management.csproj" />
-  </ItemGroup>
-
+    <ProjectReference Include="..\EdFi.Ods.AdminApp.Management\EdFi.Ods.AdminApp.Management.csproj" />  
+</ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="27.2.1" />
-    <PackageReference Include="AutoMapper" Version="11.0.1" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
-    <PackageReference Include="EdFi.Suite3.LoadTools" Version="5.4.12" />
+    <PackageReference Include="CsvHelper" Version="31.0.2" />
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
+    <PackageReference Include="EdFi.SecurityCompatiblity53.DataAccess" Version="5.4.0">
+      <Aliases>SecurityCompatiblity53</Aliases>
+    </PackageReference>
+    <PackageReference Include="EdFi.Suite3.LoadTools" Version="6.1.24" />
     <PackageReference Include="FluentValidation" Version="10.4.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="10.4.0" />
-    <PackageReference Include="HtmlTags" Version="8.1.1" />
-    <PackageReference Include="LigerShark.WebOptimizer.Core" Version="3.0.357" />
-    <PackageReference Include="log4net" Version="2.0.13" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.9" />
-    <PackageReference Include="Npgsql" Version="6.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="6.1.0" />
+    <PackageReference Include="HtmlTags" Version="9.0.0" />
+    <PackageReference Include="LigerShark.WebOptimizer.Core" Version="3.0.405" />
+    <PackageReference Include="log4net" Version="2.0.16" />
+    <PackageReference Include="Npgsql" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.3" />
   </ItemGroup>
-
   <ItemGroup>
     <Content Update="appsettings.Docker-SharedInstance.json" CopyToPublishDirectory="Never" />
     <Content Update="appsettings.PostgreSql-DistrictSpecific.json" CopyToPublishDirectory="Never" />
@@ -48,6 +44,4 @@
     <Content Update="appsettings.SqlServer-SharedInstance.json" CopyToPublishDirectory="Never" />
     <Content Update="appsettings.SqlServer-YearSpecific.json" CopyToPublishDirectory="Never" />
   </ItemGroup>
-
-
 </Project>

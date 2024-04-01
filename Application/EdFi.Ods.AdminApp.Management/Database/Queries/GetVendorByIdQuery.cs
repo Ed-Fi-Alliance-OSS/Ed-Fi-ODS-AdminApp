@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: Apache-2.0
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
@@ -6,6 +6,7 @@
 using System.Linq;
 using EdFi.Admin.DataAccess.Contexts;
 using EdFi.Admin.DataAccess.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace EdFi.Ods.AdminApp.Management.Database.Queries
 {
@@ -25,7 +26,11 @@ namespace EdFi.Ods.AdminApp.Management.Database.Queries
 
         public Vendor Execute(int vendorId)
         {
-            var vendor = _context.Vendors.SingleOrDefault(v => v.VendorId == vendorId);
+            var vendor = _context.Vendors
+                .Include(x => x.Applications)
+                .Include(x => x.Users)
+                .Include(x => x.VendorNamespacePrefixes)
+                .AsEnumerable().FirstOrDefault(v => v.VendorId == vendorId);
             return vendor;
         }
     }

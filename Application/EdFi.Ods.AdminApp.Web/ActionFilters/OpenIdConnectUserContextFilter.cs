@@ -32,7 +32,7 @@ namespace EdFi.Ods.AdminApp.Web.ActionFilters
         public void OnAuthorization(AuthorizationFilterContext filterContext)
         {
             var providerId = filterContext.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var userLogin = _identity.UserLogins.SingleOrDefault(
+            var userLogin = _identity.UserLogins.AsEnumerable().FirstOrDefault(
                 x => x.LoginProvider == _identitySettings.OpenIdSettings.LoginProvider &&
                      x.ProviderKey == providerId);
 
@@ -41,7 +41,7 @@ namespace EdFi.Ods.AdminApp.Web.ActionFilters
                 return;
             }
 
-            var user = _identity.Users.SingleOrDefault(x => x.Id == userLogin.UserId);
+            var user = _identity.Users.AsEnumerable().FirstOrDefault(x => x.Id == userLogin.UserId);
 
             if (user == null)
             {

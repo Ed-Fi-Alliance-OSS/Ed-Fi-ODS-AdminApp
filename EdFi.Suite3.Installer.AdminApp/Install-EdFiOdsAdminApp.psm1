@@ -20,7 +20,7 @@ function Set-TlsVersion {
 Import-Module "$PSScriptRoot/key-management.psm1"
 
 $appCommonDirectory = "$PSScriptRoot/AppCommon"
-$RequiredDotNetHostingBundleVersion = "6.0.0"
+$RequiredDotNetHostingBundleVersion = "8.0.0"
 
 Import-Module -Force "$appCommonDirectory/Environment/Prerequisites.psm1" -Scope Global
 Set-TlsVersion
@@ -562,9 +562,9 @@ function Invoke-InstallationPreCheck{
         $Config
     )
 
-    Invoke-Task -Name ($MyInvocation.MyCommand.Name) -Task { 
+    Invoke-Task -Name ($MyInvocation.MyCommand.Name) -Task {
         $existingWebSiteName = $Config.WebSiteName
-        $webSite = Get-WebsiteByName $existingWebSiteName         
+        $webSite = Get-WebsiteByName $existingWebSiteName
 
         if($webSite)
         {
@@ -572,7 +572,7 @@ function Invoke-InstallationPreCheck{
             if($existingAdminAppApplication)
             {
                 $webSitePhysicalPath = $webSite.Applications[0].VirtualDirectories.PhysicalPath
-                              
+
                 $existingApplicationPath, $versionString = GetExistingAppVersion $webSitePhysicalPath $existingAdminAppApplication
                 $installVersionString = $Config.PackageVersion
 
@@ -640,7 +640,7 @@ function Invoke-ApplicationUpgrade {
             }
             $webSite = $customWebSite
             $existingWebSiteName =  $customWebSiteName
-        }        
+        }
 
         $existingAppName = $Config.WebApplicationName
         $existingAdminApp = Get-WebApplicationByName $webSite.Name $existingAppName
@@ -657,7 +657,7 @@ function Invoke-ApplicationUpgrade {
             $existingAppName = $customApplicationName
         }
 
-        $existingWebSitePath = $webSite.Applications[0].VirtualDirectories.PhysicalPath        
+        $existingWebSitePath = $webSite.Applications[0].VirtualDirectories.PhysicalPath
 
         $existingApplicationPath, $versionString = CheckForCompatibleUpdate $existingWebSitePath $existingAdminApp $Config.PackageVersion
 

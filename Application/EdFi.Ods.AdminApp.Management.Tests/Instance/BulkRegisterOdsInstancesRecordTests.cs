@@ -5,7 +5,6 @@
 
 using System.Collections.Generic;
 using EdFi.Ods.AdminApp.Management.Database;
-using EdFi.Ods.AdminApp.Management.Database.Ods;
 using EdFi.Ods.AdminApp.Management.Instances;
 using EdFi.Ods.AdminApp.Management.OdsInstanceServices;
 using EdFi.Ods.AdminApp.Web.Infrastructure;

@@ -4,7 +4,7 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using System;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -21,7 +21,6 @@ using EdFi.Ods.AdminApp.Web.Helpers;
 using EdFi.Ods.AdminApp.Web.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -41,9 +40,9 @@ using NUglify.Css;
 using NUglify.JavaScript;
 using System.Security.Claims;
 using System.Linq;
-using EdFi.Admin.DataAccess.DbConfigurations;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http.Features;
+using System.Data;
 
 namespace EdFi.Ods.AdminApp.Web
 {
@@ -62,7 +61,6 @@ namespace EdFi.Ods.AdminApp.Web
             var executingAssembly = Assembly.GetExecutingAssembly();
 
             var databaseEngine = Configuration["AppSettings:DatabaseEngine"];
-            DbConfiguration.SetConfiguration(new DatabaseEngineDbConfiguration(Common.Configuration.DatabaseEngine.TryParseEngine(databaseEngine)));
 
             var identitySettings = new IdentitySettings();
             Configuration.GetSection("IdentitySettings").Bind(identitySettings);
@@ -327,7 +325,7 @@ namespace EdFi.Ods.AdminApp.Web
             if (IsSqlServer(databaseEngine))
                 options.UseSqlServer(connectionString);
             else
-                options.UseNpgsql(connectionString);
+                options.UseNpgsql(connectionString).UseLowerCaseNamingConvention();
         }
 
         private static bool IsSqlServer(string databaseEngine) => "SqlServer".Equals(databaseEngine, StringComparison.InvariantCultureIgnoreCase);

@@ -4,10 +4,10 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using EdFi.Security.DataAccess.Contexts;
 using EdFi.Security.DataAccess.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
 {
@@ -25,18 +25,19 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
             var newClaimSet = new Security.DataAccess.Models.ClaimSet
             {
                 ClaimSetName = claimSet.Name,
-                Application = _context.Applications.Single(),
+                Application = _context.Applications.AsEnumerable().First(),
                 IsEdfiPreset = false,
                 ForApplicationUseOnly = false
             };
 
             var originalResourceClaims =
                 _context.ClaimSetResourceClaimActions
-                    .Where(x => x.ClaimSet.ClaimSetId == claimSet.OriginalId)
                     .Include(x => x.ResourceClaim)
                     .Include(x => x.Action)
-                    .Include(x => x.AuthorizationStrategyOverrides.Select(x => x.AuthorizationStrategy))
+                    .Include(x => x.AuthorizationStrategyOverrides).ThenInclude(o => o.AuthorizationStrategy)
+                    .Where(x => x.ClaimSet.ClaimSetId == claimSet.OriginalId)
                     .ToList();
+
             _context.ClaimSets.Add(newClaimSet);
 
             foreach (var resourceClaim in originalResourceClaims.ToList())

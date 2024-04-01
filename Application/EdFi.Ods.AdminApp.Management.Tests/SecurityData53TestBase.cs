@@ -2,7 +2,6 @@
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +9,7 @@ using AutoMapper;
 using EdFi.Ods.AdminApp.Management.Api.Automapper;
 using EdFi.SecurityCompatiblity53.DataAccess.Contexts;
 using EdFi.SecurityCompatiblity53.DataAccess.Models;
+using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 
 using Action = EdFi.SecurityCompatiblity53.DataAccess.Models.Action;
@@ -31,7 +31,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests
 
         protected override SqlServerSecurityContext CreateDbContext()
         {
-            return new SqlServerSecurityContext(ConnectionString);
+            var builder = new DbContextOptionsBuilder();
+            builder.UseSqlServer(ConnectionString);
+            DbContextOptions dbContextOptions = builder.Options;
+            return new SqlServerSecurityContext(dbContextOptions);
         }
 
         // This bool controls whether or not to run SecurityContext initialization
@@ -43,7 +46,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
         {
             if (SeedSecurityContextOnFixtureSetup)
             {
-                SetupContext.Database.Initialize(true);
+                SetupContext.Database.Migrate();
             }
         }
 
@@ -81,7 +84,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
                                   TestContext.Applications.Add(new Application
                                   {
                                       ApplicationName = "Ed-Fi ODS API"
-                                  });
+                                  }).Entity;
                 return application;
             }
 
@@ -92,7 +95,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
                              {
                                  ActionName = actionName,
                                  ActionUri = $"http://ed-fi.org/odsapi/actions/{actionName}"
-                             });
+                             }).Entity;
 
                 return action;
             }
@@ -109,7 +112,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
                                                     DisplayName = displayName,
                                                     AuthorizationStrategyName = authorizationStrategyName,
                                                     Application = application
-                                                });
+                                                }).Entity;
 
                 return authorizationStrategy;
             }
@@ -126,7 +129,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
                         ResourceName = resourceName,
                         ClaimName = $"http://ed-fi.org/ods/identity/claims/domains/{resourceName}",
                         ParentResourceClaim = null
-                    });
+                    }).Entity;
 
                 return resourceClaim;
             }
@@ -296,7 +299,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
                 var getResourcesByClaimSetIdQuery = new ClaimSetEditorTypes.GetResourcesByClaimSetIdQuery(new StubOdsSecurityModelVersionResolver.V3_5(),
                     new ClaimSetEditorTypes.GetResourcesByClaimSetIdQueryV53Service(securityContext, Mapper()), null);
                 list = getResourcesByClaimSetIdQuery.AllResources(securityContextClaimSetId).ToList();
-            } 
+            }
             return list;
         }
 

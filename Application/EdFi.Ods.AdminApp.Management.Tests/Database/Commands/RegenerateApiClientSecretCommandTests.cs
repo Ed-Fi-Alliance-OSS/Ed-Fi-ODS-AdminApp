@@ -14,6 +14,7 @@ using NUnit.Framework;
 using Shouldly;
 using VendorUser = EdFi.Admin.DataAccess.Models.User;
 using static EdFi.Ods.AdminApp.Management.Tests.Testing;
+using Microsoft.EntityFrameworkCore;
 
 namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
 {
@@ -107,7 +108,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Commands
                 result = command.Execute(application.ApplicationId);
             });
 
-            var updatedApiClient = Transaction(usersContext => usersContext.Clients.Single(c => c.ApiClientId == apiClient.ApiClientId));
+            var updatedApiClient = Transaction(usersContext => usersContext.Clients
+                .Single(c => c.ApiClientId == apiClient.ApiClientId));
 
             result.Key.ShouldBe(orignalKey);
             result.Secret.ShouldNotBe(originalSecret);

@@ -2,11 +2,12 @@
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
+extern alias SecurityCompatiblity53;
 
 using System.Collections.Generic;
 using System.Linq;
 using EdFi.Admin.DataAccess.Contexts;
-using EdFi.SecurityCompatiblity53.DataAccess.Contexts;
+using SecurityCompatiblity53::EdFi.SecurityCompatiblity53.DataAccess.Contexts;
 
 namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
 {
@@ -60,7 +61,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
             foreach (var claimSet in claimSets)
             {
                 var applicationsCount = applicationsCounts
-                    .SingleOrDefault(x => x.ClaimSetName == claimSet.Name)
+                    .AsEnumerable().FirstOrDefault(x => x.ClaimSetName == claimSet.Name)
                     ?.ApplicationsCount;
                 claimSet.IsEditable = !CloudOdsAdminApp.DefaultClaimSets.Contains(claimSet.Name);
                 claimSet.ApplicationsCount = applicationsCount.GetValueOrDefault();

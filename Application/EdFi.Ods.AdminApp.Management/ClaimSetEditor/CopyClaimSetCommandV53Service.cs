@@ -2,13 +2,14 @@
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
+extern alias SecurityCompatiblity53;
 
-using System.Data.Entity;
 using System.Linq;
-using EdFi.SecurityCompatiblity53.DataAccess.Contexts;
-using EdFi.SecurityCompatiblity53.DataAccess.Models;
+using Microsoft.EntityFrameworkCore;
+using SecurityCompatiblity53::EdFi.SecurityCompatiblity53.DataAccess.Contexts;
+using SecurityCompatiblity53::EdFi.SecurityCompatiblity53.DataAccess.Models;
 
-using SecurityClaimSet = EdFi.SecurityCompatiblity53.DataAccess.Models.ClaimSet;
+using SecurityClaimSet = SecurityCompatiblity53::EdFi.SecurityCompatiblity53.DataAccess.Models.ClaimSet;
 
 namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
 {
@@ -26,15 +27,15 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
             var newClaimSet = new SecurityClaimSet
             {
                 ClaimSetName = claimSet.Name,
-                Application = _context.Applications.Single()
+                Application = _context.Applications.AsEnumerable().First()
             };
 
             var originalResourceClaims =
                 _context.ClaimSetResourceClaims
-                    .Where(x => x.ClaimSet.ClaimSetId == claimSet.OriginalId)
                     .Include(x => x.ResourceClaim)
                     .Include(x => x.Action)
                     .Include(x => x.AuthorizationStrategyOverride)
+                    .Where(x => x.ClaimSet.ClaimSetId == claimSet.OriginalId)
                     .ToList();
             _context.ClaimSets.Add(newClaimSet);
 
