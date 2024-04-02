@@ -29,18 +29,20 @@ namespace EdFi.Ods.AdminApp.Management.Database.Queries
         public List<Vendor> Execute()
         {
             return _context.Vendors
-                .Include(x => x.Applications)
                 .Include(x => x.Users)
+                    .ThenInclude(o => o.ApiClients)
                 .Include(x => x.VendorNamespacePrefixes)
+                .Include(x => x.Applications)
+                    .ThenInclude(o => o.OdsInstance)
                 .OrderBy(v => v.VendorName).Where(v => !VendorExtensions.ReservedNames.Contains(v.VendorName.Trim())).ToList();
         }
 
         public List<Vendor> Execute(int offset, int limit)
         {
             return _context.Vendors
-                .Include(x => x.Applications)
                 .Include(x => x.Users)
                 .Include(x => x.VendorNamespacePrefixes)
+                .Include(x => x.Applications).ThenInclude(o => o.OdsInstance)
                 .OrderBy(v => v.VendorName).Where(v => !VendorExtensions.ReservedNames.Contains(v.VendorName.Trim())).Skip(offset).Take(limit).ToList();
         }
     }

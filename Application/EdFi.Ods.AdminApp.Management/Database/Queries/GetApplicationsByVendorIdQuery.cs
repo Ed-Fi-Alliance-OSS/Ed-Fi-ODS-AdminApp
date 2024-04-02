@@ -28,6 +28,7 @@ namespace EdFi.Ods.AdminApp.Management.Database.Queries
                 .Include(x => x.ApplicationEducationOrganizations)
                 .Include(x => x.OdsInstance)
                 .Include(x => x.Profiles)
+                .Include(x => x.Vendor)
                 .Where(a => a.Vendor != null && a.Vendor.VendorId == vendorid)
                 .ToList();
 

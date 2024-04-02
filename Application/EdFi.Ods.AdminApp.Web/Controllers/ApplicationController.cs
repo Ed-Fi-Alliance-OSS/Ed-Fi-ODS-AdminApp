@@ -125,7 +125,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         private void FilterInstanceSpecificApplications(VendorApplicationsModel vendor)
         {
             var applications = vendor.Applications.Where(x =>
-                    x.OdsInstanceName.Equals(_instanceContext.Name, StringComparison.InvariantCultureIgnoreCase))
+                    x.OdsInstanceName.ToUpper() == _instanceContext.Name.ToUpper())
                 .ToList();
             vendor.Applications = applications;
         }
