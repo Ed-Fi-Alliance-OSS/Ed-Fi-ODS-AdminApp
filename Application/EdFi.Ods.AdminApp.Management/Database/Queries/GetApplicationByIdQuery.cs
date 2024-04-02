@@ -27,6 +27,7 @@ namespace EdFi.Ods.AdminApp.Management.Database.Queries
                 .Include(x => x.ApplicationEducationOrganizations)
                 .Include(x => x.OdsInstance)
                 .Include(x => x.Profiles)
+                .Include(x => x.Vendor)
                 .AsEnumerable().FirstOrDefault(app => app.ApplicationId == applicationId);
             if (application == null)
             {
