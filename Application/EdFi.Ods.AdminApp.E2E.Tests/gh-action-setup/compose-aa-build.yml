@@ -34,9 +34,12 @@ services:
       - vol-db-admin:/var/lib/postgresql/data
     restart: always
     container_name: ed-fi-db-admin
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready  -U ${POSTGRES_USER}"]
+      start_period: "60s"
+      retries: 3
 
   nginx:
-    image: edfialliance/ods-api-web-gateway:${TAG}
     build:
       context: ../../../Docker/Settings/gateway
       dockerfile: Dockerfile
@@ -56,7 +59,7 @@ services:
       - adminapp
 
   api:
-    image: edfialliance/ods-api-web-api:${TAG}
+    image: edfialliance/ods-api-web-api:v2.3.2
     environment:
       POSTGRES_USER: "${POSTGRES_USER}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
@@ -117,8 +120,6 @@ services:
   pb-admin:
     image: bitnami/pgbouncer
     environment:
-      DATABASES: "* = host = db-admin port=5432 user=${POSTGRES_USER} password=${POSTGRES_PASSWORD}"
-      PGBOUNCER_LISTEN_PORT: "${PGBOUNCER_LISTEN_PORT:-6432}"
       PGBOUNCER_DATABASE: "*"
       PGBOUNCER_PORT: "${PGBOUNCER_LISTEN_PORT:-6432}"
       POSTGRESQL_USER: "${POSTGRES_USER}"
@@ -136,8 +137,6 @@ services:
   pb-ods:
     image: bitnami/pgbouncer
     environment:
-      DATABASES: "* = host = db-ods port=5432 user=${POSTGRES_USER} password=${POSTGRES_PASSWORD}"
-      PGBOUNCER_LISTEN_PORT: "${PGBOUNCER_LISTEN_PORT:-6432}"
       PGBOUNCER_DATABASE: "*"
       PGBOUNCER_PORT: "${PGBOUNCER_LISTEN_PORT:-6432}"
       POSTGRESQL_USER: "${POSTGRES_USER}"
@@ -162,4 +161,3 @@ volumes:
   adminapp-bulk-hashcache:
     driver: local
     name: vol-adminapp-bulk-hashcache
-
