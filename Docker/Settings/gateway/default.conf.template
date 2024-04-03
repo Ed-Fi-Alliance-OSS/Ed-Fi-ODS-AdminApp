@@ -32,7 +32,7 @@ server {
 
     location /${ADMINAPP_VIRTUAL_NAME} {
         client_max_body_size 20M;
-        proxy_pass  http://adminapp;
+        proxy_pass  http://adminapp:8080;
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header X-Forwarded-Host $host;
         proxy_set_header X-Forwarded-Port 443;
