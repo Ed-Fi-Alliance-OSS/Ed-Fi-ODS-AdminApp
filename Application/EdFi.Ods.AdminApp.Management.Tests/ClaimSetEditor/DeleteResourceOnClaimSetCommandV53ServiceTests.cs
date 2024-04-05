@@ -66,7 +66,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                 securityContext.ClaimSetResourceClaims.Where(x => x.ClaimSet.ClaimSetId == testClaimSet.ClaimSetId && x.ResourceClaim.ParentResourceClaimId == null);
             resourceClaimsForClaimSet.Count().ShouldBe(parentResourcesOnClaimSetOriginalCount - 1);
 
-            var resultResourceClaim = resourceClaimsForClaimSet.SingleOrDefault(x => x.ResourceClaim.ResourceClaimId == testResourceToDelete.ResourceClaimId);
+            var resultResourceClaim = resourceClaimsForClaimSet.AsEnumerable().FirstOrDefault(x => x.ResourceClaim.ResourceClaimId == testResourceToDelete.ResourceClaimId);
 
             resultResourceClaim.ShouldBeNull();
         }
@@ -114,7 +114,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
                 securityContext.ClaimSetResourceClaims.Where(x => x.ClaimSet.ClaimSetId == testClaimSet.ClaimSetId && x.ResourceClaim.ParentResourceClaimId == testParentResource.ResourceClaimId);
             resultChildResources.Count().ShouldBe(childResourcesForParentOriginalCount - 1);
 
-            var resultResourceClaim = resultChildResources.SingleOrDefault(x => x.ResourceClaim.ResourceClaimId == testChildResourceToDelete.ResourceClaimId);
+            var resultResourceClaim = resultChildResources.AsEnumerable().FirstOrDefault(x => x.ResourceClaim.ResourceClaimId == testChildResourceToDelete.ResourceClaimId);
 
             resultResourceClaim.ShouldBeNull();
         }

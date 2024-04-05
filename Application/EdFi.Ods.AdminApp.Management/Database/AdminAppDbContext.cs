@@ -36,7 +36,7 @@ namespace EdFi.Ods.AdminApp.Management.Database
 
         public TEntity EnsureSingle<TEntity>() where TEntity : Entity, new()
         {
-            var single = Set<TEntity>().SingleOrDefault();
+            var single = Set<TEntity>().AsEnumerable().FirstOrDefault();
 
             if (single == null)
             {

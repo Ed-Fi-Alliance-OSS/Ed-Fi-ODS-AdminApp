@@ -9,6 +9,7 @@ using EdFi.Ods.AdminApp.Management.Helpers;
 using EdFi.Common.Database;
 using EdFi.Common.Configuration;
 
+
 namespace EdFi.Ods.AdminApp.Management.Services
 {
     public interface IConnectionStringBuilderAdapterFactory
@@ -24,7 +25,7 @@ namespace EdFi.Ods.AdminApp.Management.Services
 
         public IDbConnectionStringBuilderAdapter Get()
         {
-            var isPostgreSql = ApiConfigurationConstants.PostgreSQL.Equals(_appSettings.Value.DatabaseEngine,
+            var isPostgreSql = EdFi.Common.Configuration.ApiConfigurationConstants.PostgreSQL.Equals(_appSettings.Value.DatabaseEngine,
             StringComparison.InvariantCultureIgnoreCase);
 
             if (isPostgreSql)

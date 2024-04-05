@@ -2,9 +2,9 @@
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
-
 using System.Threading.Tasks;
 using EdFi.SecurityCompatiblity53.DataAccess.Contexts;
+using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using Respawn;
 
@@ -36,7 +36,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
             }
         };
 
-        protected virtual string ConnectionString => TestContext.Database.Connection.ConnectionString;
+        protected virtual string ConnectionString => TestContext.Database.GetConnectionString();
 
         protected virtual void AdditionalFixtureSetup()
         {
@@ -87,7 +87,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
         {
             foreach (var entity in entities)
             {
-                TestContext.Set(entity.GetType()).Add(entity);
+                TestContext.Add(entity);
             }
 
             TestContext.SaveChanges();

@@ -2,8 +2,9 @@
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
+extern alias SecurityCompatiblity53;
 
-using SecurityAction = EdFi.SecurityCompatiblity53.DataAccess.Models.Action;
+using SecurityAction = SecurityCompatiblity53::EdFi.SecurityCompatiblity53.DataAccess.Models.Action;
 
 namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor.Extensions
 {

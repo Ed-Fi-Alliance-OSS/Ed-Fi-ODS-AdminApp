@@ -2,11 +2,12 @@
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
+extern alias SecurityCompatiblity53;
 
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using EdFi.Ods.AdminApp.Management.Configuration.Claims;
-using EdFi.SecurityCompatiblity53.DataAccess.Contexts;
+using SecurityCompatiblity53::EdFi.SecurityCompatiblity53.DataAccess.Contexts;
 
 namespace EdFi.Ods.AdminApp.Management
 {
@@ -30,7 +31,7 @@ namespace EdFi.Ods.AdminApp.Management
                 .Include(x => x.Action)
                 .Include(x => x.ResourceClaim)
                 .Include(x => x.AuthorizationStrategy)
-                .SingleOrDefault(x =>
+                .AsEnumerable().FirstOrDefault(x =>
                     x.Action.ActionName == actionType && x.ResourceClaim.ResourceName == resourceName);
 
             if (claimAuthMetadata == null) return;

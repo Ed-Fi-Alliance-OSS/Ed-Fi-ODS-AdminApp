@@ -1,20 +1,23 @@
-﻿// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: Apache-2.0
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using System.Collections.Generic;
-using System.Data.Entity.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Query;
+using System;
+using EdFi.Common.Extensions;
 
 namespace EdFi.Ods.AdminApp.Management.Tests
 {
     //Classes to assist with mocking a DBSet -- see https://msdn.microsoft.com/en-us/library/dn314429.aspx
 
-    internal class TestDbAsyncQueryProvider<TEntity> : IDbAsyncQueryProvider
+    internal class TestDbAsyncQueryProvider<TEntity> : IAsyncQueryProvider
     {
         private readonly IQueryProvider _inner;
 
@@ -43,18 +46,25 @@ namespace EdFi.Ods.AdminApp.Management.Tests
             return _inner.Execute<TResult>(expression);
         }
 
-        public Task<object> ExecuteAsync(Expression expression, CancellationToken cancellationToken)
+        public TResult ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(Execute(expression));
-        }
+            var expectedResultType = typeof(TResult).GetGenericArguments()[0];
+            var executionResult = typeof(IQueryProvider)
+                                 .GetMethod(
+                                      name: nameof(IQueryProvider.Execute),
+                                      genericParameterCount: 1,
+                                      types: new[] { typeof(Expression) })
+                                 .MakeGenericMethod(expectedResultType)
+                                 .Invoke(this, new[] { expression });
 
-        public Task<TResult> ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken)
-        {
-            return Task.FromResult(Execute<TResult>(expression));
+            return (TResult)typeof(Task).GetMethod(nameof(Task.FromResult))
+                                        ?.MakeGenericMethod(expectedResultType)
+                                         .Invoke(null, new[] { executionResult });
         }
     }
 
-    internal class TestDbAsyncEnumerable<T> : EnumerableQuery<T>, IDbAsyncEnumerable<T>, IQueryable<T>
+
+    internal class TestDbAsyncEnumerable<T> : EnumerableQuery<T>, IAsyncEnumerable<T>, IQueryable<T>
     {
         public TestDbAsyncEnumerable(IEnumerable<T> enumerable)
             : base(enumerable)
@@ -64,14 +74,19 @@ namespace EdFi.Ods.AdminApp.Management.Tests
             : base(expression)
         { }
 
-        public IDbAsyncEnumerator<T> GetAsyncEnumerator()
+        public IAsyncEnumerator<T> GetAsyncEnumerator()
         {
             return new TestDbAsyncEnumerator<T>(this.AsEnumerable().GetEnumerator());
         }
 
-        IDbAsyncEnumerator IDbAsyncEnumerable.GetAsyncEnumerator()
+        IAsyncEnumerator<T> IAsyncEnumerable<T>.GetAsyncEnumerator(CancellationToken cancellationToken)
         {
-            return GetAsyncEnumerator();
+            return GetAsyncEnumerator(cancellationToken);
+        }
+
+        public IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        {
+            return new TestDbAsyncEnumerator<T>(this.AsEnumerable().GetEnumerator());
         }
 
         IQueryProvider IQueryable.Provider
@@ -80,7 +95,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
         }
     }
 
-    internal class TestDbAsyncEnumerator<T> : IDbAsyncEnumerator<T>
+    internal class TestDbAsyncEnumerator<T> : IAsyncEnumerator<T>
     {
         private readonly IEnumerator<T> _inner;
 
@@ -94,19 +109,24 @@ namespace EdFi.Ods.AdminApp.Management.Tests
             _inner.Dispose();
         }
 
-        public Task<bool> MoveNextAsync(CancellationToken cancellationToken)
+        public ValueTask<bool> MoveNextAsync()
         {
-            return Task.FromResult(_inner.MoveNext());
+            try
+            {
+                return new ValueTask<bool>(_inner.MoveNext());
+            }
+            catch (Exception ex)
+            {
+                return new ValueTask<bool>(Task.FromException<bool>(ex));
+            }
         }
 
-        public T Current
+        public ValueTask DisposeAsync()
         {
-            get { return _inner.Current; }
+            _inner.Dispose();
+            return new ValueTask(Task.CompletedTask);
         }
 
-        object IDbAsyncEnumerator.Current
-        {
-            get { return Current; }
-        }
+        public T Current => _inner.Current;
     }
 }

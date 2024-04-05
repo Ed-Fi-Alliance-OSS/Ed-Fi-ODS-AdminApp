@@ -3,6 +3,7 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
+using System.Threading;
 using System.Threading.Tasks;
 using EdFi.Admin.DataAccess.Contexts;
 using EdFi.Ods.AdminApp.Management.Configuration.Claims;
@@ -38,10 +39,11 @@ namespace EdFi.Ods.AdminApp.Management.OdsInstanceServices
         public async Task CompleteSetup(OdsInstanceRegistration odsInstanceRegistration, CloudOdsClaimSet claimSet,
             ApiMode apiMode)
         {
+            CancellationToken _cancellationToken = new CancellationToken();
             await AddOdsInstanceRegistration(odsInstanceRegistration);
             await CreateAndSaveApiKeyAndSecret(odsInstanceRegistration, claimSet, apiMode);
             _firstTimeSetupService.EnsureAdminDatabaseInitialized();
-            await _usersContext.SaveChangesAsync();
+            await _usersContext.SaveChangesAsync(_cancellationToken);
         }
 
         private async Task CreateAndSaveApiKeyAndSecret(OdsInstanceRegistration odsInstanceRegistration, CloudOdsClaimSet claimSet, ApiMode mode)

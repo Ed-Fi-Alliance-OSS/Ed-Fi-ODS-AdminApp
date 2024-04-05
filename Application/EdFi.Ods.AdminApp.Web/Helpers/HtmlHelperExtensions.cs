@@ -2,6 +2,7 @@
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
+extern alias SecurityCompatiblity53;
 
 using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Web.Infrastructure.Tags;
@@ -21,7 +22,7 @@ using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Property = EdFi.Ods.AdminApp.Web.Infrastructure.Property;
-using Preconditions = EdFi.Common.Preconditions;
+using Preconditions = SecurityCompatiblity53::EdFi.Common.Preconditions;
 using EdFi.Ods.AdminApp.Web.Display.Pagination;
 using log4net;
 using Microsoft.AspNetCore.WebUtilities;

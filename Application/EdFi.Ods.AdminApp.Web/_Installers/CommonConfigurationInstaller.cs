@@ -2,6 +2,7 @@
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
+extern alias SecurityCompatiblity53;
 
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,6 @@ using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Management.Api;
 using EdFi.Ods.AdminApp.Management.Configuration.Application;
 using EdFi.Ods.AdminApp.Management.Helpers;
-using EdFi.Ods.AdminApp.Web.Hubs;
 using EdFi.Ods.AdminApp.Web.Infrastructure;
 using EdFi.Common.Security;
 using EdFi.Ods.AdminApp.Management.ClaimSetEditor;
@@ -25,7 +25,7 @@ using log4net;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace EdFi.Ods.AdminApp.Web._Installers
 {
@@ -35,34 +35,34 @@ namespace EdFi.Ods.AdminApp.Web._Installers
 
         public void Install(IServiceCollection services, AppSettings appSettings)
         {
-            services.AddScoped<SecurityCompatiblity53.DataAccess.Contexts.ISecurityContext>(x =>
+            services.AddScoped<SecurityCompatiblity53::EdFi.SecurityCompatiblity53.DataAccess.Contexts.ISecurityContext>(x =>
             {
                 var connectionStrings = x.GetService<IOptions<ConnectionStrings>>();
-
+                DbContextOptions dbContextOptions = GetDbContextOptions(appSettings, connectionStrings.Value.Security);
                 if (appSettings.DatabaseEngine.EqualsIgnoreCase("SqlServer"))
-                    return new SecurityCompatiblity53.DataAccess.Contexts.SqlServerSecurityContext(connectionStrings.Value.Security);
+                    return new SecurityCompatiblity53::EdFi.SecurityCompatiblity53.DataAccess.Contexts.SqlServerSecurityContext(dbContextOptions);
 
-                return new SecurityCompatiblity53.DataAccess.Contexts.PostgresSecurityContext(connectionStrings.Value.Security);
+                return new SecurityCompatiblity53::EdFi.SecurityCompatiblity53.DataAccess.Contexts.PostgresSecurityContext(dbContextOptions);
             });
 
             services.AddScoped<ISecurityContext>(x =>
             {
                 var connectionStrings = x.GetService<IOptions<ConnectionStrings>>();
-
+                DbContextOptions dbContextOptions = GetDbContextOptions(appSettings, connectionStrings.Value.Security);
                 if (appSettings.DatabaseEngine.EqualsIgnoreCase("SqlServer"))
-                    return new SqlServerSecurityContext(connectionStrings.Value.Security);
+                    return new SqlServerSecurityContext(dbContextOptions);
 
-                return new PostgresSecurityContext(connectionStrings.Value.Security);
+                return new PostgresSecurityContext(dbContextOptions);
             });
 
             services.AddScoped<IUsersContext>(x =>
             {
                 var connectionStrings = x.GetService<IOptions<ConnectionStrings>>();
-
+                DbContextOptions dbContextOptions = GetDbContextOptions(appSettings, connectionStrings.Value.Admin);
                 if (appSettings.DatabaseEngine.EqualsIgnoreCase("SqlServer"))
-                    return new SqlServerUsersContext(connectionStrings.Value.Admin);
+                    return new SqlServerUsersContext(dbContextOptions);
 
-                return new PostgresUsersContext(connectionStrings.Value.Admin);
+                return new PostgresUsersContext(dbContextOptions);
             });
 
             services.AddSingleton(TokenCache.DefaultShared);
@@ -143,6 +143,18 @@ namespace EdFi.Ods.AdminApp.Web._Installers
         private static IServiceProvider ServiceProviderFunc(IServiceCollection collection)
         {
             return collection.BuildServiceProvider();
+        }
+
+        protected static DbContextOptions GetDbContextOptions(AppSettings appSettings, string connectionString)
+        {
+            var builder = new DbContextOptionsBuilder();
+            if (appSettings.DatabaseEngine.EqualsIgnoreCase("SqlServer")) { 
+                builder.UseSqlServer(connectionString);
+            }
+            else {
+                builder.UseNpgsql(connectionString).UseLowerCaseNamingConvention(); ;
+            }
+            return builder.Options;
         }
     }
 }

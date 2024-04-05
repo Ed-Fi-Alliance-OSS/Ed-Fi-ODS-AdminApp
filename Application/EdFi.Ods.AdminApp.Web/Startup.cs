@@ -4,7 +4,7 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using System;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -18,11 +18,9 @@ using EdFi.Ods.AdminApp.Management.Helpers;
 using EdFi.Ods.AdminApp.Web._Installers;
 using EdFi.Ods.AdminApp.Web.ActionFilters;
 using EdFi.Ods.AdminApp.Web.Helpers;
-using EdFi.Ods.AdminApp.Web.Hubs;
 using EdFi.Ods.AdminApp.Web.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -42,9 +40,9 @@ using NUglify.Css;
 using NUglify.JavaScript;
 using System.Security.Claims;
 using System.Linq;
-using EdFi.Admin.DataAccess.DbConfigurations;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http.Features;
+using System.Data;
 
 namespace EdFi.Ods.AdminApp.Web
 {
@@ -57,13 +55,12 @@ namespace EdFi.Ods.AdminApp.Web
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        // This method gets called by the runtime. Use this method to add services to the container
         public void ConfigureServices(IServiceCollection services)
         {
             var executingAssembly = Assembly.GetExecutingAssembly();
 
             var databaseEngine = Configuration["AppSettings:DatabaseEngine"];
-            DbConfiguration.SetConfiguration(new DatabaseEngineDbConfiguration(Common.Configuration.DatabaseEngine.TryParseEngine(databaseEngine)));
 
             var identitySettings = new IdentitySettings();
             Configuration.GetSection("IdentitySettings").Bind(identitySettings);
@@ -119,7 +116,7 @@ namespace EdFi.Ods.AdminApp.Web
                     pipeline.AddJavaScriptBundle("/bundles/bootstrap-multiselect.min.js", minifyJsSettings, "/Scripts/bootstrap-multiselect.js");
                     pipeline.AddJavaScriptBundle("/bundles/jquery-multiselect.min.js", minifyJsSettings, "/Scripts/jquery-multiselect.js");
                     pipeline.AddJavaScriptBundle("/bundles/modernizr.min.js", minifyJsSettings, "/Scripts/modernizr-2.8.3.js");
-                    pipeline.AddJavaScriptBundle("/bundles/site.min.js", minifyJsSettings, "/Scripts/site.js", "/Scripts/site-form-handlers.js", "/Scripts/signalr-progress.js");
+                    pipeline.AddJavaScriptBundle("/bundles/site.min.js", minifyJsSettings, "/Scripts/site.js", "/Scripts/site-form-handlers.js");
                     pipeline.AddJavaScriptBundle("/bundles/claimset.min.js", minifyJsSettings, "/Scripts/resource-editor.js");
                     pipeline.AddJavaScriptBundle("/bundles/authstrategy.min.js", minifyJsSettings, "/Scripts/auth-editor.js");
                 });
@@ -131,8 +128,6 @@ namespace EdFi.Ods.AdminApp.Web
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.Configure<IdentitySettings>(Configuration.GetSection("IdentitySettings"));
             services.Configure<ConnectionStrings>(Configuration.GetSection("ConnectionStrings"));
-
-            services.AddSignalR();
 
             services.AddHttpClient();
 
@@ -330,7 +325,7 @@ namespace EdFi.Ods.AdminApp.Web
             if (IsSqlServer(databaseEngine))
                 options.UseSqlServer(connectionString);
             else
-                options.UseNpgsql(connectionString);
+                options.UseNpgsql(connectionString).UseLowerCaseNamingConvention();
         }
 
         private static bool IsSqlServer(string databaseEngine) => "SqlServer".Equals(databaseEngine, StringComparison.InvariantCultureIgnoreCase);

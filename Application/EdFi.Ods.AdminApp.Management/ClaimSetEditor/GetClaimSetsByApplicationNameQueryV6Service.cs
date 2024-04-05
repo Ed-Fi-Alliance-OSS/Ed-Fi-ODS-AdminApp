@@ -61,7 +61,7 @@ namespace EdFi.Ods.AdminApp.Management.ClaimSetEditor
             foreach (var claimSet in claimSets)
             {
                 var applicationsCount = applicationsCounts
-                    .SingleOrDefault(x => x.ClaimSetName == claimSet.Name)
+                    .AsEnumerable().FirstOrDefault(x => x.ClaimSetName == claimSet.Name)
                     ?.ApplicationsCount;
                 claimSet.ApplicationsCount = applicationsCount.GetValueOrDefault();
             }

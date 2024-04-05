@@ -27,7 +27,7 @@ namespace EdFi.Ods.AdminApp.Management.User
             };
 
             var currentUserRole =
-                _identity.UserRoles.SingleOrDefault(x => x.UserId == model.UserId);
+                _identity.UserRoles.AsEnumerable().FirstOrDefault(x => x.UserId == model.UserId);
 
             if (currentUserRole != null)
             {

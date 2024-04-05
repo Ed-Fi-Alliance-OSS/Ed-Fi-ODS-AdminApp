@@ -2,7 +2,6 @@
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
-
 using System;
 using System.Linq;
 using NUnit.Framework;
@@ -49,7 +48,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.ClaimSetEditor
             var command = new DeleteClaimSetCommandV53Service(securityContext);
             command.Execute(deleteModel.Object);
 
-            var deletedClaimSet = securityContext.ClaimSets.SingleOrDefault(x => x.ClaimSetId == testClaimSetToDelete.ClaimSetId);
+            var deletedClaimSet = securityContext.ClaimSets.AsEnumerable().FirstOrDefault(x => x.ClaimSetId == testClaimSetToDelete.ClaimSetId);
             deletedClaimSet.ShouldBeNull();
             var deletedClaimSetResourceActions = securityContext.ClaimSetResourceClaims.Count(x => x.ClaimSet.ClaimSetId == testClaimSetToDelete.ClaimSetId);
             deletedClaimSetResourceActions.ShouldBe(0);

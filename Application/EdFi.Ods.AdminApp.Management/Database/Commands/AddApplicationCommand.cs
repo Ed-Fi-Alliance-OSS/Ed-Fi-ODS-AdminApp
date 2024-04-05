@@ -8,8 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using EdFi.Admin.DataAccess.Contexts;
 using EdFi.Admin.DataAccess.Models;
+using Microsoft.EntityFrameworkCore;
 using VendorUser = EdFi.Admin.DataAccess.Models.User;
-
 namespace EdFi.Ods.AdminApp.Management.Database.Commands
 {
     public interface IAddApplicationCommand
@@ -31,20 +31,21 @@ namespace EdFi.Ods.AdminApp.Management.Database.Commands
         public AddApplicationResult Execute(IAddApplicationModel applicationModel)
         {
             var profile = applicationModel.ProfileId.HasValue
-                ? _usersContext.Profiles.SingleOrDefault(p => p.ProfileId == applicationModel.ProfileId.Value)
+                ? _usersContext.Profiles
+                    .Include(x => x.Applications)
+                    .AsEnumerable().FirstOrDefault(p => p.ProfileId == applicationModel.ProfileId.Value)
                 : null;
 
-            var vendor = _usersContext.Vendors.Single(v => v.VendorId == applicationModel.VendorId);            
+            var vendor = _usersContext.Vendors
+                .Include(x => x.Applications)
+                .Include(x => x.Users)
+                .Include(x => x.VendorNamespacePrefixes)
+                .AsEnumerable().First(v => v.VendorId == applicationModel.VendorId);            
 
-            var odsInstance = _usersContext.OdsInstances.FirstOrDefault(x =>
+            var odsInstance = _usersContext.OdsInstances.AsEnumerable().FirstOrDefault(x =>
                 x.Name.Equals(_instanceContext.Name, StringComparison.InvariantCultureIgnoreCase));
 
-            var user = new VendorUser
-            {
-                Email = "",
-                FullName = applicationModel.ApplicationName,
-                Vendor = vendor
-            };
+            var user = vendor.Users.FirstOrDefault();
 
             var apiClient = new ApiClient(true)
             {
@@ -108,3 +109,4 @@ namespace EdFi.Ods.AdminApp.Management.Database.Commands
         public string Secret { get; set; }
     }
 }
+

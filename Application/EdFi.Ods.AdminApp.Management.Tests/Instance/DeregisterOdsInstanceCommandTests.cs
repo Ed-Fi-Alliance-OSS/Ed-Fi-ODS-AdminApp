@@ -13,12 +13,16 @@ using EdFi.Ods.AdminApp.Management.Database.Models;
 using EdFi.Ods.AdminApp.Management.Instances;
 using EdFi.Ods.AdminApp.Management.User;
 using EdFi.Ods.AdminApp.Web.Models.ViewModels.OdsInstances;
+using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using Shouldly;
 using static EdFi.Ods.AdminApp.Management.Tests.Testing;
 using static EdFi.Ods.AdminApp.Management.Tests.Instance.InstanceTestSetup;
 using static EdFi.Ods.AdminApp.Management.Tests.User.UserTestSetup;
 using static EdFi.Ods.AdminApp.Management.Tests.TestingHelper;
+using Polly;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace EdFi.Ods.AdminApp.Management.Tests.Instance
 {
@@ -32,7 +36,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Instance
             var testUser1 = users[0];
             var testUser2 = users[1];
 
-            var testInstances = SetupOdsInstanceRegistrations(2).OrderBy(x => x.Name).ToList();
+            var testInstances = SetupOdsInstanceRegistrations(2)
+                .OrderBy(x => x.Name).ToList();
             var testInstanceToBeDeregistered = testInstances[0];
             var testInstanceNotToBeDeregistered = testInstances[1];
 
@@ -68,10 +73,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Instance
 
             Scoped<DeregisterOdsInstanceCommand>(command => command.Execute(deregisterModel));
 
-            var deregisteredOdsInstance = Transaction(database => database.OdsInstanceRegistrations.SingleOrDefault(x => x.Id == testInstanceToBeDeregistered.Id));
+            var deregisteredOdsInstance = Transaction(database => database.OdsInstanceRegistrations.AsEnumerable().FirstOrDefault(x => x.Id == testInstanceToBeDeregistered.Id));
             deregisteredOdsInstance.ShouldBeNull();
 
-            var notDeregisteredOdsInstance = Transaction(database => database.OdsInstanceRegistrations.SingleOrDefault(x => x.Id == testInstanceNotToBeDeregistered.Id));
+            var notDeregisteredOdsInstance = Transaction(database => database.OdsInstanceRegistrations.AsEnumerable().FirstOrDefault(x => x.Id == testInstanceNotToBeDeregistered.Id));
             notDeregisteredOdsInstance.ShouldNotBeNull();
 
             ShouldBeNull<SecretConfiguration>(x => x.OdsInstanceRegistrationId == testInstanceToBeDeregistered.Id);
@@ -108,7 +113,6 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Instance
         {
             var odsInstances = odsInstanceRegistrations.Select(x => new OdsInstance
             {
-                OdsInstanceId = x.Id,
                 Name = x.Name,
                 InstanceType = "Ods",
                 IsExtended = false,
@@ -154,12 +158,11 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Instance
                 {
                     database.OdsInstances.Add(odsInstance);
                 }
-
+                database.SaveChanges();
                 foreach (var application in applications)
                 {
                     database.Applications.Add(application);
                 }
-
                 database.SaveChanges();
             });
         }
@@ -178,9 +181,9 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Instance
             {
                 var validator = new DeregisterOdsInstanceModelValidator(database);
                 validator.ShouldNotValidate(deregisterModel,
-                    "'ODS Instance Database' must not be empty.", 
-                    "'ODS Instance Description' must not be empty.", 
-                    "'Ods Instance Id' must not be empty.", 
+                    "'ODS Instance Database' must not be empty.",
+                    "'ODS Instance Description' must not be empty.",
+                    "'Ods Instance Id' must not be empty.",
                     "The instance you are trying to deregister does not exist in the database.");
             });
         }

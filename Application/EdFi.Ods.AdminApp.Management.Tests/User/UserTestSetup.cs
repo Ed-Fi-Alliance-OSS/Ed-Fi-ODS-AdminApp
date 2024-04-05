@@ -76,8 +76,8 @@ namespace EdFi.Ods.AdminApp.Management.Tests.User
         {
             Scoped<AdminAppIdentityDbContext>(database =>
             {
-                var superAdminRole = database.Roles.SingleOrDefault(x => x.Id.Equals(Role.SuperAdmin.Value.ToString()));
-                var adminRole = database.Roles.SingleOrDefault(x => x.Id.Equals(Role.Admin.Value.ToString()));
+                var superAdminRole = database.Roles.AsEnumerable().FirstOrDefault(x => x.Id.Equals(Role.SuperAdmin.Value.ToString()));
+                var adminRole = database.Roles.AsEnumerable().FirstOrDefault(x => x.Id.Equals(Role.Admin.Value.ToString()));
                 var missingRolesToAdd = new List<IdentityRole>();
                 if (superAdminRole == null)
                 {
