@@ -127,6 +127,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             var applications = vendor.Applications.Where(x =>
                     x.OdsInstanceName.ToUpper() == _instanceContext.Name.ToUpper())
                 .ToList();
+
             vendor.Applications = applications;
         }
 
