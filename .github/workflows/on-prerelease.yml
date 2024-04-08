@@ -216,6 +216,8 @@ jobs:
       base64-subjects: ${{ needs.pack.outputs.hash-code }}
       provenance-name: AdminApp.Web.intoto.jsonl
       upload-assets: true
+      # TODO: remove this after this issue is resolved: https://github.com/slsa-framework/slsa-github-generator/issues/876
+      compile-generator: true
 
   publish-package:
     name: Publish NuGet Package
