@@ -193,9 +193,9 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         public async Task<ActionResult> Edit(int applicationId)
         {
             var application = _getApplicationByIdQuery.Execute(applicationId);
-            var psis = apiFacade.GetAllPostSecondaryInstitutions().ToList();
             var apiFacade = await _odsApiFacadeFactory.Create();
             var schools = apiFacade.GetAllSchools().ToList();
+            var psis = apiFacade.GetAllPostSecondaryInstitutions().ToList();
             var leas = apiFacade.GetAllLocalEducationAgencies().ToList();
             var profiles = _mapper.Map<List<ProfileModel>>(_getProfilesQuery.Execute());
 
