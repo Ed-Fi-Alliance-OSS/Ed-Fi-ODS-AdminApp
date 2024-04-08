@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
-// See the LICENSE and NOTICES files in the project root for more information. 
+// See the LICENSE and NOTICES files in the project root for more information.
 
 using System;
 using System.Collections.Generic;
@@ -194,8 +194,8 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         {
             var application = _getApplicationByIdQuery.Execute(applicationId);
             var apiFacade = await _odsApiFacadeFactory.Create();
-            var psis = apiFacade.GetAllPostSecondaryInstitutions().ToList();
             var schools = apiFacade.GetAllSchools().ToList();
+            var psis = apiFacade.GetAllPostSecondaryInstitutions().ToList();
             var leas = apiFacade.GetAllLocalEducationAgencies().ToList();
             var profiles = _mapper.Map<List<ProfileModel>>(_getProfilesQuery.Execute());
 
