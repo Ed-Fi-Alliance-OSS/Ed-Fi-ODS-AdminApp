@@ -4,6 +4,8 @@ The Ed-Fi ODS/API Admin App is a web-based administrative interface
 for the Ed-Fi ODS/API. The Admin App is available as a standalone application
 for installation on-premises or in the cloud.
 
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/Ed-Fi-Alliance-OSS/Ed-Fi-ODS-AdminApp/badge)](https://securityscorecards.dev/viewer/?uri=github.com/Ed-Fi-Alliance-OSS/Ed-Fi-ODS-AdminApp)
+
 For more information, see:
 
 * For a detailed description see [ODS/API Admin
