@@ -52,7 +52,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
 
         private string GetBearerToken(IRestClient oauthClient)
         {
-            var bearerTokenRequest = new RestRequest("oauth/token", Method.POST);
+            var bearerTokenRequest = new RestRequest("oauth/token", Method.Post);
             bearerTokenRequest.AddParameter("Client_id", _connectionInformation.ClientKey);
             bearerTokenRequest.AddParameter("Client_secret", _connectionInformation.ClientSecret);
             bearerTokenRequest.AddParameter("Grant_type", "client_credentials");

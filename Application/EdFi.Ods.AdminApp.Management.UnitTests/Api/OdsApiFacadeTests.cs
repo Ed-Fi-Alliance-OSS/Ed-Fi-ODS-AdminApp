@@ -19,6 +19,8 @@ using NUnit.Framework;
 using Moq;
 using RestSharp;
 using Shouldly;
+using Azure;
+using System.Threading;
 
 namespace EdFi.Ods.AdminApp.Management.UnitTests.Api
 {
@@ -87,9 +89,12 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Api
             const string errorMessage = "not found error";
 
             var mockRestClient = new Mock<IRestClient>();
-            mockRestClient.Setup(x => x.BaseUrl).Returns(new Uri(_connectionInformation.ApiBaseUrl));
-            mockRestClient.Setup(x => x.Execute(It.IsAny<RestRequest>())).Returns(new RestResponse
-                {StatusCode = HttpStatusCode.NotFound, ErrorMessage = errorMessage});
+            mockRestClient.Setup(x => x.ExecuteAsync(It.IsAny<RestRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(new RestResponse
+            {
+                Content = "{}",
+                StatusCode = HttpStatusCode.NotFound,
+                ErrorMessage = errorMessage
+            });
 
             var mockTokenRetriever = new Mock<ITokenRetriever>();
             mockTokenRetriever.Setup(x => x.ObtainNewBearerToken()).Returns("Token");
@@ -142,9 +147,12 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Api
             const string errorMessage = "not found error";
 
             var mockRestClient = new Mock<IRestClient>();
-            mockRestClient.Setup(x => x.BaseUrl).Returns(new Uri(_connectionInformation.ApiBaseUrl));
-            mockRestClient.Setup(x => x.Execute(It.IsAny<RestRequest>())).Returns(new RestResponse
-            { StatusCode = HttpStatusCode.NotFound, ErrorMessage = errorMessage });
+            mockRestClient.Setup(x => x.ExecuteAsync(It.IsAny<RestRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(new RestResponse
+            {
+                Content = "{}",
+                StatusCode = HttpStatusCode.NotFound,
+                ErrorMessage = errorMessage
+            });
 
             var mockTokenRetriever = new Mock<ITokenRetriever>();
             mockTokenRetriever.Setup(x => x.ObtainNewBearerToken()).Returns("Token");
@@ -188,9 +196,12 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Api
             const string errorMessage = "not found error";
 
             var mockRestClient = new Mock<IRestClient>();
-            mockRestClient.Setup(x => x.BaseUrl).Returns(new Uri(_connectionInformation.ApiBaseUrl));
-            mockRestClient.Setup(x => x.Execute(It.IsAny<RestRequest>())).Returns(new RestResponse
-                { StatusCode = HttpStatusCode.NotFound, ErrorMessage = errorMessage });
+            mockRestClient.Setup(x => x.ExecuteAsync(It.IsAny<RestRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(new RestResponse
+             {
+                Content = "{}",
+                StatusCode = HttpStatusCode.NotFound,
+                ErrorMessage = errorMessage
+            });
 
             var mockTokenRetriever = new Mock<ITokenRetriever>();
             mockTokenRetriever.Setup(x => x.ObtainNewBearerToken()).Returns("Token");
@@ -228,11 +239,12 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Api
         [Test]
         public void Should_AddSchool_returns_not_success_result_when_api_throws_exception()
         {
+            var MockRestResponse = new Mock<RestResponse>();
             // Arrange
             const string errorMsg = "exception";
             var mockRestClient = new Mock<IRestClient>();
-            mockRestClient.Setup(x => x.BaseUrl).Returns(new Uri(_connectionInformation.ApiBaseUrl));
-            mockRestClient.Setup(x => x.Execute(It.IsAny<RestRequest>())).Throws(new Exception(errorMsg));
+            mockRestClient.Setup(x => x.ExecuteAsync(It.IsAny<RestRequest>(), It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new Exception(errorMsg));
 
             var mockTokenRetriever = new Mock<ITokenRetriever>();
             mockTokenRetriever.Setup(x => x.ObtainNewBearerToken()).Returns("Token");
@@ -274,8 +286,8 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Api
             // Arrange
             const string errorMsg = "exception";
             var mockRestClient = new Mock<IRestClient>();
-            mockRestClient.Setup(x => x.BaseUrl).Returns(new Uri(_connectionInformation.ApiBaseUrl));
-            mockRestClient.Setup(x => x.Execute(It.IsAny<RestRequest>())).Throws(new Exception(errorMsg));
+            mockRestClient.Setup(x => x.ExecuteAsync(It.IsAny<RestRequest>(), It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new Exception(errorMsg));
 
             var mockTokenRetriever = new Mock<ITokenRetriever>();
             mockTokenRetriever.Setup(x => x.ObtainNewBearerToken()).Returns("Token");
@@ -299,10 +311,15 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Api
             // Arrange
             const string errorMsg = "exception";
             var mockRestClient = new Mock<IRestClient>();
-            mockRestClient.Setup(x => x.BaseUrl).Returns(new Uri(_connectionInformation.ApiBaseUrl));
-            mockRestClient.Setup(x => x.Execute(It.IsAny<RestRequest>())).Returns(new RestResponse
-                { StatusCode = HttpStatusCode.NotFound, ErrorMessage = errorMsg });
-
+            mockRestClient.Setup(x => x.ExecuteAsync(It.IsAny<RestRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new RestResponse
+                {
+                    Content = "{}",
+                    StatusCode = HttpStatusCode.NotFound,
+                    ErrorMessage = errorMsg,
+                    IsSuccessStatusCode = false
+                });
+            
             var mockTokenRetriever = new Mock<ITokenRetriever>();
             mockTokenRetriever.Setup(x => x.ObtainNewBearerToken()).Returns("Token");
 
@@ -326,21 +343,22 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Api
             const string content =
                 "{\r\n  \"swagger\": \"2.0\",\r\n  \"basePath\": \"/v3.1.1/api/data/v3\",\r\n  \"consumes\": [\r\n    \"application/json\"\r\n  ],\r\n  \"definitions\": {\r\n    \"edFi_test1Descriptor\": {\r\n    },\r\n    \"edFi_test2Descriptor\": {\r\n    }\r\n  }, \"paths\": {\r\n    \"/ed-fi/testCategory1Descriptors\": {\r\n    },\r\n   \"/ed-fi/testCategory1Descriptors/{id}\": {\r\n    },\r\n   \"/ed-fi/testCategory1Descriptors/deletes\": {\r\n    },\r\n    \"/ed-fi/testCategory2Descriptors\": {\r\n    },\r\n   \"/ed-fi/testCategory2Descriptors/{id}\": {\r\n    },\r\n   \"/ed-fi/testCategory2Descriptors/deletes\": {\r\n    }\r\n  }\r\n}";
             var mockRestClient = new Mock<IRestClient>();
-            mockRestClient.Setup(x => x.BaseUrl).Returns(new Uri(_connectionInformation.ApiBaseUrl));
-            mockRestClient.Setup(x => x.Execute(It.IsAny<RestRequest>())).Returns(new RestResponse
-            {
-                ResponseStatus = ResponseStatus.Completed,
-                StatusCode = HttpStatusCode.OK,
-                Content = content
-            });
+            mockRestClient.Setup(x => x.ExecuteAsync(It.IsAny<RestRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new RestResponse
+                {
+                    Content = content,
+                    ResponseStatus = ResponseStatus.Completed,
+                    StatusCode = HttpStatusCode.OK,
+                    IsSuccessStatusCode=true
+                });
 
             var mockTokenRetriever = new Mock<ITokenRetriever>();
             mockTokenRetriever.Setup(x => x.ObtainNewBearerToken()).Returns("Token");
 
-            var mockOdsRestClient =
-                new OdsRestClient(_connectionInformation, mockRestClient.Object, mockTokenRetriever.Object);
-
-            _facade = new OdsApiFacade(_mapper, mockOdsRestClient);
+            var mockOdsRestClient = new Mock<OdsRestClient>(_connectionInformation, mockRestClient.Object, mockTokenRetriever.Object);
+            mockOdsRestClient.SetupGet(x => x.RestClient).Returns(mockRestClient.Object);
+            
+            _facade = new OdsApiFacade(_mapper, mockOdsRestClient.Object);
 
             // Act
             var result = _facade.GetAllDescriptors();
@@ -357,20 +375,22 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Api
         {
             // Arrange
             const string errorMessage = "not found error";
-
             var mockRestClient = new Mock<IRestClient>();
-            mockRestClient.Setup(x => x.BaseUrl).Returns(new Uri(_connectionInformation.ApiBaseUrl));
-            mockRestClient.Setup(x => x.Execute(It.IsAny<RestRequest>())).Returns(new RestResponse
-                { StatusCode = HttpStatusCode.NotFound, ErrorMessage = errorMessage });
-
+            mockRestClient.Setup(x => x.ExecuteAsync(It.IsAny<RestRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new RestResponse
+                {
+                    Content = "{}",
+                    StatusCode = HttpStatusCode.NotFound,
+                    ErrorMessage = errorMessage
+                });
+            
             var mockTokenRetriever = new Mock<ITokenRetriever>();
             mockTokenRetriever.Setup(x => x.ObtainNewBearerToken()).Returns("Token");
 
-            var mockOdsRestClient =
-                new OdsRestClient(_connectionInformation, mockRestClient.Object, mockTokenRetriever.Object);
-
-            _facade = new OdsApiFacade(_mapper, mockOdsRestClient);
-
+            var mockOdsRestClient = new Mock<OdsRestClient>(_connectionInformation, mockRestClient.Object, mockTokenRetriever.Object);
+            mockOdsRestClient.SetupGet(x => x.RestClient).Returns(mockRestClient.Object);
+            _facade = new OdsApiFacade(_mapper, mockOdsRestClient.Object);
+            
             //Act
             var ex = Assert.Throws<OdsApiConnectionException>(() => _facade.GetAllDescriptors());
 
@@ -403,8 +423,8 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Api
             // Arrange
             const string errorMsg = "exception";
             var mockRestClient = new Mock<IRestClient>();
-            mockRestClient.Setup(x => x.BaseUrl).Returns(new Uri(_connectionInformation.ApiBaseUrl));
-            mockRestClient.Setup(x => x.Execute(It.IsAny<RestRequest>())).Throws(new Exception(errorMsg));
+            mockRestClient.Setup(x => x.ExecuteAsync(It.IsAny<RestRequest>(), It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new Exception(errorMsg));
 
             var mockTokenRetriever = new Mock<ITokenRetriever>();
             mockTokenRetriever.Setup(x => x.ObtainNewBearerToken()).Returns("Token");
@@ -428,9 +448,10 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Api
             // Arrange
             const string errorMsg = "exception";
             var mockRestClient = new Mock<IRestClient>();
-            mockRestClient.Setup(x => x.BaseUrl).Returns(new Uri(_connectionInformation.ApiBaseUrl));
-            mockRestClient.Setup(x => x.Execute(It.IsAny<RestRequest>())).Returns(new RestResponse
+            mockRestClient.Setup(x => x.ExecuteAsync(It.IsAny<RestRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new RestResponse
             {
+                Content = "{}",
                 StatusCode = HttpStatusCode.Conflict,
                 ErrorMessage = errorMsg
             });
@@ -456,11 +477,12 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Api
         {
             // Arrange
             var mockRestClient = new Mock<IRestClient>();
-            mockRestClient.Setup(x => x.BaseUrl).Returns(new Uri(_connectionInformation.ApiBaseUrl));
-            mockRestClient.Setup(x => x.Execute(It.IsAny<RestRequest>())).Returns(new RestResponse
+            mockRestClient.Setup(x => x.ExecuteAsync(It.IsAny<RestRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new RestResponse
             {
                 ResponseStatus = ResponseStatus.Completed,
-                StatusCode = HttpStatusCode.Created
+                StatusCode = HttpStatusCode.Created,
+                IsSuccessStatusCode = true
             });
 
             var mockTokenRetriever = new Mock<ITokenRetriever>();
@@ -484,9 +506,10 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Api
             // Arrange
             const string errorMsg = "exception";
             var mockRestClient = new Mock<IRestClient>();
-            mockRestClient.Setup(x => x.BaseUrl).Returns(new Uri(_connectionInformation.ApiBaseUrl));
-            mockRestClient.Setup(x => x.Execute(It.IsAny<RestRequest>())).Returns(new RestResponse
+            mockRestClient.Setup(x => x.ExecuteAsync(It.IsAny<RestRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new RestResponse
             {
+                Content = "{}",
                 StatusCode = HttpStatusCode.Conflict,
                 ErrorMessage = errorMsg
             });
@@ -512,11 +535,13 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Api
         {
             // Arrange
             var mockRestClient = new Mock<IRestClient>();
-            mockRestClient.Setup(x => x.BaseUrl).Returns(new Uri(_connectionInformation.ApiBaseUrl));
-            mockRestClient.Setup(x => x.Execute(It.IsAny<RestRequest>())).Returns(new RestResponse
+            mockRestClient.Setup(x => x.ExecuteAsync(It.IsAny<RestRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new RestResponse
             {
+                Content = "{}",
                 StatusCode = HttpStatusCode.NoContent,
                 ResponseStatus = ResponseStatus.Completed,
+                IsSuccessStatusCode = true
             });
 
             var mockTokenRetriever = new Mock<ITokenRetriever>();

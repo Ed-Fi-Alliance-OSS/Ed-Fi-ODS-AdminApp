@@ -20,7 +20,8 @@ namespace EdFi.Ods.AdminApp.Management.Api
         private readonly OdsApiConnectionInformation _connectionInformation;
         private readonly ITokenRetriever _tokenRetriever;
         private string _bearerToken;
-        private readonly IRestClient _restClient;
+        private IRestClient _restClient;
+        public virtual IRestClient RestClient { get { return _restClient; } }
         private static ILog _logger;
 
         public OdsRestClient(OdsApiConnectionInformation connectionInformation, IRestClient restClient, ITokenRetriever tokenRetriever)
@@ -49,7 +50,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
             return request;
         }
 
-        private OdsApiResult ExecuteWithDefaultResponse(IRestRequest request)
+        private OdsApiResult ExecuteWithDefaultResponse(RestRequest request)
         {
             try
             {
@@ -62,12 +63,12 @@ namespace EdFi.Ods.AdminApp.Management.Api
             }
         }
 
-        private IRestResponse ExecuteRequestAndHandleErrors(IRestRequest request)
+        private RestResponse ExecuteRequestAndHandleErrors(RestRequest request)
         {
-            IRestResponse response;
+            RestResponse response;
             try
             {
-                response = _restClient.Execute(request);
+                response = RestClient.Execute(request);
             }
             catch (Exception ex)
             {
@@ -134,7 +135,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
                 responseList.AddRange(pageItems);
 
                 offset += limit;
-                request.Parameters.AsEnumerable().First(x => x.Name == "offset").Value = offset;
+                request.AddOrUpdateParameter("offset", offset);
             }
             while (pageItems.Count >= limit);
 
@@ -152,7 +153,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
 
             foreach (var (key, value) in filters)
             {
-                request.AddParameter(key, value);
+                request.AddParameter(key, value, ParameterType.HttpHeader);
             }
 
             var responseList = new List<T>();
@@ -166,7 +167,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
                 responseList.AddRange(pageItems);
 
                 offset += limit;
-                request.Parameters.AsEnumerable().First(x => x.Name == "offset").Value = offset;
+                request.AddOrUpdateParameter("offset", offset);
             }
             while (pageItems.Count >= limit);
 
@@ -184,7 +185,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
         public OdsApiResult PostResource<T>(T resource, string elementPath, bool refreshToken = false)
         {
             var request = OdsRequest(elementPath);
-            request.Method = Method.POST;
+            request.Method = Method.Post;
 
             try
             {
@@ -201,7 +202,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
         public OdsApiResult PutResource<T>(T resource, string elementPath, string id, bool refreshToken = false)
         {
             var request = OdsRequest($"{elementPath}/{id}");
-            request.Method = Method.PUT;
+            request.Method = Method.Put;
 
             try
             {
@@ -215,10 +216,14 @@ namespace EdFi.Ods.AdminApp.Management.Api
 
             return ExecuteWithDefaultResponse(request);
         }
-
+        public IRestClient CreateRestClient(string url) {
+            return new RestClient(url);
+        }
         public IReadOnlyList<string> GetAllDescriptors()
         {
-            _restClient.BaseUrl = new Uri(_connectionInformation.DescriptorsUrl);
+            RestClientOptions options = new RestClientOptions();
+            options.BaseUrl = new Uri(_connectionInformation.DescriptorsUrl);
+            _restClient = new RestClient(_connectionInformation.DescriptorsUrl);
             var request = OdsRequest("swagger.json");
             var response = ExecuteRequestAndHandleErrors(request);
             var swaggerDocument = JsonConvert.DeserializeObject<JObject>(response.Content);
@@ -245,7 +250,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
         public OdsApiResult DeleteResource(string elementPath, string id, bool refreshToken = false)
         {
             var request = OdsRequest(elementPath);
-            request.Method = Method.DELETE;
+            request.Method = Method.Delete;
             request.AddUrlSegment("id", id);
             return ExecuteWithDefaultResponse(request);
         }
