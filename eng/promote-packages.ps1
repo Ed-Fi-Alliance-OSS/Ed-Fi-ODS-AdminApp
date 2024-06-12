@@ -7,9 +7,6 @@
 param(
 
     [Parameter(Mandatory = $true)]
-    $FeedsURL,
-
-    [Parameter(Mandatory = $true)]
     $PackagesURL,
 
     [Parameter(Mandatory = $true)]
@@ -28,7 +25,7 @@ param(
 
 function Get-PackagesFromAzure {
 
-    $uri = "$FeedsURL/packages?api-version=6.0-preview.1"
+    $uri = $PackagesURL
     $result = @{ }
 
     foreach ($packageName in $Packages) {
@@ -60,9 +57,6 @@ switch ($packageName) {
             "EdFi.Suite3.ODS.AdminApp.Web"
         )
     }
-    "Admin.Api" {
-        $packages = @( "EdFi.Suite3.ODS.Admin.Api" )
-    }
     "AdminApp.Installer" {
         $packages = @( "EdFi.Suite3.Installer.AdminApp" )
     }
@@ -90,7 +84,7 @@ $parameters = @{
     Method      = "POST"
     ContentType = "application/json"
     Credential  = New-Object -TypeName PSCredential -ArgumentList $Username, $Password
-    URI         = "$PackagesURL/nuget/packagesBatch?api-version=5.0-preview.1"
+    URI         = $PackagesURL
     Body        = ConvertTo-Json $Body -Depth 10
 }
 
