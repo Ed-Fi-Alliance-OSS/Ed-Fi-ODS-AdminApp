@@ -5,6 +5,7 @@
 
 using System;
 using System.Net;
+using System.Text.Json.Serialization;
 using EdFi.Ods.AdminApp.Management.ErrorHandling;
 using Newtonsoft.Json;
 using RestSharp;
@@ -91,9 +92,13 @@ namespace EdFi.Ods.AdminApp.Management.Api
 
     internal class BearerTokenResponse
     {
+        [JsonPropertyName("access_token")]
         public string AccessToken { get; set; }
-        public string ExpiresIn { get; set; }
+        [JsonPropertyName("expires_in")]
+        public int ExpiresIn { get; set; }
+        [JsonPropertyName("token_type")]
         public string TokenType { get; set; }
+        [JsonPropertyName("error")]
         public string Error { get; set; }
     }
 }
