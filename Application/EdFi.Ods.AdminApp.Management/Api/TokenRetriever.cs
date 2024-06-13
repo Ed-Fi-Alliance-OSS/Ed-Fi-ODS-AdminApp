@@ -22,8 +22,9 @@ namespace EdFi.Ods.AdminApp.Management.Api
         private readonly OdsApiConnectionInformation _connectionInformation;
 
         /// <summary>
+        ///
         /// </summary>
-        /// <param name="connectionInformation"></param>
+        /// <param name="connectionInformation"> </param>
         public TokenRetriever(OdsApiConnectionInformation connectionInformation)
         {
             _connectionInformation = connectionInformation;
