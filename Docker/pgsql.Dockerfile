@@ -6,7 +6,7 @@
 #tag 8.0-alpine
 FROM mcr.microsoft.com/dotnet/aspnet@sha256:646b1c5ff36375f35f6149b0ce19ca095f97b4b882b90652801e9fbe82bcfa8a
 LABEL maintainer="Ed-Fi Alliance, LLC and Contributors <techsupport@ed-fi.org>"
-ARG VERSION=3.3.1-alpha.0.5
+ARG VERSION=Pre-Release-v3.3.1-alpha.0.5
 
 ENV POSTGRES_PORT=5432
 ENV PGBOUNCER_LISTEN_PORT=6432
