@@ -10,6 +10,8 @@ on:
     types:
       - completed
 
+permissions: read-all
+
 env:
   JIRA_ACCESS_TOKEN: ${{ secrets.JIRA_ACCESS_TOKEN }}
   ADMIN_APP_VERSION: "3.0.0"
