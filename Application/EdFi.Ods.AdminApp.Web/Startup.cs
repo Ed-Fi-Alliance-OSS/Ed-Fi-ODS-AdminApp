@@ -43,6 +43,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http.Features;
 using System.Data;
+using System.Net.Http;
 
 namespace EdFi.Ods.AdminApp.Web
 {
@@ -129,7 +130,19 @@ namespace EdFi.Ods.AdminApp.Web
             services.Configure<IdentitySettings>(Configuration.GetSection("IdentitySettings"));
             services.Configure<ConnectionStrings>(Configuration.GetSection("ConnectionStrings"));
 
+#if DEBUG
+            services.AddHttpClient("HttpClientWithSSLUntrusted").ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+            {
+                ClientCertificateOptions = ClientCertificateOption.Manual,
+                ServerCertificateCustomValidationCallback =
+            (httpRequestMessage, cert, cetChain, policyErrors) =>
+            {
+                return true;
+            }
+            });
+#else
             services.AddHttpClient();
+#endif
 
             services.Configure<FormOptions>(options =>
             {

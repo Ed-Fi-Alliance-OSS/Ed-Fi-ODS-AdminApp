@@ -3,8 +3,10 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
+using System.Text.Json;
 using System.Threading.Tasks;
 using RestSharp;
+using RestSharp.Serializers.Json;
 
 namespace EdFi.Ods.AdminApp.Management.Api
 {
@@ -32,7 +34,21 @@ namespace EdFi.Ods.AdminApp.Management.Api
             }
 
             _tokenRetriever = new TokenRetriever(connectionInfo);
-            _restClient = new RestClient(connectionInfo.ApiBaseUrl);
+            //_restClient = new RestClient(connectionInfo.ApiBaseUrl);
+            var restOptions = new RestClientOptions(connectionInfo.ApiBaseUrl)
+            {
+#if DEBUG
+                RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true,
+#endif
+            };
+            _restClient = new RestClient(
+                restOptions,
+                configureSerialization: s =>
+                    s.UseSystemTextJson(new JsonSerializerOptions
+                    {
+                        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+                    })
+                );
             return new OdsRestClient(connectionInfo, _restClient, _tokenRetriever);
         }
     }

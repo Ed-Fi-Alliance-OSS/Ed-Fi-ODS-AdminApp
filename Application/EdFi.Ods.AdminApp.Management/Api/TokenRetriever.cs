@@ -5,10 +5,12 @@
 
 using System;
 using System.Net;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using EdFi.Ods.AdminApp.Management.ErrorHandling;
 using Newtonsoft.Json;
 using RestSharp;
+using RestSharp.Serializers.Json;
 
 namespace EdFi.Ods.AdminApp.Management.Api
 {
@@ -31,8 +33,21 @@ namespace EdFi.Ods.AdminApp.Management.Api
 
         public string ObtainNewBearerToken()
         {
-            var oauthClient = new RestClient(_connectionInformation.OAuthUrl);
-
+            //var oauthClient = new RestClient(_connectionInformation.OAuthUrl);
+            var restOptions = new RestClientOptions(_connectionInformation.OAuthUrl)
+            {
+#if DEBUG
+                RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true,
+#endif
+            };
+            var oauthClient = new RestClient(
+                restOptions,
+                configureSerialization: s =>
+                    s.UseSystemTextJson(new JsonSerializerOptions
+                    {
+                        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+                    })
+                );
             try
             {
                 return GetBearerToken(oauthClient);
@@ -41,7 +56,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
             {
                 throw;
             }
-            catch (JsonException exception)
+            catch (System.Text.Json.JsonException exception)
             {
                 throw new AdminAppException($"Unexpected response format from API. Please verify the address ({_connectionInformation.OAuthUrl}) is configured correctly.", exception) { AllowFeedback = false, };
             }
@@ -92,13 +107,9 @@ namespace EdFi.Ods.AdminApp.Management.Api
 
     internal class BearerTokenResponse
     {
-        [JsonPropertyName("access_token")]
         public string AccessToken { get; set; }
-        [JsonPropertyName("expires_in")]
         public int ExpiresIn { get; set; }
-        [JsonPropertyName("token_type")]
         public string TokenType { get; set; }
-        [JsonPropertyName("error")]
         public string Error { get; set; }
     }
 }

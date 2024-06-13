@@ -26,7 +26,11 @@ namespace EdFi.Ods.AdminApp.Management.Services
 
         public async Task<string> DownloadString(string address)
         {
+#if DEBUG
+            var httpClient = _clientFactory.CreateClient("HttpClientWithSSLUntrusted");
+#else
             var httpClient = _clientFactory.CreateClient();
+#endif
 
             using (var response = await httpClient.GetAsync(address))
             {
