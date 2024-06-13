@@ -6,7 +6,7 @@
 #tag 8.0-alpine
 FROM mcr.microsoft.com/dotnet/aspnet@sha256:646b1c5ff36375f35f6149b0ce19ca095f97b4b882b90652801e9fbe82bcfa8a
 LABEL maintainer="Ed-Fi Alliance, LLC and Contributors <techsupport@ed-fi.org>"
-ARG VERSION=Pre-Release-v3.3.1-alpha.0.5
+ARG VERSION=latest
 
 ENV POSTGRES_PORT=5432
 ENV PGBOUNCER_LISTEN_PORT=6432
@@ -24,7 +24,7 @@ COPY Settings/pgsql/run.sh /app/run.sh
 COPY Settings/pgsql/log4net.config /app/log4net.txt
 
 RUN apk --no-cache add unzip=~6 dos2unix=~7 bash=~5 gettext=~0 postgresql13-client=~13 jq=~1 icu=~74 curl=~8 && \
-    wget -nv -O /app/AdminApp.zip  "https://pkgs.dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_apis/packaging/feeds/EdFi/nuget/packages/EdFi.Suite3.ODS.AdminApp.Web/versions/${VERSION}/content" && \
+    wget -nv -O /app/AdminApp.zip  "https://pkgs.dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_apis/packaging/feeds/EdFi/nuget/packages/EdFi.Suite3.ODS.AdminApp.Web/versions/3.3.1-alpha.0.5/content" && \
     unzip /app/AdminApp.zip AdminApp/* -d /app/ && \
     cp -r /app/AdminApp/. /app/ && \
     rm -f /app/AdminApp.zip && \
