@@ -34,7 +34,6 @@ namespace EdFi.Ods.AdminApp.Management.Api
             }
 
             _tokenRetriever = new TokenRetriever(connectionInfo);
-            //_restClient = new RestClient(connectionInfo.ApiBaseUrl);
             var restOptions = new RestClientOptions(connectionInfo.ApiBaseUrl)
             {
 #if DEBUG
