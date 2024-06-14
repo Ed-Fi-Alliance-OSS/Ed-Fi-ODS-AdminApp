@@ -101,6 +101,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
         public IReadOnlyList<T> GetAll<T>(string elementPath, int offset, int limit = 50) where T : class
         {
             var request = OdsRequest(elementPath);
+            request.Method = Method.Get;
             request.AddParameter("offset", offset);
             request.AddParameter("limit", limit);
 
@@ -121,6 +122,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
             const int limit = 50;
 
             var request = OdsRequest(elementPath);
+            request.Method = Method.Get;
             request.AddParameter("offset", offset);
             request.AddParameter("limit", limit);
 
@@ -148,12 +150,13 @@ namespace EdFi.Ods.AdminApp.Management.Api
             const int limit = 50;
 
             var request = OdsRequest(elementPath);
-            request.AddParameter("offset", offset);
-            request.AddParameter("limit", limit);
+            request.Method = Method.Get;
+            request.AddParameter("offset", offset, ParameterType.QueryString);
+            request.AddParameter("limit", limit, ParameterType.QueryString);
 
             foreach (var (key, value) in filters)
             {
-                request.AddParameter(key, value, ParameterType.HttpHeader);
+                request.AddParameter(key, value, ParameterType.QueryString);
             }
 
             var responseList = new List<T>();
