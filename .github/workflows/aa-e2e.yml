@@ -18,6 +18,8 @@ on:
       - ".github/workflows/aa-e2e.yml"
       - "!Application/EdFi.Ods.Admin.Api" # Need to remove this extra check after we remove EdFi.Ods.Admin.Api project
 
+permissions: read-all
+
 jobs:
   run-e2e-tests:
     runs-on: ubuntu-latest

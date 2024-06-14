@@ -9,6 +9,8 @@ on:
     types:
       - released
 
+permissions: read-all
+
 env:
   ARTIFACTS_API_KEY: ${{ secrets.AZURE_ARTIFACTS_PERSONAL_ACCESS_TOKEN }}
   ARTIFACTS_FEED_URL: "https://pkgs.dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_packaging/EdFi/nuget/v3/index.json"
@@ -20,6 +22,8 @@ jobs:
   delete-pre-releases:
     name: Delete Unnecessary Pre-Releases
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout the repo
         uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
@@ -74,4 +78,3 @@ jobs:
 
           Import-Module ./eng/promote-packages.psm1
           Invoke-Promote @arguments
-

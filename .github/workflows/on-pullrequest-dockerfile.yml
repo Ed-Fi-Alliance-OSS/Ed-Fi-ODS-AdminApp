@@ -20,6 +20,8 @@ on:
       - "Docker/*"
   workflow_dispatch:
 
+permissions: read-all
+
 jobs:
   docker-testing:
     runs-on: ubuntu-latest
