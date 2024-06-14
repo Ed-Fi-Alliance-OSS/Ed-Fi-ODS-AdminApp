@@ -190,7 +190,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
             try
             {
                 var jsonInput = JsonConvert.SerializeObject(resource);
-                request.AddParameter("application/json; charset=utf-8", jsonInput, ParameterType.RequestBody);
+                request.AddJsonBody(jsonInput);
             }
             catch (Exception ex)
             {
@@ -207,7 +207,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
             try
             {
                 var jsonInput = JsonConvert.SerializeObject(resource);
-                request.AddParameter("application/json; charset=utf-8", jsonInput, ParameterType.RequestBody);
+                request.AddJsonBody(jsonInput);
             }
             catch (Exception ex)
             {
