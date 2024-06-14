@@ -207,7 +207,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
             try
             {
                 var jsonInput = JsonConvert.SerializeObject(resource);
-                request.AddJsonBody("application/json; charset=utf-8", jsonInput);
+                request.AddJsonBody(jsonInput);
             }
             catch (Exception ex)
             {
