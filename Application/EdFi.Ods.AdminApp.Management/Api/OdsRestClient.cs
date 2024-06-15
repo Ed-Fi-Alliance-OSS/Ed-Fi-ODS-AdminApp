@@ -153,7 +153,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
 
             foreach (var (key, value) in filters)
             {
-                request.AddParameter(key, value, ParameterType.HttpHeader);
+                request.AddParameter(key, value, ParameterType.QueryString);
             }
 
             var responseList = new List<T>();
