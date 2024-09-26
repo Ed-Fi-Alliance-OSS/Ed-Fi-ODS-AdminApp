@@ -220,7 +220,7 @@ the ODS/API running in Docker:
 
   ```powershell
   # From the Docker clone directory
-  docker-compose -f compose-shared-instance-for-local-debug.yml up -d
+  docker compose -f compose-shared-instance-for-local-debug.yml up -d
   ```
 
 * Generate a 256 bit AES encryption key and paste it into the
@@ -251,7 +251,7 @@ DLLs are what runs inside of Docker.
   run Docker compose using `compose-shared-instance-env-build.yml`:
 
   ```bash
-  docker-compose -f compose-shared-instance-env-build.yml up -d
+  docker compose -f compose-shared-instance-env-build.yml up -d
   ```
 
 * Open a PowerShell prompt and change to the AdminApp clone directory.
