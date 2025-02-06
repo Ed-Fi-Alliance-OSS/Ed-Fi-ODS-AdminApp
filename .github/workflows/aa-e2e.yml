@@ -86,11 +86,11 @@ jobs:
         with:
           name: test-results
           path: main/Application/EdFi.Ods.AdminApp.E2E.Tests/reports/playwright-results.xml
-          retention-days: 5
+          retention-days: 10
       - name: Upload execution traces
         if: failure()
         uses: actions/upload-artifact@26f96dfa697d77e81fd5907df203aa23a56210a8 # v4.3.0
         with:
           name: playwright-execution-traces
           path: main/Application/EdFi.Ods.AdminApp.E2E.Tests/traces
-          retention-days: 5
+          retention-days: 10
