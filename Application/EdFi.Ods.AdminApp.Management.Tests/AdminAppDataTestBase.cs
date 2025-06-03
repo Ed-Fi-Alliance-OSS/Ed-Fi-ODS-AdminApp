@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using EdFi.Ods.AdminApp.Management.Database;
 using NUnit.Framework;
 using Respawn;
+using Respawn.Graph;
 using static EdFi.Ods.AdminApp.Management.Tests.Testing;
 using EdFi.Ods.AdminApp.Web;
 
@@ -17,17 +18,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
     [TestFixture]
     public abstract class AdminAppDataTestBase
     {
-        private readonly Checkpoint _checkpoint = new Checkpoint
-        {
-            TablesToIgnore = new[]
-            {
-                "__MigrationHistory", "DeployJournal", "AdminAppDeployJournal"
-            },
-            SchemasToExclude = new[]
-            {
-                "HangFire", "adminapp_HangFire"
-            }
-        };
+        private Respawner _respawner;
 
         private string ConnectionString
         {
@@ -35,18 +26,30 @@ namespace EdFi.Ods.AdminApp.Management.Tests
             {
                 return Startup.ConfigurationConnectionStrings.Admin;
             }
+        }        [OneTimeSetUp]
+        public async Task FixtureSetUp()
+        {
+            _respawner = await Respawner.CreateAsync(ConnectionString, new RespawnerOptions
+            {
+                TablesToIgnore = new[]
+                {
+                    new Table("__MigrationHistory"),
+                    new Table("DeployJournal"),
+                    new Table("AdminAppDeployJournal")
+                }
+            });
         }
 
         [OneTimeTearDown]
         public async Task FixtureTearDown()
         {
-            await _checkpoint.Reset(ConnectionString);
+            await _respawner.ResetAsync(ConnectionString);
         }
 
         [SetUp]
         public async Task SetUp()
         {
-            await _checkpoint.Reset(ConnectionString);
+            await _respawner.ResetAsync(ConnectionString);
         }
 
         protected void DeleteAll<TEntity>() where TEntity : class

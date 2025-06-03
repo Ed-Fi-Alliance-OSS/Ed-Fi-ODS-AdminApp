@@ -8,25 +8,15 @@ using System.Threading.Tasks;
 using EdFi.Admin.DataAccess.Contexts;
 using NUnit.Framework;
 using Respawn;
+using Respawn.Graph;
 using static EdFi.Ods.AdminApp.Management.Tests.Testing;
 using EdFi.Ods.AdminApp.Web;
 
 namespace EdFi.Ods.AdminApp.Management.Tests
-{
-    [TestFixture]
+{    [TestFixture]
     public abstract class PlatformUsersContextTestBase
     {
-        private readonly Checkpoint _checkpoint = new Checkpoint
-        {
-            TablesToIgnore = new[]
-            {
-                "__MigrationHistory", "DeployJournal", "AdminAppDeployJournal"
-            },
-            SchemasToExclude = new[]
-            {
-                "HangFire", "adminapp_HangFire"
-            }
-        };
+        private Respawner _respawner;
 
         protected string ConnectionString
         {
@@ -34,18 +24,30 @@ namespace EdFi.Ods.AdminApp.Management.Tests
             {
                 return Startup.ConfigurationConnectionStrings.Admin;
             }
+        }        [OneTimeSetUp]
+        public async Task FixtureSetUp()
+        {
+            _respawner = await Respawner.CreateAsync(ConnectionString, new RespawnerOptions
+            {
+                TablesToIgnore = new[]
+                {
+                    new Table("__MigrationHistory"),
+                    new Table("DeployJournal"),
+                    new Table("AdminAppDeployJournal")
+                }
+            });
         }
 
         [OneTimeTearDown]
         public async Task FixtureTearDown()
         {
-            await _checkpoint.Reset(ConnectionString);
+            await _respawner.ResetAsync(ConnectionString);
         }
 
         [SetUp]
         public async Task SetUp()
         {
-            await _checkpoint.Reset(ConnectionString);
+            await _respawner.ResetAsync(ConnectionString);
         }
 
         protected void Save(params object[] entities)
