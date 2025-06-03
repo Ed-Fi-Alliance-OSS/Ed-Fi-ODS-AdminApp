@@ -24,7 +24,7 @@ using EdFi.Security.DataAccess.Contexts;
 using log4net;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Microsoft.Identity.Client;
 using Microsoft.EntityFrameworkCore;
 
 namespace EdFi.Ods.AdminApp.Web._Installers
@@ -62,10 +62,11 @@ namespace EdFi.Ods.AdminApp.Web._Installers
                 if (appSettings.DatabaseEngine.EqualsIgnoreCase("SqlServer"))
                     return new SqlServerUsersContext(dbContextOptions);
 
-                return new PostgresUsersContext(dbContextOptions);
-            });
+                return new PostgresUsersContext(dbContextOptions);            });
 
-            services.AddSingleton(TokenCache.DefaultShared);
+            // Modern MSAL approach - no need for explicit TokenCache registration
+            // Token caching is handled automatically by MSAL
+            services.AddMemoryCache(); // For in-memory token caching
 
             services.AddScoped<AdminAppUserContext>();
 
@@ -148,7 +149,7 @@ namespace EdFi.Ods.AdminApp.Web._Installers
         protected static DbContextOptions GetDbContextOptions(AppSettings appSettings, string connectionString)
         {
             var builder = new DbContextOptionsBuilder();
-            if (appSettings.DatabaseEngine.EqualsIgnoreCase("SqlServer")) { 
+            if (appSettings.DatabaseEngine.EqualsIgnoreCase("SqlServer")) {
                 builder.UseSqlServer(connectionString);
             }
             else {
