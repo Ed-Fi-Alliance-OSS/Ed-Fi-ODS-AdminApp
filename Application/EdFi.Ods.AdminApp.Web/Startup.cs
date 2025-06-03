@@ -42,7 +42,8 @@ using System.Security.Claims;
 using System.Linq;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http.Features;
-using System.Data;
+using WebOptimizer;
+using WebOptimizer.Processors;
 
 namespace EdFi.Ods.AdminApp.Web
 {
@@ -94,15 +95,15 @@ namespace EdFi.Ods.AdminApp.Web
                             opt.ValidatorOptions.DisplayNameResolver = (type, memberInfo, expression)
                                 => memberInfo?
                                     .GetCustomAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>()?.GetName();
-                        });
-
-            services.AddWebOptimizer(
+                        });            services.AddWebOptimizer(
                 pipeline =>
-                {
-                    var minifyJsSettings = new CodeSettings
+                {                    var minifyJsSettings = new JsSettings
                     {
-                        LocalRenaming = LocalRenaming.CrunchAll,
-                        MinifyCode = true
+                        CodeSettings = new CodeSettings
+                        {
+                            LocalRenaming = LocalRenaming.CrunchAll,
+                            MinifyCode = true
+                        }
                     };
 
                     var minifyCssSettings = new CssSettings
