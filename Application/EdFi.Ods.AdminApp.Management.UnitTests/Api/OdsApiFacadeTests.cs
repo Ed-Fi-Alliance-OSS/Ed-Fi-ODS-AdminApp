@@ -108,7 +108,7 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Api
             var ex = Assert.Throws<OdsApiConnectionException>(() => _facade.GetAllSchools());
 
             // Assert
-            Assert.AreEqual(errorMessage, ex.Message);
+            Assert.That(ex.Message, Is.EqualTo(errorMessage));
         }
 
         [Test]
@@ -166,7 +166,7 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Api
             var ex = Assert.Throws<OdsApiConnectionException>(() => _facade.GetSchoolsByLeaIds(new List<int> { LocalEducationAgencyId }));
 
             // Assert
-            Assert.AreEqual(errorMessage, ex.Message);
+            Assert.That(ex.Message, Is.EqualTo(errorMessage));
         }
 
         [Test]
@@ -215,7 +215,7 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Api
             var ex = Assert.Throws<OdsApiConnectionException>(() => _facade.GetSchoolById(SchoolId));
 
             // Assert
-            Assert.AreEqual(errorMessage, ex.Message);
+            Assert.That(ex.Message, Is.EqualTo(errorMessage));
         }
 
         [Test]
@@ -395,7 +395,7 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Api
             var ex = Assert.Throws<OdsApiConnectionException>(() => _facade.GetAllDescriptors());
 
             // Assert
-            Assert.AreEqual(errorMessage, ex.Message);
+            Assert.That(ex.Message, Is.EqualTo(errorMessage));
         }
 
         [Test]

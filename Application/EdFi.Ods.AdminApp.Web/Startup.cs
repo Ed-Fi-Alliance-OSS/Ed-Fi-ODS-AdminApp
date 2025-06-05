@@ -24,7 +24,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using FluentValidation.AspNetCore;
+using FluentValidation;
 using log4net;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -42,7 +42,8 @@ using System.Security.Claims;
 using System.Linq;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http.Features;
-using System.Data;
+using WebOptimizer;
+using WebOptimizer.Processors;
 
 namespace EdFi.Ods.AdminApp.Web
 {
@@ -85,24 +86,23 @@ namespace EdFi.Ods.AdminApp.Web
                         options.Filters.Add<JsonValidationFilter>();
                         options.Filters.Add<SetupRequiredFilter>();
                         options.Filters.Add<InstanceContextFilter>();
-                    })
-                    .AddFluentValidation(
-                        opt =>
-                        {
-                            opt.RegisterValidatorsFromAssembly(executingAssembly);
+                    });
 
-                            opt.ValidatorOptions.DisplayNameResolver = (type, memberInfo, expression)
-                                => memberInfo?
-                                    .GetCustomAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>()?.GetName();
-                        });
+            // FluentValidation 12 configuration
+            services.AddValidatorsFromAssembly(executingAssembly);
+            ValidatorOptions.Global.DisplayNameResolver = (type, memberInfo, expression)
+                => memberInfo?
+                    .GetCustomAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>()?.GetName();
 
             services.AddWebOptimizer(
                 pipeline =>
-                {
-                    var minifyJsSettings = new CodeSettings
+                {                    var minifyJsSettings = new JsSettings
                     {
-                        LocalRenaming = LocalRenaming.CrunchAll,
-                        MinifyCode = true
+                        CodeSettings = new CodeSettings
+                        {
+                            LocalRenaming = LocalRenaming.CrunchAll,
+                            MinifyCode = true
+                        }
                     };
 
                     var minifyCssSettings = new CssSettings
@@ -417,3 +417,6 @@ namespace EdFi.Ods.AdminApp.Web
         public static ConnectionStrings ConfigurationConnectionStrings { get; set; }
     }
 }
+
+
+

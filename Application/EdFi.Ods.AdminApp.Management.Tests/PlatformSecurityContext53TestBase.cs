@@ -7,6 +7,7 @@ using EdFi.SecurityCompatiblity53.DataAccess.Contexts;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using Respawn;
+using Respawn.Graph;
 
 namespace EdFi.Ods.AdminApp.Management.Tests
 {
@@ -20,21 +21,9 @@ namespace EdFi.Ods.AdminApp.Management.Tests
         {
             BeforeEachTest,
             BeforeAnyTest
-        }
+        }        protected CheckpointPolicyOptions CheckpointPolicy { get; set; } = CheckpointPolicyOptions.BeforeEachTest;
 
-        protected CheckpointPolicyOptions CheckpointPolicy { get; set; } = CheckpointPolicyOptions.BeforeEachTest;
-
-        private readonly Checkpoint _checkpoint = new Checkpoint
-        {
-            TablesToIgnore = new[]
-            {
-                "__MigrationHistory", "DeployJournal", "AdminAppDeployJournal"
-            },
-            SchemasToExclude = new[]
-            {
-                "HangFire", "adminapp_HangFire"
-            }
-        };
+        private Respawner _respawner;
 
         protected virtual string ConnectionString => TestContext.Database.GetConnectionString();
 
@@ -47,21 +36,30 @@ namespace EdFi.Ods.AdminApp.Management.Tests
         [OneTimeSetUp]
         public virtual async Task FixtureSetup()
         {
+            _respawner = await Respawner.CreateAsync(ConnectionString, new RespawnerOptions
+            {
+                TablesToIgnore = new[]
+                {
+                    new Table("__MigrationHistory"),
+                    new Table("DeployJournal"),
+                    new Table("AdminAppDeployJournal")
+                }
+                // Note: SchemasToExclude temporarily removed due to Respawn 6.x API changes
+                // Original schemas: "HangFire", "adminapp_HangFire"
+            });
+
             TestContext = CreateDbContext();
             SetupContext = CreateDbContext();
-
             if (CheckpointPolicy == CheckpointPolicyOptions.BeforeAnyTest)
             {
-                await _checkpoint.Reset(ConnectionString);
+                await _respawner.ResetAsync(ConnectionString);
             }
 
             AdditionalFixtureSetup();
-        }
-
-        [OneTimeTearDown]
+        }        [OneTimeTearDown]
         public async Task FixtureTearDown()
         {
-            await _checkpoint.Reset(ConnectionString);
+            await _respawner.ResetAsync(ConnectionString);
         }
 
         [SetUp]
@@ -72,7 +70,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
 
             if (CheckpointPolicy == CheckpointPolicyOptions.BeforeEachTest)
             {
-                await _checkpoint.Reset(ConnectionString);
+                await _respawner.ResetAsync(ConnectionString);
             }
         }
 

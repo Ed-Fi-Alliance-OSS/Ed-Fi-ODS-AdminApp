@@ -7,6 +7,7 @@ using Dapper;
 using EdFi.Ods.AdminApp.Management.Database.Ods;
 using NUnit.Framework;
 using Respawn;
+using Respawn.Graph;
 using System;
 using System.Data;
 using Microsoft.Data.SqlClient;
@@ -20,20 +21,25 @@ using Moq;
 using static EdFi.Ods.AdminApp.Management.Tests.Testing;
 
 namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
-{
-    [TestFixture]
+{    [TestFixture]
     public abstract class OdsDataTestBase
     {
         protected static TestOdsConnectionProvider TestConnectionProvider = new TestOdsConnectionProvider();
 
-        private readonly Checkpoint _checkpoint = new Checkpoint
+        private Respawner _respawner;
+
+        [OneTimeSetUp]
+        public async Task OneTimeSetUp()
         {
-            CommandTimeout = 300,
-            TablesToIgnore = new[]
+            _respawner = await Respawner.CreateAsync(TestOdsConnectionProvider.ConnectionString, new RespawnerOptions
             {
-                "__MigrationHistory"
-            },
-        };
+                CommandTimeout = 300,
+                TablesToIgnore = new[]
+                {
+                    new Table("__MigrationHistory")
+                }
+            });
+        }
 
         private static int GetNewStudentId(string name, int sexDescriptorId)
         {
@@ -108,7 +114,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
             {
                 sqlConnection.Query(@"
                 INSERT INTO edfi.GeneralStudentProgramAssociation (StudentUSI, EducationOrganizationId, ProgramTypeDescriptorId, ProgramName, ProgramEducationOrganizationId, BeginDate, EndDate)
-                VALUES (@StudentUSI, @LocalEducationAgencyId, @ProgramTypeDescriptorId, @ProgramName, @LocalEducationAgencyId, @BeginDate, @EndDate)", 
+                VALUES (@StudentUSI, @LocalEducationAgencyId, @ProgramTypeDescriptorId, @ProgramName, @LocalEducationAgencyId, @BeginDate, @EndDate)",
                 new
                 {
                     StudentUSI = studentUsi,
@@ -178,7 +184,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
                        ,@SexDescriptorId
                        ,@HispanicLatinoEthnicity
                        ,@Date)
-                    ", 
+                    ",
                     new
                     {
                         StudentUSI = studentUsi,
@@ -205,7 +211,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
                        ,@EducationOrganizationId
                        ,@RaceDescriptorId
                        ,@Date)
-                    ", 
+                    ",
                     new
                     {
                         StudentUSI = studentUsi,
@@ -415,7 +421,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
                                ,@Id
                                ,@Date
                                ,@Date)
-                    ", 
+                    ",
                     new {
                         SchoolYearId = schoolYear,
                         SchoolYearDescription = $"{schoolYear-1}-{schoolYear}",
@@ -504,15 +510,13 @@ namespace EdFi.Ods.AdminApp.Management.Tests.Database.Queries.Ods
 
                 sqlConnection.Execute(command, new { DescriptorId = descriptorId });
             }
-        }
-
-        [SetUp]
+        }        [SetUp]
         public async Task SetUp()
         {
-            await _checkpoint.Reset(TestOdsConnectionProvider.ConnectionString);
+            await _respawner.ResetAsync(TestOdsConnectionProvider.ConnectionString);
         }
 
-     
+
 
         [OneTimeTearDown]
         public void TearDown()

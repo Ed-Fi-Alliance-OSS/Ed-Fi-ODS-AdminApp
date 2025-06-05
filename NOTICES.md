@@ -131,7 +131,8 @@ See the [Apache License, Version 2.0](LICENSE) file in this application.
 
 https://github.com/FluentValidation/FluentValidation
 
-* FluentValidation.AspNetCore
+* FluentValidation
+* FluentValidation.DependencyInjectionExtensions
 
 See the [Apache License, Version 2.0](LICENSE) file in this application.
 
