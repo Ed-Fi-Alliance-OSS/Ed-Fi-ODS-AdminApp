@@ -13,7 +13,8 @@ using static EdFi.Ods.AdminApp.Management.Tests.Testing;
 using EdFi.Ods.AdminApp.Web;
 
 namespace EdFi.Ods.AdminApp.Management.Tests
-{    [TestFixture]
+{
+    [TestFixture]
     public abstract class PlatformUsersContextTestBase
     {
         private Respawner _respawner;
@@ -24,7 +25,9 @@ namespace EdFi.Ods.AdminApp.Management.Tests
             {
                 return Startup.ConfigurationConnectionStrings.Admin;
             }
-        }        [OneTimeSetUp]
+        }
+
+        [OneTimeSetUp]
         public async Task FixtureSetUp()
         {
             _respawner = await Respawner.CreateAsync(ConnectionString, new RespawnerOptions
@@ -55,7 +58,7 @@ namespace EdFi.Ods.AdminApp.Management.Tests
             Transaction(usersContext =>
             {
                 foreach (var entity in entities)
-                    ((SqlServerUsersContext) usersContext).Add(entity);
+                    ((SqlServerUsersContext)usersContext).Add(entity);
             });
         }
 

@@ -108,7 +108,7 @@ namespace EdFi.Ods.AdminApp.Management.UnitTests.Api
             var ex = Assert.Throws<OdsApiConnectionException>(() => _facade.GetAllSchools());
 
             // Assert
-            Assert.That(ex.Message, Is.EqualTo(errorMessage));
+            ex.Message.ShouldBe(errorMessage);
         }
 
         [Test]
