@@ -19,20 +19,24 @@
     <ProjectReference Include="..\EdFi.Ods.AdminApp.Management\EdFi.Ods.AdminApp.Management.csproj" />  
 </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="31.0.2" />
-    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="CsvHelper" Version="33.1.0" />
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="EdFi.SecurityCompatiblity53.DataAccess" Version="5.4.1">
       <Aliases>SecurityCompatiblity53</Aliases>
     </PackageReference>
     <PackageReference Include="EdFi.Suite3.LoadTools" Version="6.2.25" />
-    <PackageReference Include="FluentValidation" Version="10.4.0" />
-    <PackageReference Include="FluentValidation.AspNetCore" Version="10.4.0" />
+    <PackageReference Include="EFCore.NamingConventions" Version="9.0.0" />
+    <PackageReference Include="FluentValidation" Version="12.0.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
     <PackageReference Include="HtmlTags" Version="9.0.0" />
-    <PackageReference Include="LigerShark.WebOptimizer.Core" Version="3.0.405" />
-    <PackageReference Include="log4net" Version="2.0.17" />
-    <PackageReference Include="Npgsql" Version="8.0.3" />
+    <PackageReference Include="LigerShark.WebOptimizer.Core" Version="3.0.436" />
+    <PackageReference Include="log4net" Version="3.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.5" />
+    <PackageReference Include="Npgsql" Version="9.0.3" />
     <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.6" />
+    <PackageReference Include="System.Formats.Asn1" Version="9.0.5" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="appsettings.Docker-SharedInstance.json" CopyToPublishDirectory="Never" />
