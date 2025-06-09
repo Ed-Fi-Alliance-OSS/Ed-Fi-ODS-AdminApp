@@ -36,6 +36,10 @@ namespace EdFi.Ods.AdminApp.Management.Tests
                     new Table("__MigrationHistory"),
                     new Table("DeployJournal"),
                     new Table("AdminAppDeployJournal")
+                },
+                SchemasToExclude = new[]
+                {
+                    "HangFire", "adminapp_HangFire"
                 }
             });
         }
