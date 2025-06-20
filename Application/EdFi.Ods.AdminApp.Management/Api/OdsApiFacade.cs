@@ -48,7 +48,17 @@ namespace EdFi.Ods.AdminApp.Management.Api
                     {"localEducationAgencyId", leaId}
                 };
 
-                response.AddRange(_restClient.GetAll<School>(ResourcePaths.Schools, filters));
+                //response.AddRange(_restClient.GetAll<School>(ResourcePaths.Schools, filters));
+                var task = System.Threading.Tasks.Task.Run(() => _restClient.GetAll<School>(ResourcePaths.Schools, filters));
+                if (task.Wait(System.TimeSpan.FromSeconds(10)))
+                {
+                    response.AddRange(task.Result);
+                }
+                else
+                {
+                    System.Console.WriteLine($"Timeout while fetching schools for LEA ID: {leaId}");
+                    break;
+                }
             }
 
             return _mapper.Map<List<Models.School>>(response);
