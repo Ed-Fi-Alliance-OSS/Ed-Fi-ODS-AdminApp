@@ -26,51 +26,19 @@ See the LICENSE and NOTICES files in the project root for more information.
 
 @foreach (var localEducationAgency in Model.LocalEducationAgencies.Items)
 {
-    var schools = Model.Schools.Where(x => x.LocalEducationAgencyId == localEducationAgency.EducationOrganizationId).ToList();
-
-    <div class="panel-section">
+    <div class="panel-section lea-panel" data-leaid="@localEducationAgency.EducationOrganizationId">
         <div class="row heading">
             <div class="col-lg-6">
                 <h8>@localEducationAgency.Name</h8>
             </div>
-
             <div class="col-lg-6 text-right">
                 <a href="javascript:void(0)" class="loads-ajax-modal" data-url="@Url.Action("EditLocalEducationAgencyModal", "EducationOrganizations", new {id = localEducationAgency.Id})"> <span class="fa fa-pencil action-icons"></span></a>
-                @if (!schools.Any())
-                {
-                    <a href="javascript:void(0)" class="delete-lea-link" data-id="@localEducationAgency.Id" data-name="@localEducationAgency.Name"> <span class="fa fa-trash-o action-icons"></span></a>
-                }
-                else
-                {
-                    <a href="javascript:void(0)" data-name="@localEducationAgency.Name"> <span class="fa fa-trash-o action-icons disabled"></span></a>
-                }
+                <a href="javascript:void(0)" class="delete-lea-link disabled" data-id="@localEducationAgency.Id" data-name="@localEducationAgency.Name"> <span class="fa fa-trash-o action-icons disabled"></span></a>
                 <span class="custom-divider"> |</span>
-                <a href="javascript:void(0)" data-toggle="collapse" data-target="#lea-@(localEducationAgency.Id)"><span class="fa fa-chevron-up caret-custom panel-toggle"></span></a>
+                <a href="javascript:void(0)" class="lea-toggle" data-leaid="@localEducationAgency.EducationOrganizationId"><span class="fa fa-chevron-down caret-custom panel-toggle"></span></a>
             </div>
         </div>
-        <div id="lea-@(localEducationAgency.Id)" class="row content collapse in">
-            @if (!schools.Any())
-            {
-                <div class="col-lg-12">
-                    <em>There are no schools in this category</em>
-                </div>
-            }
-            @foreach (var school in schools)
-            {
-                <div class="col-lg-8">
-                    <h7>@school.Name</h7>
-                </div>
-                <div class="col-lg-4 text-right">
-                    <a href="javascript:void(0)" class="loads-ajax-modal" data-url="@Url.Action("EditSchoolModal", "EducationOrganizations", new {id = school.Id})"> <span class="fa fa-pencil action-icons"></span></a>
-                    <a href="javascript:void(0)" class="delete-school-link" data-id="@school.Id" data-name="@school.Name"> <span class="fa fa-trash-o action-icons"></span></a>
-                </div>
-            }
-            <div class="col-lg-12 text-right padding-bottom-5">
-                <button class="ghost-button btn-sm add-school-button" data-lea-id="@(localEducationAgency.EducationOrganizationId)">
-                    Add School
-                </button>
-            </div>
-        </div>
+        <div id="lea-schools-@localEducationAgency.EducationOrganizationId" class="row content collapse lea-schools-panel"></div>
     </div>
 }
 
@@ -80,4 +48,48 @@ See the LICENSE and NOTICES files in the project root for more information.
 @{ await Html.RenderPartialAsync("_DeleteOrganizationModal", new DeleteEducationOrganizationModel()); }
 @{ await Html.RenderPartialAsync("_AddLocalEducationAgencyModal", Model.AddLocalEducationAgencyModel); }
 @{ await Html.RenderPartialAsync("_AddSchoolModal", Model.AddSchoolModel); }
+
+<script>
+$(function() {
+    var expandedLea = null;
+    function loadSchools(leaId, page) {
+        var $panel = $("#lea-schools-" + leaId);
+        $panel.html('<div class="col-lg-12 text-center"><span class="fa fa-spinner fa-spin"></span> Loading...</div>');
+        $.get('@Url.Action("GetSchoolsByLea", "EducationOrganizations")', { leaId: leaId, pageNumber: page || 1 }, function(html) {
+            $panel.html(html);
+            // Enable delete-lea-link if no schools
+            var hasSchools = $panel.find('.col-lg-8').length > 0;
+            var $deleteLink = $panel.closest('.lea-panel').find('.delete-lea-link');
+            if (!hasSchools) {
+                $deleteLink.removeClass('disabled');
+                $deleteLink.find('span').removeClass('disabled');
+            } else {
+                $deleteLink.addClass('disabled');
+                $deleteLink.find('span').addClass('disabled');
+            }
+        });
+    }
+    $(document).on('click', '.lea-toggle', function() {
+        var leaId = $(this).data('leaid');
+        var $panel = $("#lea-schools-" + leaId);
+        // Collapse others
+        $('.lea-schools-panel').not($panel).slideUp();
+        if ($panel.is(':visible')) {
+            $panel.slideUp();
+            expandedLea = null;
+        } else {
+            $panel.slideDown();
+            loadSchools(leaId, 1);
+            expandedLea = leaId;
+        }
+    });
+    // Pagination for schools
+    $(document).on('click', '.school-page-link', function(e) {
+        e.preventDefault();
+        var leaId = $(this).data('leaid');
+        var page = $(this).data('page');
+        loadSchools(leaId, page);
+    });
+});
+</script>
 

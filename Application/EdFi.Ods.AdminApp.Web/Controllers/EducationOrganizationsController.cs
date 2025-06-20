@@ -425,5 +425,29 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                 StatusCode = 400
             };
         }
+
+        [HttpGet]
+        public async Task<ActionResult> GetSchoolsByLea(int leaId, int pageNumber = 1)
+        {
+            var api = await _odsApiFacadeFactory.Create();
+            var allSchools = api.GetSchoolsByLeaIds(new List<int> { leaId });
+            var pagedSchools = allSchools
+                .OrderBy(s => s.Name)
+                .Skip((pageNumber - 1) * 10)
+                .Take(10)
+                .ToList();
+            var totalSchools = allSchools.Count;
+            var totalPages = (int)Math.Ceiling(totalSchools / 10.0);
+
+            var model = new SchoolsByLeaViewModel
+            {
+                Schools = pagedSchools,
+                LeaId = leaId,
+                PageNumber = pageNumber,
+                TotalPages = totalPages,
+                TotalSchools = totalSchools
+            };
+            return PartialView("_SchoolsByLea", model);
+        }
     }
 }
