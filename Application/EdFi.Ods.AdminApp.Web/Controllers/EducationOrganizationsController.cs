@@ -430,7 +430,11 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         public async Task<ActionResult> GetSchoolsByLea(int leaId, int pageNumber = 1)
         {
             var api = await _odsApiFacadeFactory.Create();
-            int pageSize = 10;
+            int pageSize = 20;
+            if (int.TryParse(System.Configuration.ConfigurationManager.AppSettings["SchoolPageSize"], out var configPageSize))
+            {
+                pageSize = configPageSize;
+            }
             int offset = (pageNumber - 1) * pageSize;
             var (pagedSchools, totalSchools) = api.GetSchoolsByLeaIdByPageWithTotalCount(leaId, offset, pageSize);
             var totalPages = totalSchools.HasValue ? (int)Math.Ceiling(totalSchools.Value / (double)pageSize) : 1;
