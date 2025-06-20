@@ -49,7 +49,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         public async Task<ActionResult> LocalEducationAgencies()
         {
             var validatorResult = await _odsApiValidator.Validate(CloudOdsAdminAppSettings.AppSettings.ProductionApiUrl);
-            
+
             if (!validatorResult.IsValidOdsApi)
             {
                 throw validatorResult.Exception;
@@ -68,11 +68,11 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             return View("Index", model);
         }
 
-        
+
         public async Task<ActionResult> PostSecondaryInstitutions()
         {
             var validatorResult = await _odsApiValidator.Validate(CloudOdsAdminAppSettings.AppSettings.ProductionApiUrl);
-            
+
             if (!validatorResult.IsValidOdsApi)
             {
                 throw validatorResult.Exception;
@@ -272,12 +272,12 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         public async Task<ActionResult> LocalEducationAgencyList(int pageNumber)
         {
             var api = await _odsApiFacadeFactory.Create();
-            
+
             var localEducationAgencies =
                 await Page<LocalEducationAgency>.FetchAsync(GetLocalEducationAgencies, pageNumber);
 
-            var schools = api.GetSchoolsByLeaIds(
-                localEducationAgencies.Items.Select(x => x.EducationOrganizationId));
+            var schools = new List<School>();/*api.GetSchoolsByLeaIds(
+                localEducationAgencies.Items.Select(x => x.EducationOrganizationId));*/
 
             var requiredApiDataExist = (await _odsApiFacadeFactory.Create()).DoesApiDataExist();
 
@@ -396,7 +396,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         {
             var details = await GetTpdmExtensionDetails();
             return details.IsTpdmCommunityVersion ? BuildListWithEmptyOption(optionList) : null;
-        }      
+        }
 
         private List<SelectOptionModel> BuildListWithEmptyOption(Func<List<SelectOptionModel>> getSelectOptionList)
         {
@@ -430,14 +430,10 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         public async Task<ActionResult> GetSchoolsByLea(int leaId, int pageNumber = 1)
         {
             var api = await _odsApiFacadeFactory.Create();
-            var allSchools = api.GetSchoolsByLeaIds(new List<int> { leaId });
-            var pagedSchools = allSchools
-                .OrderBy(s => s.Name)
-                .Skip((pageNumber - 1) * 10)
-                .Take(10)
-                .ToList();
-            var totalSchools = allSchools.Count;
-            var totalPages = (int)Math.Ceiling(totalSchools / 10.0);
+            int pageSize = 10;
+            int offset = (pageNumber - 1) * pageSize;
+            var (pagedSchools, totalSchools) = api.GetSchoolsByLeaIdByPageWithTotalCount(leaId, offset, pageSize);
+            var totalPages = totalSchools.HasValue ? (int)Math.Ceiling(totalSchools.Value / (double)pageSize) : 1;
 
             var model = new SchoolsByLeaViewModel
             {
@@ -445,7 +441,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                 LeaId = leaId,
                 PageNumber = pageNumber,
                 TotalPages = totalPages,
-                TotalSchools = totalSchools
+                TotalSchools = totalSchools ?? pagedSchools.Count
             };
             return PartialView("_SchoolsByLea", model);
         }
