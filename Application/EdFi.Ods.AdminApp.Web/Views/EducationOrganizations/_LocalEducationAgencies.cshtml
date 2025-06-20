@@ -69,13 +69,13 @@ $(function() {
             }
         });
     }
+    // Use event delegation for dynamically loaded content
     $(document).on('click', '.lea-toggle', function() {
         var leaId = $(this).data('leaid');
         var $panel = $("#lea-schools-" + leaId);
         // Collapse others
-        $('.lea-schools-panel').not($panel).slideUp();
+        //$('.lea-schools-panel').not($panel).slideUp();
         if ($panel.is(':visible')) {
-            $panel.slideUp();
             expandedLea = null;
         } else {
             $panel.slideDown();
@@ -91,5 +91,6 @@ $(function() {
         loadSchools(leaId, page);
     });
 });
+
 </script>
 
