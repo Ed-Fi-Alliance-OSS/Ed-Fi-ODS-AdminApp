@@ -69,21 +69,19 @@ $(function() {
             }
         });
     }
-    // Use event delegation for dynamically loaded content
     $(document).on('click', '.lea-toggle', function() {
         var leaId = $(this).data('leaid');
         var $panel = $("#lea-schools-" + leaId);
-        var $icon = $(this).find('.panel-toggle');
-        // If this panel is already expanded, collapse it and reset expandedLea
-        if ($icon.hasClass('fa-chevron-down')) {
+        // Collapse others
+        $('.lea-schools-panel').not($panel).slideUp();
+        if ($panel.is(':visible')) {
             $panel.slideUp();
             expandedLea = null;
-            return;
+        } else {
+            $panel.slideDown();
+            loadSchools(leaId, 1);
+            expandedLea = leaId;
         }
-        // Expand this one
-        $panel.slideDown();
-        loadSchools(leaId, 1);
-        expandedLea = leaId;
     });
     // Pagination for schools
     $(document).on('click', '.school-page-link', function(e) {
@@ -92,11 +90,6 @@ $(function() {
         var page = $(this).data('page');
         loadSchools(leaId, page);
     });
-    // Reset expandedLea when paging
-    $(document).on('click', '.pagination a', function() {
-        expandedLea = null;
-    });
 });
-
 </script>
 
