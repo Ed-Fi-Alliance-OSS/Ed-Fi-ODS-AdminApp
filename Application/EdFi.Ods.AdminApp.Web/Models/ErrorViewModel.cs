@@ -5,6 +5,7 @@
 
 namespace EdFi.Ods.AdminApp.Web.Models
 {
+    //Error view
     public class ErrorViewModel
     {
         public string RequestId { get; set; }
