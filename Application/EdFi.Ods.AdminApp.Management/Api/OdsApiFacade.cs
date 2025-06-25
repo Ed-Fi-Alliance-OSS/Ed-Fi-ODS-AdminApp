@@ -41,7 +41,6 @@ namespace EdFi.Ods.AdminApp.Management.Api
         public List<Models.School> GetSchoolsByLeaIds(IEnumerable<int> leaIds)
         {
             var response = new List<School>();
-            int n = 0;
             foreach (var leaId in leaIds)
             {
                 var filters = new Dictionary<string, object>
