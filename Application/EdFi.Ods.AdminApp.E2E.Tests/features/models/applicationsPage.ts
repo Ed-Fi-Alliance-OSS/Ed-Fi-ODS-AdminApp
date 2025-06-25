@@ -11,7 +11,7 @@ import { AdminAppPage } from "./adminAppPage";
 export class ApplicationsPage extends AdminAppPage {
     activeTabSelector = "ul.nav li.active";
     apiURLSelector = "a.copy-to-clipboard";
-    errorMsgSection = "div.validationSummary:not(.hidden)";
+    errorMsgSection = "div.validationSummary";
     fieldWithErrorSelector = ".row.has-error";
     modalConfirmationBtn = 'button[type="submit"]';
     addApplicationBtn = this.modalConfirmationBtn;
@@ -127,9 +127,10 @@ export class ApplicationsPage extends AdminAppPage {
 
     async enterLongApplicationName(): Promise<void> {
         await this.fillApplicationName(getRandomString(51));
-    }    async saveApplicationForm({ expectErrors = false }: { expectErrors?: boolean } = {}): Promise<void> {
+    }
+
+    async saveApplicationForm({ expectErrors = false }: { expectErrors?: boolean } = {}): Promise<void> {
         try {
-            console.log(`Saving application form with expectErrors: ${expectErrors}`);
             await Promise.all([
                 network.waitForResponse({
                     url: "/Application/Add",
@@ -138,17 +139,8 @@ export class ApplicationsPage extends AdminAppPage {
                 this.saveForm(),
             ]);
             network.startResponseTracking(this.applicationListURL);
-
-            if (expectErrors) {
-                console.log("Form saved with errors - validation should now be visible");
-                // Give a small delay for validation to appear
-                await this.page.waitForTimeout(1000);
-            }
         } catch (error) {
-            console.log(`Error in saveApplicationForm: ${error}`);
-            const errorMessages = await this.getErrorMessages();
-            console.log(`Current error messages: ${errorMessages}`);
-            throw `${error}\nErrors saving form:\n${errorMessages}`;
+            throw `${error}\nErrors saving form:\n${await this.getErrorMessages()}`;
         }
     }
 
@@ -196,23 +188,10 @@ export class ApplicationsPage extends AdminAppPage {
             return false;
         }
         return await testURL(apiURL);
-    }    async getErrorMessages(): Promise<string | null> {
-        try {
-            // Wait for the validation summary to become visible (remove hidden class)
-            await this.modalSelector.locator(`${this.errorMsgSection}`).waitFor({
-                timeout: 10000,
-                state: 'visible'
-            });
-            return await this.getText({ section: this.modalSelector, selector: this.errorMsgSection });
-        } catch (error) {
-            // If validation summary is not visible, check if there are any validation errors at all
-            const hasValidationErrors = await this.modalSelector.locator('div.validationSummary').count() > 0;
-            if (hasValidationErrors) {
-                // Try to get text even if hidden to see what's there
-                return await this.getText({ section: this.modalSelector, selector: 'div.validationSummary' });
-            }
-            return null;
-        }
+    }
+
+    async getErrorMessages(): Promise<string | null> {
+        return await this.getText({ section: this.modalSelector, selector: this.errorMsgSection });
     }
 
     async applicationFieldHasError(): Promise<boolean> {
