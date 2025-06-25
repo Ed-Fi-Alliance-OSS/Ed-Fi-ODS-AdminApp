@@ -194,27 +194,34 @@ Then("application is edited", async () => {
 Then("application validation for {string} appears", async (scenario: string) => {
     const errors = await models.applicationsPage.getErrorMessages();
 
+    console.log(`Validation scenario: ${scenario}`);
+    console.log(`Received error messages: ${errors}`);
+
+    if (!errors) {
+        throw new Error(`No validation errors found for scenario: ${scenario}. Expected validation messages to appear.`);
+    }
+
     switch (scenario) {
         case "long app name":
             ok(
                 errors?.includes(models.applicationsPage.errorMessages.longAppName),
-                `long application name error message failed. Actual message: ${errors}`
+                `long application name error message failed. Expected: "${models.applicationsPage.errorMessages.longAppName}". Actual message: ${errors}`
             );
             ok(await models.applicationsPage.applicationFieldHasError());
             break;
         case "no data":
             ok(
                 errors?.includes(models.applicationsPage.errorMessages.noData),
-                `Error message failed. Actual message: ${errors}`
+                `Missing "no data" error message. Expected: "${models.applicationsPage.errorMessages.noData}". Actual message: ${errors}`
             );
             ok(
                 errors?.includes(models.applicationsPage.errorMessages.noOrgSelected),
-                `Error message failed. Actual message: ${errors}`
+                `Missing "no org selected" error message. Expected: "${models.applicationsPage.errorMessages.noOrgSelected}". Actual message: ${errors}`
             );
             ok(await models.applicationsPage.requiredFieldsHaveError());
             break;
         default:
-            break;
+            throw new Error(`Unknown validation scenario: ${scenario}`);
     }
 });
 
