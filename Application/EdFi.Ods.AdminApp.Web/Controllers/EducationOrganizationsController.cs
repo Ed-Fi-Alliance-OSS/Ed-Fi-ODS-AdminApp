@@ -272,12 +272,15 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         public async Task<ActionResult> LocalEducationAgencyList(int pageNumber)
         {
             var api = await _odsApiFacadeFactory.Create();
-
+            int pageSize = 20;
+            if (int.TryParse(System.Configuration.ConfigurationManager.AppSettings["PageSize"], out var configPageSize))
+            {
+                pageSize = configPageSize;
+            }
             var localEducationAgencies =
-                await Page<LocalEducationAgency>.FetchAsync(GetLocalEducationAgencies, pageNumber);
+                await Page<LocalEducationAgency>.FetchAsync(GetLocalEducationAgencies, pageNumber, pageSize);
 
-            var schools = new List<School>();/*api.GetSchoolsByLeaIds(
-                localEducationAgencies.Items.Select(x => x.EducationOrganizationId));*/
+            var schools = new List<School>();
 
             var requiredApiDataExist = (await _odsApiFacadeFactory.Create()).DoesApiDataExist();
 
@@ -431,7 +434,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         {
             var api = await _odsApiFacadeFactory.Create();
             int pageSize = 20;
-            if (int.TryParse(System.Configuration.ConfigurationManager.AppSettings["SchoolPageSize"], out var configPageSize))
+            if (int.TryParse(System.Configuration.ConfigurationManager.AppSettings["PageSize"], out var configPageSize))
             {
                 pageSize = configPageSize;
             }
