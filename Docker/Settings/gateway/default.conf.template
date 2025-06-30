@@ -40,7 +40,7 @@ server {
     }
 
     location /${ADMINAPP_VIRTUAL_NAME}/productionLearningStandardsHub {
-        proxy_pass http://adminapp/productionLearningStandardsHub;
+        proxy_pass http://adminapp:8080/productionLearningStandardsHub;
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header X-Forwarded-Host $host;
         proxy_set_header X-Forwarded-Port 443;
@@ -52,7 +52,7 @@ server {
     }
 
     location /${ADMINAPP_VIRTUAL_NAME}/bulkUploadHub {
-        proxy_pass http://adminapp/bulkUploadHub;
+        proxy_pass http://adminapp:8080/bulkUploadHub;
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header X-Forwarded-Host $host;
         proxy_set_header X-Forwarded-Port 443;
