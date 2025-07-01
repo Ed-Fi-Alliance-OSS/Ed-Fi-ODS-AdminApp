@@ -63,9 +63,6 @@ namespace EdFi.Ods.AdminApp.Web.ActionFilters
                     context.Result = contentResult;
                     return;
                 }
-
-                // For non-AJAX requests, let existing filters handle the response
-                return;
             }
             await next();
         }
