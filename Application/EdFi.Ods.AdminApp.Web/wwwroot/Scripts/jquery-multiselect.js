@@ -77,14 +77,20 @@ jQuery.fn.extend({
         detail.css({ "width": parseInt(options.width) + 10, "max-height": localOption.height });
         var multiCheckBoxDetailBody = detail.find(".MultiCheckBoxDetailBody");
 
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
         this.find("option").each(function () {
-            var val = $(this).attr("value");
+            var val = escapeHtml($(this).attr("value") || '');
             var selected = $(this).attr("selected");
             var disabled = $(this).attr("disabled");
             var default_auth = $(this).data("default-auth")
-
-            if (val == undefined)
-                val = '';
 
             if (selected == undefined)
                 selected = '';
@@ -96,10 +102,10 @@ jQuery.fn.extend({
                 default_auth = '';
 
             if (disabled) {
-                multiCheckBoxDetailBody.append(`<div class='cont'><input type='checkbox' class='mulinput ${(default_auth ? "default-auth" : "standard")}' value='${val}' ${(selected ? "checked" : "")} ${(disabled ? "disabled='disabled'" : "")} text='${ $(this).text() }' data-default-auth=${ default_auth } /> ${ $(this).text() } </div>`);
+                multiCheckBoxDetailBody.append(`<div class='cont'><input type='checkbox' class='mulinput ${(default_auth ? "default-auth" : "standard")}' value='${val}' ${(selected ? "checked" : "")} ${(disabled ? "disabled='disabled'" : "")} text='${ escapeHtml($(this).text()) }' data-default-auth=${ default_auth } /> ${ escapeHtml($(this).text()) } </div>`);
             }
             else {
-                multiCheckBoxDetailBody.append(`<div class='cont'><input type='checkbox' class='mulinput ${(default_auth ? "default-auth" : "standard")}' value='${val}' ${(selected ? "checked" : "")}  text='${$(this).text()}' data-default-auth=${default_auth } /> ${$(this).text()} </div>`);
+                multiCheckBoxDetailBody.append(`<div class='cont'><input type='checkbox' class='mulinput ${(default_auth ? "default-auth" : "standard")}' value='${val}' ${(selected ? "checked" : "")}  text='${escapeHtml($(this).text())}' data-default-auth=${default_auth } /> ${escapeHtml($(this).text())} </div>`);
             }
         });
 
