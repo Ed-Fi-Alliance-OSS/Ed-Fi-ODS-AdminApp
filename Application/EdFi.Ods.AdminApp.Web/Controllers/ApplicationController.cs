@@ -158,7 +158,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
 
         [HttpPost]
         //[AddTelemetry("Add Application")]
-        public async Task<ActionResult> Add(AddApplicationModel model)
+        public ActionResult Add(AddApplicationModel model)
         {
             var result = _addApplicationCommand.Execute(model);
 
