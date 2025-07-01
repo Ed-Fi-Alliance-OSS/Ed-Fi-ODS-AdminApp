@@ -6,10 +6,13 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using EdFi.Ods.AdminApp.Web.Helpers;
 using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 
 namespace EdFi.Ods.AdminApp.Web.ActionFilters
 {
@@ -40,12 +43,30 @@ namespace EdFi.Ods.AdminApp.Web.ActionFilters
                 }
             }
             // Stop the pipeline if validation failed
-           /* if (!context.ModelState.IsValid)
+            if (!context.ModelState.IsValid)
             {
-                // Optionally, set a result here (e.g., BadRequestObjectResult for APIs)
-                // For MVC, just return and let existing filters handle the response
+                // Handle AJAX requests
+                if (context.HttpContext.Request.IsAjaxRequest())
+                {
+                    var jsonSerializerSettings = new JsonSerializerSettings
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    };
+
+                    var contentResult = new ContentResult
+                    {
+                        Content = JsonConvert.SerializeObject(context.ModelState, jsonSerializerSettings),
+                        ContentType = "application/json",
+                        StatusCode = 400,
+                    };
+
+                    context.Result = contentResult;
+                    return;
+                }
+
+                // For non-AJAX requests, let existing filters handle the response
                 return;
-            }*/
+            }
             await next();
         }
     }

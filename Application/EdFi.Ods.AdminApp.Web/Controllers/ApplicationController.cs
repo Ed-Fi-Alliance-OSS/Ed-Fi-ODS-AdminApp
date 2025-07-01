@@ -160,22 +160,6 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         //[AddTelemetry("Add Application")]
         public async Task<ActionResult> Add(AddApplicationModel model)
         {
-
-            if (!ModelState.IsValid)
-            {
-                if (Request.IsAjaxRequest())
-                {
-                    return new ContentResult
-                    {
-                        Content = JsonConvert.SerializeObject(
-                            ModelState,
-                            new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                        ContentType = "application/json",
-                        StatusCode = 400
-                    };
-                }
-            }
-
             var result = _addApplicationCommand.Execute(model);
 
             var apiUrl = CloudOdsApiConnectionInformationProvider.GetConnectionInformationForEnvironment(
