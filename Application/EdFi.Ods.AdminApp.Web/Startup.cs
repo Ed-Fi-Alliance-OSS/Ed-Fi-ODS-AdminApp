@@ -86,6 +86,7 @@ namespace EdFi.Ods.AdminApp.Web
                         options.Filters.Add<JsonValidationFilter>();
                         options.Filters.Add<SetupRequiredFilter>();
                         options.Filters.Add<InstanceContextFilter>();
+                        options.Filters.Add<FluentValidationManualFilter>();
                     });
 
             // FluentValidation 12 configuration
