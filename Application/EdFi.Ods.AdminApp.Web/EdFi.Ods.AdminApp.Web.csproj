@@ -24,7 +24,7 @@
     <PackageReference Include="EdFi.SecurityCompatiblity53.DataAccess" Version="5.4.1">
       <Aliases>SecurityCompatiblity53</Aliases>
     </PackageReference>
-    <PackageReference Include="EdFi.Suite3.LoadTools" Version="7.4.3" />
+    <PackageReference Include="EdFi.Suite3.LoadTools" Version="6.2.25" />
     <PackageReference Include="EFCore.NamingConventions" Version="9.0.0" />
     <PackageReference Include="FluentValidation" Version="12.0.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
