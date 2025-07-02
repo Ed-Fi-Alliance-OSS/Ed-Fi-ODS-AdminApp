@@ -33,7 +33,7 @@ See the LICENSE and NOTICES files in the project root for more information.
             </div>
             <div class="col-lg-6 text-right">
                 <a href="javascript:void(0)" class="loads-ajax-modal" data-url="@Url.Action("EditLocalEducationAgencyModal", "EducationOrganizations", new {id = localEducationAgency.Id})"> <span class="fa fa-pencil action-icons"></span></a>
-                <a href="javascript:void(0)" class="delete-lea-link disabled" data-id="@localEducationAgency.Id" data-name="@localEducationAgency.Name"> <span class="fa fa-trash-o action-icons disabled"></span></a>
+                <a href="javascript:void(0)" class="delete-lea-link disabled" data-id="@localEducationAgency.Id" data-name="@localEducationAgency.Name"> <span class="fa fa-trash-o action-icons disabled" aria-disabled="true"></span></a>
                 <span class="custom-divider"> |</span>
                 <a href="javascript:void(0)" class="lea-toggle" data-leaid="@localEducationAgency.EducationOrganizationId"><span class="fa fa-chevron-down caret-custom panel-toggle"></span></a>
             </div>
@@ -51,7 +51,6 @@ See the LICENSE and NOTICES files in the project root for more information.
 
 <script>
 $(function() {
-    var expandedLea = null;
     function loadSchools(leaId, page) {
         var $panel = $("#lea-schools-" + leaId);
         $panel.html('<div class="col-lg-12 text-center"><span class="fa fa-spinner fa-spin"></span> Loading...</div>');
@@ -77,13 +76,11 @@ $(function() {
         // If this panel is already expanded, collapse it and reset expandedLea
         if ($icon.hasClass('fa-chevron-down')) {
             $panel.slideUp();
-            expandedLea = null;
             return;
         }
         // Expand this one
         $panel.slideDown();
         loadSchools(leaId, 1);
-        expandedLea = leaId;
     });
     // Pagination for schools
     $(document).on('click', '.school-page-link', function(e) {
@@ -91,10 +88,6 @@ $(function() {
         var leaId = $(this).data('leaid');
         var page = $(this).data('page');
         loadSchools(leaId, page);
-    });
-    // Reset expandedLea when paging
-    $(document).on('click', '.pagination a', function() {
-        expandedLea = null;
     });
 });
 

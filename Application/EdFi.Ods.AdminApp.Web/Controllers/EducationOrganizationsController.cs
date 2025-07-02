@@ -3,24 +3,25 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
+using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Management.Api;
 using EdFi.Ods.AdminApp.Management.Api.Models;
-using EdFi.Ods.AdminApp.Web.Models.ViewModels;
-using EdFi.Ods.AdminApp.Web.Models.ViewModels.EducationOrganizations;
-using Microsoft.AspNetCore.Mvc;
-using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Management.Helpers;
 using EdFi.Ods.AdminApp.Management.Instances;
 using EdFi.Ods.AdminApp.Web.ActionFilters;
 using EdFi.Ods.AdminApp.Web.Display.Pagination;
 using EdFi.Ods.AdminApp.Web.Display.TabEnumeration;
 using EdFi.Ods.AdminApp.Web.Infrastructure;
+using EdFi.Ods.AdminApp.Web.Models.ViewModels;
+using EdFi.Ods.AdminApp.Web.Models.ViewModels.EducationOrganizations;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using static EdFi.Ods.AdminApp.Web.Models.ViewModels.EducationOrganizations.EducationOrganizationValidationHelper;
 
 namespace EdFi.Ods.AdminApp.Web.Controllers
@@ -33,10 +34,12 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         private readonly ITabDisplayService _tabDisplayService;
         private readonly IInferExtensionDetails _inferExtensionDetails;
         private readonly IOdsApiValidator _odsApiValidator;
+        private readonly IOptions<AppSettings> _appSettings;
 
         public EducationOrganizationsController(IOdsApiFacadeFactory odsApiFacadeFactory
             , IMapper mapper, InstanceContext instanceContext, ITabDisplayService tabDisplayService
-            , IInferExtensionDetails inferExtensionDetails, IOdsApiValidator odsApiValidator)
+            , IInferExtensionDetails inferExtensionDetails, IOdsApiValidator odsApiValidator
+            , IOptions<AppSettings> appSettings)
         {
             _odsApiFacadeFactory = odsApiFacadeFactory;
             _mapper = mapper;
@@ -44,6 +47,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _tabDisplayService = tabDisplayService;
             _inferExtensionDetails = inferExtensionDetails;
             _odsApiValidator = odsApiValidator;
+            _appSettings = appSettings;
         }
 
         public async Task<ActionResult> LocalEducationAgencies()
@@ -272,11 +276,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         public async Task<ActionResult> LocalEducationAgencyList(int pageNumber)
         {
             var api = await _odsApiFacadeFactory.Create();
-            int pageSize = 20;
-            if (int.TryParse(System.Configuration.ConfigurationManager.AppSettings["PageSize"], out var configPageSize))
-            {
-                pageSize = configPageSize;
-            }
+            int pageSize = _appSettings.Value.PageSize;
             var localEducationAgencies =
                 await Page<LocalEducationAgency>.FetchAsync(GetLocalEducationAgencies, pageNumber, pageSize);
 
