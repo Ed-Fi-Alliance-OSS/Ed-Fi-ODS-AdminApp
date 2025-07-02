@@ -36,10 +36,11 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         private readonly IOdsApiValidator _odsApiValidator;
         private readonly IOptions<AppSettings> _appSettings;
 
+        // In the constructor parameter list, make the IOptions<AppSettings> appSettings parameter optional by providing a default value of null.
         public EducationOrganizationsController(IOdsApiFacadeFactory odsApiFacadeFactory
             , IMapper mapper, InstanceContext instanceContext, ITabDisplayService tabDisplayService
             , IInferExtensionDetails inferExtensionDetails, IOdsApiValidator odsApiValidator
-            , IOptions<AppSettings> appSettings)
+            , IOptions<AppSettings> appSettings = null)
         {
             _odsApiFacadeFactory = odsApiFacadeFactory;
             _mapper = mapper;
@@ -276,7 +277,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         public async Task<ActionResult> LocalEducationAgencyList(int pageNumber)
         {
             var api = await _odsApiFacadeFactory.Create();
-            int pageSize = _appSettings.Value.PageSize;
+            int pageSize = _appSettings?.Value?.PageSize ?? 20;
             var localEducationAgencies =
                 await Page<LocalEducationAgency>.FetchAsync(GetLocalEducationAgencies, pageNumber, pageSize);
 
