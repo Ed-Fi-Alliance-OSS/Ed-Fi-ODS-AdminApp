@@ -291,6 +291,10 @@ export class ApplicationsPage extends AdminAppPage {
         await this.modalSelector.locator(this.cancelBtn).click();
     }
 
+    async clickExpand(): Promise<void> {
+        await this.page.locator(this.expandBtn).first().click();
+    }
+
     async clickCollapse(): Promise<void> {
         await this.page.locator(this.collapseBtn).first().click();
     }
