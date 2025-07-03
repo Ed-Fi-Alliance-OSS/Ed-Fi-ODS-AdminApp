@@ -145,6 +145,10 @@ export class EducationOrganizationsPage extends AdminAppPage {
         return this.hasText({ text: this.editedFormValueName, selector: this.nameOnListHeader });
     }
 
+    async clickExpand() {
+        await this.page.locator(this.expandBtn).click();
+    }
+
     async clickCollapse() {
         await this.page.locator(this.collapseBtn).click();
     }
