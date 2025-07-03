@@ -82,6 +82,14 @@ $(function() {
         $panel.slideDown();
         loadSchools(leaId, 1);
     });
+
+    // Add School button handler
+    $(document).on('click', '.add-school-button', function() {
+        var leaId = $(this).data('lea-id');
+        $('#add-school-modal').modal('show');
+        $('#add-school-modal').find('input[name="LocalEducationAgencyId"]').val(leaId);
+    });
+
     // Pagination for schools
     $(document).on('click', '.school-page-link', function(e) {
         e.preventDefault();
