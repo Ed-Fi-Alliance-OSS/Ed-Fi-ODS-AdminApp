@@ -10,6 +10,7 @@ export class EducationOrganizationsPage extends AdminAppPage {
     titleHeader = "div > h6";
     nameOnListHeader = ".panel-section h8";
     edOrgDetailsSectionCollapsedSection = 'div.lea-schools-panel:not(:visible)';
+    edOrgDetailsSectionExpandedSection = 'div.lea-schools-panel:visible';
     errorMsgSection = "div.validationSummary";
     fieldWithErrorSelector = ".row.has-error";
     activeTabSelector = "ul.nav li.active";
@@ -166,6 +167,10 @@ export class EducationOrganizationsPage extends AdminAppPage {
 
     async isSectionCollapsed(): Promise<boolean> {
         return await this.elementExists(this.expandBtn);
+    }
+
+    async isSectionExpanded(): Promise<boolean> {
+        return await this.elementExists(this.edOrgDetailsSectionExpandedSection);
     }
 
     async deleteLEA(): Promise<void> {
