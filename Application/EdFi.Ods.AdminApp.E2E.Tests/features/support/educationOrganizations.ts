@@ -97,6 +97,10 @@ When("entering local education agency form {string}", async (scenario: string) =
     }
 });
 
+Then("local education agency section is expanded", async () => {
+    ok(await !models.edOrgsPage.isSectionCollapsed(), "Section is not expanded");
+});
+
 Then("local education agency section is collapsed", async () => {
     ok(await models.edOrgsPage.isSectionCollapsed(), "Section is not collapsed");
 });
