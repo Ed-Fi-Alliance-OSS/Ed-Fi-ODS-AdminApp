@@ -3,6 +3,14 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
+// Helper function to sanitize user input and prevent XSS
+var sanitizeInput = function (input) {
+    if (input === null || input === undefined) {
+        return '';
+    }
+    return $('<div>').text(String(input)).html();
+};
+
 var buildResourceTableRow = function buildResourceTableRow(resourceName, resourceId) {
     var parentId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
     var isChildResource = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
@@ -10,12 +18,18 @@ var buildResourceTableRow = function buildResourceTableRow(resourceName, resourc
     var editCell = "<a class=\"edit-resource-check\"><span class=\"fa fa-check action-icons\"></span></a>";
     var rowString = '<tr class="parent-resource-claim" data-state="added">';
     var iconCell = '<td class="icon-cell"></td>';
-    var resourceCell = "  <td class=\"resource-label\" data-resource-id='".concat(resourceId, "'>").concat(resourceName, "</td>");
+
+    // Sanitize inputs to prevent XSS
+    var sanitizedResourceName = sanitizeInput(resourceName);
+    var sanitizedResourceId = sanitizeInput(resourceId);
+    var sanitizedParentId = sanitizeInput(parentId);
+
+    var resourceCell = "  <td class=\"resource-label\" data-resource-id='".concat(sanitizedResourceId, "'>").concat(sanitizedResourceName, "</td>");
 
     if (isChildResource) {
         rowString = "<tr class=\"child-resource-claim\" data-state=\"added\">";
         iconCell = "<td class=\"icon-cell\"><span class=\"child-resource-branch\"></span></td>";
-        resourceCell = "  <td class=\"resource-label\" data-resource-id='".concat(resourceId, "' data-parent-id='").concat(parentId, "'>").concat(resourceName, "</td>");
+        resourceCell = "  <td class=\"resource-label\" data-resource-id='".concat(sanitizedResourceId, "' data-parent-id='").concat(sanitizedParentId, "'>").concat(sanitizedResourceName, "</td>");
     } else if (!childWithoutParent) {
         iconCell = '  <td class="icon-cell"><a class="claims-toggle"><span class="fa fa-chevron-down caret-custom"></span></a></td>';
     }
@@ -83,7 +97,7 @@ var enableCellsForRow = function (editRow, cells) {
     });
 };
 
-var disableForEdit = function(editRow) {
+var disableForEdit = function (editRow) {
     $("#resource-claim-table-body td").addClass("disabled");
 
     AddTooltip($("a.edit-resource"), "You can only edit after saving the highlighted row");
@@ -256,15 +270,22 @@ var saveEditedResource = function saveEditedResource() {
                 var resourceModel = claimSetInfo;
                 resourceModel.resourceName = resourceName;
                 resourceModel.resourceId = resourceId;
-                row.find("a.delete-resource").replaceWith("<a class=\"loads-ajax-modal delete-resource-claim\" data-url=".concat(getDeleteResourceModalUrl(resourceModel), "> <span class=\"fa fa-trash-o action-icons\"></span></a>"));
-                row.find("a.override-auth-strategy").replaceWith("<a class=\"loads-ajax-modal edit-auth-strategy\" data-url=".concat(getAuthOverrideModalUrl(resourceModel), "> <span class=\"fa fa-info-circle action-icons\"></span></a>"));
+
+                // Sanitize URLs to prevent XSS in HTML attributes
+                var sanitizedDeleteUrl = sanitizeInput(getDeleteResourceModalUrl(resourceModel));
+                var sanitizedAuthUrl = sanitizeInput(getAuthOverrideModalUrl(resourceModel));
+
+                row.find("a.delete-resource").replaceWith("<a class=\"loads-ajax-modal delete-resource-claim\" data-url=\"".concat(sanitizedDeleteUrl, "\"> <span class=\"fa fa-trash-o action-icons\"></span></a>"));
+                row.find("a.override-auth-strategy").replaceWith("<a class=\"loads-ajax-modal edit-auth-strategy\" data-url=\"".concat(sanitizedAuthUrl, "\"> <span class=\"fa fa-info-circle action-icons\"></span></a>"));
                 InitializeModalLoaders();
             }
 
             enableAfterEdit();
             disableOptionForChildResource(undefined, undefined, resourceId);
             disableAlreadyAddedResources();
-            ClaimSetToastrMessage("".concat(resourceName, " edited successfully"), true);
+            // Sanitize resourceName to prevent XSS in success message
+            var sanitizedResourceName = sanitizeInput(resourceName);
+            ClaimSetToastrMessage("".concat(sanitizedResourceName, " edited successfully"), true);
             ClaimSetWarningMessage(true);
         },
         error: function error(data) {
@@ -287,7 +308,7 @@ var saveEditedResource = function saveEditedResource() {
             validationBlock.hidden = false;
             validationBlock.innerText = errString;
             document.body.scrollTop = document.documentElement.scrollTop = 0;
-            ClaimSetToastrMessage("There was an error in editing ".concat(resourceName));
+            ClaimSetToastrMessage("There was an error in editing ".concat(sanitizedResourceName));
         }
     });
 };
@@ -318,7 +339,9 @@ var deleteResourceAjax = function deleteResourceAjax(e) {
 
             enableOptionForChildResource(row);
 
-            ClaimSetToastrMessage("".concat(row[0].innerText.replace(/[\n\r]+|[\s]{2,}/g, " ").trim(), " deleted successfully"), true);
+            // Sanitize row text content to prevent XSS in success message
+            var sanitizedRowText = sanitizeInput(row[0].innerText.replace(/[\n\r]+|[\s]{2,}/g, " ").trim());
+            ClaimSetToastrMessage("".concat(sanitizedRowText, " deleted successfully"), true);
             ClaimSetWarningMessage(true);
 
             row.remove();
@@ -365,7 +388,7 @@ var populateChildResourcesForParent = function populateChildResourcesForParent(p
         success: function success(data) {
             $(data).each(function () {
                 var dropdown = $("#child-resource-dropdown-".concat(parentResourceId));
-                var childResourceButton = $('.add-child-resource-button[data-parent-id='+parentResourceId+']');
+                var childResourceButton = $('.add-child-resource-button[data-parent-id=' + parentResourceId + ']');
                 dropdown.change(function () {
                     childResourceButton.prop("disabled", false);
                 });
@@ -373,7 +396,12 @@ var populateChildResourcesForParent = function populateChildResourcesForParent(p
                     childResourceButton.prop("disabled", true);
                 });
                 dropdown[0].selectedIndex = 0;
-                dropdown.append($("<option></option>").val(this.value).html(this.text).attr("disabled", this.disabled));
+
+                // Sanitize option values to prevent XSS
+                var sanitizedValue = sanitizeInput(this.value);
+                var sanitizedText = sanitizeInput(this.text);
+
+                dropdown.append($("<option></option>").val(sanitizedValue).html(sanitizedText).attr("disabled", this.disabled));
                 var row = $("td[data-resource-id=".concat(parentResourceId, "]")).parent();
                 row.nextUntil("tr.parent-resource-claim").each(function () {
                     var resourceName = $(this).find(".resource-label").text();
@@ -402,7 +430,10 @@ var claimsToggle = function claimsToggle() {
 };
 
 var buildChildDropdownRow = function buildChildDropdownRow(parentResourceId) {
-    var $row = $(["<tr class=\"child-resource-claim\" data-parent-id='".concat(parentResourceId, "' id='child-dropdown-row-").concat(parentResourceId, "' style=\"display: none\">"), "<td class=\"icon-cell\"></td>", "<td class=\"child-dropdown\"><select id=\"child-resource-dropdown-".concat(parentResourceId, "\" name=\"ChildResourceClaimsDropDown\"></select></td>"), "<td colspan=\"6\"><button type=\"button\" disabled class=\"btn btn-primary cta add-child-resource-button\" data-parent-id=\"".concat(parentResourceId, "\">Add Child Resource</button></td>"), "</tr>"].join("\n"));
+    // Sanitize parentResourceId to prevent XSS
+    var sanitizedParentResourceId = sanitizeInput(parentResourceId);
+
+    var $row = $(["<tr class=\"child-resource-claim\" data-parent-id='".concat(sanitizedParentResourceId, "' id='child-dropdown-row-").concat(sanitizedParentResourceId, "' style=\"display: none\">"), "<td class=\"icon-cell\"></td>", "<td class=\"child-dropdown\"><select id=\"child-resource-dropdown-".concat(sanitizedParentResourceId, "\" name=\"ChildResourceClaimsDropDown\"></select></td>"), "<td colspan=\"6\"><button type=\"button\" disabled class=\"btn btn-primary cta add-child-resource-button\" data-parent-id=\"".concat(sanitizedParentResourceId, "\">Add Child Resource</button></td>"), "</tr>"].join("\n"));
     $row.find(".add-child-resource-button").click(addChildResourceButton);
     return $row;
 };
@@ -414,12 +445,16 @@ $("#add-resource-button").click(function (e) {
     if (selectedItem.closest("optgroup")) {
         var optGroup = selectedItem.closest("optgroup").label;
         if (!selectedItem.disabled) {
+            // Sanitize selected item values to prevent XSS
+            var sanitizedText = sanitizeInput(selectedItem.text);
+            var sanitizedValue = sanitizeInput(selectedItem.value);
+
             if (optGroup === "Groups") {
-                $("#resource-claim-table-body").append(buildResourceTableRow(selectedItem.text, selectedItem.value));
-                $("#resource-claim-table-body").append(buildChildDropdownRow(selectedItem.value));
+                $("#resource-claim-table-body").append(buildResourceTableRow(sanitizedText, sanitizedValue));
+                $("#resource-claim-table-body").append(buildChildDropdownRow(sanitizedValue));
                 populateChildResourcesForParent(selectedItem.value);
             } else {
-                $("#resource-claim-table-body").append(buildResourceTableRow(selectedItem.text, selectedItem.value, 0, false, true));
+                $("#resource-claim-table-body").append(buildResourceTableRow(sanitizedText, sanitizedValue, 0, false, true));
                 disableOptionForChildResource(undefined, undefined, selectedItem.value);
             }
         }
@@ -437,7 +472,11 @@ var addChildResourceButton = function addChildResourceButton(e) {
 
     if (selectedItem != undefined) {
         if (!selectedItem.disabled) {
-            var newRow = buildResourceTableRow(selectedItem.text, selectedItem.value, row.data("parent-id"), true);
+            // Sanitize selected item values to prevent XSS
+            var sanitizedText = sanitizeInput(selectedItem.text);
+            var sanitizedValue = sanitizeInput(selectedItem.value);
+
+            var newRow = buildResourceTableRow(sanitizedText, sanitizedValue, row.data("parent-id"), true);
             newRow.insertBefore(row);
         }
 
@@ -458,7 +497,7 @@ var disableAlreadyAddedResources = function disableAlreadyAddedResources() {
 
 var populateChildren = function populateChildren() {
     $(".claims-toggle").each(function () {
-        var resourceId=  $(this).data("resource-id");
+        var resourceId = $(this).data("resource-id");
         populateChildResourcesForParent(resourceId);
     });
 };
