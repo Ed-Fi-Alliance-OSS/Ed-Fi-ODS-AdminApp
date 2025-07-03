@@ -147,7 +147,7 @@ export class EducationOrganizationsPage extends AdminAppPage {
     }
 
     async clickExpand() {
-        await this.page.locator(this.expandBtn).click();
+        await this.page.locator(this.expandBtn).first().click();
     }
 
     async clickCollapse() {
