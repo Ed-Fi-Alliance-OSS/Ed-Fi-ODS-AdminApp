@@ -38,7 +38,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                 <a href="javascript:void(0)" class="lea-toggle" data-leaid="@localEducationAgency.EducationOrganizationId"><span class="fa fa-chevron-down caret-custom panel-toggle"></span></a>
             </div>
         </div>
-        <div id="lea-schools-@localEducationAgency.EducationOrganizationId" class="row content collapse lea-schools-panel"></div>
+        <div id="lea-schools-@localEducationAgency.EducationOrganizationId" class="row content lea-schools-panel" style="display: none;"></div>
     </div>
 }
 
@@ -73,14 +73,18 @@ $(function() {
         var leaId = $(this).data('leaid');
         var $panel = $("#lea-schools-" + leaId);
         var $icon = $(this).find('.panel-toggle');
-        // If this panel is already expanded, collapse it and reset expandedLea
-        if ($icon.hasClass('fa-chevron-down')) {
+
+        // Check if panel is currently visible
+        if ($panel.is(':visible')) {
+            // Panel is expanded, so collapse it
             $panel.slideUp();
-            return;
+            $icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+        } else {
+            // Panel is collapsed, so expand it
+            $panel.slideDown();
+            $icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+            loadSchools(leaId, 1);
         }
-        // Expand this one
-        $panel.slideDown();
-        loadSchools(leaId, 1);
     });
 
     // Add School button handler

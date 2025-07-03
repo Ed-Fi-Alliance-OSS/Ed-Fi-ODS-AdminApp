@@ -75,9 +75,7 @@ When("confirming delete local education agency", async () => {
     await models.edOrgsPage.deleteLEA();
 });
 When("clicking expand local education agency section", async () => {
-    if (await models.edOrgsPage.isSectionCollapsed()) {
-        await models.edOrgsPage.clickExpand();
-    }
+    await models.edOrgsPage.clickExpand();
 });
 When("clicking collapse local education agency section", async () => {
     if (!await models.edOrgsPage.isSectionCollapsed()) {
