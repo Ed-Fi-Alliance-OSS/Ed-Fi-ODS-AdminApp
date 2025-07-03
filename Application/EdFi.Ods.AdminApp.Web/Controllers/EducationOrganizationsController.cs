@@ -3,24 +3,25 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
+using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Management.Api;
 using EdFi.Ods.AdminApp.Management.Api.Models;
-using EdFi.Ods.AdminApp.Web.Models.ViewModels;
-using EdFi.Ods.AdminApp.Web.Models.ViewModels.EducationOrganizations;
-using Microsoft.AspNetCore.Mvc;
-using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Management.Helpers;
 using EdFi.Ods.AdminApp.Management.Instances;
 using EdFi.Ods.AdminApp.Web.ActionFilters;
 using EdFi.Ods.AdminApp.Web.Display.Pagination;
 using EdFi.Ods.AdminApp.Web.Display.TabEnumeration;
 using EdFi.Ods.AdminApp.Web.Infrastructure;
+using EdFi.Ods.AdminApp.Web.Models.ViewModels;
+using EdFi.Ods.AdminApp.Web.Models.ViewModels.EducationOrganizations;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using static EdFi.Ods.AdminApp.Web.Models.ViewModels.EducationOrganizations.EducationOrganizationValidationHelper;
 
 namespace EdFi.Ods.AdminApp.Web.Controllers
@@ -33,10 +34,13 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         private readonly ITabDisplayService _tabDisplayService;
         private readonly IInferExtensionDetails _inferExtensionDetails;
         private readonly IOdsApiValidator _odsApiValidator;
+        private readonly IOptions<AppSettings> _appSettings;
 
+        // In the constructor parameter list, make the IOptions<AppSettings> appSettings parameter optional by providing a default value of null.
         public EducationOrganizationsController(IOdsApiFacadeFactory odsApiFacadeFactory
             , IMapper mapper, InstanceContext instanceContext, ITabDisplayService tabDisplayService
-            , IInferExtensionDetails inferExtensionDetails, IOdsApiValidator odsApiValidator)
+            , IInferExtensionDetails inferExtensionDetails, IOdsApiValidator odsApiValidator
+            , IOptions<AppSettings> appSettings = null)
         {
             _odsApiFacadeFactory = odsApiFacadeFactory;
             _mapper = mapper;
@@ -44,12 +48,13 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             _tabDisplayService = tabDisplayService;
             _inferExtensionDetails = inferExtensionDetails;
             _odsApiValidator = odsApiValidator;
+            _appSettings = appSettings;
         }
 
         public async Task<ActionResult> LocalEducationAgencies()
         {
             var validatorResult = await _odsApiValidator.Validate(CloudOdsAdminAppSettings.AppSettings.ProductionApiUrl);
-            
+
             if (!validatorResult.IsValidOdsApi)
             {
                 throw validatorResult.Exception;
@@ -68,11 +73,11 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
             return View("Index", model);
         }
 
-        
+
         public async Task<ActionResult> PostSecondaryInstitutions()
         {
             var validatorResult = await _odsApiValidator.Validate(CloudOdsAdminAppSettings.AppSettings.ProductionApiUrl);
-            
+
             if (!validatorResult.IsValidOdsApi)
             {
                 throw validatorResult.Exception;
@@ -272,12 +277,11 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         public async Task<ActionResult> LocalEducationAgencyList(int pageNumber)
         {
             var api = await _odsApiFacadeFactory.Create();
-            
+            int pageSize = _appSettings?.Value?.PageSize ?? 20;
             var localEducationAgencies =
-                await Page<LocalEducationAgency>.FetchAsync(GetLocalEducationAgencies, pageNumber);
+                await Page<LocalEducationAgency>.FetchAsync(GetLocalEducationAgencies, pageNumber, pageSize);
 
-            var schools = api.GetSchoolsByLeaIds(
-                localEducationAgencies.Items.Select(x => x.EducationOrganizationId));
+            var schools = new List<School>();
 
             var requiredApiDataExist = (await _odsApiFacadeFactory.Create()).DoesApiDataExist();
 
@@ -396,7 +400,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         {
             var details = await GetTpdmExtensionDetails();
             return details.IsTpdmCommunityVersion ? BuildListWithEmptyOption(optionList) : null;
-        }      
+        }
 
         private List<SelectOptionModel> BuildListWithEmptyOption(Func<List<SelectOptionModel>> getSelectOptionList)
         {
@@ -424,6 +428,30 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                 ContentType = "application/json",
                 StatusCode = 400
             };
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetSchoolsByLea(int leaId, int pageNumber = 1)
+        {
+            var api = await _odsApiFacadeFactory.Create();
+            int pageSize = 20;
+            if (int.TryParse(System.Configuration.ConfigurationManager.AppSettings["PageSize"], out var configPageSize))
+            {
+                pageSize = configPageSize;
+            }
+            int offset = (pageNumber - 1) * pageSize;
+            var (pagedSchools, totalSchools) = api.GetSchoolsByLeaIdByPageWithTotalCount(leaId, offset, pageSize);
+            var totalPages = totalSchools.HasValue ? (int)Math.Ceiling(totalSchools.Value / (double)pageSize) : 1;
+
+            var model = new SchoolsByLeaViewModel
+            {
+                Schools = pagedSchools,
+                LeaId = leaId,
+                PageNumber = pageNumber,
+                TotalPages = totalPages,
+                TotalSchools = totalSchools ?? pagedSchools.Count
+            };
+            return PartialView("_SchoolsByLea", model);
         }
     }
 }

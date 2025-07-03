@@ -27,5 +27,7 @@ namespace EdFi.Ods.AdminApp.Management.Helpers
         public string Log4NetConfigPath { get; set; }
         public string EncryptionKey { get; set; }
         public string ProductRegistrationUrl { get; set; }
+
+        public int PageSize { get; set; } = 10; // Default page size for paginated results
     }
 }

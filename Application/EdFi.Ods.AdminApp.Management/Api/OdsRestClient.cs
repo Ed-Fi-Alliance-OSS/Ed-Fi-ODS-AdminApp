@@ -177,6 +177,55 @@ namespace EdFi.Ods.AdminApp.Management.Api
             return responseList;
         }
 
+        public IReadOnlyList<T> GetAll<T>(string elementPath, Dictionary<string, object> filters, int offset, int limit) where T : class
+        {
+            var request = OdsRequest(elementPath);
+            request.Method = Method.Get;
+            request.AddParameter("offset", offset, ParameterType.QueryString);
+            request.AddParameter("limit", limit, ParameterType.QueryString);
+            if (filters != null)
+            {
+                foreach (var (key, value) in filters)
+                {
+                    request.AddParameter(key, value, ParameterType.QueryString);
+                }
+            }
+            var restResponse = ExecuteRequestAndHandleErrors(request);
+            var items = JsonConvert.DeserializeObject<List<T>>(restResponse.Content);
+            return items;
+        }
+
+        public (IReadOnlyList<T> Items, int? TotalCount) GetAllWithTotalCount<T>(string elementPath, Dictionary<string, object> filters, int offset, int limit, bool totalCount = false) where T : class
+        {
+            var request = OdsRequest(elementPath);
+            request.Method = Method.Get;
+            request.AddParameter("offset", offset, ParameterType.QueryString);
+            request.AddParameter("limit", limit, ParameterType.QueryString);
+            if (totalCount)
+            {
+                request.AddParameter("totalCount", true, ParameterType.QueryString);
+            }
+            if (filters != null)
+            {
+                foreach (var (key, value) in filters)
+                {
+                    request.AddParameter(key, value, ParameterType.QueryString);
+                }
+            }
+            var restResponse = ExecuteRequestAndHandleErrors(request);
+            var items = JsonConvert.DeserializeObject<List<T>>(restResponse.Content);
+            int? total = null;
+            if (restResponse.Headers != null)
+            {
+                var totalHeader = restResponse.Headers.FirstOrDefault(h => string.Equals(h.Name, "total-count", StringComparison.OrdinalIgnoreCase));
+                if (totalHeader != null && int.TryParse(totalHeader.Value?.ToString(), out var parsed))
+                {
+                    total = parsed;
+                }
+            }
+            return (items, total);
+        }
+
         public T GetById<T>(string elementPath, string id) where T : class
         {
             var request = OdsRequest(elementPath);
