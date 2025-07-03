@@ -17,8 +17,8 @@ export class EducationOrganizationsPage extends AdminAppPage {
     confirmBtn = 'button[type="submit"]';
     deleteLEABtn = "a.delete-lea-link";
     editLEABtn = ".row.heading a:has(.fa-pencil)";
-    collapseBtn = 'a[data-toggle="collapse"]:has(.fa-chevron-up)';
-    expandBtn = 'a[data-toggle="collapse"]:has(.fa-chevron-down)';
+    collapseBtn = 'a.lea-toggle:has(.fa-chevron-up.caret-custom.panel-toggle)';
+    expandBtn = 'a.lea-toggle:has(.fa-chevron-up.caret-custom.panel-toggle)';;
     dismissModalBtn = "button.close";
 
     get editedFormValueName(): string {
