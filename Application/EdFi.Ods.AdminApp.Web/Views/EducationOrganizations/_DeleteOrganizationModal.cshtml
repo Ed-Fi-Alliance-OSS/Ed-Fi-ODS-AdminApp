@@ -40,20 +40,27 @@ See the LICENSE and NOTICES files in the project root for more information.
 </div>
 
 <script type="text/javascript">
-    $(function () {
-        $(".delete-lea-link").click(function () {
+    $(document).ready(function () {
+        // Remove any existing event handlers to prevent duplicates
+        $(document).off('click', '.delete-lea-link');
+        $(document).off('click', '.delete-psi-link');
+        $(document).off('click', '.delete-school-link');
+
+        // Add event handlers using document delegation for dynamically loaded content
+        $(document).on('click', '.delete-lea-link', function () {
             var name = $(this).attr("data-name");
             var id = $(this).attr("data-id");
             ShowDeleteEdOrgModal(name, id, "@(Html.Raw(Url.Action("DeleteLocalEducationAgency", "EducationOrganizations")))", 'LEA');
         });
 
-        $(".delete-psi-link").click(function () {
+        $(document).on('click', '.delete-psi-link', function () {
             var name = $(this).attr("data-name");
             var id = $(this).attr("data-id");
             ShowDeleteEdOrgModal(name, id, "@(Html.Raw(Url.Action("DeletePostSecondaryInstitution", "EducationOrganizations")))", 'PSI');
         });
 
-        $(".delete-school-link").click(function () {
+        $(document).on('click', '.delete-school-link', function () {
+            console.log("School delete clicked", $(this).attr("data-id"), $(this).attr("data-name"));
             var name = $(this).attr("data-name");
             var id = $(this).attr("data-id");
             ShowDeleteEdOrgModal(name, id, "@(Html.Raw(Url.Action("DeleteSchool", "EducationOrganizations")))", 'School');
@@ -61,6 +68,7 @@ See the LICENSE and NOTICES files in the project root for more information.
     });
 
     function ShowDeleteEdOrgModal(organizationName, organizationId, url, organizationType) {
+        console.log("Showing delete modal for", organizationType, organizationId, organizationName);
         var $deleteEdOrgModal = $("#delete-edorg-modal");
         $deleteEdOrgModal.find("form").attr("action", url);
         $deleteEdOrgModal.find("#delete-edorg-name").text(organizationName);
