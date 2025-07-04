@@ -22,7 +22,7 @@ else
         </div>
         <div class="col-lg-4 text-right">
             <a href="javascript:void(0)" class="loads-ajax-modal" data-url="@Url.Action("EditSchoolModal", "EducationOrganizations", new {id = school.Id})"> <span class="fa fa-pencil action-icons"></span></a>
-            <a href="javascript:void(0)" class="delete-school-link" data-id="@school.Id" data-name="@school.Name"> <span class="fa fa-trash-o action-icons"></span></a>
+            <a href="javascript:void(0)" onclick="ShowDeleteEdOrgModal('@school.Name', '@school.Id', '@(Html.Raw(Url.Action("DeleteSchool", "EducationOrganizations")))', 'School'); return false;" data-id="@school.Id" data-name="@school.Name"> <span class="fa fa-trash-o action-icons"></span></a>
         </div>
     }
 }
