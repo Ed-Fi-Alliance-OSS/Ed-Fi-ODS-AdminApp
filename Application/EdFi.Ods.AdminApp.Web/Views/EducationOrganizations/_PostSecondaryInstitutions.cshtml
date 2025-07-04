@@ -23,51 +23,19 @@ See the LICENSE and NOTICES files in the project root for more information.
 
 @foreach (var postSecondaryInstitution in Model.PostSecondaryInstitutions.Items)
 {
-    var schools = Model.Schools.Where(x => x.PostSecondaryInstitutionId == postSecondaryInstitution.EducationOrganizationId).ToList();
-
-    <div class="panel-section">
+    <div class="panel-section psi-panel" data-psiid="@postSecondaryInstitution.EducationOrganizationId">
         <div class="row heading">
             <div class="col-lg-6">
                 <h8>@postSecondaryInstitution.Name</h8>
             </div>
-
             <div class="col-lg-6 text-right">
                 <a href="javascript:void(0)" class="loads-ajax-modal" data-url="@Url.Action("EditPostSecondaryInstitutionModal", "EducationOrganizations", new {id = postSecondaryInstitution.Id})"> <span class="fa fa-pencil action-icons"></span></a>
-                @if (!schools.Any())
-                {
-                    <a href="javascript:void(0)" class="delete-psi-link" data-id="@postSecondaryInstitution.Id" data-name="@postSecondaryInstitution.Name"> <span class="fa fa-trash-o action-icons"></span></a>
-                }
-                else
-                {
-                    <a href="javascript:void(0)" data-name="@postSecondaryInstitution.Name"> <span class="fa fa-trash-o action-icons disabled"></span></a>
-                }
+                <a href="javascript:void(0)" class="delete-psi-link disabled" data-id="@postSecondaryInstitution.Id" data-name="@postSecondaryInstitution.Name"> <span class="fa fa-trash-o action-icons disabled" aria-disabled="true"></span></a>
                 <span class="custom-divider"> |</span>
-                <a href="javascript:void(0)" data-toggle="collapse" data-target="#psi-@(postSecondaryInstitution.Id)"><span class="fa fa-chevron-up caret-custom panel-toggle"></span></a>
+                <a href="javascript:void(0)" class="psi-toggle" data-psiid="@postSecondaryInstitution.EducationOrganizationId"><span class="fa fa-chevron-down caret-custom panel-toggle"></span></a>
             </div>
         </div>
-        <div id="psi-@(postSecondaryInstitution.Id)" class="row content collapse in">
-            @if (!schools.Any())
-            {
-                <div class="col-lg-12">
-                    <em>There are no schools in this category</em>
-                </div>
-            }
-            @foreach (var school in schools)
-            {
-                <div class="col-lg-8">
-                    <h7>@school.Name</h7>
-                </div>
-                <div class="col-lg-4 text-right">
-                    <a href="javascript:void(0)" class="loads-ajax-modal" data-url="@Url.Action("EditPsiSchoolModal", "EducationOrganizations", new {id = school.Id})"> <span class="fa fa-pencil action-icons"></span></a>
-                    <a href="javascript:void(0)" class="delete-school-link" data-id="@school.Id" data-name="@school.Name"> <span class="fa fa-trash-o action-icons"></span></a>
-                </div>
-            }
-            <div class="col-lg-12 text-right padding-bottom-5">
-                <button class="ghost-button btn-sm add-psi-school-button" data-psi-id="@(postSecondaryInstitution.EducationOrganizationId)">
-                    Add School
-                </button>
-            </div>
-        </div>
+        <div id="psi-schools-@postSecondaryInstitution.EducationOrganizationId" class="row collapse content psi-schools-panel"></div>
     </div>
 }
 
@@ -77,4 +45,95 @@ See the LICENSE and NOTICES files in the project root for more information.
 @{ await Html.RenderPartialAsync("_DeleteOrganizationModal", new DeleteEducationOrganizationModel()); }
 @{ await Html.RenderPartialAsync("_AddPostSecondaryInstitutionModal", Model.AddPostSecondaryInstitutionModel); }
 @{ await Html.RenderPartialAsync("_AddPsiSchoolModal", Model.AddPsiSchoolModel); }
+
+<script>
+$(function() {
+    function loadSchools(psiId, page) {
+        var $panel = $("#psi-schools-" + psiId);
+        $panel.html('<div class="col-lg-12 text-center"><span class="fa fa-spinner fa-spin"></span> Loading...</div>');
+        $.get('@Url.Action("GetSchoolsByPsi", "EducationOrganizations")', { psiId: psiId, pageNumber: page || 1 }, function(html) {
+            $panel.html(html);
+            // Enable delete-psi-link if no schools
+            var hasSchools = $panel.find('.col-lg-8').length > 0;
+            var $deleteLink = $panel.closest('.psi-panel').find('.delete-psi-link');
+            if (!hasSchools) {
+                $deleteLink.removeClass('disabled');
+                $deleteLink.find('span').removeClass('disabled');
+            } else {
+                $deleteLink.addClass('disabled');
+                $deleteLink.find('span').addClass('disabled');
+            }
+        }).fail(function() {
+            $panel.html('<div class="col-lg-12"><em>There are no schools in this category</em></div><div class="col-lg-12 text-right padding-bottom-5"><button class="ghost-button btn-sm add-psi-school-button" data-psi-id="' + psiId + '">Add School</button></div>');
+            // Enable delete button if no schools
+            var $deleteLink = $panel.closest('.psi-panel').find('.delete-psi-link');
+            $deleteLink.removeClass('disabled');
+            $deleteLink.find('span').removeClass('disabled');
+        });
+    }
+
+    // Use event delegation for dynamically loaded content
+    $(document).on('click', '.psi-toggle', function() {
+        var psiId = $(this).data('psiid');
+        var $panel = $("#psi-schools-" + psiId);
+        var $icon = $(this).find('.panel-toggle');
+
+        if ($icon.hasClass('fa-chevron-down')) {
+            $panel.slideUp();
+            $icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+            return;
+        }
+        // Expand this one
+        $panel.slideDown();
+        $icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+        loadSchools(psiId, 1);
+    });
+
+    // Add School button handler
+    $(document).on('click', '.add-psi-school-button', function() {
+        var psiId = $(this).data('psi-id');
+        $('#add-psi-school-modal').modal('show');
+        $('#add-psi-school-modal').find('input[name="PostSecondaryInstitutionId"]').val(psiId);
+    });
+
+    // Pagination for schools
+    $(document).on('click', '.psi-school-page-link', function(e) {
+        e.preventDefault();
+        var psiId = $(this).data('psiid');
+        var page = $(this).data('page');
+        loadSchools(psiId, page);
+    });
+
+    // Handle PSI school form submission to prevent page reload and maintain pagination
+    $(document).on('submit', '#addPsiSchoolFormModal', function(e) {
+        e.preventDefault();
+        var $form = $(this);
+        $.ajax({
+            url: $form.attr("action"),
+            type: "POST",
+            data: $form.serialize(),
+            success: function(data) {
+                if (data.success) {
+                    $("#add-psi-school-modal").modal("hide");
+                    // Show success message
+                    SetSuccessMessage(data.successMessage);
+                    // Refresh only the expanded PSI panel if it's open
+                    var psiId = $("#add-school-psi-id").val();
+                    var $panel = $("#psi-schools-" + psiId);
+                    if ($panel.is(':visible')) {
+                        // Reload the schools for this PSI
+                        loadSchools(psiId, 1);
+                    }
+                } else {
+                    // Handle validation errors
+                    $form.find('.validation-summary').html(data.errorMessage).removeClass('hidden');
+                }
+            },
+            error: function() {
+                SetErrorMessage("An error occurred while adding the school.");
+            }
+        });
+    });
+});
+</script>
 

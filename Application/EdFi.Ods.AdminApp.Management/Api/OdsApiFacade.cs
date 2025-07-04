@@ -275,5 +275,40 @@ namespace EdFi.Ods.AdminApp.Management.Api
             var (items, total) = _restClient.GetAllWithTotalCount<School>(ResourcePaths.Schools, filters, offset, limit, true);
             return (_mapper.Map<List<Models.School>>(items), total);
         }
+
+        public List<Models.PsiSchool> GetPsiSchoolsByIds(IEnumerable<int> psiIds)
+        {
+            var allSchools = _restClient.GetAll<School>(ResourcePaths.Schools);
+            var filteredSchools = allSchools.Where(school =>
+                school._ext?.TPDM?.PostSecondaryInstitutionReference?.PostSecondaryInstitutionId.HasValue == true &&
+                psiIds.Contains(school._ext.TPDM.PostSecondaryInstitutionReference.PostSecondaryInstitutionId.Value)
+            ).ToList();
+
+            return _mapper.Map<List<Models.PsiSchool>>(filteredSchools);
+        }
+
+        public List<Models.PsiSchool> GetPsiSchoolsByIdByPage(int psiId, int offset, int limit)
+        {
+            var allSchools = _restClient.GetAll<School>(ResourcePaths.Schools);
+            var filteredSchools = allSchools.Where(school =>
+                school._ext?.TPDM?.PostSecondaryInstitutionReference?.PostSecondaryInstitutionId == psiId
+            ).Skip(offset).Take(limit).ToList();
+
+            return _mapper.Map<List<Models.PsiSchool>>(filteredSchools);
+        }
+
+        public (List<Models.PsiSchool> Schools, int? TotalCount) GetPsiSchoolsByIdByPageWithTotalCount(int psiId, int offset, int limit)
+        {
+            var allSchools = _restClient.GetAll<School>(ResourcePaths.Schools);
+            var filteredSchools = allSchools.Where(school =>
+                school._ext?.TPDM?.PostSecondaryInstitutionReference?.PostSecondaryInstitutionId == psiId
+            ).ToList();
+
+            var totalCount = filteredSchools.Count;
+            var pagedSchools = filteredSchools.Skip(offset).Take(limit).ToList();
+            var mappedSchools = _mapper.Map<List<Models.PsiSchool>>(pagedSchools);
+
+            return (mappedSchools, totalCount);
+        }
     }
 }
