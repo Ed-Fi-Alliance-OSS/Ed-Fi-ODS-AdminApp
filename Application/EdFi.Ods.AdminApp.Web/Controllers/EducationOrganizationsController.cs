@@ -315,10 +315,11 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         public async Task<ActionResult> PostSecondaryInstitutionsList(int pageNumber)
         {
             var api = await _odsApiFacadeFactory.Create();
+            int pageSize = _appSettings?.Value?.PageSize ?? 20;
             var schools = api.GetAllPsiSchools();
 
             var postSecondaryInstitutions =
-                await Page<PostSecondaryInstitution>.FetchAsync(GetPostSecondaryInstitutions, pageNumber);
+                await Page<PostSecondaryInstitution>.FetchAsync(GetPostSecondaryInstitutions, pageNumber, pageSize);
 
             var requiredApiDataExist = (await _odsApiFacadeFactory.Create()).DoesApiDataExist();
 
