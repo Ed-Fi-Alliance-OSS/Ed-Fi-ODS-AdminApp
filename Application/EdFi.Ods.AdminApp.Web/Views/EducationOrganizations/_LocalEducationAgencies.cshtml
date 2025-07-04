@@ -85,12 +85,6 @@ $(function() {
         loadSchools(leaId, 1);
     });
 
-    $(document).on('click', '.pagination a', function(e) {
-        // Reset all panels to collapsed state on LEA pagination
-        $('.lea-schools-panel').hide();
-        $('.lea-toggle').removeClass('fa-chevron-up').addClass('fa-chevron-down');
-        alert('Please expand the LEA to view schools.');
-    });
     // Add School button handler
     $(document).on('click', '.add-school-button', function() {
         var leaId = $(this).data('lea-id');
