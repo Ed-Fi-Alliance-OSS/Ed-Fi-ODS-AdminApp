@@ -44,5 +44,8 @@ namespace EdFi.Ods.AdminApp.Management.Api
         PostSecondaryInstitution GetPostSecondaryInstitutionById(string id);
         OdsApiResult EditPostSecondaryInstitution(Models.PostSecondaryInstitution model);
         OdsApiResult DeletePostSecondaryInstitution(string id);
+        List<PsiSchool> GetPsiSchoolsByIds(IEnumerable<int> psiIds);
+        List<PsiSchool> GetPsiSchoolsByIdByPage(int psiId, int offset, int limit);
+        (List<PsiSchool> Schools, int? TotalCount) GetPsiSchoolsByIdByPageWithTotalCount(int psiId, int offset, int limit);
     }
 }

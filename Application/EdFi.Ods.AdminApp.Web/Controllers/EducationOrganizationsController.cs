@@ -434,11 +434,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         public async Task<ActionResult> GetSchoolsByLea(int leaId, int pageNumber = 1)
         {
             var api = await _odsApiFacadeFactory.Create();
-            int pageSize = 20;
-            if (int.TryParse(System.Configuration.ConfigurationManager.AppSettings["PageSize"], out var configPageSize))
-            {
-                pageSize = configPageSize;
-            }
+            int pageSize = _appSettings?.Value?.PageSize ?? 20;
             int offset = (pageNumber - 1) * pageSize;
             var (pagedSchools, totalSchools) = api.GetSchoolsByLeaIdByPageWithTotalCount(leaId, offset, pageSize);
             var totalPages = totalSchools.HasValue ? (int)Math.Ceiling(totalSchools.Value / (double)pageSize) : 1;
@@ -452,6 +448,26 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
                 TotalSchools = totalSchools ?? pagedSchools.Count
             };
             return PartialView("_SchoolsByLea", model);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetSchoolsByPsi(int psiId, int pageNumber = 1)
+        {
+            var api = await _odsApiFacadeFactory.Create();
+            int pageSize = _appSettings?.Value?.PageSize ?? 20;
+            int offset = (pageNumber - 1) * pageSize;
+            var (pagedSchools, totalSchools) = api.GetPsiSchoolsByIdByPageWithTotalCount(psiId, offset, pageSize);
+            var totalPages = totalSchools.HasValue ? (int)Math.Ceiling(totalSchools.Value / (double)pageSize) : 1;
+
+            var model = new SchoolsByPsiViewModel
+            {
+                Schools = pagedSchools,
+                PsiId = psiId,
+                PageNumber = pageNumber,
+                TotalPages = totalPages,
+                TotalSchools = totalSchools ?? pagedSchools.Count
+            };
+            return PartialView("_SchoolsByPsi", model);
         }
     }
 }

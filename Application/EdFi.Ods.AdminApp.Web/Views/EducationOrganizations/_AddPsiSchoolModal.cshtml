@@ -61,12 +61,12 @@ See the LICENSE and NOTICES files in the project root for more information.
             $modal.find("#add-school-psi-id").val(psiId);
             $modal.modal("show");
         });
-       
+
         $("#add-psi-school-modal").on("show.bs.modal", function () {
-            $(".reset-included input").val('');            
+            $(".reset-included input").val('');
             $('#State option').prop('selected', function () {
                 return this.defaultSelected;
-            });           
+            });
             $(".form-group").removeClass("has-error");
             $(".validationSummary").addClass("hidden");
             $(".multiselect.dropdown-toggle").attr("title", "None");
