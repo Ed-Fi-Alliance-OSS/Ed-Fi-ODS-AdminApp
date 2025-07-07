@@ -47,7 +47,7 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets
                     RuleFor(x => x)
                         .SafeCustom((model, context) =>
                         {
-                            var validator = new SharingModelValidator(_getAllClaimSetsQuery, _getResourceClaimsQuery, context.PropertyName);
+                            var validator = new SharingModelValidator(_getAllClaimSetsQuery, _getResourceClaimsQuery, context.PropertyPath);
 
                             if (Path.GetExtension(model.ImportFile.FileName)?.ToLower() != ".json")
                             {

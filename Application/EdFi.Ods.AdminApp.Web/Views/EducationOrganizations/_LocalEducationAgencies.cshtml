@@ -74,17 +74,15 @@ $(function() {
         var $panel = $("#lea-schools-" + leaId);
         var $icon = $(this).find('.panel-toggle');
 
-        // Check if panel is currently visible
-        if ($panel.is(':visible')) {
-            // Panel is expanded, so collapse it
+        if ($icon.hasClass('fa-chevron-down')) {
             $panel.slideUp();
             $icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
-        } else {
-            // Panel is collapsed, so expand it
-            $panel.slideDown();
-            $icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
-            loadSchools(leaId, 1);
+            return;
         }
+        // Expand this one
+        $panel.slideDown();
+        $icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+        loadSchools(leaId, 1);
     });
 
     // Add School button handler
