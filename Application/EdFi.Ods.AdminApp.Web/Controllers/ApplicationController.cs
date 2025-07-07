@@ -79,7 +79,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         public async Task<ActionResult> Index()
         {
             var apiUrl = (await _apiConnectionInformationProvider.GetConnectionInformationForEnvironment())
-                .ApiServerUrl;
+                .ApiServerUrl; 
 
             var model = new ApplicationsIndexModel
             {
