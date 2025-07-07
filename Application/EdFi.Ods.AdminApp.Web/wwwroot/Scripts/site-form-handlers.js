@@ -170,8 +170,8 @@ var highlightFields = function (response) {
     $(".form-group").removeClass("has-error");
 
     $.each(response, function (propName, val) {
-        var nameSelector = '[name = "' + propName.replace(/(:|\.|\[|\])/g, "\\$1") + '"]';
-        var idSelector = '#' + propName.replace(/(:|\.|\[|\])/g, "\\$1");
+        var nameSelector = '[name = "' + propName.replace(/([:\\.\\[\\]\\\\])/g, "\\$1") + '"]';
+        var idSelector = '#' + propName.replace(/([:\\.\\[\\]\\\\])/g, "\\$1");
         var element = $(nameSelector) || $(idSelector);
 
         if (val.Errors.length > 0) {
