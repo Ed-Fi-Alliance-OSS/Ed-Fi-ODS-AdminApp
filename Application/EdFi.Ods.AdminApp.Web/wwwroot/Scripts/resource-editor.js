@@ -509,5 +509,5 @@ $(function () {
     dropDownList.removeAttribute("name");
     populateChildren();
     disableAlreadyAddedResources();
-    $(".claims-toggle").click(claimsToggle);
+    $(".claims-toggle").click(claimsToggle); 
 });
