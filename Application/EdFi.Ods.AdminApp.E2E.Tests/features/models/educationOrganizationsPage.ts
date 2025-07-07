@@ -9,7 +9,8 @@ import { AdminAppPage } from "./adminAppPage";
 export class EducationOrganizationsPage extends AdminAppPage {
     titleHeader = "div > h6";
     nameOnListHeader = ".panel-section h8";
-    edOrgDetailsSectionCollapsedSection = 'div.content[aria-expanded="false"]';
+    edOrgDetailsSectionCollapsedSection = 'div.lea-schools-panel:not(:visible)';
+    edOrgDetailsSectionExpandedSection = 'div.lea-schools-panel:visible';
     errorMsgSection = "div.validationSummary";
     fieldWithErrorSelector = ".row.has-error";
     activeTabSelector = "ul.nav li.active";
@@ -17,8 +18,8 @@ export class EducationOrganizationsPage extends AdminAppPage {
     confirmBtn = 'button[type="submit"]';
     deleteLEABtn = "a.delete-lea-link";
     editLEABtn = ".row.heading a:has(.fa-pencil)";
-    collapseBtn = 'a[data-toggle="collapse"]:has(.fa-chevron-up)';
-    expandBtn = 'a[data-toggle="collapse"]:has(.fa-chevron-down)';
+    collapseBtn = 'a.lea-toggle:has(.fa-chevron-up)';
+    expandBtn = 'a.lea-toggle:has(.fa-chevron-down)';
     dismissModalBtn = "button.close";
 
     get editedFormValueName(): string {
@@ -145,7 +146,14 @@ export class EducationOrganizationsPage extends AdminAppPage {
         return this.hasText({ text: this.editedFormValueName, selector: this.nameOnListHeader });
     }
 
+    async clickExpand() {
+        await this.page.locator(this.expandBtn).first().click();
+    }
+
     async clickCollapse() {
+        if (await this.isSectionCollapsed()) {
+            await this.clickExpand();
+        }
         await this.page.locator(this.collapseBtn).click();
     }
 
@@ -158,10 +166,11 @@ export class EducationOrganizationsPage extends AdminAppPage {
     }
 
     async isSectionCollapsed(): Promise<boolean> {
-        return (
-            (await this.elementExists(this.expandBtn)) &&
-            (await this.elementExists(this.edOrgDetailsSectionCollapsedSection))
-        );
+        return await this.elementExists(this.expandBtn);
+    }
+
+    async isSectionExpanded(): Promise<boolean> {
+        return await this.elementExists(this.edOrgDetailsSectionExpandedSection);
     }
 
     async deleteLEA(): Promise<void> {

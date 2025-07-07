@@ -41,7 +41,6 @@ namespace EdFi.Ods.AdminApp.Management.Api
         public List<Models.School> GetSchoolsByLeaIds(IEnumerable<int> leaIds)
         {
             var response = new List<School>();
-
             foreach (var leaId in leaIds)
             {
                 var filters = new Dictionary<string, object>
@@ -255,6 +254,61 @@ namespace EdFi.Ods.AdminApp.Management.Api
                 Value = nameSpace + "#" + code,
                 DisplayText = description
             };
+        }
+
+        public List<Models.School> GetSchoolsByLeaIdByPage(int leaId, int offset, int limit)
+        {
+            var filters = new Dictionary<string, object>
+            {
+                {"localEducationAgencyId", leaId}
+            };
+            var response = _restClient.GetAll<School>(ResourcePaths.Schools, filters, offset, limit);
+            return _mapper.Map<List<Models.School>>(response);
+        }
+
+        public (List<Models.School> Schools, int? TotalCount) GetSchoolsByLeaIdByPageWithTotalCount(int leaId, int offset, int limit)
+        {
+            var filters = new Dictionary<string, object>
+            {
+                {"localEducationAgencyId", leaId}
+            };
+            var (items, total) = _restClient.GetAllWithTotalCount<School>(ResourcePaths.Schools, filters, offset, limit, true);
+            return (_mapper.Map<List<Models.School>>(items), total);
+        }
+
+        public List<Models.PsiSchool> GetPsiSchoolsByIds(IEnumerable<int> psiIds)
+        {
+            var allSchools = _restClient.GetAll<School>(ResourcePaths.Schools);
+            var filteredSchools = allSchools.Where(school =>
+                school._ext?.TPDM?.PostSecondaryInstitutionReference?.PostSecondaryInstitutionId.HasValue == true &&
+                psiIds.Contains(school._ext.TPDM.PostSecondaryInstitutionReference.PostSecondaryInstitutionId.Value)
+            ).ToList();
+
+            return _mapper.Map<List<Models.PsiSchool>>(filteredSchools);
+        }
+
+        public List<Models.PsiSchool> GetPsiSchoolsByIdByPage(int psiId, int offset, int limit)
+        {
+            var allSchools = _restClient.GetAll<School>(ResourcePaths.Schools);
+            var filteredSchools = allSchools.Where(school =>
+                school._ext?.TPDM?.PostSecondaryInstitutionReference?.PostSecondaryInstitutionId == psiId
+            ).Skip(offset).Take(limit).ToList();
+
+            return _mapper.Map<List<Models.PsiSchool>>(filteredSchools);
+        }
+
+        public (List<Models.PsiSchool> Schools, int? TotalCount) GetPsiSchoolsByIdByPageWithTotalCount(int psiId, int offset, int limit)
+        {
+            var allSchools = _restClient.GetAll<School>(ResourcePaths.Schools);
+            var filteredSchools = allSchools.Where(school =>
+                school._ext?.TPDM?.PostSecondaryInstitutionReference?.PostSecondaryInstitutionId == psiId
+            ).ToList();
+
+            var totalCount = filteredSchools.Count;
+            var pagedSchools = filteredSchools.Skip(offset).Take(limit).ToList();
+            var mappedSchools = _mapper.Map<List<Models.PsiSchool>>(pagedSchools);
+
+            return (mappedSchools, totalCount);
         }
     }
 }

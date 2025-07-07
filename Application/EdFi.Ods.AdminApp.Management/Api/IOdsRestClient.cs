@@ -14,6 +14,8 @@ namespace EdFi.Ods.AdminApp.Management.Api
         IReadOnlyList<T> GetAll<T>(string elementPath) where T : class;
         IReadOnlyList<T> GetAll<T>(string elementPath, int offset, int limit) where T : class;
         IReadOnlyList<T> GetAll<T>(string elementPath, Dictionary<string, object> filters) where T : class;
+        IReadOnlyList<T> GetAll<T>(string elementPath, Dictionary<string, object> filters, int offset, int limit) where T : class;
+        (IReadOnlyList<T> Items, int? TotalCount) GetAllWithTotalCount<T>(string elementPath, Dictionary<string, object> filters, int offset, int limit, bool totalCount = false) where T : class;
         T GetById<T>(string elementPath, string id) where T : class;
         OdsApiResult PostResource<T>(T resource, string elementPath, bool refreshToken = false);
         OdsApiResult PutResource<T>(T resource, string elementPath, string id, bool refreshToken = false);
