@@ -41,6 +41,14 @@ Feature: Education Organizations
         And confirming delete local education agency
         Then local education agency is deleted
 
+    ##AA-1779
+    Scenario: Expand local education agency section
+        Given there's a local education agency added
+        And it's on the "Education Organizations" page
+        And education organization list has loaded
+        When clicking expand local education agency section
+        Then local education agency section is expanded
+
     #AA-862
     Scenario: Collapse local education agency section
         Given there's a local education agency added

@@ -172,8 +172,8 @@ function InitializeBackNavigationalAjaxButtons() {
 }
 
 function InitializeModalLoaders() {
-    $(".loads-ajax-modal").off("click");
-    $(".loads-ajax-modal").click(function (e) {
+    $(document).off("click", ".loads-ajax-modal");
+    $(document).on("click", ".loads-ajax-modal", function (e) {
         e.preventDefault();
         $("body").css("cursor", "progress");
         var $button = $(this);
@@ -469,7 +469,7 @@ function AttachDefaultPagingBehavior() {
 
     $('.navigate-next-page').off("click");
     $('.navigate-next-page').on("click", replacePagedContent);
-};   
+};
 
 function AddTooltip(element, tooltipMessage) {
     element.attr("data-toggle", "tooltip");

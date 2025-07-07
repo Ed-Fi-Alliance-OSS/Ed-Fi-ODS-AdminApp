@@ -13,6 +13,8 @@ namespace EdFi.Ods.AdminApp.Management.Api
         List<School> GetAllSchools();
         List<PsiSchool> GetAllPsiSchools();
         List<School> GetSchoolsByLeaIds(IEnumerable<int> leaIds);
+        List<School> GetSchoolsByLeaIdByPage(int leaId, int offset, int limit);
+        (List<School> Schools, int? TotalCount) GetSchoolsByLeaIdByPageWithTotalCount(int leaId, int offset, int limit);
         List<LocalEducationAgency> GetAllLocalEducationAgencies();
         List<LocalEducationAgency> GetLocalEducationAgenciesByPage(int offset = 0, int limit = 50);
         OdsApiResult DeleteLocalEducationAgency(string id);
@@ -42,5 +44,8 @@ namespace EdFi.Ods.AdminApp.Management.Api
         PostSecondaryInstitution GetPostSecondaryInstitutionById(string id);
         OdsApiResult EditPostSecondaryInstitution(Models.PostSecondaryInstitution model);
         OdsApiResult DeletePostSecondaryInstitution(string id);
+        List<PsiSchool> GetPsiSchoolsByIds(IEnumerable<int> psiIds);
+        List<PsiSchool> GetPsiSchoolsByIdByPage(int psiId, int offset, int limit);
+        (List<PsiSchool> Schools, int? TotalCount) GetPsiSchoolsByIdByPageWithTotalCount(int psiId, int offset, int limit);
     }
 }

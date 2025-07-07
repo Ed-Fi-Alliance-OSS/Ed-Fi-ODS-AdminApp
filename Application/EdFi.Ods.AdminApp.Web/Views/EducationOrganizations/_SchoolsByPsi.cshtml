@@ -1,0 +1,48 @@
+@*
+SPDX-License-Identifier: Apache-2.0
+Licensed to the Ed-Fi Alliance under one or more agreements.
+The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+See the LICENSE and NOTICES files in the project root for more information.
+*@
+
+@model EdFi.Ods.AdminApp.Web.Models.ViewModels.EducationOrganizations.SchoolsByPsiViewModel
+
+@if (!Model.Schools.Any())
+{
+    <div class="col-lg-12">
+        <em>There are no schools in this category</em>
+    </div>
+}
+else
+{
+    foreach (var school in Model.Schools)
+    {
+        <div class="col-lg-8">
+            <h7>@school.Name</h7>
+        </div>
+        <div class="col-lg-4 text-right">
+            <a href="javascript:void(0)" class="loads-ajax-modal" data-url="@Url.Action("EditPsiSchoolModal", "EducationOrganizations", new {id = school.Id})"> <span class="fa fa-pencil action-icons"></span></a>
+            <a href="javascript:void(0)" onclick="ShowDeleteEdOrgModal('@school.Name', '@school.Id', '@(Html.Raw(Url.Action("DeleteSchool", "EducationOrganizations")))', 'School'); return false;" data-id="@school.Id" data-name="@school.Name"> <span class="fa fa-trash-o action-icons"></span></a>
+        </div>
+    }
+}
+
+@if (Model.TotalPages > 1)
+{
+    <div class="col-lg-12 text-center">
+        <ul class="pagination pagination-sm">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="@(i == Model.PageNumber ? "active" : "")">
+                    <a href="#" class="psi-school-page-link" data-psiid="@Model.PsiId" data-page="@i">@i</a>
+                </li>
+            }
+        </ul>
+        <small class="text-muted">Page @Model.PageNumber of @Model.TotalPages (@Model.TotalSchools total schools)</small>
+    </div>
+}
+<div class="col-lg-12 text-right padding-bottom-5">
+    <button class="ghost-button btn-sm add-psi-school-button" data-psi-id="@(Model.PsiId)">
+        Add School
+    </button>
+</div>
