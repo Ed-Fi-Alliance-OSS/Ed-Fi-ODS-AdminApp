@@ -1,0 +1,11 @@
+name: "CodeQL Config"
+queries:
+  - uses: security-and-quality
+  
+paths:
+  - "**/*.cs"
+  - "**/*.cshtml"
+  - "**/*.js"
+  - "**/*.ts"
+  - "**/*.py"
+  - ".github/workflows/*.yml"
