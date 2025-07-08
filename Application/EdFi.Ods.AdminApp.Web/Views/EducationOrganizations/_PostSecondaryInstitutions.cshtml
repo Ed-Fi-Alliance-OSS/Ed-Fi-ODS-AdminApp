@@ -60,8 +60,6 @@ $(function() {
             $panel.html('<div class="col-lg-12"><em>There are no schools in this category</em></div><div class="col-lg-12 text-right padding-bottom-5"><button class="ghost-button btn-sm add-psi-school-button" data-psi-id="' + psiId + '">Add School</button></div>');
             // Enable delete button if no schools
             var $deleteLink = $panel.closest('.psi-panel').find('.delete-psi-link');
-            $deleteLink.removeClass('disabled');
-            $deleteLink.find('span').removeClass('disabled');
         });
     }
 
