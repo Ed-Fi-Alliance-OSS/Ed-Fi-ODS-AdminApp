@@ -364,14 +364,25 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         [HttpPost]
         public async Task<ActionResult> DeleteLocalEducationAgency(DeleteEducationOrganizationModel model)
         {
+            string conflictErrorMessage = "Request failed with status code Conflict";
+            string deleteErrorSchoolsAssociated = "Deletion Failed: This organization cannot be deleted because it is currently linked to one or more schools. Please remove the associated schools before proceeding.";
             var deletionResult = (await _odsApiFacadeFactory.Create()).DeleteLocalEducationAgency(model.Id);
+            if (!deletionResult.Success && deletionResult.ErrorMessage.Equals(conflictErrorMessage)) {
+                return JsonError(deleteErrorSchoolsAssociated);
+            }
             return deletionResult.Success ? JsonSuccess("Organization Removed") : JsonError(deletionResult.ErrorMessage);
         }
 
         [HttpPost]
         public async Task<ActionResult> DeletePostSecondaryInstitution(DeleteEducationOrganizationModel model)
         {
+            string conflictErrorMessage = "Request failed with status code Conflict";
+            string deleteErrorSchoolsAssociated = "Deletion Failed: This organization cannot be deleted because it is currently linked to one or more schools. Please remove the associated schools before proceeding.";
             var deletionResult = (await _odsApiFacadeFactory.Create()).DeletePostSecondaryInstitution(model.Id);
+            if (!deletionResult.Success && deletionResult.ErrorMessage.Equals(conflictErrorMessage))
+            {
+                return JsonError(deleteErrorSchoolsAssociated);
+            }
             return deletionResult.Success ? JsonSuccess("Post-Secondary Institution Removed") : JsonError(deletionResult.ErrorMessage);
         }
 

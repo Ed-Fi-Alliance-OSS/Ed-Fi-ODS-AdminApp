@@ -33,7 +33,7 @@ See the LICENSE and NOTICES files in the project root for more information.
             </div>
             <div class="col-lg-6 text-right">
                 <a href="javascript:void(0)" class="loads-ajax-modal" data-url="@Url.Action("EditLocalEducationAgencyModal", "EducationOrganizations", new {id = localEducationAgency.Id})"> <span class="fa fa-pencil action-icons"></span></a>
-                <a href="javascript:void(0)" class="delete-lea-link disabled" data-id="@localEducationAgency.Id" data-name="@localEducationAgency.Name"> <span class="fa fa-trash-o action-icons disabled" aria-disabled="true"></span></a>
+                <a href="javascript:void(0)" class="delete-lea-link" data-id="@localEducationAgency.Id" data-name="@localEducationAgency.Name"> <span class="fa fa-trash-o action-icons"></span></a>
                 <span class="custom-divider"> |</span>
                 <a href="javascript:void(0)" class="lea-toggle" data-leaid="@localEducationAgency.EducationOrganizationId"><span class="fa fa-chevron-down caret-custom panel-toggle"></span></a>
             </div>
@@ -59,13 +59,6 @@ $(function() {
             // Enable delete-lea-link if no schools
             var hasSchools = $panel.find('.col-lg-8').length > 0;
             var $deleteLink = $panel.closest('.lea-panel').find('.delete-lea-link');
-            if (!hasSchools) {
-                $deleteLink.removeClass('disabled');
-                $deleteLink.find('span').removeClass('disabled');
-            } else {
-                $deleteLink.addClass('disabled');
-                $deleteLink.find('span').addClass('disabled');
-            }
         });
     }
     // Use event delegation for dynamically loaded content
