@@ -42,6 +42,7 @@ namespace EdFi.Ods.AdminApp.Web.Controllers
         private readonly IGetVendorsQuery _getVendorsQuery;
         private readonly IInferExtensionDetails _inferExtensionDetails;
 
+
         public ApplicationController(IMapper mapper
             , IDeleteApplicationCommand deleteApplicationCommand
             , IAddApplicationCommand addApplicationCommand
