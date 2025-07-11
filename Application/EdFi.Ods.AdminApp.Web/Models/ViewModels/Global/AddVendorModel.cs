@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: Apache-2.0
 // Licensed to the Ed-Fi Alliance under one or more agreements.
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
@@ -27,7 +27,9 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.Global
                 .WithMessage(p => $"'{p.Company}' is a reserved name and may not be used. Please choose another name.");
 
             RuleFor(m => m.ContactName).NotEmpty();
-            RuleFor(m => m.ContactEmailAddress).NotEmpty().EmailAddress();
+            RuleFor(m => m.ContactEmailAddress)
+                .NotEmpty()
+                .Matches(@"^[^@\s]+@[^@\s]+\.[^@\s]+$").WithMessage("'Contact Email Address' is not a valid email address.");
         }
     }
 }
