@@ -1,4 +1,3 @@
-
 html {
     position: relative;
     min-height: 100% !important;
@@ -1306,4 +1305,11 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
     -moz-appearance: textfield;
+}
+
+/* Multiselect button text wrapping fix */
+.multiselect-native-select .multiselect.dropdown-toggle.btn.btn-default {
+    text-align: left;
+    white-space: normal;
+    overflow-wrap: anywhere;
 }
