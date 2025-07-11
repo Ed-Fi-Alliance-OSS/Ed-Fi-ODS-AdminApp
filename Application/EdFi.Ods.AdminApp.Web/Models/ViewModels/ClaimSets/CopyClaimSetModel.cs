@@ -12,7 +12,13 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets
 {
     public class CopyClaimSetModel : ICopyClaimSetModel
     {
-        public string Name { get; set; }
+        private string _name;
+        
+        public string Name 
+        { 
+            get => _name; 
+            set => _name = value?.Trim(); 
+        }
         public int OriginalId { get; set; }
         public string OriginalName { get; set; }
     }
@@ -34,7 +40,8 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets
 
         private bool BeAUniqueName(string newName)
         {
-            return _getAllClaimSetsQuery.Execute().All(x => x.Name != newName);
+            var trimmedName = newName?.Trim();
+            return _getAllClaimSetsQuery.Execute().All(x => x.Name?.Trim() != trimmedName);
         }
     }
 }

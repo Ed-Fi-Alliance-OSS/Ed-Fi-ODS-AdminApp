@@ -19,11 +19,11 @@ See the LICENSE and NOTICES files in the project root for more information.
                 <div class="padding-bottom-10">
                     Do you want to make a copy of the claimset - <b>@Model.OriginalName</b>?
                 </div>
-                @using (Html.BeginForm("CopyClaimSet", "ClaimSets", FormMethod.Post, new { data_tab_claimset = true }))
+                @using (Html.BeginForm("CopyClaimSet", "ClaimSets", FormMethod.Post, new { data_tab_claimset = true, @id = "copy-claim-set-form" }))
                 {
                     @Html.Input(m => m.OriginalId).Hide()
                     @Html.ValidationBlock()
-                    @Html.InputBlock(m => m.Name, inputModifier: x => x.Attr("maxlength", 255))
+                    @Html.InputBlock(m => m.Name, inputModifier: x => x.Attr("maxlength", 255).Attr("id", "copy-claimset-name-input"))
                 }
             </div>
             <div class="modal-footer">
@@ -33,3 +33,16 @@ See the LICENSE and NOTICES files in the project root for more information.
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        // Handle form submission for copy claim set modal
+        $('#copy-claim-set-form').submit(function(e) {
+            // Trim the Name input before submitting
+            var copyClaimsetNameInput = $('#copy-claimset-name-input');
+            if (copyClaimsetNameInput.length) {
+                copyClaimsetNameInput.val(copyClaimsetNameInput.val().trim());
+            }
+        });
+    });
+</script>

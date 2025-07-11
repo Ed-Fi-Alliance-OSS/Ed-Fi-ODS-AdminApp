@@ -12,7 +12,13 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets
 {
     public class AddClaimSetModel : IAddClaimSetModel
     {
-        public string ClaimSetName { get; set; }
+        private string _claimSetName;
+        
+        public string ClaimSetName 
+        { 
+            get => _claimSetName; 
+            set => _claimSetName = value?.Trim(); 
+        }
     }
 
     public class AddClaimSetModelValidator : AbstractValidator<AddClaimSetModel>
@@ -34,7 +40,8 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets
 
         private bool BeAUniqueName(string newName)
         {
-            return _getAllClaimSetsQuery.Execute().All(x => x.Name != newName);
+            var trimmedName = newName?.Trim();
+            return _getAllClaimSetsQuery.Execute().All(x => x.Name?.Trim() != trimmedName);
         }
     }
 }
