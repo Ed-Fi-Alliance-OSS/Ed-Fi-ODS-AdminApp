@@ -29,7 +29,8 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.Global
             RuleFor(m => m.ContactName).NotEmpty();
             RuleFor(m => m.ContactEmailAddress)
                 .NotEmpty()
-                .Matches(@"^[^@\s]+@[^@\s]+\.[^@\s]+$").WithMessage("'Contact Email Address' is not a valid email address.");
+                .Matches(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+                .WithMessage("'Contact Email Address' is not a valid email address.");
         }
     }
 }
