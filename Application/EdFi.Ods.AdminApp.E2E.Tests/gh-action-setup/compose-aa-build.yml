@@ -104,7 +104,6 @@ services:
       ADMINAPP_HEALTHCHECK_TEST: ${ADMINAPP_HEALTHCHECK_TEST?Please consult env.example to set the Admin App healthcheck test}
     volumes:
       - ${LOGS_FOLDER}:/app/logs
-      - adminapp-bulk-hashcache:/app/BulkUploadHashCache
       - ../../../eng/test-certs/ssl:/ssl/
     depends_on:
       - pb-ods
