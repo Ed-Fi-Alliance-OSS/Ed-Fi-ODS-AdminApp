@@ -20,7 +20,7 @@ ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 WORKDIR /app
 COPY Settings/pgsql/appsettings.template.json Settings/pgsql/run.sh Settings/pgsql/log4net.config /app/
 
-ENV ALPINE_PACKAGES="unzip=~6 dos2unix=~7 bash=~5 gettext=~0 postgresql16-client=~16 jq=~1 curl=~8 icu ca-certificates"
+ENV ALPINE_PACKAGES="unzip=~6 dos2unix=~7 bash=~5 gettext=~0 postgresql16-client=~16 jq=~1 curl=~8 icu=~76 ca-certificates=~20241121"
 RUN apk --upgrade --no-cache add ${ALPINE_PACKAGES} && \
     wget -nv -O /app/AdminApp.zip ${ADMINAPP_PACKAGE}  && \
     unzip /app/AdminApp.zip AdminApp/* -d /app/ && \
