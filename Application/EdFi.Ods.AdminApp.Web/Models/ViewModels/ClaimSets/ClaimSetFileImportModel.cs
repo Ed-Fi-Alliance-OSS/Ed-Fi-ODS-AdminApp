@@ -108,8 +108,9 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.ClaimSets
 
                 bool IsAnExistingClaimSetName(string sharingClaimSetName)
                 {
+                    var trimmedName = sharingClaimSetName?.Trim();
                     var claimSets = getAllClaimSetsQuery.Execute().ToList();
-                    return claimSets.Any(x => x.Name == sharingClaimSetName);
+                    return claimSets.Any(x => x.Name?.Trim() == trimmedName);
                 }
             }
         }

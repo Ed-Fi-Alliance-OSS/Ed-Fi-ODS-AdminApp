@@ -86,6 +86,13 @@ else
 <script type="text/javascript">
     $('#edit-claim-set-form').submit(function (e) {
         e.preventDefault();
+        
+        // Trim the ClaimSetName input before submitting
+        var claimSetNameInput = $('#ClaimSetName');
+        if (claimSetNameInput.length) {
+            claimSetNameInput.val(claimSetNameInput.val().trim());
+        }
+        
         var postData = {
             'ClaimSetId': parseInt($("#ClaimSetId").val()),
             'ClaimSetName': $("#ClaimSetName").val()
