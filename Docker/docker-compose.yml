@@ -41,7 +41,7 @@ services:
       context: ./Settings/gateway/
       dockerfile: Dockerfile
     environment:
-      ADMIN_APP_VIRTUAL_NAME: "${ADMIN_APP_VIRTUAL_NAME:-adminapp}"
+      ADMINAPP_VIRTUAL_NAME: "${ADMIN_APP_VIRTUAL_NAME:-adminapp}"
       ODS_VIRTUAL_NAME: "${ODS_VIRTUAL_NAME:-api}"
     ports:
       - "443:443"
