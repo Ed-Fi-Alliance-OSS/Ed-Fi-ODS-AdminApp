@@ -44,8 +44,8 @@ services:
       ADMINAPP_VIRTUAL_NAME: "${ADMIN_APP_VIRTUAL_NAME:-adminapp}"
       ODS_VIRTUAL_NAME: "${ODS_VIRTUAL_NAME:-api}"
     ports:
-      - "443:443"
-      - "80:80"
+      - "${GATEWAY_EXPOSED_PORT_SSL:-443}:443"
+      - "${GATEWAY_EXPOSED_PORT:-80}:80"
     restart: always
     volumes:
       - ./Settings/ssl:/ssl/
@@ -87,13 +87,14 @@ services:
       dockerfile: pgsql.Dockerfile
       args:
         ADMINAPP_PACKAGE_VERSION: ${ADMINAPP_PACKAGE_VERSION:-3.3.1}
+        CA_CERTIFICATE_FILE: ${CA_CERTIFICATE_FILE}
     environment:
       POSTGRES_USER: "${POSTGRES_USER}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
       POSTGRES_PORT: 5432
       ODS_POSTGRES_HOST: db-ods
       ADMIN_POSTGRES_HOST: db-admin
-      API_MODE: "SharedInstance"
+      API_MODE: ${API_MODE:-SharedInstance}
       API_EXTERNAL_URL: "https://${API_HOSTNAME:-localhost}/${ODS_VIRTUAL_NAME:-api}"
       ENCRYPTION_KEY: "${ENCRYPTION_KEY}"
       ADMINAPP_VIRTUAL_NAME: "${ADMINAPP_VIRTUAL_NAME:-adminapp}"

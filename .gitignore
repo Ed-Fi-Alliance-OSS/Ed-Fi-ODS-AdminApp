@@ -44,6 +44,9 @@ _ReSharper.*
 *.key
 *.pfx
 *.pem
+*.cer
+
+logs/
 
 #Packages
 packages/
