@@ -23,7 +23,6 @@ $p = @{
         XsdFolder = "/app/Schema"
         ApiStartupType = "SharedInstance"
         DatabaseEngine = "PostgreSql"
-        BulkUploadHashCache = "/app/BulkUploadHashCache/"
         PathBase = "adminapp"
         EncryptionKey = "<Generated encryption key>"
         AdminDB = "host=db-admin;port=5432;username=username;password=password;database=EdFi_Admin;Application Name=EdFi.Ods.AdminApp;"

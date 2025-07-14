@@ -43,6 +43,7 @@ _ReSharper.*
 *.crt
 *.key
 *.pfx
+*.pem
 
 #Packages
 packages/

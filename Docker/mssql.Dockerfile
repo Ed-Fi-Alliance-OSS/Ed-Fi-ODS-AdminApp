@@ -3,31 +3,29 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-#tag 8.0-alpine
-FROM mcr.microsoft.com/dotnet/aspnet@sha256:646b1c5ff36375f35f6149b0ce19ca095f97b4b882b90652801e9fbe82bcfa8a
+#tag 8.0.18-alpine3.22
+FROM mcr.microsoft.com/dotnet/aspnet@sha256:724275ef1d9fe87eab6e1c45e4cf9cca2c1751dccfbf93a182fc82fd42278ce0
 LABEL maintainer="Ed-Fi Alliance, LLC and Contributors <techsupport@ed-fi.org>"
-ARG VERSION=latest
 
-ENV PGBOUNCER_LISTEN_PORT=6432
+ARG ADMINAPP_PACKAGE_VERSION=3.3.1
+
 ENV ADMINAPP_VIRTUAL_NAME=adminapp
 ENV API_MODE=SharedInstance
+ENV ADMINAPP_PACKAGE="https://pkgs.dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_apis/packaging/feeds/EdFi/nuget/packages/EdFi.Suite3.ODS.AdminApp.Web/versions/${ADMINAPP_PACKAGE_VERSION}/content"
 
-# Alpine image does not contain Globalization Cultures library so we need to install ICU library to get fopr LINQ expression to work
-# Disable the globalization invariant mode (set in base image)
+# Disable the globalization invariant mode
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 
 WORKDIR /app
-COPY Settings/mssql/appsettings.template.json /app/appsettings.template.json
-COPY Settings/mssql/run.sh /app/run.sh
-COPY Settings/mssql/log4net.config /app/log4net.txt
+COPY Settings/mssql/appsettings.template.json Settings/mssql/run.sh Settings/mssql/log4net.config /app/
 
-RUN apk --no-cache add unzip=~6 dos2unix=~7 bash=~5 gettext=~0 jq=~1 icu=~74 curl=~8 && \
-    wget -nv -O /app/AdminApp.zip "https://pkgs.dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_apis/packaging/feeds/EdFi/nuget/packages/EdFi.Suite3.ODS.AdminApp.Web/versions/${VERSION}/content" && \
+ENV ALPINE_PACKAGES="unzip=~6 dos2unix=~7 bash=~5 gettext=~0 jq=~1 curl=~8 icu=~76 ca-certificates=~20241121"
+RUN apk --upgrade --no-cache add ${ALPINE_PACKAGES} && \
+    wget -nv -O /app/AdminApp.zip ${ADMINAPP_PACKAGE}  && \
     unzip /app/AdminApp.zip AdminApp/* -d /app/ && \
     cp -r /app/AdminApp/. /app/ && \
     rm -f /app/AdminApp.zip && \
     rm -r /app/AdminApp && \
-    cp /app/log4net.txt /app/log4net.config && \
     dos2unix /app/*.json && \
     dos2unix /app/*.sh && \
     dos2unix /app/log4net.config && \
