@@ -4,8 +4,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-
-version: "3.8"
+name: AdminApp E2E Test Environment
 
 services:
   db-ods:
@@ -82,7 +81,7 @@ services:
     hostname: api
     container_name: ed-fi-ods-api
     healthcheck:
-      test: $API_HEALTHCHECK_TEST
+      test: ${API_HEALTHCHECK_TEST}
       start_period: "60s"
       retries: 3
 
@@ -113,7 +112,7 @@ services:
     hostname: adminapp
     container_name: ed-fi-ods-adminapp
     healthcheck:
-      test: $ADMINAPP_HEALTHCHECK_TEST
+      test: ${ADMINAPP_HEALTHCHECK_TEST}
       start_period: "60s"
       retries: 3
 
@@ -158,6 +157,3 @@ volumes:
   vol-db-ods:
     driver: local
     name: vol-db-ods
-  adminapp-bulk-hashcache:
-    driver: local
-    name: vol-adminapp-bulk-hashcache
