@@ -1308,8 +1308,10 @@ input[type=number] {
 }
 
 /* Multiselect button text wrapping fix */
-.multiselect-native-select .multiselect.dropdown-toggle.btn.btn-default {
+.multiselect-native-select .multiselect.dropdown-toggle.btn.btn-default,
+.multiselect-native-select .btn-group.open .multiselect-container li .checkbox {
     text-align: left;
     white-space: normal;
     overflow-wrap: anywhere;
+    min-width: 400px;
 }
