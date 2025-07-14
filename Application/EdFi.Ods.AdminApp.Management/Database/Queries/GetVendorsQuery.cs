@@ -43,6 +43,7 @@ namespace EdFi.Ods.AdminApp.Management.Database.Queries
                 .Include(x => x.Users)
                 .Include(x => x.VendorNamespacePrefixes)
                 .Include(x => x.Applications).ThenInclude(o => o.OdsInstance)
+                .Include(x => x.Applications).ThenInclude(o => o.ApplicationEducationOrganizations)
                 .OrderBy(v => v.VendorName).Where(v => !VendorExtensions.ReservedNames.Contains(v.VendorName.Trim())).Skip(offset).Take(limit).ToList();
         }
     }
