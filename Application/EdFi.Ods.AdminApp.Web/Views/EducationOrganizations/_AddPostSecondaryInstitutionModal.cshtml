@@ -8,6 +8,7 @@
 @using EdFi.Ods.AdminApp.Management.Instances
 @using EdFi.Ods.AdminApp.Web.Helpers
 @using EdFi.Ods.AdminApp.Web.Infrastructure
+@using EdFi.Ods.AdminApp.Web.Models.ViewModels
 @model EdFi.Ods.AdminApp.Web.Models.ViewModels.EducationOrganizations.AddPostSecondaryInstitutionModel
 
 <div id ="add-psi-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addPSIModal" aria-hidden="true">
@@ -24,7 +25,12 @@
                 {
                     @Html.ValidationBlock()
                     @Html.InputBlock(m => m.PostSecondaryInstitutionId)
-                    @Html.SelectListBlock(m => m.PostSecondaryInstitutionLevel, Model.PostSecondaryInstitutionLevelOptions, x => new SelectListItem {Text = x.DisplayText, Value = x.Value})
+                    @Html.SelectListBlock(m => m.PostSecondaryInstitutionLevel, Model.PostSecondaryInstitutionLevelOptions,
+                        x => new SelectListItemWithDescription {
+                            Text = x.ShortDescription,
+                            Value = x.Value,
+                            Description = x.DisplayText
+                        })
                     @Html.SelectListBlock(m => m.AdministrativeFundingControl, Model.AdministrativeFundingControlOptions, x => new SelectListItem {Text = x.DisplayText, Value = x.Value})
                     @Html.InputBlock(m => m.Name)
                     @Html.InputBlock(m => m.StreetNumberName)

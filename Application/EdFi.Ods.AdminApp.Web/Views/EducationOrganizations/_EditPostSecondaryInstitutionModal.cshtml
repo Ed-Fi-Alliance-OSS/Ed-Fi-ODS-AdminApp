@@ -6,6 +6,7 @@ See the LICENSE and NOTICES files in the project root for more information.
 *@
 
 @using EdFi.Ods.AdminApp.Web.Helpers
+@using EdFi.Ods.AdminApp.Web.Models.ViewModels
 @model EdFi.Ods.AdminApp.Web.Models.ViewModels.EducationOrganizations.EditPostSecondaryInstitutionModel
 
 <div id="add-psi-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editPSIModal" aria-hidden="true">
@@ -21,7 +22,13 @@ See the LICENSE and NOTICES files in the project root for more information.
                     @Html.Input(m => m.Id).Hide()
                     @Html.Input(m => m.PostSecondaryInstitutionId).Hide()
                     @Html.ValidationBlock()
-                    @Html.SelectListBlock(m => m.PostSecondaryInstitutionLevel, Model.PostSecondaryInstitutionLevelOptions, x => new SelectListItem { Text = x.DisplayText, Value = x.Value, Selected = Model.PostSecondaryInstitutionLevel == x.Value})
+                    @Html.SelectListBlock(m => m.PostSecondaryInstitutionLevel, Model.PostSecondaryInstitutionLevelOptions,x => new SelectListItemWithDescription
+                        {
+                            Text = x.ShortDescription,
+                            Value = x.Value,
+                            Description = x.DisplayText,
+                            Selected = Model.PostSecondaryInstitutionLevel == x.Value
+                        })
                     @Html.SelectListBlock(m => m.AdministrativeFundingControl, Model.AdministrativeFundingControlOptions, x => new SelectListItem { Text = x.DisplayText, Value = x.Value, Selected = Model.AdministrativeFundingControl == x.Value })
                     @Html.InputBlock(m => m.Name)
                     @Html.InputBlock(m => m.StreetNumberName)

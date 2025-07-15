@@ -26,6 +26,7 @@ using Preconditions = SecurityCompatiblity53::EdFi.Common.Preconditions;
 using EdFi.Ods.AdminApp.Web.Display.Pagination;
 using log4net;
 using Microsoft.AspNetCore.WebUtilities;
+using EdFi.Ods.AdminApp.Web.Models.ViewModels;
 
 namespace EdFi.Ods.AdminApp.Web.Helpers
 {
@@ -56,7 +57,7 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
                 input.AddClass("form-control");
                 if (accept != null)
                     input.Attr("accept", accept.FileTypeSpecifier);
-            }; 
+            };
 
             return helper.InputBlock(expression, null, null, action);
         }
@@ -95,7 +96,7 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
             return wrapper;
         }
 
-        public static HtmlTag NumberOnlyInputBlock<T>(this IHtmlHelper<T> helper, Expression<Func<T, object>> expression, string placeholderText = null, string helpTooltipText = null, string customLabelText = null, int maxValue = int.MaxValue, int minValue=0) where T : class
+        public static HtmlTag NumberOnlyInputBlock<T>(this IHtmlHelper<T> helper, Expression<Func<T, object>> expression, string placeholderText = null, string helpTooltipText = null, string customLabelText = null, int maxValue = int.MaxValue, int minValue = 0) where T : class
         {
             void Action(HtmlTag input)
             {
@@ -130,7 +131,7 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
             var isCheckbox = expression?.ToAccessor()?.PropertyType == typeof(bool);
 
             input = input.WrapWith(new DivTag().AddClasses("col-xs-6", isCheckbox ? "text-left" : "text-center"));
-            
+
 
             var helpTooltip = helper.ToolTip(helpTooltipText);
             helpTooltip = helpTooltip.AddClasses("col-xs-2");
@@ -178,15 +179,15 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
             where T : class
             where TR : Enumeration<TR>
         {
-            var getAllMethod = typeof (TR).GetMethod("GetAll", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
+            var getAllMethod = typeof(TR).GetMethod("GetAll", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
             var enumerationValues = (IEnumerable<TR>)getAllMethod.Invoke(null, null);
 
             var model = helper.ViewData.Model;
             var expressionValue = expression.Compile().Invoke(model);
             var convertedExpression = expression.Cast<T, TR, object>();
 
-            return helper.SelectList(convertedExpression, enumerationValues, i => new SelectListItem { Text = i.DisplayName, Value = i.Value.ToString(), Selected = i == expressionValue}, includeBlankOption);
-        }       
+            return helper.SelectList(convertedExpression, enumerationValues, i => new SelectListItem { Text = i.DisplayName, Value = i.Value.ToString(), Selected = i == expressionValue }, includeBlankOption);
+        }
 
         public static HtmlTag SelectList<T, TR>(this IHtmlHelper<T> helper, Expression<Func<T, object>> expression, IEnumerable<TR> options, Func<TR, SelectListItem> selectListItemBuilder, bool includeBlankOption = false) where T : class
         {
@@ -205,7 +206,14 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
 
             foreach (var selectListItem in options.Select(selectListItemBuilder))
             {
-                AppendSelectListOption(selectListItem, input);
+                if (selectListItem is SelectListItemWithDescription)
+                {
+                    AppendSelectListOptionWithDescription((SelectListItemWithDescription)selectListItem, input);
+                }
+                else
+                {
+                    AppendSelectListOption(selectListItem, input);
+                }
             }
 
             return input;
@@ -214,6 +222,21 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
         private static void AppendSelectListOption(SelectListItem selectListItem, HtmlTag selectTag)
         {
             var optionTag = new HtmlTag("option").Attr("value", selectListItem.Value).Text(selectListItem.Text);
+            if (selectListItem.Selected)
+            {
+                optionTag.Attr("selected", "selected");
+            }
+
+            selectTag.Append(optionTag);
+        }
+
+        private static void AppendSelectListOptionWithDescription(SelectListItemWithDescription selectListItem, HtmlTag selectTag)
+        {
+            var optionTag = new HtmlTag("option")
+                .Attr("value", selectListItem.Value)
+                .Attr("title", selectListItem.Description)
+                .Text(selectListItem.Text);
+
             if (selectListItem.Selected)
             {
                 optionTag.Attr("selected", "selected");
@@ -241,15 +264,15 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
                 });
         }
 
-        public static HtmlTag SelectListBlock<T, TR>(this IHtmlHelper<T> helper, Expression<Func<T, object>> expression, IEnumerable<TR> options, Func<TR, SelectListItem> selectListItemBuilder, string helpTooltipText = null, bool includeBlankOption = false) where T: class
+        public static HtmlTag SelectListBlock<T, TR>(this IHtmlHelper<T> helper, Expression<Func<T, object>> expression, IEnumerable<TR> options, Func<TR, SelectListItem> selectListItemBuilder, string helpTooltipText = null, bool includeBlankOption = false) where T : class
         {
             var selectList = SelectList(helper, expression, options, selectListItemBuilder, includeBlankOption);
             return helper.SelectListBlock(expression, selectList, helpTooltipText, includeBlankOption);
         }
 
-        public static HtmlTag SelectListBlock<T, TR>(this IHtmlHelper<T> helper, Expression<Func<T, TR>> expression, string helpTooltipText = null, bool includeBlankOption = false) 
+        public static HtmlTag SelectListBlock<T, TR>(this IHtmlHelper<T> helper, Expression<Func<T, TR>> expression, string helpTooltipText = null, bool includeBlankOption = false)
             where T : class
-            where TR: Enumeration<TR>
+            where TR : Enumeration<TR>
         {
             var selectList = SelectList(helper, expression, includeBlankOption);
             var convertedExpression = expression.Cast<T, TR, object>();
@@ -284,8 +307,8 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
 
         public static HtmlTag MultiSelectListBlock<T, TR>(this IHtmlHelper<T> helper,
             Expression<Func<T, object>> expression,
-            IEnumerable<TR> options, 
-            Func<TR, SelectListItem> selectListItemBuilder, 
+            IEnumerable<TR> options,
+            Func<TR, SelectListItem> selectListItemBuilder,
             string helpTooltipText = null
         )
             where T : class
@@ -354,7 +377,7 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
             return new DivTag().AddClasses("validationSummary", "alert", "alert-danger", "hidden");
         }
 
-        public static HtmlTag NavTabs<T>(this IHtmlHelper helper, IUrlHelper urlHelper, List<TabDisplay<T>> tabs, object commonRouteValues = null) where T: Enumeration<T>, ITabEnumeration
+        public static HtmlTag NavTabs<T>(this IHtmlHelper helper, IUrlHelper urlHelper, List<TabDisplay<T>> tabs, object commonRouteValues = null) where T : Enumeration<T>, ITabEnumeration
         {
             var tabTag = new HtmlTag("ul").AddClasses("nav", "nav-tabs");
             BuildNavEntries(urlHelper, tabs, tabTag, commonRouteValues);
@@ -398,10 +421,10 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
                 tabTag.Append(listItem);
             }
         }
-        
-        public static HtmlTag InlineRadioButton<T, TEnumeration>(this IHtmlHelper<T> helper, Expression<Func<T, object>> expression, TEnumeration option, string helpTooltipText = null, string id = null, bool enabled = true) 
-            where T: class
-            where TEnumeration: Enumeration<TEnumeration> 
+
+        public static HtmlTag InlineRadioButton<T, TEnumeration>(this IHtmlHelper<T> helper, Expression<Func<T, object>> expression, TEnumeration option, string helpTooltipText = null, string id = null, bool enabled = true)
+            where T : class
+            where TEnumeration : Enumeration<TEnumeration>
         {
             var model = helper.ViewData.Model;
             var value = model == null ? default(TEnumeration) : expression.Compile()(model);
@@ -447,7 +470,7 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
         }
 
         public static HtmlTag InlineCustomRadioButton<T, TEnumeration>(this IHtmlHelper<T> helper, Expression<Func<T, object>> expression, RadioButtonDisplay<TEnumeration> option, string id = null)
-            where T : class 
+            where T : class
             where TEnumeration : Enumeration<TEnumeration>, IRadioButton
         {
             var model = helper.ViewData.Model;
@@ -504,7 +527,7 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
             if (minHeight > 0)
             {
                 //adding a minimum height is optional, but can help prevent the page scrollbar from jumping around while content loads
-                contentLoadingArea.Attr("style", $"min-height: {minHeight}px"); 
+                contentLoadingArea.Attr("style", $"min-height: {minHeight}px");
             }
 
             contentLoadingArea.Append(placeholderTag);
@@ -525,7 +548,7 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
         }
 
         public static HtmlString ApplicationVersion(this IHtmlHelper helper)
-        {            
+        {
             var informationVersion = InMemoryCache.Instance
                 .GetOrSet("informationVersion",
                     () => Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion);
@@ -536,7 +559,7 @@ namespace EdFi.Ods.AdminApp.Web.Helpers
         public static HtmlTag CheckBoxSquare<T>(this IHtmlHelper<T> helper, bool expression, string action) where T : class
         {
             var label = new HtmlTag("label");
-            var input = new HtmlTag("input").Attr("type", "checkbox").Attr("disabled","disabled").Attr("checked", true).AddClasses("hide", $"{action}-checkbox");
+            var input = new HtmlTag("input").Attr("type", "checkbox").Attr("disabled", "disabled").Attr("checked", true).AddClasses("hide", $"{action}-checkbox");
             const string icon = "<i class='fa fa-fw fa-check-square'></i>";
             if (expression)
                 label.Append(input).AppendHtml(icon);

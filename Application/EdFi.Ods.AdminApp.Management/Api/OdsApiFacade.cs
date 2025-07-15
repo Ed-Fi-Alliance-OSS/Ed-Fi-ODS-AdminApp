@@ -64,7 +64,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
         public List<SelectOptionModel> GetPostSecondaryInstitutionLevels()
         {
             var response = _restClient.GetAll<DomainModels.EdFiDescriptor>(ResourcePaths.PostSecondaryInstitutionLevelDescriptors);
-            return response.Select(x => BuildDescriptorSelectOptionModel(x.Namespace, x.CodeValue, x.Description))
+            return response.Select(x => BuildDescriptorSelectOptionModel(x.Namespace, x.CodeValue, x.Description,x.ShortDescription))
                 .ToList();
         }
 
@@ -253,6 +253,16 @@ namespace EdFi.Ods.AdminApp.Management.Api
             {
                 Value = nameSpace + "#" + code,
                 DisplayText = description
+            };
+        }
+
+        private static SelectOptionModel BuildDescriptorSelectOptionModel(string nameSpace, string code, string description, string shortDesctiption)
+        {
+            return new SelectOptionModel
+            {
+                Value = nameSpace + "#" + code,
+                DisplayText = description,
+                ShortDescription = shortDesctiption
             };
         }
 

@@ -9,5 +9,6 @@ namespace EdFi.Ods.AdminApp.Management.Api.Models
     {
         public string Value { get; set; }
         public string DisplayText { get; set; }
+        public string ShortDescription { get; set; }
     }
 }
