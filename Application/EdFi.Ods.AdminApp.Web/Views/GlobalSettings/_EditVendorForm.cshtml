@@ -50,7 +50,7 @@ else
     <script type="text/javascript">
         $(function() {
             $("textarea[id=edit-vendor-namespaces]").on("input", function (e) {
-                this.val(e.target.value);
+                $(this).val(e.target.value);
             });
             $("#edit-namespace-prefix").on("click", function () {
                 var namespacePrefixesInput = $("textarea[id=edit-vendor-namespaces]");
