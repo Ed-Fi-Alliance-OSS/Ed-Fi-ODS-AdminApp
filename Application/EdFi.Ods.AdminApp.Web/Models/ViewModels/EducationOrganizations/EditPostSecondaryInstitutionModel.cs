@@ -38,10 +38,35 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.EducationOrganizations
         public EditPostSecondaryInstitutionModelValidator()
         {
             RuleFor(m => m.Name).NotEmpty();
+            RuleFor(m => m.Name)
+                .MaximumLength(75)
+                .WithMessage("The Name of Institution would be too long for Admin App. The maximum length is 75 characters.")
+                .When(x => x.Name != null);
+
             RuleFor(m => m.StreetNumberName).NotEmpty();
+            RuleFor(m => m.StreetNumberName)
+                .MaximumLength(150)
+                .WithMessage("The Address would be too long for Admin App. The maximum length is 150 characters.")
+                .When(x => x.StreetNumberName != null);
+
             RuleFor(m => m.State).NotEmpty();
             RuleFor(m => m.City).NotEmpty();
+            RuleFor(m => m.City).NotEmpty();
+            RuleFor(m => m.City)
+                .MaximumLength(30)
+                .WithMessage("The City would be too long for Admin App. The maximum length is 30 characters.")
+                .When(x => x.City != null);
+
             RuleFor(m => m.ZipCode).NotEmpty();
+            RuleFor(m => m.ZipCode)
+                .MaximumLength(17)
+                .WithMessage("The Zip Code would be too long for Admin App. The maximum length is 17 characters.")
+                .When(x => x.ZipCode != null);
+
+            RuleFor(m => m.ApartmentRoomSuiteNumber)
+                .MaximumLength(50)
+                .WithMessage("The Suite would be too long for Admin App. The maximum length is 50 characters.")
+                .When(x => x.ApartmentRoomSuiteNumber != null);
         }
     }
 }
