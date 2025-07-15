@@ -10,7 +10,7 @@
 @using EdFi.Ods.AdminApp.Web.Infrastructure
 @model EdFi.Ods.AdminApp.Web.Models.ViewModels.EducationOrganizations.AddPostSecondaryInstitutionModel
 
-<div id ="add-psi-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addPSIModal" aria-hidden="true">
+<div id ="add-psi-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addPSIModal">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -49,10 +49,10 @@
 
 <script type="text/javascript">
     $(function() {
-        $("#add-psi-modal").on("show.bs.modal", function () {        
+        $("#add-psi-modal").on("show.bs.modal", function () {
             $("#addPostSecondaryFormModal").get(0).reset();
             $(".form-group").removeClass("has-error");
-            $(".validationSummary").addClass("hidden");           
+            $(".validationSummary").addClass("hidden");
         });
     });
 </script>

@@ -8,7 +8,7 @@ See the LICENSE and NOTICES files in the project root for more information.
 @using EdFi.Ods.AdminApp.Web.Helpers
 @model EdFi.Ods.AdminApp.Web.Models.ViewModels.EducationOrganizations.AddSchoolModel
 
-<div id="add-school-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addSchoolModal" aria-hidden="true">
+<div id="add-school-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addSchoolModal">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -17,7 +17,7 @@ See the LICENSE and NOTICES files in the project root for more information.
             </div>
         @if (Model.RequiredApiDataExist)
         {
-            <div class="modal-body center-block text-center">                
+            <div class="modal-body center-block text-center">
                 @using (Html.BeginForm("AddSchool", "EducationOrganizations", FormMethod.Post, new { id = "addSchoolFormModal" }))
                 {
                     @Html.Input(m => m.LocalEducationAgencyId).Id("add-school-lea-id").Hide()
@@ -53,12 +53,12 @@ See the LICENSE and NOTICES files in the project root for more information.
             $modal.find("#add-school-lea-id").val(leaId);
             $modal.modal("show");
         });
-       
+
         $("#add-school-modal").on("show.bs.modal", function () {
-            $(".reset-included input").val('');            
+            $(".reset-included input").val('');
             $('#State option').prop('selected', function () {
                 return this.defaultSelected;
-            });           
+            });
             $(".form-group").removeClass("has-error");
             $(".validationSummary").addClass("hidden");
             $(".multiselect.dropdown-toggle").attr("title", "None");
