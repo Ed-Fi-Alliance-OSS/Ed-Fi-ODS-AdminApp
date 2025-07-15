@@ -1,10 +1,8 @@
 #! /bin/bash
 end=$((SECONDS+ 5 * 60))
-
 until [[ "`docker inspect -f {{.State.Health.Status}} ed-fi-ods-adminapp`" == "healthy" || $SECONDS -gt $end ]]; do
     sleep 2;
 done;
-
 if [ "`docker inspect -f {{.State.Health.Status}} ed-fi-ods-adminapp`" == "healthy" ]
 then
     echo "--- Container is healthy ---"

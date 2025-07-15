@@ -51,10 +51,14 @@ services:
     restart: always
     hostname: nginx
     volumes:
-      - ../../../Docker/Settings/ssl:/ssl/
+      - ../../../eng/test-certs/ssl:/ssl/
     depends_on:
       - api
       - adminapp
+    healthcheck:
+      test: ${API_HEALTHCHECK_TEST}
+      start_period: "60s"
+      retries: 3
 
   api:
     image: edfialliance/ods-api-web-api:${ODS_API_PACKAGE_VERSION:-v2.3.5}

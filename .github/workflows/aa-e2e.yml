@@ -28,9 +28,6 @@ jobs:
         with:
           path: main
           ref: ${{ github.head_ref || github.ref_name }}
-      - name: Generate the certificate
-        run: |
-          chmod +x ./main/Docker/Settings/ssl/generate-certificate.sh
       - name: Run ODS
         if: success()
         run: docker compose -f ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/compose-aa-build.yml --env-file ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/.automation.env up -d
@@ -54,6 +51,8 @@ jobs:
       - name: Run tests
         run: npm run report
         working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
+        env:
+          PLAYWRIGHT_CHROMIUM_ARGS: --ignore-certificate-errors
       - name: Get Docker logs
         if: failure()
         run: |
@@ -68,6 +67,9 @@ jobs:
           name: docker-logs
           path: docker-logs/
           retention-days: 10
+      - name: List report files
+        run: ls -l reports
+        working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
       - name: Transform results
         if: success() || failure()
         run: python ./resultparser.py
