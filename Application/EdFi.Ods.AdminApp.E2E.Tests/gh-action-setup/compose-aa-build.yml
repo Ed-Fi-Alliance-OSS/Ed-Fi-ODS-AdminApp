@@ -8,7 +8,7 @@ name: AdminApp E2E Test Environment
 
 services:
   db-ods:
-    image: edfialliance/ods-api-db-ods:${TAG}
+    image: edfialliance/ods-api-db-ods:${ODS_API_PACKAGE_VERSION:-v2.3.5}
     environment:
       POSTGRES_USER: "${POSTGRES_USER}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
@@ -23,9 +23,7 @@ services:
       retries: 3
 
   db-admin:
-    build:
-      context: ../../../../ods-docker/DB-Admin/Alpine/pgsql
-      dockerfile: Dockerfile
+    image: edfialliance/ods-api-db-admin:${ODS_API_PACKAGE_VERSION:-v2.3.5}
     environment:
       POSTGRES_USER: "${POSTGRES_USER}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
@@ -53,13 +51,13 @@ services:
     restart: always
     hostname: nginx
     volumes:
-      - ../../../eng/test-certs/ssl:/ssl/
+      - ../../../Docker/Settings/ssl:/ssl/
     depends_on:
       - api
       - adminapp
 
   api:
-    image: edfialliance/ods-api-web-api:v2.3.2
+    image: edfialliance/ods-api-web-api:${ODS_API_PACKAGE_VERSION:-v2.3.5}
     environment:
       POSTGRES_USER: "${POSTGRES_USER}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
@@ -71,7 +69,11 @@ services:
       TPDM_ENABLED: "${TPDM_ENABLED:-true}"
       PATH_BASE: "${ODS_VIRTUAL_NAME:-api}"
       API_HEALTHCHECK_TEST: ${API_HEALTHCHECK_TEST?Please consult env.example to set the API healthcheck test}
-      NPG_POOLING_ENABLED: "${NPG_POOLING_ENABLED:-false}"
+      NPG_POOLING_ENABLED: ${NPG_POOLING_ENABLED:-true}
+      NPG_API_MAX_POOL_SIZE_ODS: ${NPG_API_MAX_POOL_SIZE_ODS:-100}
+      NPG_API_MAX_POOL_SIZE_ADMIN: ${NPG_API_MAX_POOL_SIZE_ADMIN:-100}
+      NPG_API_MAX_POOL_SIZE_SECURITY: ${NPG_API_MAX_POOL_SIZE_SECURITY:-100}
+      NPG_API_MAX_POOL_SIZE_MASTER: ${NPG_API_MAX_POOL_SIZE_MASTER:-100}
     volumes:
       - ${LOGS_FOLDER}:/app/logs
     depends_on:
@@ -87,8 +89,11 @@ services:
 
   adminapp:
     build:
-      context: ../../../Docker
-      dockerfile: pgsql.Dockerfile
+      context: ../../../Docker/
+      additional_contexts:
+        settings: ../../../Docker/
+        parentdir: ../../../
+      dockerfile: dev.pgsql.Dockerfile
     environment:
       POSTGRES_USER: "${POSTGRES_USER}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
@@ -101,6 +106,10 @@ services:
       ADMINAPP_VIRTUAL_NAME: "${ADMINAPP_VIRTUAL_NAME:-adminapp}"
       API_INTERNAL_URL: ${API_INTERNAL_URL?Please consult env.example to set the Api internal url}
       ADMINAPP_HEALTHCHECK_TEST: ${ADMINAPP_HEALTHCHECK_TEST?Please consult env.example to set the Admin App healthcheck test}
+      NPG_POOLING_ENABLED: "${NPG_POOLING_ENABLED:-true}"
+      NPG_ADMIN_MAX_POOL_SIZE_ODS: "${NPG_ADMIN_MAX_POOL_SIZE_ODS:-100}"
+      NPG_ADMIN_MAX_POOL_SIZE_ADMIN: "${NPG_ADMIN_MAX_POOL_SIZE_ADMIN:-100}"
+      NPG_ADMIN_MAX_POOL_SIZE_SECURITY: "${NPG_ADMIN_MAX_POOL_SIZE_SECURITY:-100}"
     volumes:
       - ${LOGS_FOLDER}:/app/logs
       - ../../../eng/test-certs/ssl:/ssl/
@@ -126,6 +135,7 @@ services:
       POSTGRESQL_HOST: db-admin
       PGBOUNCER_SET_DATABASE_USER: "yes"
       PGBOUNCER_SET_DATABASE_PASSWORD: "yes"
+      PGBOUNCER_IGNORE_STARTUP_PARAMETERS: extra_float_digits
     ports:
       - "5401:${PGBOUNCER_LISTEN_PORT:-6432}"
     restart: always
@@ -143,6 +153,7 @@ services:
       POSTGRESQL_HOST: db-ods
       PGBOUNCER_SET_DATABASE_USER: "yes"
       PGBOUNCER_SET_DATABASE_PASSWORD: "yes"
+      PGBOUNCER_IGNORE_STARTUP_PARAMETERS: extra_float_digits
     ports:
       - "5402:${PGBOUNCER_LISTEN_PORT:-6432}"
     restart: always
