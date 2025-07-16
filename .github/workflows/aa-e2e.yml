@@ -28,20 +28,8 @@ jobs:
         with:
           path: main
           ref: ${{ github.head_ref || github.ref_name }}
-      - name: Get ODS Docker
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-        with:
-          repository: Ed-Fi-Alliance-OSS/Ed-Fi-ODS-Docker
-          path: ods-docker
-          ref: main-6x
-      - name: Copy files to Docker repo
-        run: |
-          cp -r ./main/eng/test-certs/ssl ./ods-docker
-      - name: Update Admin App Docker package versions
-        run: |
-          chmod +x ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/set-versions.sh
-          ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/set-versions.sh
       - name: Run ODS
+        if: success()
         run: docker compose -f ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/compose-aa-build.yml --env-file ./main/Application/EdFi.Ods.AdminApp.E2E.Tests/gh-action-setup/.automation.env up -d
       - name: Verify ODS Health
         run: |
@@ -63,6 +51,8 @@ jobs:
       - name: Run tests
         run: npm run report
         working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
+        env:
+          PLAYWRIGHT_CHROMIUM_ARGS: --ignore-certificate-errors
       - name: Get Docker logs
         if: failure()
         run: |

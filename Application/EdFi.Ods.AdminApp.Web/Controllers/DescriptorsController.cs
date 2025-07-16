@@ -4,16 +4,15 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 using AutoMapper;
+using EdFi.Ods.AdminApp.Management;
 using EdFi.Ods.AdminApp.Management.Api;
+using EdFi.Ods.AdminApp.Web.Display.TabEnumeration;
+using EdFi.Ods.AdminApp.Web.Helpers;
 using EdFi.Ods.AdminApp.Web.Models.ViewModels.Descriptors;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using EdFi.Ods.AdminApp.Management;
-using EdFi.Ods.AdminApp.Web.ActionFilters;
-using EdFi.Ods.AdminApp.Web.Display.TabEnumeration;
-using EdFi.Ods.AdminApp.Web.Helpers;
-using Microsoft.AspNetCore.Mvc;
 
 namespace EdFi.Ods.AdminApp.Web.Controllers
 {
