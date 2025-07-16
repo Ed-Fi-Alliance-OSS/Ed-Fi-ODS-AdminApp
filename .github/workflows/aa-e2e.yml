@@ -67,9 +67,6 @@ jobs:
           name: docker-logs
           path: docker-logs/
           retention-days: 10
-      - name: List report files
-        run: ls -l reports
-        working-directory: main/Application/EdFi.Ods.AdminApp.E2E.Tests
       - name: Transform results
         if: success() || failure()
         run: python ./resultparser.py

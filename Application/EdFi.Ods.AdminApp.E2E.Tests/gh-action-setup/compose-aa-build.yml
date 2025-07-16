@@ -116,7 +116,6 @@ services:
       NPG_ADMIN_MAX_POOL_SIZE_SECURITY: "${NPG_ADMIN_MAX_POOL_SIZE_SECURITY:-100}"
     volumes:
       - ${LOGS_FOLDER}:/app/logs
-      - ../../../Docker/Settings/ssl:/ssl/
     depends_on:
       - pb-ods
       - pb-admin
