@@ -29,9 +29,7 @@ LABEL maintainer="Ed-Fi Alliance, LLC and Contributors <techsupport@ed-fi.org>"
 
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 ENV ASPNETCORE_ENVIRONMENT=Production
-ENV ASPNETCORE_HTTP_PORTS=80
-
-# COPY --chmod=500 Settings/pgsql/run.sh /app/run.sh 
+ENV ASPNETCORE_HTTP_PORTS=80 
 
 WORKDIR /app
 COPY --from=publish /app/EdFi.Ods.AdminApp.Web .
