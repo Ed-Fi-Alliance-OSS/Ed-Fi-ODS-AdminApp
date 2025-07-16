@@ -21,7 +21,7 @@ RUN dotnet publish -c Release --no-build -o /app/EdFi.Ods.AdminApp.Web
 
 #tag 8.0.18-alpine3.22
 FROM mcr.microsoft.com/dotnet/aspnet@sha256:724275ef1d9fe87eab6e1c45e4cf9cca2c1751dccfbf93a182fc82fd42278ce0 as base
-ENV ALPINE_PACKAGES="unzip=~6 dos2unix=~7 bash=~5 openssl=3.5.1-r0 gettext=~0 icu=76.1-r1 curl=~8 ca-certificates postgresql16-client=~16"
+ENV ALPINE_PACKAGES="unzip=~6 dos2unix=~7 bash=~5 openssl=3.5.1-r0 gettext=~0 icu=76.1-r1 curl=~8 ca-certificates=~20250619-r0 postgresql16-client=~16"
 RUN apk --upgrade --no-cache add ${ALPINE_PACKAGES}
 
 FROM base AS setup
