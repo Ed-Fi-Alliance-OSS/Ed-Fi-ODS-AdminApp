@@ -9,7 +9,7 @@ See the LICENSE and NOTICES files in the project root for more information.
 
 @model EdFi.Ods.AdminApp.Web.Models.ViewModels.Global.AddVendorModel
 
-<div class="modal fade add-vendor-modal" tabindex="-1" role="dialog" aria-labelledby="addVendorModal" aria-hidden="true">
+<div class="modal fade add-vendor-modal" tabindex="-1" role="dialog" aria-labelledby="addVendorModal">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -55,8 +55,8 @@ See the LICENSE and NOTICES files in the project root for more information.
 </div>
 
 <script type="text/javascript">
-    $(function() {   
-        $(".add-vendor-modal").on("show.bs.modal", function () {            
+    $(function() {
+        $(".add-vendor-modal").on("show.bs.modal", function () {
             $("#addVendorFormModal").get(0).reset();
             $(".form-group").removeClass("has-error");
             $(".validationSummary").addClass("hidden");
@@ -67,7 +67,7 @@ See the LICENSE and NOTICES files in the project root for more information.
             $(this).val(e.target.value);
         });
         $("#add-namespace-prefix").on("click", function () {
-            var namespacePrefixesInput = $("textarea[id=add-vendor-namespaces]"); 
+            var namespacePrefixesInput = $("textarea[id=add-vendor-namespaces]");
             var previousValue = namespacePrefixesInput.val().trim();
             var namespaceToAdd = $("#add-namespace-prefix-input").val().trim();
             var newValue = "";

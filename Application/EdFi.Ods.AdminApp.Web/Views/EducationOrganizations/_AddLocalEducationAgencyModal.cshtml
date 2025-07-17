@@ -10,7 +10,7 @@
 @using EdFi.Ods.AdminApp.Web.Infrastructure
 @model EdFi.Ods.AdminApp.Web.Models.ViewModels.EducationOrganizations.AddLocalEducationAgencyModel
 
-<div id ="add-lea-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addLEAModal" aria-hidden="true">
+<div id ="add-lea-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addLEAModal">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -55,10 +55,10 @@
 
 <script type="text/javascript">
     $(function() {
-        $("#add-lea-modal").on("show.bs.modal", function () {        
+        $("#add-lea-modal").on("show.bs.modal", function () {
             $("#addLocalEducationFormModal").get(0).reset();
             $(".form-group").removeClass("has-error");
-            $(".validationSummary").addClass("hidden");           
+            $(".validationSummary").addClass("hidden");
         });
     });
 </script>
