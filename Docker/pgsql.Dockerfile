@@ -16,11 +16,13 @@ ENV ADMINAPP_PACKAGE="https://pkgs.dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-O
 
 # Disable the globalization invariant mode
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+ENV ASPNETCORE_ENVIRONMENT=Production
+ENV ASPNETCORE_HTTP_PORTS=80 
 
 WORKDIR /app
 COPY Settings/pgsql/appsettings.template.json Settings/pgsql/run.sh Settings/pgsql/log4net.config /app/
 
-ENV ALPINE_PACKAGES="unzip=~6 dos2unix=~7 bash=~5 gettext=~0 postgresql16-client=~16 jq=~1 curl=~8 icu=~76 ca-certificates=~20241121"
+ENV ALPINE_PACKAGES="unzip=~6 dos2unix=~7 bash=~5 gettext=~0 postgresql16-client=~16 jq=~1 curl=~8 icu=~76 ca-certificates=~20250619-r0"
 RUN apk --upgrade --no-cache add ${ALPINE_PACKAGES} && \
     wget -nv -O /app/AdminApp.zip ${ADMINAPP_PACKAGE}  && \
     unzip /app/AdminApp.zip AdminApp/* -d /app/ && \
@@ -33,6 +35,6 @@ RUN apk --upgrade --no-cache add ${ALPINE_PACKAGES} && \
     chmod 700 /app/*.sh -- ** && \
     rm -f /app/*.exe
 
-EXPOSE 80
+EXPOSE ${ASPNETCORE_HTTP_PORTS}
 
 ENTRYPOINT [ "/app/run.sh" ]
