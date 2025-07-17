@@ -64,7 +64,7 @@ See the LICENSE and NOTICES files in the project root for more information.
             $("#addVendorFormModal.input").val("");
         });
         $("textarea[id=add-vendor-namespaces]").on("input", function (e) {
-            this.val(e.target.value);
+            $(this).val(e.target.value);
         });
         $("#add-namespace-prefix").on("click", function () {
             var namespacePrefixesInput = $("textarea[id=add-vendor-namespaces]"); 
@@ -81,4 +81,4 @@ See the LICENSE and NOTICES files in the project root for more information.
             $("#add-namespace-prefix-input").val("");
         });
     });
-</script> 
+</script>
