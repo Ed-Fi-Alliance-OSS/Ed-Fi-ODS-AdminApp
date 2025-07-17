@@ -64,7 +64,7 @@ namespace EdFi.Ods.AdminApp.Management.Api
         public List<SelectOptionModel> GetPostSecondaryInstitutionLevels()
         {
             var response = _restClient.GetAll<DomainModels.EdFiDescriptor>(ResourcePaths.PostSecondaryInstitutionLevelDescriptors);
-            return response.Select(x => BuildDescriptorSelectOptionModel(x.Namespace, x.CodeValue, x.Description,x.ShortDescription))
+            return response.Select(x => BuildDescriptorSelectOptionModel(x.Namespace, x.CodeValue, x.Description, x.ShortDescription))
                 .ToList();
         }
 
@@ -123,8 +123,8 @@ namespace EdFi.Ods.AdminApp.Management.Api
 
         public OdsApiResult AddLocalEducationAgency(Models.LocalEducationAgency newLocalEducationAgency)
         {
-             var request = _mapper.Map<LocalEducationAgency>(newLocalEducationAgency);
-             return _restClient.PostResource(request, ResourcePaths.LocalEducationAgencies);
+            var request = _mapper.Map<LocalEducationAgency>(newLocalEducationAgency);
+            return _restClient.PostResource(request, ResourcePaths.LocalEducationAgencies);
         }
 
         public OdsApiResult AddPostSecondaryInstitution(Models.PostSecondaryInstitution newPostSecondaryInstitution)

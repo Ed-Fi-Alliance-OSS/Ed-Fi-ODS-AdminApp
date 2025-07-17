@@ -22,7 +22,7 @@ See the LICENSE and NOTICES files in the project root for more information.
                     @Html.Input(m => m.Id).Hide()
                     @Html.Input(m => m.PostSecondaryInstitutionId).Hide()
                     @Html.ValidationBlock()
-                    @Html.SelectListBlock(m => m.PostSecondaryInstitutionLevel, Model.PostSecondaryInstitutionLevelOptions,x => new SelectListItemWithDescription
+                    @Html.SelectListBlock(m => m.PostSecondaryInstitutionLevel, Model.PostSecondaryInstitutionLevelOptions, x => new SelectListItemWithDescription
                         {
                             Text = x.ShortDescription,
                             Value = x.Value,
