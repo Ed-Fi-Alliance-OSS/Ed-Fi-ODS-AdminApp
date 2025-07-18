@@ -339,7 +339,17 @@ namespace EdFi.Ods.AdminApp.Web
             var pathBase = Configuration.GetValue<string>("AppSettings:PathBase");
             if (!string.IsNullOrEmpty(pathBase))
             {
-                app.UsePathBase("/" + pathBase.Trim('/'));
+                // If pathBase looks like a full server path (starts with http:// or https://), use as is
+                if (pathBase.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || pathBase.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                {
+                    app.UsePathBase(pathBase);
+                }
+                else
+                {
+                    // Otherwise, treat as partial path: prefix with '/' and trim trailing slash
+                    var normalizedPath = "/" + pathBase.Trim('/');
+                    app.UsePathBase(normalizedPath);
+                }
             }
 
             loggerFactory.AddLog4Net(loggingOptions);
