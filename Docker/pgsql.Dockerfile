@@ -31,7 +31,7 @@ ENV ASPNETCORE_HTTP_PORTS=80
 WORKDIR /app
 COPY Settings/pgsql/appsettings.template.json Settings/pgsql/run.sh Settings/pgsql/log4net.config /app/
 
-ENV ALPINE_PACKAGES="unzip=~6 dos2unix=~7 bash=~5 gettext=~0 postgresql16-client=~16 jq=~1 curl=~8 icu=~76 ca-certificates=~20250619-r0"
+ENV ALPINE_PACKAGES="unzip=~6 bash=~5 gettext=~0 postgresql16-client=~16 jq=~1 curl=~8 icu=~76 ca-certificates=~20250619-r0"
 RUN if [ -f /tmp/custom_cert/${CA_CERTIFICATE_FILE} ]; then cat /tmp/custom_cert/${CA_CERTIFICATE_FILE} >> /etc/ssl/certs/ca-certificates.crt; fi && \
     apk --upgrade --no-cache add ${ALPINE_PACKAGES} && \
     wget -nv -O /app/AdminApp.zip ${ADMINAPP_PACKAGE}  && \
@@ -39,11 +39,9 @@ RUN if [ -f /tmp/custom_cert/${CA_CERTIFICATE_FILE} ]; then cat /tmp/custom_cert
     cp -r /app/AdminApp/. /app/ && \
     rm -f /app/AdminApp.zip && \
     rm -r /app/AdminApp && \
-    dos2unix /app/*.json && \
-    dos2unix /app/*.sh && \
-    dos2unix /app/log4net.config && \
     chmod 700 /app/*.sh -- ** && \
-    rm -f /app/*.exe
+    rm -f /app/*.exe && \
+    apk del --no-cache unzip
 
 EXPOSE ${ASPNETCORE_HTTP_PORTS}
 

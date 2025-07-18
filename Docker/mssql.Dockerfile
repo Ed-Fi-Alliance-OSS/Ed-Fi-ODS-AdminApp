@@ -19,18 +19,16 @@ ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 WORKDIR /app
 COPY Settings/mssql/appsettings.template.json Settings/mssql/run.sh Settings/mssql/log4net.config /app/
 
-ENV ALPINE_PACKAGES="unzip=~6 dos2unix=~7 bash=~5 gettext=~0 jq=~1 curl=~8 icu=~76 ca-certificates=~20241121"
+ENV ALPINE_PACKAGES="unzip=~6 bash=~5 gettext=~0 jq=~1 curl=~8 icu=~76 ca-certificates=~20250619-r0"
 RUN apk --upgrade --no-cache add ${ALPINE_PACKAGES} && \
     wget -nv -O /app/AdminApp.zip ${ADMINAPP_PACKAGE}  && \
     unzip /app/AdminApp.zip AdminApp/* -d /app/ && \
     cp -r /app/AdminApp/. /app/ && \
     rm -f /app/AdminApp.zip && \
     rm -r /app/AdminApp && \
-    dos2unix /app/*.json && \
-    dos2unix /app/*.sh && \
-    dos2unix /app/log4net.config && \
     chmod 700 /app/*.sh -- ** && \
-    rm -f /app/*.exe
+    rm -f /app/*.exe && \
+    apk del --no-cache unzip
 
 EXPOSE 80
 
