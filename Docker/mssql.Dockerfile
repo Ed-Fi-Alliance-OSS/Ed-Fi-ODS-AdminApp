@@ -40,7 +40,7 @@ RUN if [ -f /tmp/custom_cert/${CA_CERTIFICATE_FILE} ]; then cat /tmp/custom_cert
     rm -r /app/AdminApp && \
     chmod 700 /app/*.sh -- ** && \
     rm -f /app/*.exe && \
-    apk del --no-cache unzip
+    apk del unzip
 
 EXPOSE 80
 
