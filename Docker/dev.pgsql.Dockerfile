@@ -21,28 +21,31 @@ RUN dotnet publish -c Release --no-build -o /app/EdFi.Ods.AdminApp.Web
 
 #tag 8.0.18-alpine3.22
 FROM mcr.microsoft.com/dotnet/aspnet@sha256:724275ef1d9fe87eab6e1c45e4cf9cca2c1751dccfbf93a182fc82fd42278ce0 as base
-ENV ALPINE_PACKAGES="unzip=~6 dos2unix=~7 bash=~5 openssl=3.5.1-r0 gettext=~0 icu=76.1-r1 curl=~8 ca-certificates=~20250619-r0 postgresql16-client=~16"
-RUN apk --upgrade --no-cache add ${ALPINE_PACKAGES}
+
+# Use a build argument for the CA certificate file, defaulting to a non-existent
+# file This allows the Dockerfile to be built without a specific CA certificate,
+# but it can be overridden at build time by passing a different value for
+# CA_CERTIFICATE_FILE. If used, the actual file must be in the local
+# `custom_cert/` directory.
+ARG CA_CERTIFICATE_FILE=does-not-exist.crt
+COPY custom_cert/ /tmp/custom_cert/
+
+ENV ALPINE_PACKAGES="bash=~5 openssl=3.5.1-r0 gettext=~0 icu=76.1-r1 curl=~8 ca-certificates=~20250619-r0 postgresql16-client=~16"
+RUN if [ -f /tmp/custom_cert/${CA_CERTIFICATE_FILE} ]; then cat /tmp/custom_cert/${CA_CERTIFICATE_FILE} >> /etc/ssl/certs/ca-certificates.crt; fi && \
+    apk --upgrade --no-cache add ${ALPINE_PACKAGES}
 
 FROM base AS setup
 LABEL maintainer="Ed-Fi Alliance, LLC and Contributors <techsupport@ed-fi.org>"
 
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 ENV ASPNETCORE_ENVIRONMENT=Production
-ENV ASPNETCORE_HTTP_PORTS=80 
+ENV ASPNETCORE_HTTP_PORTS=80
 
-WORKDIR /app
-COPY --from=publish /app/EdFi.Ods.AdminApp.Web .
+COPY --from=publish /app/EdFi.Ods.AdminApp.Web /app
 
-# From settings is defined in docker compose as additional context
-COPY --from=settings --chmod=600 Settings/pgsql/appsettings.template.json /app/
-COPY --from=settings --chmod=700 Settings/pgsql/run.sh /app/run.sh
-COPY --from=settings Settings/pgsql/log4net.config /app/log4net.config
+COPY Settings/pgsql/appsettings.template.json Settings/pgsql/run.sh Settings/pgsql/log4net.config /app/
 
-RUN dos2unix /app/*.json && \
-    dos2unix /app/*.sh && \
-    dos2unix /app/log4net.config && \
-    chmod 700 /app/*.sh -- ** && \
+RUN chmod 700 /app/*.sh && \
     rm -f /app/*.exe
 
 EXPOSE ${ASPNETCORE_HTTP_PORTS}
