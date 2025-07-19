@@ -8,10 +8,10 @@ FROM mcr.microsoft.com/dotnet/sdk@sha256:071ec6075f01f91ceaef8f1eaed5d43873635d4
 WORKDIR /source
 
 # From parentdir is defined in docker compose as additional context
-COPY --from=parentdir Application/NuGet.Config NuGet.Config
-COPY --from=parentdir Application/EdFi.Ods.AdminApp.Web EdFi.Ods.AdminApp.Web/
-COPY --from=parentdir Application/EdFi.Ods.AdminApp.Management EdFi.Ods.AdminApp.Management/
-COPY --from=parentdir Application/EdFi.Ods.AdminApp.Management.OnPrem EdFi.Ods.AdminApp.Management.OnPrem/
+COPY Application/NuGet.Config NuGet.Config
+COPY Application/EdFi.Ods.AdminApp.Web EdFi.Ods.AdminApp.Web/
+COPY Application/EdFi.Ods.AdminApp.Management EdFi.Ods.AdminApp.Management/
+COPY Application/EdFi.Ods.AdminApp.Management.OnPrem EdFi.Ods.AdminApp.Management.OnPrem/
 
 WORKDIR /source/EdFi.Ods.AdminApp.Web
 RUN dotnet restore && dotnet build -c Release
