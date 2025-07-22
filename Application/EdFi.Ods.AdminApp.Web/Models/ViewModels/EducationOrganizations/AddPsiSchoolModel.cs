@@ -22,8 +22,6 @@ namespace EdFi.Ods.AdminApp.Web.Models.ViewModels.EducationOrganizations
     {
         public AddPsiSchoolModelValidator()
         {
-            RuleFor(m => m.LocalEducationAgencyId).NotEmpty();
-
             RuleFor(m => m.Name).NotEmpty();
             RuleFor(m => m.Name)
                 .MaximumLength(75)
