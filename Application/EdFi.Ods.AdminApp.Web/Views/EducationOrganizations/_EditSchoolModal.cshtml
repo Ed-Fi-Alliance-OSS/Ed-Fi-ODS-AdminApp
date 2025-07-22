@@ -23,12 +23,12 @@ See the LICENSE and NOTICES files in the project root for more information.
                     @Html.Input(m => m.LocalEducationAgencyId).Hide()
                     @Html.ValidationBlock()
                     @Html.MultiSelectListBlock(m => m.GradeLevels, Model.GradeLevelOptions, x => new SelectListItem { Text = x.DisplayText, Value = x.Value, Selected = (Model.GradeLevels != null && Model.GradeLevels.Contains(x.Value)) })
-                    @Html.InputBlock(m => m.Name)
-                    @Html.InputBlock(m => m.StreetNumberName)
-                    @Html.InputBlock(m => m.ApartmentRoomSuiteNumber)
-                    @Html.InputBlock(m => m.City)
+                    @Html.InputBlock(m => m.Name, inputModifier: x => x.Attr("maxlength", "75"))
+                    @Html.InputBlock(m => m.StreetNumberName, inputModifier: x => x.Attr("maxlength", "150"))
+                    @Html.InputBlock(m => m.ApartmentRoomSuiteNumber, inputModifier: x => x.Attr("maxlength", "50"))
+                    @Html.InputBlock(m => m.City, inputModifier: x => x.Attr("maxlength", "30"))
                     @Html.SelectListBlock(m => m.State, Model.StateOptions, x => new SelectListItem { Text = x.DisplayText, Value = x.Value, Selected = Model.State == x.Value })
-                    @Html.InputBlock(m => m.ZipCode)
+                    @Html.InputBlock(m => m.ZipCode, inputModifier: x => x.Attr("maxlength", "17"))
                 }
             </div>
             <div class="modal-footer">
