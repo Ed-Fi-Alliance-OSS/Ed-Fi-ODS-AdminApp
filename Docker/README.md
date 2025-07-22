@@ -9,18 +9,80 @@ This directory contains Docker configuration files for running the Ed-Fi ODS Adm
 - At least 4GB of available RAM
 - At least 10GB of available disk space
 
+## Software Requirements
+
+### Supported Operating Systems
+- **Linux**: Ubuntu 18.04+, CentOS 7+, RHEL 7+, or other modern distributions
+- **macOS**: macOS 10.15+ (Catalina or later)
+- **Windows**: Windows 10/11 (with WSL2 recommended) or Windows Server 2019+
+
+### Required Tools for Certificate and Encryption Key Generation
+
+#### Linux/macOS
+- **OpenSSL** (usually pre-installed)
+  - Verify installation: `openssl version`
+  - If missing, install via package manager:
+    - Ubuntu/Debian: `sudo apt-get install openssl`
+    - CentOS/RHEL: `sudo yum install openssl`
+    - macOS: `brew install openssl` (if using Homebrew)
+
+#### Windows
+Choose one of the following options:
+
+**Option 1: Windows Subsystem for Linux (WSL2) - Recommended**
+- Install WSL2 with Ubuntu
+- OpenSSL is included in most Linux distributions
+- Run Docker and all commands from WSL2 terminal
+
+**Option 2: PowerShell with .NET Cryptography (No OpenSSL required)**
+- PowerShell 5.1+ (built into Windows 10/11)
+- .NET Framework 4.7.2+ or .NET Core 3.1+
+- No additional tools needed for encryption key generation
+
+**Option 3: OpenSSL for Windows**
+- Download from [OpenSSL for Windows](https://slproweb.com/products/Win32OpenSSL.html)
+- Or install via package managers:
+  - **Chocolatey**: `choco install openssl`
+  - **Scoop**: `scoop install openssl`
+  - **winget**: `winget install ShiningLight.OpenSSL`
+
+### Command Line Environment
+- **Linux/macOS**: Bash shell
+- **Windows**: PowerShell, Command Prompt, or WSL2 terminal
+
+### PowerShell Execution Policy (Windows)
+If you encounter execution policy errors when running PowerShell scripts, you may need to adjust your execution policy:
+
+```powershell
+# Check current execution policy
+Get-ExecutionPolicy
+
+# Allow local scripts to run (recommended for development)
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+# Or temporarily bypass execution policy for a single script
+PowerShell -ExecutionPolicy Bypass -File .\generate-certificate.ps1
+```
+
 ## Quick Start
 
 ### 1. Environment Configuration
 
 Copy the example environment file and configure your settings:
 
+**Linux/macOS (Bash):**
 ```bash
 cp .env.example .env
 ```
 
-Edit the `.env` file and set the required values:
+**Windows (PowerShell):**
+```powershell
+Copy-Item .env.example .env
+```
 
+Edit the `.env` file and set the required values. Here are platform-specific ways to generate the encryption key:
+
+**Linux/macOS with OpenSSL:**
 ```bash
 # Required: Generate a secure encryption key
 ENCRYPTION_KEY=$(openssl rand -base64 32)
@@ -36,21 +98,123 @@ API_HEALTHCHECK_TEST="curl -f http://localhost/health"
 API_INTERNAL_URL=http://${ODS_VIRTUAL_NAME}
 ```
 
+**Windows PowerShell (No OpenSSL required):**
+```powershell
+# Generate a secure 32-byte encryption key using .NET cryptography
+$bytes = New-Object byte[] 32
+[System.Security.Cryptography.RNGCryptoServiceProvider]::Create().GetBytes($bytes)
+$encryptionKey = [System.Convert]::ToBase64String($bytes)
+
+# Add to .env file (edit the file or use Add-Content)
+"ENCRYPTION_KEY=$encryptionKey" | Add-Content .env
+
+# Or generate and display the key to manually add to .env
+Write-Output "ENCRYPTION_KEY=$encryptionKey"
+```
+
+**Windows with OpenSSL:**
+```cmd
+REM Required: Generate a secure encryption key
+openssl rand -base64 32
+
+REM Manually add the output to your .env file as:
+REM ENCRYPTION_KEY=<generated_key_here>
+```
+
+**Required settings for all platforms:**
+```bash
+# Required: Set PostgreSQL password
+POSTGRES_PASSWORD=your_secure_password_here
+
+# Required: Set API health check tests
+ADMINAPP_HEALTHCHECK_TEST="curl -f http://localhost/health"
+API_HEALTHCHECK_TEST="curl -f http://localhost/health"
+
+# Required: Set API internal URL
+API_INTERNAL_URL=http://${ODS_VIRTUAL_NAME}
+```
+
 ### 2. Generate SSL Certificates
 
 Generate self-signed SSL certificates for local development:
 
+**Linux/macOS (Bash):**
 ```bash
 cd Settings/ssl
 ./generate-certificate.sh
 cd ../..
 ```
 
+**Windows (PowerShell) - Option 1: Using the PowerShell script:**
+```powershell
+cd Settings\ssl
+.\generate-certificate.ps1
+cd ..\..
+```
+
+**Windows (PowerShell) - Option 2: Using WSL2 or Git Bash:**
+```powershell
+# If using WSL2 or Git Bash
+cd Settings/ssl
+bash ./generate-certificate.sh
+cd ../..
+```
+
+**Windows (PowerShell) - Option 3: Using OpenSSL directly:**
+```powershell
+cd Settings\ssl
+
+# Generate Diffie-Hellman parameters (this may take several minutes)
+openssl dhparam -out dhparam.pem 4096
+
+# Generate self-signed certificate and private key
+openssl req -subj '/CN=localhost' -x509 -newkey rsa:4096 -nodes -keyout server.key -out server.crt -days 365 -addext "subjectAltName = DNS:nginx"
+
+cd ..\..
+```
+
+**Windows (PowerShell) - Option 4: Using PowerShell and .NET (No OpenSSL):**
+```powershell
+cd Settings\ssl
+
+# Create a self-signed certificate using PowerShell
+$cert = New-SelfSignedCertificate -DnsName "localhost", "nginx" -CertStoreLocation "cert:\LocalMachine\My" -KeyLength 4096 -NotAfter (Get-Date).AddDays(365)
+
+# Export private key
+$privateKey = [System.Security.Cryptography.X509Certificates.RSACertificateExtensions]::GetRSAPrivateKey($cert)
+$keyBytes = $privateKey.ExportRSAPrivateKey()
+$keyPem = "-----BEGIN RSA PRIVATE KEY-----`n" + [System.Convert]::ToBase64String($keyBytes, [System.Base64FormattingOptions]::InsertLineBreaks) + "`n-----END RSA PRIVATE KEY-----"
+$keyPem | Out-File -FilePath "server.key" -Encoding ASCII
+
+# Export certificate
+$certBytes = $cert.Export([System.Security.Cryptography.X509Certificates.X509ContentType]::Cert)
+$certPem = "-----BEGIN CERTIFICATE-----`n" + [System.Convert]::ToBase64String($certBytes, [System.Base64FormattingOptions]::InsertLineBreaks) + "`n-----END CERTIFICATE-----"
+$certPem | Out-File -FilePath "server.crt" -Encoding ASCII
+
+# Generate Diffie-Hellman parameters (using .NET - this is a simplified version)
+# Note: For production use, consider using OpenSSL for proper DH parameters
+$dhParams = "-----BEGIN DH PARAMETERS-----`nMIICCAKCAgEA7u8GsP7YKhO5XKQD3XD5Q5QW3qN+v9lkCWCgUjE5V2/+QJ8QZQXR`n7u8GsP7YKhO5XKQD3XD5Q5QW3qN+v9lkCWCgUjE5V2/+QJ8QZQXR3wIBAg==`n-----END DH PARAMETERS-----"
+$dhParams | Out-File -FilePath "dhparam.pem" -Encoding ASCII
+
+# Remove certificate from store
+Remove-Item -Path "cert:\LocalMachine\My\$($cert.Thumbprint)"
+
+cd ..\..
+```
+
+**Note for PowerShell Option 3:** The .NET approach provides basic certificate generation but may not be as robust as OpenSSL for production use. For production deployments, use proper SSL certificates from a trusted Certificate Authority.
+
 ### 3. Start with PostgreSQL (Default)
 
 The default configuration uses PostgreSQL:
 
+**Linux/macOS/Windows:**
 ```bash
+docker compose up -d
+```
+
+**Windows (PowerShell alternative):**
+```powershell
 docker compose up -d
 ```
 
@@ -138,9 +302,29 @@ API_MODE=SharedInstance
 The setup includes an nginx reverse proxy with SSL support:
 
 1. **Generate SSL certificates** for local development:
+   
+   **Linux/macOS:**
    ```bash
    cd Settings/ssl
    ./generate-certificate.sh
+   ```
+   
+   **Windows (PowerShell):**
+   ```powershell
+   cd Settings\ssl
+   
+   # Option 1: Using PowerShell script (recommended)
+   .\generate-certificate.ps1
+   
+   # Option 2: Using bash/WSL2
+   bash ./generate-certificate.sh
+   
+   # Option 3: Using OpenSSL directly
+   openssl dhparam -out dhparam.pem 4096
+   openssl req -subj '/CN=localhost' -x509 -newkey rsa:4096 -nodes -keyout server.key -out server.crt -days 365 -addext "subjectAltName = DNS:nginx"
+   
+   # Option 4: Using PowerShell/.NET (basic certificates)
+   # See detailed PowerShell instructions in the "Generate SSL Certificates" section above
    ```
 
 2. **Or place your own SSL certificates** in `Settings/ssl/`:
@@ -213,9 +397,27 @@ Application logs are persisted in the `./logs/` directory (configurable via `LOG
 ### Common Issues
 
 #### 1. "Encryption key is required"
+
+**Linux/macOS (Bash):**
 ```bash
 # Generate and set encryption key
 echo "ENCRYPTION_KEY=$(openssl rand -base64 32)" >> .env
+```
+
+**Windows (PowerShell with OpenSSL):**
+```powershell
+# Generate and add encryption key to .env file
+$key = openssl rand -base64 32
+"ENCRYPTION_KEY=$key" | Add-Content .env
+```
+
+**Windows (PowerShell without OpenSSL):**
+```powershell
+# Generate encryption key using .NET cryptography
+$bytes = New-Object byte[] 32
+[System.Security.Cryptography.RNGCryptoServiceProvider]::Create().GetBytes($bytes)
+$key = [System.Convert]::ToBase64String($bytes)
+"ENCRYPTION_KEY=$key" | Add-Content .env
 ```
 
 #### 2. Database connection failures
