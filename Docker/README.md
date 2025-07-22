@@ -33,18 +33,28 @@ ADMINAPP_HEALTHCHECK_TEST="curl -f http://localhost/health"
 API_HEALTHCHECK_TEST="curl -f http://localhost/health"
 
 # Required: Set API internal URL
-API_INTERNAL_URL=http://api
+API_INTERNAL_URL=http://${ODS_VIRTUAL_NAME}
 ```
 
-### 2. Start with PostgreSQL (Default)
+### 2. Generate SSL Certificates
+
+Generate self-signed SSL certificates for local development:
+
+```bash
+cd Settings/ssl
+./generate-certificate.sh
+cd ../..
+```
+
+### 3. Start with PostgreSQL (Default)
 
 The default configuration uses PostgreSQL:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
-### 3. Access the Application
+### 4. Access the Application
 
 Once all containers are healthy:
 
@@ -107,7 +117,7 @@ For development with local source code changes:
 ### PostgreSQL Development
 ```bash
 # Build and run with dev Dockerfile
-docker-compose -f docker-compose.yml up --build adminapp
+docker compose -f docker-compose.yml up --build adminapp
 ```
 
 The development Dockerfiles (`dev.pgsql.Dockerfile` and `dev.mssql.Dockerfile`) build the application from source rather than downloading pre-built packages.
@@ -127,11 +137,17 @@ API_MODE=SharedInstance
 
 The setup includes an nginx reverse proxy with SSL support:
 
-1. Place your SSL certificates in `Settings/ssl/`:
+1. **Generate SSL certificates** for local development:
+   ```bash
+   cd Settings/ssl
+   ./generate-certificate.sh
+   ```
+
+2. **Or place your own SSL certificates** in `Settings/ssl/`:
    - `server.crt` (certificate file)
    - `server.key` (private key file)
 
-2. Update your `.env` file if using custom hostnames:
+3. Update your `.env` file if using custom hostnames:
    ```bash
    API_HOSTNAME=your-domain.com
    ```
@@ -168,11 +184,11 @@ All services include health checks. Monitor container status:
 
 ```bash
 # Check service health
-docker-compose ps
+docker compose ps
 
 # View health check logs
-docker-compose logs adminapp
-docker-compose logs api
+docker compose logs adminapp
+docker compose logs api
 ```
 
 ## Logs and Debugging
@@ -181,11 +197,11 @@ docker-compose logs api
 
 ```bash
 # All services
-docker-compose logs -f
+docker compose logs -f
 
 # Specific service
-docker-compose logs -f adminapp
-docker-compose logs -f api
+docker compose logs -f adminapp
+docker compose logs -f api
 ```
 
 ### Log Files
@@ -203,14 +219,14 @@ echo "ENCRYPTION_KEY=$(openssl rand -base64 32)" >> .env
 ```
 
 #### 2. Database connection failures
-- Verify database containers are healthy: `docker-compose ps`
+- Verify database containers are healthy: `docker compose ps`
 - Check PostgreSQL credentials in `.env` file
 - Ensure databases have finished initializing (may take 2-3 minutes on first run)
 
 #### 3. SSL certificate issues
 - Ensure certificates are present in `Settings/ssl/`
 - Check certificate permissions and format
-- Review nginx logs: `docker-compose logs nginx`
+- Review nginx logs: `docker compose logs nginx`
 
 #### 4. Port conflicts
 - Default ports: 80, 443, 6432
@@ -222,13 +238,13 @@ To completely reset the environment:
 
 ```bash
 # Stop and remove containers
-docker-compose down
+docker compose down
 
 # Remove persistent volumes (WARNING: destroys data)
 docker volume rm vol-db-admin vol-db-ods
 
 # Rebuild and restart
-docker-compose up --build -d
+docker compose up --build -d
 ```
 
 ## Security Considerations
