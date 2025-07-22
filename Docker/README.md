@@ -320,42 +320,23 @@ API_MODE=SharedInstance
 
 ### SSL Configuration
 
-The setup includes an nginx reverse proxy with SSL support:
+The setup includes an nginx reverse proxy with SSL support. SSL certificates are generated as part of the Quick Start process above.
 
-1. **Generate SSL certificates** for local development:
-   
-   **Linux/macOS:**
-   ```bash
-   cd Settings/ssl
-   ./generate-certificate.sh
-   ```
-   
-   **Windows (PowerShell):**
-   ```powershell
-   cd Settings\ssl
-   
-   # Option 1: Using PowerShell script (recommended)
-   .\generate-certificate.ps1
-   
-   # Option 2: Using bash/WSL2
-   bash ./generate-certificate.sh
-   
-   # Option 3: Using OpenSSL directly
-   openssl dhparam -out dhparam.pem 4096
-   openssl req -subj '/CN=localhost' -x509 -newkey rsa:4096 -nodes -keyout server.key -out server.crt -days 365 -addext "subjectAltName = DNS:nginx"
-   
-   # Option 4: Using PowerShell/.NET (basic certificates)
-   # See detailed PowerShell instructions in the "Generate SSL Certificates" section above
-   ```
+**For production or custom certificates:**
 
-2. **Or place your own SSL certificates** in `Settings/ssl/`:
+1. **Place your own SSL certificates** in `Settings/ssl/`:
    - `server.crt` (certificate file)
    - `server.key` (private key file)
+   - `dhparam.pem` (Diffie-Hellman parameters, optional but recommended)
 
-3. Update your `.env` file if using custom hostnames:
+2. **Update hostname configuration** in your `.env` file:
    ```bash
    API_HOSTNAME=your-domain.com
    ```
+
+3. **Certificate requirements:**
+   - Certificate must include `localhost` and `nginx` as Subject Alternative Names for local development
+   - For production, use certificates that match your actual domain name
 
 ### Connection Pooling
 
