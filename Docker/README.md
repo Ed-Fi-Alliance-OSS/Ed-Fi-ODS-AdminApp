@@ -27,19 +27,24 @@ This directory contains Docker configuration files for running the Ed-Fi ODS Adm
     - macOS: `brew install openssl` (if using Homebrew)
 
 #### Windows
-Choose one of the following options:
+Most Windows users already have OpenSSL available through existing tools:
 
-**Option 1: Windows Subsystem for Linux (WSL2) - Recommended**
+**Option 1: Use OpenSSL from Git for Windows (Most Common)**
+- If you have Git installed, OpenSSL is already available
+- Access via Git Bash or PowerShell: `openssl version`
+- Git Bash location: `C:\Program Files\Git\usr\bin\openssl.exe`
+
+**Option 2: Windows Subsystem for Linux (WSL2) - Recommended**
 - Install WSL2 with Ubuntu
 - OpenSSL is included in most Linux distributions
 - Run Docker and all commands from WSL2 terminal
 
-**Option 2: PowerShell with .NET Cryptography (No OpenSSL required)**
+**Option 3: PowerShell with .NET Cryptography (No OpenSSL required)**
 - PowerShell 5.1+ (built into Windows 10/11)
 - .NET Framework 4.7.2+ or .NET Core 3.1+
 - No additional tools needed for encryption key generation
 
-**Option 3: OpenSSL for Windows**
+**Option 4: Install OpenSSL for Windows (If not already available)**
 - Download from [OpenSSL for Windows](https://slproweb.com/products/Win32OpenSSL.html)
 - Or install via package managers:
   - **Chocolatey**: `choco install openssl`
@@ -279,9 +284,25 @@ For production use with external SQL Server:
 For development with local source code changes:
 
 ### PostgreSQL Development
-```bash
-# Build and run with dev Dockerfile
-docker compose -f docker-compose.yml up --build adminapp
+To use the development Dockerfiles that build from source, you need to modify the `docker-compose.yml` file:
+
+1. **Update the adminapp service** to use the development Dockerfile:
+   ```yaml
+   adminapp:
+     build:
+       context: .
+       dockerfile: dev.pgsql.Dockerfile  # Changed from pgsql.Dockerfile
+   ```
+
+2. **Build and run** with the updated configuration:
+   ```bash
+   docker compose up --build adminapp
+   ```
+
+### SQL Server Development  
+For SQL Server development mode, update the dockerfile reference to:
+```yaml
+dockerfile: dev.mssql.Dockerfile  # Instead of mssql.Dockerfile
 ```
 
 The development Dockerfiles (`dev.pgsql.Dockerfile` and `dev.mssql.Dockerfile`) build the application from source rather than downloading pre-built packages.
