@@ -207,7 +207,7 @@ Remove-Item -Path "cert:\LocalMachine\My\$($cert.Thumbprint)"
 cd ..\..
 ```
 
-**Note for PowerShell Option 3:** The .NET approach provides basic certificate generation but may not be as robust as OpenSSL for production use. For production deployments, use proper SSL certificates from a trusted Certificate Authority.
+**Note for PowerShell Option 4:** The .NET approach provides basic certificate generation but may not be as robust as OpenSSL for production use. For production deployments, use proper SSL certificates from a trusted Certificate Authority.
 
 ### 3. Start with PostgreSQL (Default)
 
