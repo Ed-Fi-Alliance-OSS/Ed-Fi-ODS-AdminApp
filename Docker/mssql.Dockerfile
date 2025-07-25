@@ -7,7 +7,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet@sha256:724275ef1d9fe87eab6e1c45e4cf9cca2c1751dccfbf93a182fc82fd42278ce0
 LABEL maintainer="Ed-Fi Alliance, LLC and Contributors <techsupport@ed-fi.org>"
 
-ARG ADMINAPP_PACKAGE_VERSION=3.3.3
+ARG ADMINAPP_PACKAGE_VERSION=3.3.4
 
 ENV ADMINAPP_VIRTUAL_NAME=adminapp
 ENV API_MODE=SharedInstance
@@ -19,7 +19,7 @@ ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 WORKDIR /app
 COPY Settings/mssql/appsettings.template.json Settings/mssql/run.sh Settings/mssql/log4net.config /app/
 
-ENV ALPINE_PACKAGES="unzip=~6 dos2unix=~7 bash=~5 gettext=~0 jq=~1 curl=~8 icu=~76 ca-certificates=~20241121"
+ENV ALPINE_PACKAGES="unzip=~6 dos2unix=~7 bash=~5 gettext=~0 jq=~1 curl=~8 icu=~76 ca-certificates=~20250619-r0"
 RUN apk --upgrade --no-cache add ${ALPINE_PACKAGES} && \
     wget -nv -O /app/AdminApp.zip ${ADMINAPP_PACKAGE}  && \
     unzip /app/AdminApp.zip AdminApp/* -d /app/ && \
