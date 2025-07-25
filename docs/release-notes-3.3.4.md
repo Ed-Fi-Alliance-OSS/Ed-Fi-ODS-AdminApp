@@ -1,8 +1,8 @@
-# Release Notes - Ed-Fi ODS Admin App Version 3.3.2
+# Release Notes - Ed-Fi ODS Admin App Version 3.3.4
 
 ## Overview
 
-Version 3.3.2 of the Ed-Fi ODS Admin App includes important updates, improvements, and bug fixes to enhance the user experience and system reliability. This release introduces comprehensive functionality for administrative operations including application management, education organization management, vendor management, and user authentication systems. The release focuses on providing a robust web-based administrative interface for the Ed-Fi ODS/API with enhanced security, improved user experience, and comprehensive testing frameworks.
+Version 3.3.4 of the Ed-Fi ODS Admin App includes important updates, improvements, and bug fixes to enhance the user experience and system reliability. This release introduces comprehensive functionality for administrative operations including application management, education organization management, vendor management, and user authentication systems. The release focuses on providing a robust web-based administrative interface for the Ed-Fi ODS/API with enhanced security, improved user experience, and comprehensive testing frameworks.
 
 ## Summary of Functional Updates
 
@@ -62,7 +62,7 @@ This release includes significant functional improvements across the following c
 
 ## Changes in this release
 
-The following changes have been implemented in version 3.3.2:
+The following changes have been implemented in version 3.3.4:
 
 | Commit | Author | Pull Request | Description |
 |--------|--------|--------------|-------------|
@@ -114,7 +114,7 @@ For detailed installation procedures, refer to the [Tech Docs: Admin App](https:
 
 ### Upgrade from Previous Versions
 
-To upgrade from version 3.3.1 to 3.3.2:
+To upgrade from version 3.3.1 to 3.3.4:
 
 1. **Backup**: Create backups of your current database and configuration files
 2. **Stop Services**: Stop the existing Admin App service
@@ -128,7 +128,7 @@ To upgrade from version 3.3.1 to 3.3.2:
 
 For Docker-based deployments:
 
-1. **Pull Image**: `docker pull <registry>/edfi-adminapp:3.3.2`
+1. **Pull Image**: `docker pull <registry>/edfi-adminapp:3.3.4`
 2. **Update Configuration**: Update environment variables and configuration files
 3. **Container Management**: Stop existing containers and start new ones
 4. **Health Check**: Verify container health and application functionality
