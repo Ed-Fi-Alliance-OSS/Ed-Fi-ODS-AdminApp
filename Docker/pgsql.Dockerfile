@@ -7,7 +7,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet@sha256:724275ef1d9fe87eab6e1c45e4cf9cca2c1751dccfbf93a182fc82fd42278ce0
 LABEL maintainer="Ed-Fi Alliance, LLC and Contributors <techsupport@ed-fi.org>"
 
-ARG ADMINAPP_PACKAGE_VERSION=3.3.3
+ARG ADMINAPP_PACKAGE_VERSION=3.3.4
 
 ENV POSTGRES_PORT=5432
 ENV ADMINAPP_VIRTUAL_NAME=adminapp
