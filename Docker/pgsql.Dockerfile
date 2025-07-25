@@ -7,7 +7,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet@sha256:724275ef1d9fe87eab6e1c45e4cf9cca2c1751dccfbf93a182fc82fd42278ce0
 LABEL maintainer="Ed-Fi Alliance, LLC and Contributors <techsupport@ed-fi.org>"
 
-ARG ADMINAPP_PACKAGE_VERSION=3.3.1
+ARG ADMINAPP_PACKAGE_VERSION=3.3.2
 
 ENV POSTGRES_PORT=5432
 ENV ADMINAPP_VIRTUAL_NAME=adminapp
@@ -17,7 +17,7 @@ ENV ADMINAPP_PACKAGE="https://pkgs.dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-O
 # Disable the globalization invariant mode
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 ENV ASPNETCORE_ENVIRONMENT=Production
-ENV ASPNETCORE_HTTP_PORTS=80 
+ENV ASPNETCORE_HTTP_PORTS=80
 
 WORKDIR /app
 COPY Settings/pgsql/appsettings.template.json Settings/pgsql/run.sh Settings/pgsql/log4net.config /app/

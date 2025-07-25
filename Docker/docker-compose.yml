@@ -86,7 +86,7 @@ services:
       context: .
       dockerfile: pgsql.Dockerfile
       args:
-        ADMINAPP_PACKAGE_VERSION: ${ADMINAPP_PACKAGE_VERSION:-3.3.1}
+        ADMINAPP_PACKAGE_VERSION: ${ADMINAPP_PACKAGE_VERSION:-3.3.2}
     environment:
       POSTGRES_USER: "${POSTGRES_USER}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"

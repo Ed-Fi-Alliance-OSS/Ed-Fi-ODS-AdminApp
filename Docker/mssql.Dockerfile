@@ -7,7 +7,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet@sha256:724275ef1d9fe87eab6e1c45e4cf9cca2c1751dccfbf93a182fc82fd42278ce0
 LABEL maintainer="Ed-Fi Alliance, LLC and Contributors <techsupport@ed-fi.org>"
 
-ARG ADMINAPP_PACKAGE_VERSION=3.3.1
+ARG ADMINAPP_PACKAGE_VERSION=3.3.2
 
 ENV ADMINAPP_VIRTUAL_NAME=adminapp
 ENV API_MODE=SharedInstance
