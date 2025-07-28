@@ -117,13 +117,6 @@ Update your Docker Compose files or container configurations to use the new imag
 
 For detailed installation and upgrade procedures, refer to the [Admin App Documentation](https://docs.ed-fi.org/reference/admin-app) and [Docker deployment guide](../Docker/README.md).
 
-## Known Issues
-
-There are currently no known critical issues with this patch release. For the most up-to-date information about known issues and their status, please check:
-
-- [GitHub Issues](https://github.com/Ed-Fi-Alliance-OSS/Ed-Fi-ODS-AdminApp/issues) - Active issue tracking
-- [Ed-Fi Tracker](https://tracker.ed-fi.org/issues/?filter=14106) - Development work tracking
-
 ## Support
 
 For support questions, feature requests, and community discussions, please visit [community.ed-fi.org](https://community.ed-fi.org). The Ed-Fi community forum is the primary resource for technical support, troubleshooting assistance, and community knowledge sharing.
